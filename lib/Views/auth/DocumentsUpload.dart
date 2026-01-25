@@ -576,7 +576,7 @@ class Documentsupload extends StatelessWidget {
                 onPressed: () {
                   // Handle SignIn action, like form validation
                   // if (_formkey.currentState!.validate()) {}
-                  Get.toNamed(Routes.applicationSubmited);
+                  Get.toNamed(Routes.termPolicy);
                 },
               ),
               SizedBox(height: 30.h),

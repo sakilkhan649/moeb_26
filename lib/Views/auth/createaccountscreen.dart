@@ -1,46 +1,34 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Utils/app_const.dart';
-
 import '../../Core/routs.dart';
 import '../../Utils/app_colors.dart';
 import '../../widgets/CustomButton.dart';
 import '../../widgets/CustomText.dart';
 import '../../widgets/CustomTextField.dart';
 import '../../widgets/CustomTextGary.dart';
+import 'CreateAccountController/CreateAccountController.dart';
 
 class Createaccountscreen extends StatelessWidget {
   Createaccountscreen({super.key});
-  final _formkey = GlobalKey<FormState>();
 
-  // Reactive variable to control password visibility
-  final isPasswordVisible = false.obs;
-
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController serviceController = TextEditingController();
-  TextEditingController yearController = TextEditingController();
-  TextEditingController companyNameController = TextEditingController();
-  TextEditingController companyRoleController = TextEditingController();
+  final controller = Get.put(CreateAccountController());
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formkey,
+      key: _formKey,
       child: Scaffold(
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 100.w),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: .start,
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(text: "Account Create"),
                 SizedBox(height: 7.h),
-                // Subtitle Text
                 CustomTextgray(
                   text: "Tell us about yourself to get started",
                   fontSize: 15,
@@ -48,7 +36,7 @@ class Createaccountscreen extends StatelessWidget {
                 ),
                 SizedBox(height: 30.h),
 
-                /// Full Name
+                // ========== Full Name ==========
                 Row(
                   children: [
                     CustomText(
@@ -64,23 +52,21 @@ class Createaccountscreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Customtextfield(
-                  controller: nameController,
+                  controller: controller.nameController,
                   hintText: "Monirul Islam",
                   obscureText: false,
-                  textInputType: TextInputType.emailAddress,
+                  textInputType: TextInputType.name,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.isEmpty)
                       return "Enter your Name";
-                    }
-                    if (!AppString.usernameRegexp.hasMatch(value)) {
+                    if (!AppString.usernameRegexp.hasMatch(value))
                       return "Invalid Name";
-                    }
                     return null;
                   },
                 ),
                 SizedBox(height: 20.h),
 
-                /// Phone Number
+                // ========== Phone Number ==========
                 Row(
                   children: [
                     CustomText(
@@ -96,55 +82,21 @@ class Createaccountscreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Customtextfield(
-                  controller: phoneController,
+                  controller: controller.phoneController,
                   hintText: "01744114084",
                   obscureText: false,
                   textInputType: TextInputType.phone,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.isEmpty)
                       return "Enter your Phone";
-                    }
-                    if (!AppString.phoneRegexp.hasMatch(value)) {
+                    if (!AppString.phoneRegexp.hasMatch(value))
                       return "Invalid Phone";
-                    }
                     return null;
                   },
                 ),
                 SizedBox(height: 20.h),
 
-                /// Email Address
-                Row(
-                  children: [
-                    CustomText(
-                      text: "Email Address",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                    Text(
-                      " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                Customtextfield(
-                  controller: phoneController,
-                  hintText: "m@gmail.com",
-                  obscureText: false,
-                  textInputType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Enter your Email";
-                    }
-                    if (!AppString.emailRegexp.hasMatch(value)) {
-                      return "Invalid Email";
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20.h),
-
-                /// Service Area
+                // ========== Service Area (Dropdown) ==========
                 Row(
                   children: [
                     CustomText(
@@ -159,24 +111,70 @@ class Createaccountscreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.h),
-                Customtextfield(
-                  controller: serviceController,
-                  hintText: "ATLANTA",
-                  obscureText: false,
-                  textInputType: TextInputType.name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Enter your Service Area";
-                    }
-                    if (!AppString.emailRegexp.hasMatch(value)) {
-                      return "Invalid service Area";
-                    }
-                    return null;
-                  },
+                Obx(
+                  () => Customtextfield(
+                    controller: controller.serviceController,
+                    hintText: controller.selectedArea.value.isEmpty
+                        ? 'Select Service Area'
+                        : controller.selectedArea.value,
+                    obscureText: false,
+                    textInputType: TextInputType.name,
+                    suffixIcon: IconButton(
+                      onPressed: () async {
+                        // Dialog দেখাও
+                        String? selected = await showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: CustomTextgray(
+                                text: "Select Area",
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              backgroundColor: Colors.white,
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  children: controller.cities.map((city) {
+                                    return ListTile(
+                                      title: Text(
+                                        city,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context, city);
+                                      },
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                        // যদি কিছু select করে তাহলে save করো
+                        if (selected != null) {
+                          controller.pickArea(selected);
+                        }
+                      },
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 30,
+                        color: AppColors.gray100,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "Enter your Service Area";
+                      return null;
+                    },
+                  ),
                 ),
                 SizedBox(height: 20.h),
 
-                /// Years of Experience
+                // ========== Years of Experience ==========
                 Row(
                   children: [
                     CustomText(
@@ -188,23 +186,19 @@ class Createaccountscreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Customtextfield(
-                  controller: yearController,
+                  controller: controller.yearController,
                   hintText: "7",
                   obscureText: false,
                   textInputType: TextInputType.number,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.isEmpty)
                       return "Enter your Years of Experience";
-                    }
-                    if (!AppString.emailRegexp.hasMatch(value)) {
-                      return "Invalid Years of Experience";
-                    }
                     return null;
                   },
                 ),
                 SizedBox(height: 20.h),
 
-                /// Company Name
+                // ========== Company Name ==========
                 Row(
                   children: [
                     CustomText(
@@ -220,27 +214,23 @@ class Createaccountscreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Customtextfield(
-                  controller: companyNameController,
+                  controller: controller.companyNameController,
                   hintText: "SADRTX",
                   obscureText: false,
                   textInputType: TextInputType.name,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.isEmpty)
                       return "Enter your Company Name";
-                    }
-                    if (!AppString.emailRegexp.hasMatch(value)) {
-                      return "Invalid Company Name";
-                    }
                     return null;
                   },
                 ),
                 SizedBox(height: 20.h),
 
-                /// Company Name
+                // ========== Company Role (Dropdown) ==========
                 Row(
                   children: [
                     CustomText(
-                      text: "Company Name",
+                      text: "COMPANY ROLE",
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -251,28 +241,74 @@ class Createaccountscreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.h),
-                Customtextfield(
-                  controller: companyNameController,
-                  hintText: "SADRTX",
-                  obscureText: false,
-                  textInputType: TextInputType.name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Enter your Company Name";
-                    }
-                    if (!AppString.emailRegexp.hasMatch(value)) {
-                      return "Invalid Company Name";
-                    }
-                    return null;
-                  },
+                Obx(
+                  () => Customtextfield(
+                    controller: controller.companyRoleController,
+                    hintText: controller.selectedRole.value.isEmpty
+                        ? 'Select Role'
+                        : controller.selectedRole.value,
+                    obscureText: false,
+                    textInputType: TextInputType.name,
+                    suffixIcon: IconButton(
+                      onPressed: () async {
+                        // Dialog দেখাও
+                        String? selected = await showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: CustomTextgray(
+                                text: "Select Role",
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              backgroundColor: Colors.white,
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  children: controller.roles.map((role) {
+                                    return ListTile(
+                                      title: Text(
+                                        role,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context, role);
+                                      },
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                        // যদি কিছু select করে তাহলে save করো
+                        if (selected != null) {
+                          controller.pickRole(selected);
+                        }
+                      },
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 30,
+                        color: AppColors.gray100,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "Enter your Company Role";
+                      return null;
+                    },
+                  ),
                 ),
                 SizedBox(height: 20.h),
 
-                /// COMPANY ROLE *
+                // ========== Password ==========
                 Row(
                   children: [
                     CustomText(
-                      text: "COMPANY ROLE *",
+                      text: "Password",
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -283,33 +319,78 @@ class Createaccountscreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.h),
-                Customtextfield(
-                  controller: companyRoleController,
-                  hintText: "DRIVER",
-                  obscureText: false,
-                  suffixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      size: 30, // Or CupertinoIcons.arrow_left
-                      color: AppColors.gray100,
+                Obx(
+                  () => Customtextfield(
+                    controller: controller.passwordController,
+                    hintText: "Password",
+                    obscureText: !controller.showPassword.value,
+                    textInputType: TextInputType.visiblePassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "Enter your Password";
+                      if (!AppString.passRegexp.hasMatch(value))
+                        return "Invalid Password";
+                      return null;
+                    },
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.showPassword.value
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: AppColors.gray100,
+                      ),
+                      onPressed: controller.togglePassword,
                     ),
                   ),
-                  textInputType: TextInputType.name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Enter your Company Name";
-                    }
-                    // Adjust the validation logic if necessary
-                    return null;
-                  },
+                ),
+                SizedBox(height: 20.h),
+
+                // ========== Confirm Password ==========
+                Row(
+                  children: [
+                    CustomText(
+                      text: "Confirm Password",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                    Text(
+                      " *",
+                      style: TextStyle(color: Colors.red, fontSize: 14),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Obx(
+                  () => Customtextfield(
+                    controller: controller.confirmPasswordController,
+                    hintText: "Confirm Password",
+                    obscureText: !controller.showConfirmPassword.value,
+                    textInputType: TextInputType.visiblePassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "Enter Confirm Password";
+                      if (!AppString.passRegexp.hasMatch(value))
+                        return "Invalid Confirm Password";
+                      return null;
+                    },
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.showConfirmPassword.value
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: AppColors.gray100,
+                      ),
+                      onPressed: controller.toggleConfirmPassword,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 30.h),
+
+                // ========== Submit Button ==========
                 CustomButton(
                   text: "Continue",
-                  onPressed: () {
-                    // Handle SignIn action, like form validation
-                    if (_formkey.currentState!.validate()) {}
+                  onPressed: (){
+                    //if (_formKey.currentState!.validate()) {}
                     Get.toNamed(Routes.vehicleinformation);
                   },
                 ),

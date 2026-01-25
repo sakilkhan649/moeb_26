@@ -58,7 +58,7 @@ class Resetpasswordscreen extends StatelessWidget {
                               icon: Icon(Icons.arrow_back, color: Colors.white),
                             ),
                             SizedBox(width: 10.w),
-                            CustomText(text: "Reset Password", fontSize: 20),
+                            CustomText(text: "Forget Password", fontSize: 20),
                           ],
                         ),
                         SizedBox(width: 10.w),

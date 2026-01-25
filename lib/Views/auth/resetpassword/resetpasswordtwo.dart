@@ -34,7 +34,7 @@ class Resetpasswordtwo extends StatelessWidget {
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: CustomText(text: "Reset Password"),
+                    child: CustomText(text: "Forget Password"),
                   ),
                   SizedBox(height: 30.h),
                   // Subtitle Text
