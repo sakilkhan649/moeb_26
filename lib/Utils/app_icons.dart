@@ -1,6 +1,6 @@
 class AppIcons {
   static const String iconurl="assets/icons";
-  static const String back_icon="$iconurl/back_button.svg";
+  static const String close_icon="$iconurl/close_Icon.svg";
 
 
 }

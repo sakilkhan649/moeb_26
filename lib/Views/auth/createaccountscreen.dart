@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Utils/app_const.dart';
 
+import '../../Core/routs.dart';
 import '../../Utils/app_colors.dart';
 import '../../widgets/CustomButton.dart';
 import '../../widgets/CustomText.dart';
@@ -308,9 +309,8 @@ class Createaccountscreen extends StatelessWidget {
                   text: "Continue",
                   onPressed: () {
                     // Handle SignIn action, like form validation
-                    if (_formkey.currentState!.validate()) {
-                      // Perform sign in action
-                    }
+                    if (_formkey.currentState!.validate()) {}
+                    Get.toNamed(Routes.vehicleinformation);
                   },
                 ),
                 SizedBox(height: 30.h),
