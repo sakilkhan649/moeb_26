@@ -116,7 +116,8 @@ class Signscreen extends StatelessWidget {
                 CustomButton(
                   text: "Sign In",
                   onPressed: () {
-                    // Handle SignIn action, like form validation
+                    Get.toNamed(Routes.homeScreens);
+                    // Navigator.push()
                     if (_formkey.currentState!.validate()) {
                       // Perform sign in action
                     }

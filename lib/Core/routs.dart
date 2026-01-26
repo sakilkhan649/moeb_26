@@ -11,6 +11,7 @@ import '../Views/auth/resetpassword/resetpasswordscreen.dart';
 import '../Views/auth/resetpassword/resetpasswordthree.dart';
 import '../Views/auth/resetpassword/resetpasswordtwo.dart';
 import '../Views/auth/resetpassword/success_resetpassword.dart';
+import '../Views/home/home_screens.dart';
 
 
 class Routes {
@@ -26,6 +27,7 @@ class Routes {
   static const String termPolicy = "/TermPolicy";
   static const String applicationSubmited = "/ApplicationSubmited";
   static const String applicationNotApproved = "/ApplicationNotApproved";
+  static const String homeScreens = "/HomeScreens";
 
   static List<GetPage> routes = [
     GetPage(name: splashScreen, page: () => Splashscreen(),transition: Transition.noTransition),
@@ -40,6 +42,7 @@ class Routes {
     GetPage(name: termPolicy, page: () => TermPolicy(),transition: Transition.noTransition),
     GetPage(name: applicationSubmited, page: () => ApplicationSubmited(),transition: Transition.noTransition),
     GetPage(name: applicationNotApproved, page: () => ApplicationNotApproved(),transition: Transition.noTransition),
+    GetPage(name: homeScreens, page: () => HomeScreens(),transition: Transition.noTransition),
 
   ];
 }
