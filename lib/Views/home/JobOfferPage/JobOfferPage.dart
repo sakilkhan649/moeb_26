@@ -4,7 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:moeb_26/Utils/app_images.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
-import 'Job_Bottom_sheet/Job_Bottom_sheet.dart';
+import 'Job_Bottom_sheet/Job_Bottom_sheet_Tabbar.dart';
 import 'Notifications/Notifications_popup.dart';
 
 class Jobofferpage extends StatelessWidget {

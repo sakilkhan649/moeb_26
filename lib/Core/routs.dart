@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:moeb_26/Views/auth/VehicleInformation.dart';
 import 'package:moeb_26/Views/auth/createaccountscreen.dart';
 import 'package:moeb_26/Views/auth/signscreen.dart';
+import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/my_jobs.dart';
 import '../Views/auth/Application_Not_Approved.dart';
 import '../Views/auth/Application_submited.dart';
 import '../Views/auth/DocumentsUpload.dart';
@@ -28,6 +29,7 @@ class Routes {
   static const String applicationSubmited = "/ApplicationSubmited";
   static const String applicationNotApproved = "/ApplicationNotApproved";
   static const String homeScreens = "/HomeScreens";
+  static const String myJobsScreen = "/MyJobsScreen";
 
   static List<GetPage> routes = [
     GetPage(name: splashScreen, page: () => Splashscreen(),transition: Transition.noTransition),
@@ -43,6 +45,7 @@ class Routes {
     GetPage(name: applicationSubmited, page: () => ApplicationSubmited(),transition: Transition.noTransition),
     GetPage(name: applicationNotApproved, page: () => ApplicationNotApproved(),transition: Transition.noTransition),
     GetPage(name: homeScreens, page: () => HomeScreens(),transition: Transition.noTransition),
+    GetPage(name: myJobsScreen, page: () => MyJobsScreen(),transition: Transition.noTransition),
 
   ];
 }
