@@ -5,8 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
 import '../../../../Core/routs.dart';
 import '../../../../Utils/app_colors.dart';
+import '../../../../widgets/CustomText.dart';
+import '../../../../widgets/CustomTextField.dart';
 import '../../../../widgets/CustomText_Field_Hight.dart';
 import 'Controller/Job_bottom_sheet_Controller.dart';
+import 'Controller/Oneway_controller.dart';
 
 class ByTheHour extends StatelessWidget {
   ByTheHour({super.key});
@@ -17,6 +20,11 @@ class ByTheHour extends StatelessWidget {
   final pickupTimeController = TextEditingController();
   final payController = TextEditingController();
   final specialController = TextEditingController();
+
+  TextEditingController onewayController = TextEditingController();
+  final OnewayController onewayControllerInstance = Get.put(
+    OnewayController(),
+  ); // Rename to avoid confusion
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +67,69 @@ class ByTheHour extends StatelessWidget {
             Icons.attach_money,
           ),
           SizedBox(height: 20.h),
-          _buildPaymentMethodDropdown(controller),
+          CustomText(text: "Payment Method *", fontSize: 13.sp),
+          SizedBox(height: 8.h),
+          Obx(
+            () => Customtextfield(
+              controller: TextEditingController(),
+              hintText: onewayControllerInstance.selectedRole.value.isEmpty
+                  ? 'No Collect'
+                  : onewayControllerInstance.selectedRole.value,
+              obscureText: false,
+              textInputType: TextInputType.name,
+              suffixIcon: IconButton(
+                onPressed: () async {
+                  // Show dialog when arrow button is clicked
+                  String? selected = await showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: Colors.white,
+                        content: SingleChildScrollView(
+                          child: Column(
+                            children: onewayControllerInstance.roles.map((
+                              role,
+                            ) {
+                              return ListTile(
+                                title: Text(
+                                  role,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(
+                                    context,
+                                    role,
+                                  ); // Close dialog and return selected role
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                  // Save the selected role if user selects one
+                  if (selected != null) {
+                    onewayControllerInstance.pickRole(selected);
+                  }
+                },
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 30,
+                  color: AppColors.gray100,
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Enter your Company Role";
+                }
+                return null;
+              },
+            ),
+          ),
           SizedBox(height: 16.h),
           _buildFieldWithLabel(
             "Special Instructions (Optional)",
@@ -69,9 +139,12 @@ class ByTheHour extends StatelessWidget {
             isRequired: false,
           ),
           SizedBox(height: 24.h),
-          CustomJobButton(text: "+ New Job", onPressed: () {
-            Get.toNamed(Routes.myJobsScreen);
-          }),
+          CustomJobButton(
+            text: "+ New Job",
+            onPressed: () {
+              Get.toNamed(Routes.myJobsScreen);
+            },
+          ),
           SizedBox(height: 60.h),
         ],
       ),

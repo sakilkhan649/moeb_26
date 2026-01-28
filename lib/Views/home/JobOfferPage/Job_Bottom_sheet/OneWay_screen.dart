@@ -8,7 +8,9 @@ import 'package:moeb_26/widgets/CustomTextField.dart';
 import 'package:moeb_26/widgets/CustomText_Field_Hight.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
 import '../../../../Core/routs.dart';
+import '../../../../widgets/CustomTextGary.dart';
 import 'Controller/Job_bottom_sheet_Controller.dart';
+import 'Controller/Oneway_controller.dart';
 
 class OnewayScreen extends StatelessWidget {
   OnewayScreen({super.key});
@@ -21,9 +23,17 @@ class OnewayScreen extends StatelessWidget {
   final payController = TextEditingController();
   final specialController = TextEditingController();
 
+  TextEditingController onewayController = TextEditingController();
+  final OnewayController onewayControllerInstance = Get.put(
+    OnewayController(),
+  ); // Rename to avoid confusion
+
   @override
   Widget build(BuildContext context) {
-    final PostJobController controller = Get.find<PostJobController>();
+    final PostJobController postJobController =
+        Get.find<
+          PostJobController
+        >(); // Ensure the PostJobController is initialized
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
@@ -54,7 +64,7 @@ class OnewayScreen extends StatelessWidget {
           SizedBox(height: 20.h),
           _buildDateTimeRow(),
           SizedBox(height: 16.h),
-          _buildVehicleSelection(controller),
+          _buildVehicleSelection(postJobController),
           SizedBox(height: 16.h),
           _buildFieldWithLabel(
             "Pay Amount",
@@ -63,7 +73,70 @@ class OnewayScreen extends StatelessWidget {
             Icons.attach_money,
           ),
           SizedBox(height: 20.h),
-          _buildPaymentMethodDropdown(controller),
+          CustomText(text: "Payment Method *", fontSize: 13.sp),
+          SizedBox(height: 8.h),
+          Obx(
+            () => Customtextfield(
+              controller: TextEditingController(),
+              hintText: onewayControllerInstance.selectedRole.value.isEmpty
+                  ? 'No Collect'
+                  : onewayControllerInstance.selectedRole.value,
+              obscureText: false,
+              textInputType: TextInputType.name,
+              suffixIcon: IconButton(
+                onPressed: () async {
+                  // Show dialog when arrow button is clicked
+                  String? selected = await showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: Colors.white,
+                        content: SingleChildScrollView(
+                          child: Column(
+                            children: onewayControllerInstance.roles.map((
+                              role,
+                            ) {
+                              return ListTile(
+                                title: Text(
+                                  role,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(
+                                    context,
+                                    role,
+                                  ); // Close dialog and return selected role
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                  // Save the selected role if user selects one
+                  if (selected != null) {
+                    onewayControllerInstance.pickRole(selected);
+                  }
+                },
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 30,
+                  color: AppColors.gray100,
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Enter your Company Role";
+                }
+                return null;
+              },
+            ),
+          ),
+
           SizedBox(height: 16.h),
           _buildFieldWithLabel(
             "Special Instructions (Optional)",
@@ -73,9 +146,12 @@ class OnewayScreen extends StatelessWidget {
             isRequired: false,
           ),
           SizedBox(height: 24.h),
-          CustomJobButton(text: "New Job", onPressed: () {
-            Get.toNamed(Routes.myJobsScreen);
-          }),
+          CustomJobButton(
+            text: "New Job",
+            onPressed: () {
+              Get.toNamed(Routes.myJobsScreen);
+            },
+          ),
           SizedBox(height: 60.h),
         ],
       ),
@@ -223,66 +299,6 @@ class OnewayScreen extends StatelessWidget {
                 ),
               );
             }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPaymentMethodDropdown(PostJobController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.payment, color: Colors.white, size: 18.sp),
-            SizedBox(width: 8.w),
-            Text(
-              'Payment Method *',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w400,
-                fontSize: 13.sp,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 8.h),
-        Obx(
-          () => Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: AppColors.black200),
-            ),
-            child: DropdownButton<String>(
-              value: controller.paymentMethod.value,
-              isExpanded: true,
-              underline: SizedBox(),
-              dropdownColor: Colors.black,
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.grey,
-                size: 30.sp,
-              ),
-              style: GoogleFonts.inter(color: Colors.black, fontSize: 13.sp),
-              items: ['Collect', 'No collect']
-                  .map(
-                    (value) => DropdownMenuItem(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 13.sp,
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: controller.changePaymentMethod,
-            ),
           ),
         ),
       ],

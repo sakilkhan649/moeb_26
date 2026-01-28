@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
+import '../../Core/routs.dart';
 import '../../Utils/app_colors.dart';
 
 /// Review Status Screen
@@ -88,6 +90,20 @@ class ApplicationSubmited extends StatelessWidget {
                 _buildInfoBox(
                   title:
                       "You'll receive an email notification once your application has been reviewed. Please check your spam folder as well.",
+                ),
+                SizedBox(height: 10.h),
+                TextButton(
+                  onPressed: () {
+                    Get.toNamed(Routes.applicationNotApproved);
+                  },
+                  child: Text(
+                    "Next",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
 
                 SizedBox(height: 40.h),
