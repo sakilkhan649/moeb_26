@@ -21,10 +21,10 @@ class ApplicationNotApproved extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w,),
             child: Column(
               children: [
-                SizedBox(height: 40.h),
+                SizedBox(height: 80.h),
 
                 // Clock Icon with pulse animation
                 _buildClockIcon(),

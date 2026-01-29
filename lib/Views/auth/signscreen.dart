@@ -26,12 +26,14 @@ class Signscreen extends StatelessWidget {
       key: _formkey,
       child: Scaffold(
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 100.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w,),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: .start,
               crossAxisAlignment: .start,
               children: [
+                SizedBox(height: 100.h,),
+                // The logo (use an image asset or network image)
                 CustomText(text: "Welcome Back"),
                 SizedBox(height: 7.h),
                 // Subtitle Text

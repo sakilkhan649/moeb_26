@@ -17,10 +17,11 @@ class Vehicleinformation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 100.w),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 100.w),
             CustomText(text: "Vehicle Information"),
             SizedBox(height: 7.h),
             CustomTextgray(
@@ -57,7 +58,7 @@ class Vehicleinformation extends StatelessWidget {
                         Get.toNamed(Routes.documentsupload);
                       },
                     ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 60.h),
                   ],
                 ),
               ),

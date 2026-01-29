@@ -18,11 +18,12 @@ class Documentsupload extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 100.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w,),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 100.w),
               // Page title
               CustomText(text: "Documents Upload", fontSize: 20),
               SizedBox(height: 7.h),
@@ -579,7 +580,7 @@ class Documentsupload extends StatelessWidget {
                   Get.toNamed(Routes.termPolicy);
                 },
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: 60.h),
             ],
           ),
         ),

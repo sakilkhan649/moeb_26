@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../../../Core/routs.dart';
 import '../../../../Utils/app_colors.dart';
 import '../../../../widgets/CustomText.dart';
-import '../../../../widgets/CustomTextField.dart';
 import '../../../../widgets/CustomText_Field_Hight.dart';
 import 'Controller/Job_bottom_sheet_Controller.dart';
 import 'Controller/Oneway_controller.dart';
@@ -18,10 +18,10 @@ class ByTheHour extends StatelessWidget {
   final durationController = TextEditingController();
   final dateController = TextEditingController();
   final pickupTimeController = TextEditingController();
+
   final payController = TextEditingController();
   final specialController = TextEditingController();
 
-  TextEditingController onewayController = TextEditingController();
   final OnewayController onewayControllerInstance = Get.put(
     OnewayController(),
   ); // Rename to avoid confusion
@@ -49,85 +49,133 @@ class ByTheHour extends StatelessWidget {
             Icons.timelapse_outlined,
           ),
           SizedBox(height: 20.h),
-          _buildFieldWithLabel("Date", dateController, "", Icons.date_range),
+          Obx(() {
+            final date = onewayControllerInstance.selectedDate.value;
+            dateController.text = date == null
+                ? ""
+                : "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+            return _buildDateTimeField(
+              "Date",
+              Icons.date_range,
+              dateController,
+              "Select Date",
+              () => onewayControllerInstance.chooseDate(context),
+            );
+          }),
           SizedBox(height: 20.h),
-          _buildFieldWithLabel(
-            "Pickup Time",
-            pickupTimeController,
-            "",
-            Icons.access_time,
-          ),
+          Obx(() {
+            final time = onewayControllerInstance.selectedTime.value;
+            pickupTimeController.text = time == null
+                ? ""
+                : time.format(context);
+            return _buildDateTimeField(
+              "Pickup Time",
+              Icons.access_time,
+              pickupTimeController,
+              "Select Time",
+              () => onewayControllerInstance.chooseTime(context),
+            );
+          }),
           SizedBox(height: 20.h),
           _buildVehicleSelection(controller),
           SizedBox(height: 16.h),
           _buildFieldWithLabel(
             "Pay Amount",
             payController,
-            "\$120",
+            "\$",
             Icons.attach_money,
           ),
           SizedBox(height: 20.h),
           CustomText(text: "Payment Method *", fontSize: 13.sp),
           SizedBox(height: 8.h),
           Obx(
-            () => Customtextfield(
-              controller: TextEditingController(),
-              hintText: onewayControllerInstance.selectedRole.value.isEmpty
-                  ? 'No Collect'
-                  : onewayControllerInstance.selectedRole.value,
-              obscureText: false,
-              textInputType: TextInputType.name,
-              suffixIcon: IconButton(
-                onPressed: () async {
-                  // Show dialog when arrow button is clicked
-                  String? selected = await showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        backgroundColor: Colors.white,
-                        content: SingleChildScrollView(
-                          child: Column(
-                            children: onewayControllerInstance.roles.map((
-                              role,
-                            ) {
-                              return ListTile(
-                                title: Text(
-                                  role,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15.sp,
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.pop(
-                                    context,
-                                    role,
-                                  ); // Close dialog and return selected role
-                                },
-                              );
-                            }).toList(),
+            () => DropdownButtonHideUnderline(
+              child: DropdownButton2<String>(
+                isExpanded: true,
+                hint: Text(
+                  'No Collect',
+                  style: GoogleFonts.inter(
+                    color: AppColors.gray100,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                value: onewayControllerInstance.selectedRole.value.isEmpty
+                    ? null
+                    : onewayControllerInstance.selectedRole.value,
+                items: onewayControllerInstance.roles
+                    .map(
+                      (role) => DropdownMenuItem(
+                        value: role,
+                        child: Text(
+                          role,
+                          style: GoogleFonts.inter(
+                            color: Colors.black,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      );
-                    },
-                  );
-                  // Save the selected role if user selects one
-                  if (selected != null) {
-                    onewayControllerInstance.pickRole(selected);
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    onewayControllerInstance.pickRole(value);
                   }
                 },
-                icon: Icon(
-                  Icons.keyboard_arrow_down,
-                  size: 30,
-                  color: AppColors.gray100,
+                buttonStyleData: ButtonStyleData(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 15.w,
+                    vertical: 10.h,
+                  ),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(color: AppColors.black200),
+                    color: Colors.transparent,
+                  ),
                 ),
+                iconStyleData: IconStyleData(
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 24,
+                    color: AppColors.gray100,
+                  ),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 200.h,
+                  width: 407.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    color: Colors.white,
+                  ),
+                  offset: Offset(0, -5.h),
+                  scrollbarTheme: ScrollbarThemeData(
+                    radius: Radius.circular(40.r),
+                    thickness: MaterialStateProperty.all(6),
+                    thumbVisibility: MaterialStateProperty.all(true),
+                  ),
+                ),
+                menuItemStyleData: MenuItemStyleData(
+                  height: 40.h,
+                  padding: EdgeInsets.only(left: 14.w, right: 14.w),
+                ),
+                selectedItemBuilder: (context) {
+                  return onewayControllerInstance.roles.map((String value) {
+                    return Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        value,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    );
+                  }).toList();
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Enter your Company Role";
-                }
-                return null;
-              },
             ),
           ),
           SizedBox(height: 16.h),
@@ -151,6 +199,7 @@ class ByTheHour extends StatelessWidget {
     );
   }
 
+  ///pic date and time
   Widget _buildFieldWithLabel(
     String label,
     TextEditingController ctrl,
@@ -181,6 +230,46 @@ class ByTheHour extends StatelessWidget {
           hintText: hint,
           obscureText: false,
           textInputType: TextInputType.text,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateTimeField(
+    String label,
+    IconData icon,
+    TextEditingController ctrl,
+    String hint,
+    VoidCallback onPressed,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: Colors.white, size: 18.sp),
+            SizedBox(width: 8.w),
+            Text(
+              '$label *',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w400,
+                fontSize: 13.sp,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8.h),
+        GestureDetector(
+          onTap: onPressed,
+          child: AbsorbPointer(
+            child: CustomtextFieldHight(
+              controller: ctrl,
+              hintText: hint,
+              obscureText: false,
+              textInputType: TextInputType.none,
+            ),
+          ),
         ),
       ],
     );
@@ -245,66 +334,6 @@ class ByTheHour extends StatelessWidget {
                 ),
               );
             }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPaymentMethodDropdown(PostJobController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.payment, color: Colors.white, size: 18.sp),
-            SizedBox(width: 8.w),
-            Text(
-              'Payment Method *',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w400,
-                fontSize: 13.sp,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 8.h),
-        Obx(
-          () => Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: AppColors.black200),
-            ),
-            child: DropdownButton<String>(
-              value: controller.paymentMethod.value,
-              isExpanded: true,
-              underline: SizedBox(),
-              dropdownColor: Colors.black,
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.grey,
-                size: 30.sp,
-              ),
-              style: GoogleFonts.inter(color: Colors.black, fontSize: 13.sp),
-              items: ['Collect', 'No collect']
-                  .map(
-                    (value) => DropdownMenuItem(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 13.sp,
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: controller.changePaymentMethod,
-            ),
           ),
         ),
       ],

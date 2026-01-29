@@ -22,11 +22,12 @@ class Createaccountscreen extends StatelessWidget {
       key: _formKey,
       child: Scaffold(
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 100.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w,),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 100.h,),
                 CustomText(text: "Account Create"),
                 SizedBox(height: 7.h),
                 CustomTextgray(
@@ -394,7 +395,7 @@ class Createaccountscreen extends StatelessWidget {
                     Get.toNamed(Routes.vehicleinformation);
                   },
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 40.h),
               ],
             ),
           ),

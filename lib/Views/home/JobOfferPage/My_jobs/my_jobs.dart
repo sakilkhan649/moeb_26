@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
-
 import '../../../../Core/routs.dart';
 import '../../../../Utils/app_colors.dart';
+import '../../../../Utils/app_icons.dart';
 import '../../../../Utils/app_images.dart';
 import '../../../../widgets/Custom_AppBar.dart';
-import '../Notifications/Notifications_popup.dart';
 import 'Controller/My_job_controller.dart';
 
 class MyJobsScreen extends StatelessWidget {
@@ -27,13 +27,7 @@ class MyJobsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-        onAccountTap: () {
-          Get.toNamed(Routes.homeScreens);
-        },
-      ),
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(
@@ -42,7 +36,22 @@ class MyJobsScreen extends StatelessWidget {
             crossAxisAlignment: .start,
             children: [
               SizedBox(height: 20.h),
-              CustomText(text: "My Jobs", fontSize: 20.sp),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Get.toNamed(Routes.homeScreens);
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                      size: 20.sp,
+                    ),
+                  ),
+                  SizedBox(width: 100.w),
+                  CustomText(text: "My Jobs", fontSize: 20.sp),
+                ],
+              ),
               SizedBox(height: 10.h),
               Divider(color: Colors.white, thickness: 1.h),
               SizedBox(height: 20.h),
@@ -153,6 +162,7 @@ class MyJobsScreen extends StatelessWidget {
 
                       /// PU / DO
                       Row(
+                        mainAxisAlignment: .spaceBetween,
                         children: [
                           RichText(
                             text: TextSpan(
@@ -160,32 +170,10 @@ class MyJobsScreen extends StatelessWidget {
                               children: [
                                 TextSpan(
                                   text: "PU: ",
-                                  style: TextStyle(color: Colors.red),
+                                  style: TextStyle(color: Colors.grey),
                                 ),
                                 TextSpan(
                                   text: "Dhaka Airport",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 6.h),
-
-                      Row(
-                        mainAxisAlignment: .spaceBetween,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              style: GoogleFonts.inter(fontSize: 13.sp),
-                              children: [
-                                TextSpan(
-                                  text: "DO: ",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                                TextSpan(
-                                  text: "Barisal",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ],
@@ -207,6 +195,44 @@ class MyJobsScreen extends StatelessWidget {
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.bold,
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 6.h),
+
+                      Row(
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              style: GoogleFonts.inter(fontSize: 13.sp),
+                              children: [
+                                TextSpan(
+                                  text: "DO: ",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                TextSpan(
+                                  text: "Barisal",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10.h),
+
+                      ///DATE AND TIME
+                      Row(
+                        children: [
+                          SvgPicture.asset(AppIcons.sadax_icon),
+
+                          SizedBox(width: 5.w),
+                          Text(
+                            "SADAX",
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ],
@@ -259,21 +285,6 @@ class MyJobsScreen extends StatelessWidget {
                         textInputType: TextInputType.text,
                       ),
                       SizedBox(height: 10.h),
-
-                      ///Payment
-                      CustomTextgray(
-                        text: "Payment",
-                        color: Color(0xFF737373),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      SizedBox(height: 8.h),
-                      // Example usage of CustomTextField
-                      CustomTextFieldGold(
-                        controller: paymentController,
-                        hintText: "\$ 125",
-                        obscureText: false,
-                        textInputType: TextInputType.text,
-                      ),
                     ],
                   ),
                 );

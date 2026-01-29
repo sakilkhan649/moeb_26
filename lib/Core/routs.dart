@@ -14,6 +14,8 @@ import '../Views/auth/resetpassword/resetpasswordthree.dart';
 import '../Views/auth/resetpassword/resetpasswordtwo.dart';
 import '../Views/auth/resetpassword/success_resetpassword.dart';
 import '../Views/home/JobOfferPage/My_jobs/edit_screen.dart';
+import '../Views/home/JobOfferPage/Request_Submitted/Request_Submitted.dart';
+import '../Views/home/RidesPage/Request_Under_review.dart';
 import '../Views/home/home_screens.dart';
 
 
@@ -34,6 +36,8 @@ class Routes {
   static const String myJobsScreen = "/MyJobsScreen";
   static const String editScreen = "/EditScreen";
   static const String accountSuccesScreen = "/AccountSuccesScreen";
+  static const String requestSubmitted = "/RequestSubmitted";
+  static const String requestUnderReview = "/RequestUnderReview";
 
   static List<GetPage> routes = [
     GetPage(name: splashScreen, page: () => Splashscreen(),transition: Transition.noTransition),
@@ -52,6 +56,8 @@ class Routes {
     GetPage(name: myJobsScreen, page: () => MyJobsScreen(),transition: Transition.noTransition),
     GetPage(name: editScreen, page: () => EditScreen(),transition: Transition.noTransition),
     GetPage(name: accountSuccesScreen, page: () => AccountSuccesScreen(),transition: Transition.noTransition),
+    GetPage(name: requestSubmitted, page: () => RequestSubmitted(),transition: Transition.noTransition),
+    GetPage(name: requestUnderReview, page: () => RequestUnderReview(),transition: Transition.noTransition),
 
   ];
 }

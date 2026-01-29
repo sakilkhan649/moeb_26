@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
+import 'package:moeb_26/Utils/app_colors.dart';
 import '../../Utils/app_images.dart';
 import '../../widgets/CustomButton.dart';
 import '../../widgets/CustomText.dart';
@@ -45,7 +46,7 @@ class Createscreens extends StatelessWidget {
                   },
                   backgroundColor: Colors.black,
                   textColor: Colors.white,
-                  borderColor: Colors.white,
+                  borderColor: AppColors.black200,
                 ),
                 SizedBox(height: 15.h),
                 // Subtitle Text

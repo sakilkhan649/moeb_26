@@ -70,6 +70,22 @@ class TermPolicy extends StatelessWidget {
   final check39 = false.obs;
   final check40 = false.obs;
   final check41 = false.obs;
+  final check42 = false.obs;
+  final check43 = false.obs;
+  final check44 = false.obs;
+  final check45 = false.obs;
+  final check46 = false.obs;
+  final check47 = false.obs;
+  final check48 = false.obs;
+  final check49 = false.obs;
+  final check50 = false.obs;
+  final check51 = false.obs;
+  final check52 = false.obs;
+  final check53 = false.obs;
+  final check54 = false.obs;
+  final check55 = false.obs;
+  final check56 = false.obs;
+  final check57 = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -77,29 +93,58 @@ class TermPolicy extends StatelessWidget {
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: .center,
                     children: [
+                      SizedBox(height: 20.h),
+                      Column(
+                        mainAxisAlignment: .center,
+                        crossAxisAlignment: .center,
+                        children: [
+                          CustomText(
+                            text: "Driver Code of Conduct &",
+                            fontSize: 20,
+                          ),
+                          CustomText(text: "Service Standards", fontSize: 20),
+
+                          SizedBox(height: 7.h),
+
+                          //subtitle text
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(20),
+                              child: CustomTextgray(
+                                text:
+                                    "This Code of Conduct defines the professional standards required of all chauffeurs operating within the Elite Chauffeur Network. Compliance is mandatory.",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
                       // 👔 APPEARANCE & DRESS CODE
                       _buildSection(
                         title: "APPEARANCE & DRESS CODE",
                         children: [
                           _item(
                             check0,
-                            "Driver must wear a full suit with tie at all times.",
+                            "Chauffeurs must wear a full business suit with tie at all times while on duty.",
                           ),
                           _item(
                             check1,
-                            "Suit colors permitted: Black, Navy Blue, or Dark Grey only.",
+                            "Approved suit colors: Black, Navy Blue, or Dark Grey only.",
                           ),
                           _item(
                             check2,
-                            "Shirt must be clean, pressed, and neutral color (white or light blue).",
+                            "Shirts must be clean, pressed, and neutral in color (white or light blue).",
                           ),
                           _item(
                             check3,
@@ -107,219 +152,287 @@ class TermPolicy extends StatelessWidget {
                           ),
                           _item(
                             check4,
-                            "Personal grooming must be professional (clean shave or neatly trimmed beard).",
-                          ),
-                          _item(
-                            check5,
-                            "Strong colognes, perfumes, or scented products are not permitted.",
-                          ),
-                          _item(
-                            check6,
-                            "Breath must be clean and neutral (no smoking, vaping, or strong food odors before service).",
+                            "Personal grooming must be professional at all times (clean shave or neatly trimmed beard).",
                           ),
                         ],
                       ),
 
                       // 🚗 VEHICLE STANDARDS
                       _buildSection(
-                        title: "VEHICLE STANDARDS",
+                        title: "Fragrance & Hygiene",
                         children: [
                           _item(
+                            check5,
+                            "Fragrance must be fragrance-free or extremely light.",
+                          ),
+                          _item(
+                            check6,
+                            "Strong colognes, perfumes, or scented products are strictly prohibited.",
+                          ),
+                          _item(
                             check7,
-                            "Vehicle must be clean inside and outside before every job.",
-                          ),
-                          _item(
-                            check8,
-                            "Interior must be free of odors, trash, stains, or personal items.",
-                          ),
-                          _item(
-                            check9,
-                            "Windows must be clean; dashboard and seats wiped.",
-                          ),
-                          _item(
-                            check10,
-                            "Vehicle must be mechanically sound and fueled before pickup.",
-                          ),
-                          _item(
-                            check11,
-                            "No warning lights displayed on dashboard during service.",
+                            "Breath must be clean and neutral. Smoking, vaping, or strong food odors prior to service are not permitted.",
                           ),
                         ],
                       ),
 
                       // 🎁 CLIENT AMENITIES
                       _buildSection(
-                        title: "CLIENT AMENITIES",
+                        title: "VEHICLE STANDARDS",
                         children: [
                           _item(
+                            check8,
+                            "Vehicle must be thoroughly cleaned inside and out before every assignment.",
+                          ),
+                          _item(
+                            check9,
+                            "Interior must be free of odors, trash, stains, or personal items.",
+                          ),
+                          _item(
+                            check10,
+                            "Windows must be clean; dashboard and seats wiped and presentable.",
+                          ),
+                          _item(
+                            check11,
+                            "Vehicle must be mechanically sound and fully fueled prior to pickup.",
+                          ),
+                          _item(
                             check12,
-                            "Provide bottled water for every client.",
-                          ),
-                          _item(
-                            check13,
-                            "Provide Apple (Lightning) and Android (USB-C) chargers.",
-                          ),
-                          _item(
-                            check14,
-                            "Carry a clean umbrella and offer it in case of rain.",
-                          ),
-                          _item(
-                            check15,
-                            "Climate control must be set to a comfortable temperature.",
-                          ),
-                          _item(
-                            check16,
-                            "Music only upon client request (default: silence).",
+                            "No warning or service lights may be displayed during service.",
                           ),
                         ],
                       ),
 
                       // 🧳 SERVICE & PROFESSIONAL BEHAVIOR
                       _buildSection(
-                        title: "SERVICE & PROFESSIONAL BEHAVIOR",
+                        title: "CLIENT AMENITIES",
                         children: [
                           _item(
+                            check13,
+                            "Provide bottled water for every client.",
+                          ),
+                          _item(
+                            check14,
+                            "Provide Apple (Lightning) and Android (USB-C) charging cables.",
+                          ),
+                          _item(
+                            check15,
+                            "Carry a clean umbrella and offer it in case of rain.",
+                          ),
+                          _item(
+                            check16,
+                            "Climate control must be set to a comfortable temperature.",
+                          ),
+                          _item(
                             check17,
-                            "Always assist clients with luggage unless declined.",
-                          ),
-                          _item(
-                            check18,
-                            "Open and close doors when appropriate.",
-                          ),
-                          _item(
-                            check19,
-                            "Greet clients politely using Mr. / Ms. unless instructed otherwise.",
-                          ),
-                          _item(
-                            check20,
-                            "Confirm destination quietly and professionally.",
-                          ),
-                          _item(
-                            check21,
-                            "Always maintain a calm, discreet, and respectful demeanor.",
+                            "Music only upon client request (default setting: silence).",
                           ),
                         ],
                       ),
 
                       // 🚫 STRICT PROFESSIONAL BOUNDARIES
                       _buildSection(
-                        title: "STRICT PROFESSIONAL BOUNDARIES",
+                        title: "SERVICE & PROFESSIONAL BEHAVIOR",
                         children: [
                           _item(
+                            check18,
+                            "Assist clients with luggage unless declined.",
+                          ),
+                          _item(
+                            check19,
+                            "Open and close vehicle doors when appropriate.",
+                          ),
+                          _item(
+                            check20,
+                            "Greet clients politely using Mr. / Ms., unless instructed otherwise.",
+                          ),
+                          _item(
+                            check21,
+                            "Confirm destination quietly and professionally.",
+                          ),
+                          _item(
                             check22,
-                            "Never discuss politics, religion, or sports with clients.",
-                          ),
-                          _item(
-                            check23,
-                            "Never argue or express personal opinions.",
-                          ),
-                          _item(
-                            check24,
-                            "Never provide a personal business card, phone number, or social media.",
-                          ),
-                          _item(
-                            check25,
-                            "Never attempt to solicit future business from the client.",
-                          ),
-                          _item(
-                            check26,
-                            "Always act as if you work exclusively for the company that assigned the job.",
+                            "Maintain a calm, discreet, and respectful demeanor at all times.",
                           ),
                         ],
                       ),
 
                       // 📵 SAFETY & COMMUNICATION
                       _buildSection(
-                        title: "SAFETY & COMMUNICATION",
+                        title: "STRICT PROFESSIONAL BOUNDARIES",
                         children: [
                           _item(
+                            check23,
+                            "Never discuss politics, religion, or sports with clients.",
+                          ),
+                          _item(
+                            check24,
+                            "Never argue or express personal opinions.",
+                          ),
+                          _item(
+                            check25,
+                            "Never provide personal business cards, phone numbers, or social media.",
+                          ),
+                          _item(
+                            check26,
+                            "Never solicit future business from a client.",
+                          ),
+                          _item(
                             check27,
-                            "No texting or calling while driving with a client in the vehicle.",
-                          ),
-                          _item(
-                            check28,
-                            "Phone may only be used hands-free for navigation if necessary.",
-                          ),
-                          _item(
-                            check29,
-                            "Follow all traffic laws and drive smoothly at all times.",
-                          ),
-                          _item(
-                            check30,
-                            "No aggressive driving, speeding, or sudden braking.",
+                            "Always act as a representative exclusively of the assigning company.",
                           ),
                         ],
                       ),
 
                       // ⏱️ PUNCTUALITY & RELIABILITY
                       _buildSection(
-                        title: "PUNCTUALITY & RELIABILITY",
+                        title: "SAFETY & COMMUNICATION",
                         children: [
                           _item(
+                            check28,
+                            "No texting or handheld phone use while driving with a client onboard.",
+                          ),
+                          _item(
+                            check29,
+                            "Phone use is permitted hands-free only for navigation if necessary.",
+                          ),
+                          _item(
+                            check30,
+                            "Obey all traffic laws and drive smoothly at all times.",
+                          ),
+                          _item(
                             check31,
-                            "Arrive 10–15 minutes early to every pickup.",
-                          ),
-                          _item(
-                            check32,
-                            "Monitor flight status when applicable.",
-                          ),
-                          _item(
-                            check33,
-                            "Never cancel last minute except in true emergencies.",
-                          ),
-                          _item(
-                            check34,
-                            "Inform the company immediately of any delays or issues.",
+                            "Aggressive driving, speeding, or sudden braking is prohibited.",
                           ),
                         ],
                       ),
 
                       // 🤝 CONFIDENTIALITY & RESPECT
                       _buildSection(
-                        title: "CONFIDENTIALITY & RESPECT",
+                        title: "PUNCTUALITY & RELIABILITY",
                         children: [
                           _item(
+                            check32,
+                            "Arrive 10–15 minutes early for every pickup.",
+                          ),
+                          _item(
+                            check33,
+                            "Monitor flight status when applicable.",
+                          ),
+                          _item(
+                            check34,
+                            "Never cancel last-minute except in a true emergency.",
+                          ),
+                          _item(
                             check35,
-                            "All client information is strictly confidential.",
-                          ),
-                          _item(
-                            check36,
-                            "Do not discuss clients, routes, or conversations with anyone.",
-                          ),
-                          _item(
-                            check37,
-                            "Respect client privacy at all times.",
-                          ),
-                          _item(
-                            check38,
-                            "Treat all clients with equal respect regardless of status or appearance.",
+                            "Immediately inform the company of any delays or issues.",
                           ),
                         ],
                       ),
 
                       // ⚠️ ENFORCEMENT
                       _buildSection(
-                        title: "ENFORCEMENT",
+                        title: "CONFIDENTIALITY & RESPECT",
                         children: [
                           _item(
-                            check39,
-                            "Any violation of platform policies may lead to a warning, temporary suspension, or permanent removal from the Elite Chauffeur Network.",
+                            check36,
+                            "All client information is strictly confidential.",
                           ),
                           _item(
-                            check40,
-                            "Repeated low ratings or complaints lead to automatic review.",
+                            check37,
+                            "Do not discuss clients, routes, or conversations with anyone.",
+                          ),
+                          _item(
+                            check38,
+                            "Respect client privacy at all times.",
+                          ),
+                          _item(
+                            check39,
+                            "Treat all clients with equal respect, regardless of status or appearance.",
                           ),
                         ],
                       ),
-                      SizedBox(height: 20.h),
 
+                      // ⚠️ ENFORCEMENT
+                      _buildSection(
+                        title: "JOB ACCEPTANCE & RESPONSIBILITY",
+                        children: [
+                          _item(
+                            check40,
+                            "Chauffeurs must carefully review the full job description before accepting any assignment.",
+                          ),
+                          _item(check41, "Pickup and drop-off details."),
+                          _item(check42, "Date and time."),
+                          _item(check43, "Vehicle requirements."),
+                          _item(
+                            check44,
+                            "Client notes and special instructions.",
+                          ),
+                          _item(
+                            check45,
+                            "Once accepted, a job may not be canceled, returned, or declined, except in a true emergency and only with company approval.",
+                          ),
+                          _item(
+                            check46,
+                            "Job transfers, substitutions, or subcontracting are strictly forbidden without written authorization.",
+                          ),
+                          _item(
+                            check47,
+                            "The chauffeur who accepts the job is personally responsible for its completion.",
+                          ),
+                          _item(
+                            check48,
+                            "Unauthorized job swapping or replacement may result in immediate suspension or permanent removal from the Elite Chauffeur Network.",
+                          ),
+                        ],
+                      ),
+                      // ⚠️ ENFORCEMENT
+                      _buildSection(
+                        title: "ASAP Jobs",
+                        children: [
+                          _item(check49, "“ASAP” means immediate service."),
+                          _item(
+                            check50,
+                            "Chauffeurs must be on location or within 10 minutes, verified by GPS, to accept the job.",
+                          ),
+                        ],
+                      ),
+                      // শেষ লাইন (checkbox ছাড়া)
+                      _buildSection(
+                        title: "Payment",
+                        children: [
+                          _item(
+                            check51,
+                            "Once a job is completed, the job poster must pay the driver within a maximum of 48 hours.",
+                          ),
+                        ],
+                      ),
+                      // ⚠️ ENFORCEMENT
+                      _buildSection(
+                        title: "ENFORCEMENT",
+                        children: [
+                          _item(check52, "Violations may result in: Warning."),
+                          _item(
+                            check53,
+                            "Violations may result in: Temporary suspension.",
+                          ),
+                          _item(
+                            check54,
+                            "Permanent removal from the Elite Chauffeur Network.",
+                          ),
+                          _item(
+                            check55,
+                            "Repeated low ratings or client complaints will trigger an automatic review.",
+                          ),
+                        ],
+                      ),
                       // শেষ লাইন (checkbox ছাড়া)
                       _buildSection(
                         title: "DRIVER AGREEMENT",
                         children: [
                           _item(
-                            check41,
-                            "By accepting jobs through the platform, the driver agrees to fully comply with this Elite Driver Code of Conduct.",
+                            check56,
+                            "By accepting jobs through the platform, the chauffeur agrees to fully comply with this Elite Chauffeur Network Driver Code of Conduct.",
                           ),
                         ],
                       ),
@@ -330,7 +443,7 @@ class TermPolicy extends StatelessWidget {
                           Get.toNamed(Routes.applicationSubmited);
                         },
                       ),
-                      SizedBox(height: 30.h),
+                      SizedBox(height: 60.h),
                     ],
                   ),
                 ),

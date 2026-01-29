@@ -16,11 +16,11 @@ class HomeScreens extends StatelessWidget {
     final NavigationController navController = Get.put(NavigationController());
 
     final List<Widget> pages = [
-      const Jobofferpage(),
-      const Ridespage(),
-      const Chatpage(),
-      const Marketplacepage(),
-      const Dealspage(),
+      Jobofferpage(),
+      Ridespage(),
+      Chatpage(),
+      Marketplacepage(),
+      Dealspage(),
     ];
 
     return Scaffold(
