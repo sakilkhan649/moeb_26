@@ -1,10 +1,19 @@
 import 'package:get/get.dart';
 
 class NavigationController extends GetxController {
-  // Reactive variable to track the selected index in the bottom navigation bar
-  var currentIndex = 0.obs;  // Default to the first item (Job Offer)
+  var currentIndex = 0.obs;
 
-  // Method to change the selected index
+  @override
+  void onInit() {
+    super.onInit();
+    if (Get.arguments is int) {
+      currentIndex.value = Get.arguments;
+    } else if (Get.arguments is Map &&
+        Get.arguments.containsKey('bottomIndex')) {
+      currentIndex.value = Get.arguments['bottomIndex'];
+    }
+  }
+
   void changeIndex(int index) {
     currentIndex.value = index;
   }

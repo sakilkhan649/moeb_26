@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:moeb_26/widgets/CustomText.dart';
+import 'package:moeb_26/widgets/CustomTextGary.dart';
 import '../Views/home/JobOfferPage/Notifications/Notifications_popup.dart'; // Import your notification popup
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -9,7 +11,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMyJobsTap;
   final VoidCallback? onLogoutTap;
   final int notificationCount;
-  final String logoPath;
+  final String? logoPath;
+  final String? title;
+  final String? subtitle;
 
   const CustomAppBar({
     Key? key,
@@ -18,7 +22,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onMyJobsTap,
     this.onLogoutTap,
     this.notificationCount = 0,
-    required this.logoPath,
+    this.logoPath,
+    this.title,
+    this.subtitle,
   }) : super(key: key);
 
   @override
@@ -32,9 +38,29 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: EdgeInsets.only(left: 16.w),
-              child: Image.asset(logoPath, height: 60.w, width: 60.w),
+            if (logoPath != null && logoPath!.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.only(left: 16.w),
+                child: Image.asset(logoPath!, height: 60.w, width: 60.w),
+              ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: (logoPath != null && logoPath!.isNotEmpty) ? 8.w : 16.w,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (title != null && title!.isNotEmpty)
+                      CustomText(text: title!, fontSize: 20.sp),
+                    if (subtitle != null && subtitle!.isNotEmpty) ...[
+                      SizedBox(height: 2.h),
+                      CustomTextgray(text: subtitle!, fontSize: 12.sp),
+                    ],
+                  ],
+                ),
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(right: 16.w),

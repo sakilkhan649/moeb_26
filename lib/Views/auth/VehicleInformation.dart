@@ -291,12 +291,9 @@ class Vehicleinformation extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 15.w),
         decoration: BoxDecoration(
-          color: Color(0xFF1E2939),
+          color: isSelected ? Color(0xFF181F26) : Colors.transparent,
           borderRadius: BorderRadius.circular(30.r),
-          border: Border.all(
-            color: isSelected ? Color(0xFF46415B) : Colors.transparent,
-            width: 1,
-          ),
+          border: Border.all(color: Color(0xFF364153)),
         ),
         child: CustomTextgray(text: vehicleType, color: Colors.white),
       ),

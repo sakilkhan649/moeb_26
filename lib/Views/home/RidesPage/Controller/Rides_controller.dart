@@ -26,7 +26,15 @@ class RideModel {
 }
 
 class RidesController extends GetxController {
-  var selectedTab = 2.obs; // Default to Pending
+  var selectedTab = 0.obs; // Default to Upcoming
+
+  @override
+  void onInit() {
+    super.onInit();
+    if (Get.arguments is Map && Get.arguments.containsKey('ridesTab')) {
+      selectedTab.value = Get.arguments['ridesTab'];
+    }
+  }
 
   var upcomingRides = <RideModel>[
     RideModel(
@@ -44,13 +52,13 @@ class RidesController extends GetxController {
 
   var pastRides = <RideModel>[
     RideModel(
-      dateTime: "Mon, Jan 19 - 02:00 PM",
+      dateTime: "SUN, JAN 20 - 8:30 AM",
       vehicleType: "SEDAN",
-      pickupLocation: "Uttara",
-      dropoffLocation: "Mirpur",
-      pickupPayment: "Paid",
-      pickupAmount: "\$100",
-      driverName: "Rahim",
+      pickupLocation: "Dhaka",
+      dropoffLocation: "Barisal",
+      pickupPayment: "Collect",
+      pickupAmount: "\$125",
+      driverName: "Sadat",
       companyName: "SADAX",
       vehicleTypeColor: Colors.red,
     ),

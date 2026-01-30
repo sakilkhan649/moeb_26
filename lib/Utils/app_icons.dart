@@ -10,6 +10,11 @@ class AppIcons {
   static const String person_icon="$iconurl/person_icon.svg";
   static const String arre_right_icon="$iconurl/arre_right_icon.svg";
   static const String cross_icon="$iconurl/cross_icon.svg";
+  static const String contact_icon="$iconurl/contact_icon.svg";
+  static const String service_icon="$iconurl/service_icon.svg";
+  static const String qr_icon="$iconurl/qr_icon.svg";
+  static const String send_message_icon="$iconurl/send_message_icon.svg";
+  static const String vmw_icon="$iconurl/vmw_icon.svg";
 
 
 }

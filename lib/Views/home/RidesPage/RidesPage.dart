@@ -36,7 +36,7 @@ class Ridespage extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: CustomText(text: "My Rides", fontSize: 20.sp),
+                  child: CustomText(text: "MY Jobs", fontSize: 22.sp),
                 ),
                 Expanded(
                   child: CustomJobButton(
@@ -59,7 +59,7 @@ class Ridespage extends StatelessWidget {
               () => Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A1A),
+                  color: const Color(0xff1A1A1A),
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Row(
@@ -105,9 +105,14 @@ class Ridespage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final ride = controller.currentRides[index];
                     return GestureDetector(
+                      // Logic in RidesPage.dart
                       onTap: () {
-                        Get.toNamed(Routes.requestUnderReview);
+                        if (controller.selectedTab.value == 2) {
+                          // Index 2 is "Pending"
+                          Get.toNamed(Routes.requestUnderReview);
+                        }
                       },
+
                       child: CustomJobCard(
                         dateTime: ride.dateTime,
                         vehicleType: ride.vehicleType,

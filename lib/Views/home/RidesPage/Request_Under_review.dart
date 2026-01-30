@@ -7,6 +7,7 @@ import 'package:moeb_26/widgets/CustomTextGary.dart';
 
 import '../../../../Utils/app_icons.dart';
 import '../../../../widgets/Custom_Card_Ditails.dart';
+import '../../../Core/routs.dart';
 
 /// Review Status Screen
 /// Shows application submission status with animated steps
@@ -77,26 +78,32 @@ class RequestUnderReview extends StatelessWidget {
               SizedBox(height: 30.h),
 
               // Status Steps Container (You can use this in your widget tree)
-              CustomJobDetailsCard(
-                // Location details
-                pickupLocation: "Dhaka Airport",
-                dropoffLocation: "Barisal",
+              GestureDetector(
+                onTap: () {
+                  // Handle tap on the card
+                  Get.toNamed(Routes.rideDetailsPage);
+                },
+                child: CustomJobDetailsCard(
+                  // Location details
+                  pickupLocation: "Dhaka Airport",
+                  dropoffLocation: "Barisal",
 
-                // Job information
-                flightNumber: "Flight AA 1234",
-                dateTime: "Jan 20 · 08:30 AM",
-                vehicleType: "SEDAN",
-                jobPoster: "Khaled",
-                company: "Khaled Transportation",
-                payment: "Collect",
-                amount: "\$125",
+                  // Job information
+                  flightNumber: "Flight AA 1234",
+                  dateTime: "Jan 20 · 08:30 AM",
+                  vehicleType: "SEDAN",
+                  jobPoster: "Khaled",
+                  company: "Khaled Transportation",
+                  payment: "Collect",
+                  amount: "\$125",
 
-                // Optional: Custom colors
-                backgroundColor: const Color(0xFF1C1C1C),
-                borderColor: const Color(0xFF2A2A2A),
-                labelColor: Colors.grey,
-                valueColor: Colors.white,
-                iconColor: Colors.grey,
+                  // Optional: Custom colors
+                  backgroundColor: const Color(0xFF1C1C1C),
+                  borderColor: const Color(0xFF2A2A2A),
+                  labelColor: Colors.grey,
+                  valueColor: Colors.white,
+                  iconColor: Colors.grey,
+                ),
               ),
             ],
           ),

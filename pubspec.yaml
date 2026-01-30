@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^7.1.0
   flutter_svg: ^2.2.3
   dropdown_button2: ^2.3.9
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

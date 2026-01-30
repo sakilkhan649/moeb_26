@@ -15,9 +15,15 @@ import '../Views/auth/resetpassword/resetpasswordtwo.dart';
 import '../Views/auth/resetpassword/success_resetpassword.dart';
 import '../Views/home/JobOfferPage/My_jobs/edit_screen.dart';
 import '../Views/home/JobOfferPage/Request_Submitted/Request_Submitted.dart';
+import '../Views/home/RidesPage/Finish_Ride/Finish_Ride_page.dart';
+import '../Views/home/RidesPage/On_My_Way_Details_page/On_My_Way_Details_page.dart';
+import '../Views/home/RidesPage/Pob_Details_page/Pob_Details_page.dart';
 import '../Views/home/RidesPage/Request_Under_review.dart';
+import '../Views/home/ChatPage/ChatPage.dart';
+import '../Views/home/ChatPage/ChatDetailPage.dart';
+import '../Views/home/RidesPage/Ride_Completed/Ride_Completed_page.dart';
+import '../Views/home/RidesPage/Ride_Details/Ride_Details_Page.dart';
 import '../Views/home/home_screens.dart';
-
 
 class Routes {
   static const String splashScreen = "/SplashScreen";
@@ -38,26 +44,139 @@ class Routes {
   static const String accountSuccesScreen = "/AccountSuccesScreen";
   static const String requestSubmitted = "/RequestSubmitted";
   static const String requestUnderReview = "/RequestUnderReview";
+  static const String chatPage = "/Chatpage";
+  static const String chatDetailPage = "/ChatDetailPage";
+  static const String rideDetailsPage = "/RideDetailsPage";
+  static const String onMyWayDetailsPage = "/OnMyWayDetailsPage";
+  static const String pobDetailsPage = "/PobDetailsPage";
+  static const String finishRidePage = "/FinishRidePage";
+  static const String rideCompletedPage = "/RideCompletedPage";
 
   static List<GetPage> routes = [
-    GetPage(name: splashScreen, page: () => Splashscreen(),transition: Transition.noTransition),
-    GetPage(name: signscreen, page: () => Signscreen(),transition: Transition.noTransition),
-    GetPage(name: createaccountscreen, page: () => Createaccountscreen(),transition: Transition.noTransition),
-    GetPage(name: resetpasswordscreen, page: () => Resetpasswordscreen(),transition: Transition.noTransition),
-    GetPage(name: resetpasswordtwo, page: () => Resetpasswordtwo(),transition: Transition.noTransition),
-    GetPage(name: resetpasswordthree, page: () => Resetpasswordthree(),transition: Transition.noTransition),
-    GetPage(name: successResetpassword, page: () => SuccessResetpassword(),transition: Transition.noTransition),
-    GetPage(name: vehicleinformation, page: () => Vehicleinformation(),transition: Transition.noTransition),
-    GetPage(name: documentsupload, page: () => Documentsupload(),transition: Transition.noTransition),
-    GetPage(name: termPolicy, page: () => TermPolicy(),transition: Transition.noTransition),
-    GetPage(name: applicationSubmited, page: () => ApplicationSubmited(),transition: Transition.noTransition),
-    GetPage(name: applicationNotApproved, page: () => ApplicationNotApproved(),transition: Transition.noTransition),
-    GetPage(name: homeScreens, page: () => HomeScreens(),transition: Transition.noTransition),
-    GetPage(name: myJobsScreen, page: () => MyJobsScreen(),transition: Transition.noTransition),
-    GetPage(name: editScreen, page: () => EditScreen(),transition: Transition.noTransition),
-    GetPage(name: accountSuccesScreen, page: () => AccountSuccesScreen(),transition: Transition.noTransition),
-    GetPage(name: requestSubmitted, page: () => RequestSubmitted(),transition: Transition.noTransition),
-    GetPage(name: requestUnderReview, page: () => RequestUnderReview(),transition: Transition.noTransition),
-
+    GetPage(
+      name: splashScreen,
+      page: () => Splashscreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: signscreen,
+      page: () => Signscreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: createaccountscreen,
+      page: () => Createaccountscreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: resetpasswordscreen,
+      page: () => Resetpasswordscreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: resetpasswordtwo,
+      page: () => Resetpasswordtwo(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: resetpasswordthree,
+      page: () => Resetpasswordthree(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: successResetpassword,
+      page: () => SuccessResetpassword(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: vehicleinformation,
+      page: () => Vehicleinformation(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: documentsupload,
+      page: () => Documentsupload(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: termPolicy,
+      page: () => TermPolicy(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: applicationSubmited,
+      page: () => ApplicationSubmited(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: applicationNotApproved,
+      page: () => ApplicationNotApproved(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: homeScreens,
+      page: () => HomeScreens(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: myJobsScreen,
+      page: () => MyJobsScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: editScreen,
+      page: () => EditScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: accountSuccesScreen,
+      page: () => AccountSuccesScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: requestSubmitted,
+      page: () => RequestSubmitted(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: requestUnderReview,
+      page: () => RequestUnderReview(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: chatPage,
+      page: () => Chatpage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: chatDetailPage,
+      page: () => ChatDetailPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: rideDetailsPage,
+      page: () => RideDetailsPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: onMyWayDetailsPage,
+      page: () => OnMyWayDetailsPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: pobDetailsPage,
+      page: () => PobDetailsPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: finishRidePage,
+      page: () => FinishRidePage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: rideCompletedPage,
+      page: () => RideCompletedPage(),
+      transition: Transition.noTransition,
+    ),
   ];
 }
