@@ -10,6 +10,7 @@ import '../../../widgets/Custom_AppBar.dart';
 import 'Controller/Marketplace_controller.dart';
 import 'Model/Marketplace_model.dart';
 import 'widgets/ContactSellerPopup.dart';
+import 'widgets/SellItemBottomSheet.dart';
 
 class Marketplacepage extends StatelessWidget {
   Marketplacepage({super.key});
@@ -36,7 +37,11 @@ class Marketplacepage extends StatelessWidget {
             CustomJobButton(
               text: "List Item for Sale",
               onPressed: () {
-                // Handle item listing
+                Get.bottomSheet(
+                  SellItemBottomSheet(),
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                );
               },
             ),
             SizedBox(height: 20.h),

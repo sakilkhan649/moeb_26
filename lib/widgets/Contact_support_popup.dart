@@ -284,7 +284,7 @@ class ContactSupportBottomSheet extends StatelessWidget {
             iconColor: Colors.white,
             iconOnRight: false,
             onPressed: () {
-              Get.toNamed(Routes.accountSuccesScreen);
+              Get.toNamed(Routes.chatPage);
               // Send message logic here
             },
           ),

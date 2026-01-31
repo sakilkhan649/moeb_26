@@ -2,188 +2,236 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:moeb_26/Utils/app_icons.dart';
-import 'package:moeb_26/widgets/CustomText.dart';
-import 'package:moeb_26/widgets/CustomTextGary.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/Core/routs.dart';
+
+import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/Controller/My_job_controller.dart';
 
 import 'Controller/Notifications_Controller.dart';
 import 'Models/Notifications_Model.dart';
 
-// Notification Controller - notification manage করার জন্য
-
 class CustomNotificationPopup extends StatelessWidget {
   CustomNotificationPopup({super.key});
 
-  // Controller initialize
   final NotificationController controller = Get.put(NotificationController());
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-      child: SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(10.w),
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: Colors.grey),
-          ),
-          child: Column(
-            children: [
-              // Header - Notifications title এবং close button
-              _buildHeader(context),
-
-              // Body - Notifications list
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Unread count এবং Clear All button
-                    _buildTopSection(),
-                    CustomTextgray(text: "notifications"),
-
-                    SizedBox(height: 10.h),
-
-                    // Notifications list - Obx দিয়ে reactive করা
-                    Obx(() {
-                      // যদি কোনো notification না থাকে
-                      if (controller.notifications.isEmpty) {
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(20.h),
-                            child: CustomTextgray(
-                              text: "No notifications",
-                              fontSize: 15.sp,
+      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F0F0F),
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: Colors.white.withOpacity(0.1), width: 0.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header Section
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.w, 24.h, 16.w, 16.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Notifications",
+                        style: GoogleFonts.inter(
+                          fontSize: 28.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Get.back(),
+                        icon: Icon(
+                          Icons.close,
+                          color: Colors.white.withOpacity(0.6),
+                          size: 24.sp,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.h),
+                  Obx(
+                    () => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "${controller.unreadCount} unread notifications",
+                          style: GoogleFonts.inter(
+                            fontSize: 14.sp,
+                            color: Colors.white.withOpacity(0.4),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => controller.clearAll(),
+                          child: Text(
+                            "Clear All",
+                            style: GoogleFonts.inter(
+                              fontSize: 14.sp,
+                              color: const Color(0xFFD08700),
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        );
-                      }
-
-                      // Notifications list দেখানো
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: controller.notifications.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 10.h),
-                        itemBuilder: (context, index) {
-                          final notification = controller.notifications[index];
-                          return _buildNotificationCard(notification, index);
-                        },
-                      );
-                    }),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Header Widget - Title এবং Close button
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CustomText(text: "Notifications", fontSize: 20.sp, color: Colors.white),
-        IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.close, color: Colors.grey),
-        ),
-      ],
-    );
-  }
-
-  // Top Section - Unread count এবং Clear All
-  Widget _buildTopSection() {
-    return Obx(
-      () => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CustomTextgray(
-            text: "${controller.unreadCount} unread ",
-            fontSize: 15.sp,
-          ),
-          TextButton(
-            onPressed: () {
-              // Clear All button click করলে সব notifications clear হবে
-              controller.clearAll();
-            },
-            child: CustomTextgray(
-              text: "Clear All",
-              color: const Color(0xFFD08700),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Single Notification Card Widget
-  Widget _buildNotificationCard(NotificationItem notification, int index) {
-    return Container(
-      padding: EdgeInsets.all(10.w),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Notification header - Icon, Title, Check mark
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  SvgPicture.asset(
-                    notification.icon,
-                    height: 20.h,
-                    width: 20.w,
-                  ),
-                  SizedBox(width: 10.w),
-                  CustomText(
-                    text: notification.title,
-                    fontSize: 15.sp,
-                    color: Colors.white,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-              const Icon(Icons.check, size: 15, color: Color(0xFFD08700)),
-            ],
-          ),
+            ),
 
-          SizedBox(height: 10.h),
+            const Divider(color: Colors.white10, height: 1),
 
-          // Notification message
-          Padding(
-            padding: EdgeInsets.only(left: 30.w),
-            child: CustomTextgray(text: notification.message),
-          ),
+            // Notifications List
+            Flexible(
+              child: Obx(() {
+                if (controller.notifications.isEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40.h),
+                    child: Center(
+                      child: Text(
+                        "No notifications",
+                        style: GoogleFonts.inter(
+                          color: Colors.white.withOpacity(0.4),
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ),
+                  );
+                }
 
-          // Time এবং date icon
-          Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: 30.w),
-                child: const Icon(
-                  Icons.date_range,
-                  size: 20,
-                  color: Colors.grey,
-                ),
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: controller.notifications.length,
+                  separatorBuilder: (context, index) =>
+                      const Divider(color: Colors.white10, height: 1),
+                  itemBuilder: (context, index) {
+                    final notification = controller.notifications[index];
+                    return _buildNotificationItem(notification);
+                  },
+                );
+              }),
+            ),
+            SizedBox(height: 10.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotificationItem(NotificationItem notification) {
+    Color iconBgColor = Colors.white.withOpacity(0.05);
+    Color iconColor = Colors.white;
+
+    // Logic for icon colors based on title/type
+    if (notification.title.contains("Job")) {
+      iconColor = const Color(0xFFD08700);
+      iconBgColor = const Color(0xFFD08700).withOpacity(0.1);
+    } else if (notification.title.contains("Message")) {
+      iconColor = const Color(0xFF3498DB);
+      iconBgColor = const Color(0xFF3498DB).withOpacity(0.1);
+    } else if (notification.title.contains("Item")) {
+      iconColor = const Color(0xFF2ECC71);
+      iconBgColor = const Color(0xFF2ECC71).withOpacity(0.1);
+    }
+
+    return GestureDetector(
+      onTap: () {
+        if (notification.title == "Job Acceptance") {
+          final BookingController bookingController = Get.put(
+            BookingController(),
+          );
+          bookingController.setJobAcceptanceView(true);
+          Get.back(); // Close the popup
+          Get.toNamed(Routes.myJobsScreen);
+        }
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon Container
+            Container(
+              height: 48.w,
+              width: 48.w,
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                shape: BoxShape.circle,
               ),
-              SizedBox(width: 5.w),
-              CustomTextgray(text: notification.time),
-            ],
-          ),
-        ],
+              padding: EdgeInsets.all(12.w),
+              child: SvgPicture.asset(
+                notification.icon,
+                colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+              ),
+            ),
+            SizedBox(width: 16.w),
+
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        notification.title,
+                        style: GoogleFonts.inter(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Icon(
+                        Icons.check,
+                        size: 16,
+                        color: Color(0xFFD08700),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    notification.message,
+                    style: GoogleFonts.inter(
+                      fontSize: 14.sp,
+                      color: Colors.white.withOpacity(0.6),
+                      height: 1.4,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today_outlined,
+                        size: 12.sp,
+                        color: Colors.white.withOpacity(0.4),
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        notification.time,
+                        style: GoogleFonts.inter(
+                          fontSize: 12.sp,
+                          color: Colors.white.withOpacity(0.4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

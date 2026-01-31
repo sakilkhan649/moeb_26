@@ -14,8 +14,6 @@ import '../../../widgets/CustomText.dart';
 import '../../../widgets/CustomTextGary.dart';
 import '../../../widgets/Custom_AppBar.dart';
 import 'Job_Bottom_sheet/Job_Bottom_sheet_Tabbar.dart';
-import 'My_jobs/my_jobs.dart';
-import 'Notifications/Notifications_popup.dart';
 
 class Jobofferpage extends StatefulWidget {
   const Jobofferpage({super.key});
@@ -25,10 +23,10 @@ class Jobofferpage extends StatefulWidget {
 }
 
 class _JobofferpageState extends State<Jobofferpage> {
-
   final TextEditingController flightNumberController = TextEditingController();
   final TextEditingController paymentMethodController = TextEditingController();
-  final TextEditingController specialInstructionsController = TextEditingController();
+  final TextEditingController specialInstructionsController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -47,12 +45,16 @@ class _JobofferpageState extends State<Jobofferpage> {
         onMyJobsTap: () {
           Get.toNamed(Routes.myJobsScreen);
         },
+        onAccountTap: () {
+          Get.toNamed(Routes.profileScreen);
+        },
+
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w,),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
-            SizedBox(height: 20,),
+            SizedBox(height: 20),
             CustomJobButton(
               text: "New Job",
               onPressed: () {
@@ -127,10 +129,7 @@ class VehicleTypeBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 10.w,
-        vertical: 6.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(6.r),
@@ -271,10 +270,7 @@ class CustomJobCard extends StatelessWidget {
               SizedBox(width: 5.w),
               Text(
                 driverName,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 13.sp,
-                ),
+                style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
               ),
             ],
           ),
@@ -287,10 +283,7 @@ class CustomJobCard extends StatelessWidget {
               SizedBox(width: 5.w),
               Text(
                 companyName,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 13.sp,
-                ),
+                style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
               ),
             ],
           ),
@@ -367,10 +360,7 @@ class CustomJobCard extends StatelessWidget {
                     color: AppColors.orange100,
                     borderRadius: BorderRadius.circular(16.r),
                   ),
-                  child: CustomText(
-                    text: price,
-                    fontSize: 18.sp,
-                  ),
+                  child: CustomText(text: price, fontSize: 18.sp),
                 ),
               ),
             ],

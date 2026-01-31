@@ -7,12 +7,18 @@ import '../Views/auth/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved.dart';
 import '../Views/auth/Application_submited.dart';
 import '../Views/auth/DocumentsUpload.dart';
+import '../Views/auth/Profile/profile.dart';
 import '../Views/auth/Splash_Screen/splashScreen.dart';
 import '../Views/auth/Term_policy.dart';
 import '../Views/auth/resetpassword/resetpasswordscreen.dart';
 import '../Views/auth/resetpassword/resetpasswordthree.dart';
 import '../Views/auth/resetpassword/resetpasswordtwo.dart';
 import '../Views/auth/resetpassword/success_resetpassword.dart';
+import '../Views/home/JobOfferPage/My_jobs/Approve/approve_page.dart';
+import '../Views/home/JobOfferPage/My_jobs/Ride_Complete_Job/Ride_Complete_Job.dart';
+import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Board/Ride_Progress_Board.dart';
+import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way/Ride_Progress_Way.dart';
+import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progress_Way_Location.dart';
 import '../Views/home/JobOfferPage/My_jobs/edit_screen.dart';
 import '../Views/home/JobOfferPage/Request_Submitted/Request_Submitted.dart';
 import '../Views/home/RidesPage/Finish_Ride/Finish_Ride_page.dart';
@@ -51,6 +57,12 @@ class Routes {
   static const String pobDetailsPage = "/PobDetailsPage";
   static const String finishRidePage = "/FinishRidePage";
   static const String rideCompletedPage = "/RideCompletedPage";
+  static const String approvePage = "/ApprovePage";
+  static const String rideProgressWay = "/RideProgressWay";
+  static const String rideProgressWayLocation = "/RideProgressWayLocation";
+  static const String rideProgressBoard = "/RideProgressBoard";
+  static const String rideCompleteJob = "/RideCompleteJob";
+  static const String profileScreen = "/ProfileScreen";
 
   static List<GetPage> routes = [
     GetPage(
@@ -176,6 +188,36 @@ class Routes {
     GetPage(
       name: rideCompletedPage,
       page: () => RideCompletedPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: approvePage,
+      page: () => ApprovePage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: rideProgressWay,
+      page: () => RideProgressWay(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: rideProgressWayLocation,
+      page: () => RideProgressWayLocation(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: rideProgressBoard,
+      page: () => RideProgressBoard(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: rideCompleteJob,
+      page: () => RideCompleteJob(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: profileScreen,
+      page: () => ProfileScreen(),
       transition: Transition.noTransition,
     ),
   ];

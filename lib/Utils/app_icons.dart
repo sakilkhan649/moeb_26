@@ -15,6 +15,7 @@ class AppIcons {
   static const String qr_icon="$iconurl/qr_icon.svg";
   static const String send_message_icon="$iconurl/send_message_icon.svg";
   static const String vmw_icon="$iconurl/vmw_icon.svg";
+  static const String current_icon="$iconurl/current_icon.svg";
 
 
 }

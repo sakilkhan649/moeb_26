@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:moeb_26/Core/routs.dart';
+import 'package:moeb_26/Views/auth/Profile/widgets/LogoutBottomSheet.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
-import '../Views/home/JobOfferPage/Notifications/Notifications_popup.dart'; // Import your notification popup
+import '../Views/home/JobOfferPage/Notifications/Notifications_popup.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onNotificationTap;
@@ -198,30 +201,30 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   void handleMenuItemSelection(int item) {
-    // Popup menu automatically closes, so we need to handle navigation after
     switch (item) {
       case 0:
-        // Account selected
         if (onAccountTap != null) {
           onAccountTap!();
         } else {
-          print('Account selected');
+          Get.toNamed(Routes.profileScreen);
         }
         break;
       case 1:
-        // My Jobs selected
         if (onMyJobsTap != null) {
           onMyJobsTap!();
         } else {
-          print('My Jobs selected');
+          Get.toNamed(Routes.myJobsScreen);
         }
         break;
       case 2:
-        // Logout selected
         if (onLogoutTap != null) {
           onLogoutTap!();
         } else {
-          print('Logout selected');
+          Get.bottomSheet(
+            const LogoutBottomSheet(),
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+          );
         }
         break;
     }

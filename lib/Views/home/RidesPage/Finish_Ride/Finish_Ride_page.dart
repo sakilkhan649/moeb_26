@@ -56,7 +56,7 @@ class FinishRidePage extends StatelessWidget {
                     buttonText: "Chat with Job Poster",
                     buttonIcon: Icons.chat_bubble_outline, // যেকোনো icon
                     onButtonPressed: () {
-                      // আপনার custom action
+                      Get.toNamed(Routes.chatPage);
                     },
                   ),
                 ),

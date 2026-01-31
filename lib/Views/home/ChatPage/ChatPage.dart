@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../Core/routs.dart';
-import '../../../Utils/app_colors.dart';
 import '../../../widgets/Custom_AppBar.dart';
 import 'Controller/Chat_controller.dart';
 

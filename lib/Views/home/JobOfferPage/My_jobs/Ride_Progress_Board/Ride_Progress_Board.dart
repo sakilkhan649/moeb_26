@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
-import 'package:moeb_26/widgets/CustomTextGary.dart';
-import 'package:moeb_26/widgets/Custom_Back_Button.dart';
-import 'package:moeb_26/widgets/Custom_InfoBox.dart';
-import '../../../../Core/routs.dart';
-import '../../../../Utils/app_images.dart';
-import '../../../../widgets/Custom_AppBar.dart';
-import '../../../../widgets/Custom_Card_Ditails.dart';
-import '../../../../widgets/Custom_Driver_Card.dart';
+import 'package:moeb_26/widgets/CustomText.dart';
+import '../../../../../Core/routs.dart';
+import '../../../../../Utils/app_icons.dart';
+import '../../../../../Utils/app_images.dart';
+import '../../../../../widgets/Custom_AppBar.dart';
+import '../../../../../widgets/Custom_Card_Ditails.dart';
+import '../../../../../widgets/Custom_Driver_Card.dart';
+import '../../../../../widgets/RideProgressCard.dart';
 
-class OnMyWayDetailsPage extends StatelessWidget {
-  const OnMyWayDetailsPage({super.key});
+class RideProgressBoard extends StatelessWidget {
+  RideProgressBoard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +30,7 @@ class OnMyWayDetailsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Divider(color: Colors.white38, thickness: 1.h),
-            SizedBox(height: 10.h),
-            Padding(
-              padding: EdgeInsets.only(left: 20.w),
-              child: CustomBackButton(title: "Ride Details"),
-            ),
-            SizedBox(height: 10.h),
-            Divider(color: Colors.white38, thickness: 1.h),
-            SizedBox(height: 10.h),
+            SizedBox(height: 20.h),
             Column(
               mainAxisAlignment: .start,
               crossAxisAlignment: .start,
@@ -55,6 +48,21 @@ class OnMyWayDetailsPage extends StatelessWidget {
                     onButtonPressed: () {
                       Get.toNamed(Routes.chatPage);
                     },
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Padding(
+                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.toNamed(Routes.rideCompleteJob);
+                    },
+                    child: RideProgressCard(
+                      title: "Ride Progress",
+                      statusLabel: "Current Status : ",
+                      statusValue: "Passenger On Board",
+                      iconPath: AppIcons.current_icon,
+                    ),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -84,31 +92,7 @@ class OnMyWayDetailsPage extends StatelessWidget {
                     iconColor: Colors.grey,
                   ),
                 ),
-                SizedBox(height: 20.h),
-                Padding(
-                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: CustomTextgray(text: "Special Instructions"),
-                ),
-                SizedBox(height: 10.h),
-                CustomInfoBox(
-                  text: "Bona nit. Flight AA 1234, VIP client, suit required",
-                ),
-                SizedBox(height: 10.h),
 
-                SizedBox(height: 10.h),
-                Divider(color: Colors.white38, thickness: 1.h),
-                SizedBox(height: 10.h),
-                Padding(
-                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: CustomButton(
-                    text: "At the Location",
-                    backgroundColor: AppColors.orange100,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      Get.toNamed(Routes.pobDetailsPage);
-                    },
-                  ),
-                ),
                 SizedBox(height: 80.h),
               ],
             ),
