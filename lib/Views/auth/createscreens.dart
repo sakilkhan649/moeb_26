@@ -33,7 +33,7 @@ class Createscreens extends StatelessWidget {
                       ),
                     ),
                     width: 100.w,
-                    height: 100.h,
+                    height: 100.w,
                     child: Image.asset(
                       AppImages.final_app_logo,
                       fit: BoxFit.fill,

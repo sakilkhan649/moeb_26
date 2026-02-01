@@ -79,54 +79,56 @@ class Marketplacepage extends StatelessWidget {
             SizedBox(height: 20.h),
             // Marketplace Items - Refactored to Column with Rows
             Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Obx(() {
-                  if (controller.filteredItems.isEmpty) {
+              child: Obx(() {
+                if (controller.filteredItems.isEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: 50.h),
+                    child: Center(
+                      child: Text(
+                        "No items found",
+                        style: GoogleFonts.inter(color: Colors.white),
+                      ),
+                    ),
+                  );
+                }
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: (controller.filteredItems.length / 2).ceil(),
+                  itemBuilder: (context, index) {
+                    final int leftIndex = index * 2;
+                    final int rightIndex = leftIndex + 1;
+                    final bool hasRight =
+                        rightIndex < controller.filteredItems.length;
+
                     return Padding(
-                      padding: EdgeInsets.only(top: 50.h),
-                      child: Center(
-                        child: Text(
-                          "No items found",
-                          style: GoogleFonts.inter(color: Colors.white),
-                        ),
+                      padding: EdgeInsets.only(
+                        bottom: 16.h,
+                        left: 0,
+                        right: 0,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: MarketplaceCard(
+                              item: controller.filteredItems[leftIndex],
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: hasRight
+                                ? MarketplaceCard(
+                              item: controller.filteredItems[rightIndex],
+                            )
+                                : const SizedBox(),
+                          ),
+                        ],
                       ),
                     );
-                  }
-                  return Column(
-                    children: [
-                      // Manually mapping items into pairs of two for the grid effect
-                      for (
-                        int i = 0;
-                        i < controller.filteredItems.length;
-                        i += 2
-                      )
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 16.h),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: MarketplaceCard(
-                                  item: controller.filteredItems[i],
-                                ),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: i + 1 < controller.filteredItems.length
-                                    ? MarketplaceCard(
-                                        item: controller.filteredItems[i + 1],
-                                      )
-                                    : const SizedBox(), // Placeholder for odd items
-                              ),
-                            ],
-                          ),
-                        ),
-                      SizedBox(height: 20.h), // Bottom padding
-                    ],
-                  );
-                }),
-              ),
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -145,14 +147,12 @@ class MarketplaceCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A), // Matches specific dark background
-        borderRadius: BorderRadius.circular(24.r), // More rounded as per image
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Item Image with rounded top corners
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
             child: Image.asset(
               item.imagePath,
               height: 130.h,
@@ -172,7 +172,7 @@ class MarketplaceCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
                     color: Colors.white,
-                    fontSize: 20.sp, // Larger as per image
+                    fontSize: 15.sp, // Larger as per image
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -185,7 +185,7 @@ class MarketplaceCard extends StatelessWidget {
                       "\$${item.price}",
                       style: GoogleFonts.inter(
                         color: const Color(0xFFF1A107), // Gold price color
-                        fontSize: 24.sp, // Very prominent as per image
+                        fontSize: 20.sp, // Very prominent as per image
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -194,7 +194,7 @@ class MarketplaceCard extends StatelessWidget {
                         Icon(
                           Icons.star,
                           color: const Color(0xFFF1A107),
-                          size: 20.sp,
+                          size: 18.sp,
                         ),
                         SizedBox(width: 4.w),
                         Text(

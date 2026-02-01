@@ -46,14 +46,12 @@ class OnewayScreen extends StatelessWidget {
             "e.g., JFK Airport, Terminal 4",
             Icons.location_on_outlined,
           ),
-          SizedBox(height: 20.h),
           _buildFieldWithLabel(
             "Drop-off Location",
             dropoffController,
             "e.g., Manhattan, Times Square",
             Icons.location_on_outlined,
           ),
-          SizedBox(height: 20.h),
           _buildFieldWithLabel(
             "Flight Number (Optional)",
             flightController,
@@ -61,18 +59,15 @@ class OnewayScreen extends StatelessWidget {
             Icons.flight,
             isRequired: false,
           ),
-          SizedBox(height: 20.h),
           _buildDateTimeRow(context),
-          SizedBox(height: 16.h),
           _buildVehicleSelection(postJobController),
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
           _buildFieldWithLabel(
             "Pay Amount",
             payController,
             "\$",
             Icons.attach_money,
           ),
-          SizedBox(height: 20.h),
           CustomText(text: "Payment Method *", fontSize: 13.sp),
           SizedBox(height: 8.h),
           Obx(
@@ -113,7 +108,7 @@ class OnewayScreen extends StatelessWidget {
                 buttonStyleData: ButtonStyleData(
                   padding: EdgeInsets.symmetric(
                     horizontal: 15.w,
-                    vertical: 10.h,
+                    vertical: 8.h,
                   ),
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -164,7 +159,7 @@ class OnewayScreen extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 20.h),
           _buildFieldWithLabel(
             "Special Instructions (Optional)",
             specialController,

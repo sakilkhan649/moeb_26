@@ -41,14 +41,12 @@ class ByTheHour extends StatelessWidget {
             "e.g., JFK Airport, Terminal 4",
             Icons.location_on_outlined,
           ),
-          SizedBox(height: 20.h),
           _buildFieldWithLabel(
             "Duration",
             durationController,
             "e.g., 2 hours",
             Icons.timelapse_outlined,
           ),
-          SizedBox(height: 20.h),
           Obx(() {
             final date = onewayControllerInstance.selectedDate.value;
             dateController.text = date == null
@@ -62,7 +60,6 @@ class ByTheHour extends StatelessWidget {
               () => onewayControllerInstance.chooseDate(context),
             );
           }),
-          SizedBox(height: 20.h),
           Obx(() {
             final time = onewayControllerInstance.selectedTime.value;
             pickupTimeController.text = time == null
@@ -76,7 +73,6 @@ class ByTheHour extends StatelessWidget {
               () => onewayControllerInstance.chooseTime(context),
             );
           }),
-          SizedBox(height: 20.h),
           _buildVehicleSelection(controller),
           SizedBox(height: 16.h),
           _buildFieldWithLabel(
@@ -85,7 +81,7 @@ class ByTheHour extends StatelessWidget {
             "\$",
             Icons.attach_money,
           ),
-          SizedBox(height: 20.h),
+
           CustomText(text: "Payment Method *", fontSize: 13.sp),
           SizedBox(height: 8.h),
           Obx(
@@ -126,7 +122,7 @@ class ByTheHour extends StatelessWidget {
                 buttonStyleData: ButtonStyleData(
                   padding: EdgeInsets.symmetric(
                     horizontal: 15.w,
-                    vertical: 10.h,
+                    vertical: 8.h,
                   ),
                   width: double.infinity,
                   decoration: BoxDecoration(
