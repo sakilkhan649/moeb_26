@@ -9,6 +9,7 @@ import 'package:moeb_26/Utils/app_images.dart';
 import 'package:moeb_26/Views/auth/Profile/Controller/profile_controller.dart';
 import 'package:moeb_26/Views/auth/Profile/widgets/EditProfileBottomSheet.dart';
 import 'package:moeb_26/Views/auth/Profile/widgets/LogoutBottomSheet.dart';
+import 'package:moeb_26/widgets/Contact_support_popup.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -54,12 +55,6 @@ class ProfileScreen extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
-                                SizedBox(width: 8.w),
-                                Icon(
-                                  Icons.shield_outlined,
-                                  color: AppColors.orange100,
-                                  size: 20.sp,
                                 ),
                               ],
                             ),
@@ -323,14 +318,17 @@ class ProfileScreen extends StatelessWidget {
                     _buildSettingItem(
                       Icons.chat_bubble_outline,
                       "Ratings & Feedback",
+                      onTap: () => Get.toNamed(Routes.ratingsFeedback),
                     ),
                     _buildSettingItem(
                       Icons.settings_outlined,
                       "Terms & Condition",
+                      onTap: () => Get.toNamed(Routes.termPolicy),
                     ),
                     _buildSettingItem(
                       Icons.support_agent_outlined,
                       "Support and Report",
+                      onTap: () => showContactSupportBottomSheet(),
                     ),
                   ],
                 ),
@@ -439,7 +437,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingItem(IconData icon, String title) {
+  Widget _buildSettingItem(IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
       leading: Icon(icon, color: Colors.grey, size: 22.sp),
       title: Text(
@@ -448,7 +446,7 @@ class ProfileScreen extends StatelessWidget {
       ),
       trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16.sp),
       contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 
