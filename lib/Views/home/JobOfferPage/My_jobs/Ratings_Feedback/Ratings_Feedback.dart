@@ -38,60 +38,63 @@ class RatingsFeedback extends StatelessWidget {
         logoPath: AppImages.app_logo,
         notificationCount: 3,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          children: [
-            SizedBox(height: 20.h),
-            // Header Section
-            Row(
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
               children: [
-                IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 20.sp,
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        right: 40.w,
-                      ), // Balance for arrow icon
-                      child: CustomText(
-                        text: "Ratings & Feedback",
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
+                SizedBox(height: 20.h),
+                // Header Section
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        icon: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                       ),
                     ),
-                  ),
+                    CustomText(
+                      text: "Ratings & Feedback",
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
                 ),
+                SizedBox(height: 20.h),
+                Divider(color: Colors.white24, height: 1.h),
+                SizedBox(height: 10.h),
               ],
             ),
-            const Divider(color: Colors.white24),
-            SizedBox(height: 20.h),
-            // Feedback List
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(bottom: 20.h),
-                itemCount: feedbackList.length,
-                itemBuilder: (context, index) {
-                  final item = feedbackList[index];
-                  return _buildFeedbackCard(
-                    rating: item['rating'],
-                    feedback: item['feedback'],
-                    userName: item['userName'],
-                    userImage: item['userImage'],
-                  );
-                },
-              ),
+          ),
+          // Feedback List
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+              physics: const BouncingScrollPhysics(),
+              itemCount: feedbackList.length,
+              itemBuilder: (context, index) {
+                final item = feedbackList[index];
+                return _buildFeedbackCard(
+                  rating: item['rating'],
+                  feedback: item['feedback'],
+                  userName: item['userName'],
+                  userImage: item['userImage'],
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -109,7 +112,7 @@ class RatingsFeedback extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(
           0xFF1E1E1E,
-        ), // Matches the dark card color in the image
+        ), // Reflecting user's preferred card color
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
@@ -119,8 +122,10 @@ class RatingsFeedback extends StatelessWidget {
           Row(
             children: List.generate(5, (index) {
               return Icon(
-                index < rating ? Icons.star : Icons.star,
-                color: index < rating ? const Color(0xFFFBB03B) : Colors.white,
+                Icons.star,
+                color: index < rating
+                    ? const Color(0xFFFBB03B)
+                    : Colors.white24,
                 size: 22.sp,
               );
             }),
@@ -148,10 +153,12 @@ class RatingsFeedback extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 15.w),
-              CustomText(
-                text: userName,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
+              Expanded(
+                child: CustomText(
+                  text: userName,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),

@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../Utils/app_colors.dart';
-
 
 class CustomTextgray extends StatelessWidget {
   final String text;
@@ -29,15 +28,18 @@ class CustomTextgray extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle baseStyle = GoogleFonts.inter(
       color: color ?? AppColors.gray100,
-      fontSize: fontSize ?? 13,
+      fontSize: fontSize ?? 13.sp,
       fontWeight: fontWeight ?? FontWeight.normal,
     );
     return Text(
       text,
       textAlign: textAlign ?? TextAlign.start,
-      style: textStyle ?? baseStyle.copyWith(
-        fontFamily: fontFamily ?? 'Inter',  // Default to 'Inter', or use custom font
-      ),
+      style:
+          textStyle ??
+          baseStyle.copyWith(
+            fontFamily:
+                fontFamily ?? 'Inter', // Default to 'Inter', or use custom font
+          ),
     );
   }
 }

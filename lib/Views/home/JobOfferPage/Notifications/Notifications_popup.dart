@@ -193,10 +193,10 @@ class CustomNotificationPopup extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.check,
-                        size: 16,
-                        color: Color(0xFFD08700),
+                        size: 16.sp,
+                        color: const Color(0xFFD08700),
                       ),
                     ],
                   ),

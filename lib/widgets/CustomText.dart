@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomText extends StatelessWidget {
@@ -25,15 +26,18 @@ class CustomText extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle baseStyle = GoogleFonts.inter(
       color: color ?? Colors.white,
-      fontSize: fontSize ?? 28,
+      fontSize: fontSize ?? 28.sp,
       fontWeight: fontWeight ?? FontWeight.w600,
     );
     return Text(
       text,
       textAlign: textAlign ?? TextAlign.start,
-      style: textStyle ?? baseStyle.copyWith(
-        fontFamily: fontFamily ?? 'Inter',  // Default to 'Inter', or use custom font
-      ),
+      style:
+          textStyle ??
+          baseStyle.copyWith(
+            fontFamily:
+                fontFamily ?? 'Inter', // Default to 'Inter', or use custom font
+          ),
     );
   }
 }
