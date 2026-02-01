@@ -46,30 +46,38 @@ class RatingsFeedback extends StatelessWidget {
               children: [
                 SizedBox(height: 20.h),
                 // Header Section
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        icon: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                          size: 20.sp,
+                SizedBox(
+                  width: double.infinity,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          icon: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                            size: 20.sp,
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
                         ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
                       ),
-                    ),
-                    CustomText(
-                      text: "Ratings & Feedback",
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40.w),
+                        child: CustomText(
+                          text: "Ratings & Feedback",
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(height: 20.h),
                 Divider(color: Colors.white24, height: 1.h),

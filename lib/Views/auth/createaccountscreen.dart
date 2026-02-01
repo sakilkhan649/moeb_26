@@ -22,17 +22,17 @@ class Createaccountscreen extends StatelessWidget {
       key: _formKey,
       child: Scaffold(
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w,),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 100.h,),
+                SizedBox(height: 100.h),
                 CustomText(text: "Account Create"),
                 SizedBox(height: 7.h),
                 CustomTextgray(
                   text: "Tell us about yourself to get started",
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w400,
                 ),
                 SizedBox(height: 30.h),
@@ -43,11 +43,11 @@ class Createaccountscreen extends StatelessWidget {
                     CustomText(
                       text: "Full Name",
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                     Text(
                       " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
                     ),
                   ],
                 ),
@@ -73,11 +73,11 @@ class Createaccountscreen extends StatelessWidget {
                     CustomText(
                       text: "Phone Number",
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                     Text(
                       " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
                     ),
                   ],
                 ),
@@ -103,11 +103,11 @@ class Createaccountscreen extends StatelessWidget {
                     CustomText(
                       text: "Service Area",
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                     Text(
                       " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
                     ),
                   ],
                 ),
@@ -130,7 +130,7 @@ class Createaccountscreen extends StatelessWidget {
                               title: CustomTextgray(
                                 text: "Select Area",
                                 color: Colors.black,
-                                fontSize: 20,
+                                fontSize: 20.sp,
                                 fontWeight: FontWeight.w500,
                               ),
                               backgroundColor: Colors.white,
@@ -142,7 +142,7 @@ class Createaccountscreen extends StatelessWidget {
                                         city,
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 15,
+                                          fontSize: 15.sp,
                                         ),
                                       ),
                                       onTap: () {
@@ -181,7 +181,7 @@ class Createaccountscreen extends StatelessWidget {
                     CustomText(
                       text: "Years of Experience",
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                   ],
                 ),
@@ -205,11 +205,11 @@ class Createaccountscreen extends StatelessWidget {
                     CustomText(
                       text: "Company Name",
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                     Text(
                       " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
                     ),
                   ],
                 ),
@@ -233,11 +233,11 @@ class Createaccountscreen extends StatelessWidget {
                     CustomText(
                       text: "COMPANY ROLE",
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                     Text(
                       " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
                     ),
                   ],
                 ),
@@ -260,7 +260,7 @@ class Createaccountscreen extends StatelessWidget {
                               title: CustomTextgray(
                                 text: "Select Role",
                                 color: Colors.black,
-                                fontSize: 20,
+                                fontSize: 20.sp,
                                 fontWeight: FontWeight.w500,
                               ),
                               backgroundColor: Colors.white,
@@ -272,7 +272,7 @@ class Createaccountscreen extends StatelessWidget {
                                         role,
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 15,
+                                          fontSize: 15.sp,
                                         ),
                                       ),
                                       onTap: () {
@@ -311,11 +311,11 @@ class Createaccountscreen extends StatelessWidget {
                     CustomText(
                       text: "Password",
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                     Text(
                       " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
                     ),
                   ],
                 ),
@@ -352,11 +352,11 @@ class Createaccountscreen extends StatelessWidget {
                     CustomText(
                       text: "Confirm Password",
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                     Text(
                       " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
                     ),
                   ],
                 ),
@@ -390,7 +390,7 @@ class Createaccountscreen extends StatelessWidget {
                 // ========== Submit Button ==========
                 CustomButton(
                   text: "Continue",
-                  onPressed: (){
+                  onPressed: () {
                     //if (_formKey.currentState!.validate()) {}
                     Get.toNamed(Routes.vehicleinformation);
                   },

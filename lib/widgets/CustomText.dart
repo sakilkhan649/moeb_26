@@ -10,6 +10,8 @@ class CustomText extends StatelessWidget {
   final double? fontSize;
   final FontWeight? fontWeight;
   final String? fontFamily;
+  final TextOverflow? overflow;
+  final int? maxLines;
 
   const CustomText({
     super.key,
@@ -20,6 +22,8 @@ class CustomText extends StatelessWidget {
     this.fontSize,
     this.fontWeight,
     this.fontFamily,
+    this.overflow,
+    this.maxLines,
   });
 
   @override
@@ -32,6 +36,8 @@ class CustomText extends StatelessWidget {
     return Text(
       text,
       textAlign: textAlign ?? TextAlign.start,
+      overflow: overflow,
+      maxLines: maxLines,
       style:
           textStyle ??
           baseStyle.copyWith(

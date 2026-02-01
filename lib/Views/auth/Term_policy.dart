@@ -109,9 +109,12 @@ class TermPolicy extends StatelessWidget {
                         children: [
                           CustomText(
                             text: "Driver Code of Conduct &",
-                            fontSize: 20,
+                            fontSize: 20.sp,
                           ),
-                          CustomText(text: "Service Standards", fontSize: 20),
+                          CustomText(
+                            text: "Service Standards",
+                            fontSize: 20.sp,
+                          ),
 
                           SizedBox(height: 7.h),
 
@@ -122,7 +125,7 @@ class TermPolicy extends StatelessWidget {
                               child: CustomTextgray(
                                 text:
                                     "This Code of Conduct defines the professional standards required of all chauffeurs operating within the Elite Chauffeur Network. Compliance is mandatory.",
-                                fontSize: 13,
+                                fontSize: 13.sp,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -463,7 +466,7 @@ class TermPolicy extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: title, fontSize: 16, fontWeight: FontWeight.w600),
+        CustomText(text: title, fontSize: 16.sp, fontWeight: FontWeight.w600),
         SizedBox(height: 20.h),
         ...children,
         SizedBox(height: 20.h),
@@ -490,7 +493,9 @@ class TermPolicy extends StatelessWidget {
             _buildCheckbox(isChecked),
             SizedBox(width: 10.w),
             // Text
-            Expanded(child: CustomTextgray(text: text, fontSize: 13)),
+            Expanded(
+              child: CustomTextgray(text: text, fontSize: 13.sp),
+            ),
           ],
         ),
       ),

@@ -57,7 +57,7 @@ class RequestUnderReview extends StatelessWidget {
               // Title
               CustomText(
                 text: "Request Under review",
-                fontSize: 24,
+                fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
               ),
 
@@ -69,7 +69,7 @@ class RequestUnderReview extends StatelessWidget {
                 child: CustomTextgray(
                   text:
                       "Your application is currently under review by the job poster. Once they approve it, you will receive a notification and will be able to proceed with this ride.",
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                   textAlign: TextAlign.center,
                   color: Color(0xFFF2F2F2),

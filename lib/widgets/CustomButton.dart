@@ -38,17 +38,22 @@ class CustomButton extends StatelessWidget {
           backgroundColor: backgroundColor ?? Colors.white,
           foregroundColor: textColor ?? Colors.black,
           elevation: 0,
-          padding: padding ?? EdgeInsets.symmetric(vertical: 18.h), // Adjust padding if needed
+          padding:
+              padding ??
+              EdgeInsets.symmetric(vertical: 18.h), // Adjust padding if needed
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
-            side: borderColor != null ? BorderSide(color: borderColor!) : BorderSide.none,
+            side: borderColor != null
+                ? BorderSide(color: borderColor!)
+                : BorderSide.none,
           ),
         ),
         child: Text(
           text,
-          style: style ??
+          style:
+              style ??
               GoogleFonts.inter(
-                fontSize: fontSize ?? 16, // Default font size with scaling
+                fontSize: fontSize ?? 16.sp, // Default font size with scaling
                 fontWeight: fontWeight ?? FontWeight.bold,
                 color: textColor ?? Colors.black,
               ),

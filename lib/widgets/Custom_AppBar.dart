@@ -58,10 +58,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (title != null && title!.isNotEmpty)
-                        CustomText(text: title!, fontSize: 20.sp),
+                        CustomText(
+                          text: title!,
+                          fontSize: 20.sp,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       if (subtitle != null && subtitle!.isNotEmpty) ...[
                         SizedBox(height: 2.h),
-                        CustomTextgray(text: subtitle!, fontSize: 12.sp),
+                        CustomTextgray(
+                          text: subtitle!,
+                          fontSize: 12.sp,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ],
                     ],
                   ),
@@ -85,8 +95,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                               top: -6.w,
                               right: -5.w,
                               child: Container(
-                                width: 20.w,
-                                height: 20.w,
+                                width: 24.w,
+                                height: 24.w,
                                 decoration: BoxDecoration(
                                   color: Colors.orange,
                                   shape: BoxShape.circle,

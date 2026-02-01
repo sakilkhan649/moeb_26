@@ -51,47 +51,51 @@ class _JobofferpageState extends State<Jobofferpage> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            CustomJobButton(
-              text: "New Job",
-              onPressed: () {
-                Get.bottomSheet(
-                  PostJobBottomSheet(),
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                );
-              },
-            ),
-            SizedBox(height: 20.h),
-            CustomJobCard(
-              dateTime: "Tue, Jan 20 · 08:30 AM",
-              vehicleType: "SEDAN",
-              pickupLocation: "Dhaka Airport",
-              dropoffLocation: "Barisal",
-              driverName: "Khaled",
-              companyName: "Khaled Transportation",
-              flightNumberHint: "Flight AA 1234",
-              paymentMethodHint: "Collect",
-              specialInstructionsHint: "Airport Expert, Vip Client",
-              price: "\$125",
-              flightNumberController: flightNumberController,
-              paymentMethodController: paymentMethodController,
-              specialInstructionsController: specialInstructionsController,
-              vehicleTypeColor: VehicleTypeColors.sedan,
-              onArrowTap: () {
-                // Handle arrow tap
-                Get.toNamed(Routes.requestSubmitted);
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              CustomJobButton(
+                text: "New Job",
+                onPressed: () {
+                  Get.bottomSheet(
+                    PostJobBottomSheet(),
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                  );
+                },
+              ),
+              SizedBox(height: 20.h),
+              CustomJobCard(
+                dateTime: "Tue, Jan 20 · 08:30 AM",
+                vehicleType: "SEDAN",
+                pickupLocation: "Dhaka Airport",
+                dropoffLocation: "Barisal",
+                driverName: "Khaled",
+                companyName: "Khaled Transportation",
+                flightNumberHint: "Flight AA 1234",
+                paymentMethodHint: "Collect",
+                specialInstructionsHint: "Airport Expert, Vip Client",
+                price: "\$125",
+                flightNumberController: flightNumberController,
+                paymentMethodController: paymentMethodController,
+                specialInstructionsController: specialInstructionsController,
+                vehicleTypeColor: VehicleTypeColors.sedan,
+                onArrowTap: () {
+                  // Handle arrow tap
+                  Get.toNamed(Routes.requestSubmitted);
+          
+                  print("Arrow tapped");
+                },
+                onPriceTap: () {
+                  // Handle price tap
+                  print("Price tapped");
+                },
+              ),
+              SizedBox(height: 60.h),
 
-                print("Arrow tapped");
-              },
-              onPriceTap: () {
-                // Handle price tap
-                print("Price tapped");
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -391,7 +395,7 @@ class CustomJobCard extends StatelessWidget {
                       duration: const Duration(milliseconds: 200),
                       padding: EdgeInsets.symmetric(
                         vertical: 15.h,
-                        horizontal: 100.w,
+                        horizontal: 90.w,
                       ),
                       decoration: BoxDecoration(
                         color: isOver

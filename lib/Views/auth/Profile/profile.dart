@@ -34,56 +34,59 @@ class ProfileScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: CircleAvatar(
-                          radius: 45.r,
+                          radius: 35.r,
                           backgroundImage: AssetImage(AppImages.sadat_image),
                         ),
                       ),
-                      SizedBox(width: 16.w),
                       // Profile Info
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Obx(
-                                  () => Text(
-                                    controller.fullName.value,
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 22.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                            Obx(
+                              () => Text(
+                                controller.fullName.value,
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
-                            SizedBox(height: 4.h),
+                            SizedBox(height: 2.h),
+
                             Obx(
                               () => Text(
                                 controller.ecn.value,
                                 style: GoogleFonts.inter(
                                   color: Colors.grey,
-                                  fontSize: 14.sp,
+                                  fontSize: 10.sp,
                                 ),
                               ),
                             ),
-                            SizedBox(height: 8.h),
+                            SizedBox(height: 2.h),
+
+
                             Row(
                               children: [
                                 Icon(
                                   Icons.star,
                                   color: AppColors.orange100,
-                                  size: 18.sp,
+                                  size: 15.sp,
                                 ),
                                 SizedBox(width: 4.w),
-                                Obx(
-                                  () => Text(
-                                    controller.rating.value.toString(),
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
+                                Flexible(
+                                  child: Obx(
+                                    () => Text(
+                                      controller.rating.value.toString(),
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
@@ -116,8 +119,8 @@ class ProfileScreen extends StatelessWidget {
                                   top: -4.w,
                                   right: -2.w,
                                   child: Container(
-                                    width: 16.w,
-                                    height: 16.w,
+                                    width: 15.w,
+                                    height: 15.w,
                                     decoration: BoxDecoration(
                                       color: AppColors.orange100,
                                       shape: BoxShape.circle,
@@ -199,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(height: 24.h),
                   // Action Buttons
                   Wrap(
-                    spacing: 15.w,
+                    spacing: 10.w,
                     alignment: WrapAlignment.center,
                     children: [
                       _buildHeaderButton("Edit Profile", () {
@@ -381,7 +384,7 @@ class ProfileScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: AppColors.orange100,
           borderRadius: BorderRadius.circular(12.r),
@@ -418,17 +421,27 @@ class ProfileScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.inter(color: Colors.grey, fontSize: 14.sp),
+          Flexible(
+            flex: 2,
+            child: Text(
+              label,
+              style: GoogleFonts.inter(color: Colors.grey, fontSize: 14.sp),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          Obx(
-            () => Text(
-              value.value,
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
+          SizedBox(width: 10.w),
+          Flexible(
+            flex: 3,
+            child: Obx(
+              () => Text(
+                value.value,
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.right,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),

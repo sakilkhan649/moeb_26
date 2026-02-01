@@ -39,12 +39,15 @@ class CustomNotificationPopup extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Notifications",
-                        style: GoogleFonts.inter(
-                          fontSize: 28.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                      Expanded(
+                        child: Text(
+                          "Notifications",
+                          style: GoogleFonts.inter(
+                            fontSize: 28.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       IconButton(
@@ -64,11 +67,14 @@ class CustomNotificationPopup extends StatelessWidget {
                     () => Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "${controller.unreadCount} unread notifications",
-                          style: GoogleFonts.inter(
-                            fontSize: 14.sp,
-                            color: Colors.white.withOpacity(0.4),
+                        Expanded(
+                          child: Text(
+                            "${controller.unreadCount} unread notifications",
+                            style: GoogleFonts.inter(
+                              fontSize: 14.sp,
+                              color: Colors.white.withOpacity(0.4),
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         GestureDetector(
@@ -185,12 +191,15 @@ class CustomNotificationPopup extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        notification.title,
-                        style: GoogleFonts.inter(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                      Expanded(
+                        child: Text(
+                          notification.title,
+                          style: GoogleFonts.inter(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Icon(
@@ -218,11 +227,14 @@ class CustomNotificationPopup extends StatelessWidget {
                         color: Colors.white.withOpacity(0.4),
                       ),
                       SizedBox(width: 4.w),
-                      Text(
-                        notification.time,
-                        style: GoogleFonts.inter(
-                          fontSize: 12.sp,
-                          color: Colors.white.withOpacity(0.4),
+                      Expanded(
+                        child: Text(
+                          notification.time,
+                          style: GoogleFonts.inter(
+                            fontSize: 12.sp,
+                            color: Colors.white.withOpacity(0.4),
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

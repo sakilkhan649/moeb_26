@@ -9,13 +9,11 @@ import '../../../widgets/CustomTextGary.dart';
 import 'controller/splashcontroller.dart';
 
 class Splashscreen extends StatelessWidget {
-   Splashscreen({super.key});
-   // Initialize the GetX Controller
-   final SplashScreenController controller = Get.put(SplashScreenController());
+  Splashscreen({super.key});
+  // Initialize the GetX Controller
+  final SplashScreenController controller = Get.put(SplashScreenController());
 
-
-   // Start the timer as soon as the splash screen is loaded
-
+  // Start the timer as soon as the splash screen is loaded
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +24,7 @@ class Splashscreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // The logo (use an image asset or network image)
-            Image.asset(
-              AppImages.app_logo,
-              width: 100.w,
-              height: 100.h,
-            ),
+            Image.asset(AppImages.app_logo, width: 100.w, height: 100.h),
             SizedBox(height: 20.h),
             // Title Text
             CustomText(text: "Elite Chauffeur Network"),
@@ -40,11 +34,11 @@ class Splashscreen extends StatelessWidget {
             SizedBox(height: 20.h),
             // Dots for the indicator (if needed)
             Obx(
-                  () => Row(
+              () => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   3, // number of dots
-                      (index) => Container(
+                  (index) => Container(
                     margin: EdgeInsets.symmetric(horizontal: 4.w),
                     width: 15.w,
                     height: 15.h,
@@ -52,7 +46,7 @@ class Splashscreen extends StatelessWidget {
                       color: index == controller.currentIndex.value
                           ? Colors.white
                           : AppColors
-                          .gray100, // Change color based on current index
+                                .gray100, // Change color based on current index
                       shape: BoxShape.circle,
                     ),
                   ),

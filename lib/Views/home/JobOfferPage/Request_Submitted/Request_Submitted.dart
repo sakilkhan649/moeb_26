@@ -21,28 +21,29 @@ class RequestSubmitted extends StatelessWidget {
         backgroundColor: Colors.black,
         actions: [
           IconButton(
-            onPressed: (){
+            onPressed: () {
               Get.back();
-            }, icon:
-          Container(
-            width: 40.w,
-            height: 40.w,
-            padding: EdgeInsets.all(10.w),
-            decoration: BoxDecoration(
-              color: Color(0xFF1C1C1C),
-              shape: BoxShape.circle,
+            },
+            icon: Container(
+              width: 40.w,
+              height: 40.w,
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: Color(0xFF1C1C1C),
+                shape: BoxShape.circle,
+              ),
+              child: SvgPicture.asset(
+                AppIcons.cross_icon,
+                height: 20.w,
+                width: 20.w,
+              ),
             ),
-            child: SvgPicture.asset(
-              AppIcons.cross_icon,
-              height: 20.w,
-              width: 20.w,
-            ),
-          ), )
+          ),
         ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w,),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
               SizedBox(height: 40.h),
@@ -55,7 +56,7 @@ class RequestSubmitted extends StatelessWidget {
               // Title
               CustomText(
                 text: "Request Submitted",
-                fontSize: 24,
+                fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
               ),
 
@@ -67,7 +68,7 @@ class RequestSubmitted extends StatelessWidget {
                 child: CustomTextgray(
                   text:
                       "Your application is currently under review by the job poster. Once they approve it, you will receive a notification and will be able to proceed with this ride.",
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                   textAlign: TextAlign.center,
                   color: Color(0xFFF2F2F2),

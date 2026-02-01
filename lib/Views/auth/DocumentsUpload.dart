@@ -18,19 +18,19 @@ class Documentsupload extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w,),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 100.w),
               // Page title
-              CustomText(text: "Documents Upload", fontSize: 20),
+              CustomText(text: "Documents Upload", fontSize: 20.sp),
               SizedBox(height: 7.h),
               //subtitle text
               CustomTextgray(
                 text: "Upload required documents for verificationHola",
-                fontSize: 13,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w400,
               ),
 
@@ -52,11 +52,14 @@ class Documentsupload extends StatelessWidget {
                             CustomText(
                               text: "License Plate",
                               fontWeight: FontWeight.w500,
-                              fontSize: 15,
+                              fontSize: 15.sp,
                             ),
                             Text(
                               "  *",
-                              style: TextStyle(color: Colors.red, fontSize: 14),
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14.sp,
+                              ),
                             ),
                           ],
                         ),
@@ -90,11 +93,11 @@ class Documentsupload extends StatelessWidget {
                   CustomText(
                     text: "Expire Date",
                     fontWeight: FontWeight.w500,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                   ),
-                  const Text(
+                  Text(
                     " *",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ],
               ),
@@ -121,11 +124,14 @@ class Documentsupload extends StatelessWidget {
                             CustomText(
                               text: "Hack License",
                               fontWeight: FontWeight.w500,
-                              fontSize: 15,
+                              fontSize: 15.sp,
                             ),
                             Text(
                               "  *",
-                              style: TextStyle(color: Colors.red, fontSize: 14),
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14.sp,
+                              ),
                             ),
                           ],
                         ),
@@ -159,11 +165,11 @@ class Documentsupload extends StatelessWidget {
                   CustomText(
                     text: "Expire Date",
                     fontWeight: FontWeight.w500,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                   ),
-                  const Text(
+                  Text(
                     " *",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ],
               ),
@@ -188,7 +194,7 @@ class Documentsupload extends StatelessWidget {
                         CustomText(
                           text: "Local Permit ",
                           fontWeight: FontWeight.w500,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                         ),
                         SizedBox(height: 6.h),
                         CustomTextgray(text: "PDF, JPG, PNG"),
@@ -220,11 +226,11 @@ class Documentsupload extends StatelessWidget {
                   CustomText(
                     text: "Expire Date",
                     fontWeight: FontWeight.w500,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                   ),
-                  const Text(
+                  Text(
                     " *",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ],
               ),
@@ -251,11 +257,14 @@ class Documentsupload extends StatelessWidget {
                             CustomText(
                               text: "Commercial Insurance",
                               fontWeight: FontWeight.w500,
-                              fontSize: 13,
+                              fontSize: 13.sp,
                             ),
                             Text(
                               "  *",
-                              style: TextStyle(color: Colors.red, fontSize: 14),
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14.sp,
+                              ),
                             ),
                           ],
                         ),
@@ -288,11 +297,11 @@ class Documentsupload extends StatelessWidget {
                   CustomText(
                     text: "Expire Date",
                     fontWeight: FontWeight.w500,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                   ),
-                  const Text(
+                  Text(
                     " *",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ],
               ),
@@ -319,11 +328,14 @@ class Documentsupload extends StatelessWidget {
                             CustomText(
                               text: "Vehicle Registration",
                               fontWeight: FontWeight.w500,
-                              fontSize: 13,
+                              fontSize: 13.sp,
                             ),
                             Text(
                               "  *",
-                              style: TextStyle(color: Colors.red, fontSize: 14),
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14.sp,
+                              ),
                             ),
                           ],
                         ),
@@ -356,11 +368,11 @@ class Documentsupload extends StatelessWidget {
                   CustomText(
                     text: "Expire Date",
                     fontWeight: FontWeight.w500,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                   ),
-                  const Text(
+                  Text(
                     " *",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ],
               ),
@@ -387,18 +399,21 @@ class Documentsupload extends StatelessWidget {
                             CustomText(
                               text: "Upload Headshot",
                               fontWeight: FontWeight.w500,
-                              fontSize: 15,
+                              fontSize: 15.sp,
                             ),
                             Text(
                               "  *",
-                              style: TextStyle(color: Colors.red, fontSize: 14),
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14.sp,
+                              ),
                             ),
                           ],
                         ),
                         SizedBox(height: 6.h),
                         CustomTextgray(
                           text: "BLACK SUIT TIE WITH WHITE BACKGROUND",
-                          fontSize: 7,
+                          fontSize: 7.sp,
                         ),
                       ],
                     ),
@@ -429,11 +444,11 @@ class Documentsupload extends StatelessWidget {
                   CustomText(
                     text: "Vehicle Photos",
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                   ),
-                  const Text(
+                  Text(
                     " *",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ],
               ),
@@ -453,7 +468,7 @@ class Documentsupload extends StatelessWidget {
                         CustomText(
                           text: "Front View",
                           fontWeight: FontWeight.w500,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                         ),
                       ],
                     ),
@@ -493,7 +508,7 @@ class Documentsupload extends StatelessWidget {
                         CustomText(
                           text: "Rear View",
                           fontWeight: FontWeight.w500,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                         ),
                       ],
                     ),
@@ -534,7 +549,7 @@ class Documentsupload extends StatelessWidget {
                         CustomText(
                           text: "Interior View",
                           fontWeight: FontWeight.w500,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                         ),
                       ],
                     ),
@@ -587,7 +602,8 @@ class Documentsupload extends StatelessWidget {
       ),
     );
   }
-/// Builds the custom container with the provided child
+
+  /// Builds the custom container with the provided child
   Widget _CustomContainer({required Widget child}) {
     return Container(
       width: double.infinity,

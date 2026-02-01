@@ -76,7 +76,7 @@ class ContactSupportBottomSheet extends StatelessWidget {
         SizedBox(height: 24.h),
         Padding(
           padding: EdgeInsets.only(left: 20.w),
-          child: CustomText(text: "Contact Support", fontSize: 20),
+          child: CustomText(text: "Contact Support", fontSize: 20.sp),
         ),
       ],
     );

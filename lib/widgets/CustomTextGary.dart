@@ -12,6 +12,8 @@ class CustomTextgray extends StatelessWidget {
   final double? fontSize;
   final FontWeight? fontWeight;
   final String? fontFamily;
+  final TextOverflow? overflow;
+  final int? maxLines;
 
   const CustomTextgray({
     super.key,
@@ -22,6 +24,8 @@ class CustomTextgray extends StatelessWidget {
     this.fontSize,
     this.fontWeight,
     this.fontFamily,
+    this.overflow,
+    this.maxLines,
   });
 
   @override
@@ -34,6 +38,8 @@ class CustomTextgray extends StatelessWidget {
     return Text(
       text,
       textAlign: textAlign ?? TextAlign.start,
+      overflow: overflow,
+      maxLines: maxLines,
       style:
           textStyle ??
           baseStyle.copyWith(

@@ -10,8 +10,7 @@ import '../../widgets/CustomTextGary.dart';
 class Vehicleinformation extends StatelessWidget {
   Vehicleinformation({super.key});
 
-  // কতগুলা vehicle আছে সেটা track করার জন্য
-  var vehicleCount = 1.obs;
+  final vehicleCount = 1.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +21,11 @@ class Vehicleinformation extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 100.w),
-            CustomText(text: "Vehicle Information"),
+            CustomText(text: "Vehicle Information", fontSize: 20.sp),
             SizedBox(height: 7.h),
             CustomTextgray(
               text: "Add your professional vehicles",
-              fontSize: 15,
+              fontSize: 15.sp,
               fontWeight: FontWeight.w400,
             ),
             SizedBox(height: 30.h),
@@ -72,12 +71,13 @@ class Vehicleinformation extends StatelessWidget {
   // একটা vehicle card
   Widget _buildVehicleCard(int vehicleNumber) {
     // প্রতিটা vehicle এর জন্য আলাদা controllers
-    var selectedVehicleType = 'Sedan'.obs;
-    TextEditingController makeController = TextEditingController();
-    TextEditingController modelController = TextEditingController();
-    TextEditingController yearController = TextEditingController();
-    TextEditingController colorController = TextEditingController();
-    TextEditingController licensePlateController = TextEditingController();
+    final selectedVehicleType = 'Sedan'.obs;
+    final TextEditingController makeController = TextEditingController();
+    final TextEditingController modelController = TextEditingController();
+    final TextEditingController yearController = TextEditingController();
+    final TextEditingController colorController = TextEditingController();
+    final TextEditingController licensePlateController =
+        TextEditingController();
 
     return Container(
       width: double.infinity,
@@ -94,7 +94,7 @@ class Vehicleinformation extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomText(text: "Vehicle $vehicleNumber", fontSize: 15),
+              CustomText(text: "Vehicle $vehicleNumber", fontSize: 15.sp),
               if (vehicleCount.value > 1)
                 GestureDetector(
                   onTap: () {
@@ -128,12 +128,12 @@ class Vehicleinformation extends StatelessWidget {
               CustomText(
                 text: "Vehicle Type",
                 fontWeight: FontWeight.w500,
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: AppColors.gray100,
               ),
-              const Text(
+              Text(
                 " *",
-                style: TextStyle(color: Colors.red, fontSize: 14),
+                style: TextStyle(color: Colors.red, fontSize: 14.sp),
               ),
             ],
           ),
@@ -169,11 +169,14 @@ class Vehicleinformation extends StatelessWidget {
                         CustomText(
                           text: "Make",
                           fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
-                        const Text(
+                        Text(
                           " *",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                          ),
                         ),
                       ],
                     ),
@@ -188,11 +191,14 @@ class Vehicleinformation extends StatelessWidget {
                         CustomText(
                           text: "Year",
                           fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
-                        const Text(
+                        Text(
                           " *",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                          ),
                         ),
                       ],
                     ),
@@ -215,11 +221,14 @@ class Vehicleinformation extends StatelessWidget {
                         CustomText(
                           text: "Model",
                           fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
-                        const Text(
+                        Text(
                           " *",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                          ),
                         ),
                       ],
                     ),
@@ -234,11 +243,14 @@ class Vehicleinformation extends StatelessWidget {
                         CustomText(
                           text: "Color",
                           fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
-                        const Text(
+                        Text(
                           " *",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                          ),
                         ),
                       ],
                     ),
@@ -259,11 +271,11 @@ class Vehicleinformation extends StatelessWidget {
               CustomText(
                 text: "License Plate",
                 fontWeight: FontWeight.w500,
-                fontSize: 14,
+                fontSize: 14.sp,
               ),
-              const Text(
+              Text(
                 " *",
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
               ),
             ],
           ),
@@ -282,22 +294,27 @@ class Vehicleinformation extends StatelessWidget {
     RxString selectedVehicleType,
     String vehicleType,
   ) {
-    bool isSelected = selectedVehicleType.value == vehicleType;
-
-    return GestureDetector(
-      onTap: () {
-        selectedVehicleType.value = vehicleType;
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 15.w),
-        decoration: BoxDecoration(
-          color: isSelected ? Color(0xFF181F26) : Colors.transparent,
-          borderRadius: BorderRadius.circular(30.r),
-          border: Border.all(color: Color(0xFF364153)),
+    return Obx(() {
+      bool isSelected = selectedVehicleType.value == vehicleType;
+      return GestureDetector(
+        onTap: () {
+          selectedVehicleType.value = vehicleType;
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 15.w),
+          decoration: BoxDecoration(
+            color: isSelected ? Color(0xFF181F26) : Colors.transparent,
+            borderRadius: BorderRadius.circular(30.r),
+            border: Border.all(color: Color(0xFF364153)),
+          ),
+          child: CustomTextgray(
+            text: vehicleType,
+            color: Colors.white,
+            fontSize: 14.sp,
+          ),
         ),
-        child: CustomTextgray(text: vehicleType, color: Colors.white),
-      ),
-    );
+      );
+    });
   }
 
   // Text field method
@@ -312,7 +329,7 @@ class Vehicleinformation extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(color: AppColors.gray100),
+          hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
           contentPadding: EdgeInsets.symmetric(
             vertical: 12.h,
             horizontal: 12.w,
@@ -330,7 +347,7 @@ class Vehicleinformation extends StatelessWidget {
             borderSide: BorderSide(color: AppColors.black200),
           ),
         ),
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white, fontSize: 14.sp),
       ),
     );
   }
@@ -357,7 +374,7 @@ class CustomAddButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.add, color: Color(0xFFFAC0C0), size: 20),
+            Icon(Icons.add, color: Color(0xFFFAC0C0), size: 20.r),
             SizedBox(width: 10.w),
             Text(
               'Add Another Vehicle',

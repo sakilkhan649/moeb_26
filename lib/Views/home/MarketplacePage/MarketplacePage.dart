@@ -217,7 +217,7 @@ class MarketplaceCard extends StatelessWidget {
                       item.condition,
                       style: GoogleFonts.inter(
                         color: const Color(0xff949494),
-                        fontSize: 16.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
                     GestureDetector(
@@ -240,19 +240,19 @@ class MarketplaceCard extends StatelessWidget {
                           children: [
                             SvgPicture.asset(
                               AppIcons.contact_icon,
-                              height: 20.sp,
-                              width: 20.sp,
+                              height: 18.sp,
+                              width: 18.sp,
                               colorFilter: const ColorFilter.mode(
                                 Colors.black,
                                 BlendMode.srcIn,
                               ),
                             ),
-                            SizedBox(width: 8.w),
+                            SizedBox(width: 4.w),
                             Text(
                               "Contact",
                               style: GoogleFonts.inter(
                                 color: Colors.black,
-                                fontSize: 16.sp,
+                                fontSize: 10.sp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

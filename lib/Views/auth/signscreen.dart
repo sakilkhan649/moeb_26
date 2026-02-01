@@ -17,8 +17,8 @@ class Signscreen extends StatelessWidget {
   // Reactive variable to control password visibility
   final isPasswordVisible = false.obs;
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,27 +26,27 @@ class Signscreen extends StatelessWidget {
       key: _formkey,
       child: Scaffold(
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w,),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: .start,
-              crossAxisAlignment: .start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 100.h,),
+                SizedBox(height: 100.h),
                 // The logo (use an image asset or network image)
                 CustomText(text: "Welcome Back"),
                 SizedBox(height: 7.h),
                 // Subtitle Text
                 CustomTextgray(
                   text: "Sign in to continue to your account",
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w400,
                 ),
                 SizedBox(height: 20.h),
                 CustomText(
                   text: "Email Address",
                   fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
                 SizedBox(height: 8.h),
                 Customtextfield(
@@ -68,7 +68,7 @@ class Signscreen extends StatelessWidget {
                 CustomText(
                   text: "Password",
                   fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
                 SizedBox(height: 8.h),
                 Obx(
@@ -129,7 +129,7 @@ class Signscreen extends StatelessWidget {
                 Center(
                   child: CustomTextgray(
                     text: "Don't have an account?",
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
