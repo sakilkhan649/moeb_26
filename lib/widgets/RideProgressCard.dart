@@ -62,11 +62,11 @@ class RideProgressCard extends StatelessWidget {
               SizedBox(width: 10.w),
               CustomText(
                 text: statusLabel,
-                fontSize: labelFontSize ?? 15.sp,
+                fontSize: labelFontSize ?? 13.sp,
               ),
               CustomText(
                 text: statusValue,
-                fontSize: valueFontSize ?? 18.sp,
+                fontSize: valueFontSize ?? 15.sp,
               ),
             ],
           ),

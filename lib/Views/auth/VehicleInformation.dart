@@ -6,11 +6,15 @@ import '../../Utils/app_colors.dart';
 import '../../widgets/CustomButton.dart';
 import '../../widgets/CustomText.dart';
 import '../../widgets/CustomTextGary.dart';
+import 'Controller/VehicleInformationController.dart';
+import 'Model/VehicleModel.dart';
 
 class Vehicleinformation extends StatelessWidget {
   Vehicleinformation({super.key});
 
-  final vehicleCount = 1.obs;
+  final VehicleInformationController controller = Get.put(
+    VehicleInformationController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +41,9 @@ class Vehicleinformation extends StatelessWidget {
                   children: [
                     // সব vehicle cards
                     ...List.generate(
-                      vehicleCount.value,
-                      (index) => _buildVehicleCard(index + 1),
+                      controller.vehicles.length,
+                      (index) =>
+                          _buildVehicleCard(index, controller.vehicles[index]),
                     ),
 
                     SizedBox(height: 25.h),
@@ -46,7 +51,7 @@ class Vehicleinformation extends StatelessWidget {
                     // Add Another Vehicle Button
                     CustomAddButton(
                       onPressed: () {
-                        vehicleCount.value++; // নতুন vehicle add করো
+                        controller.addVehicle(); // নতুন vehicle add করো
                       },
                     ),
 
@@ -69,16 +74,7 @@ class Vehicleinformation extends StatelessWidget {
   }
 
   // একটা vehicle card
-  Widget _buildVehicleCard(int vehicleNumber) {
-    // প্রতিটা vehicle এর জন্য আলাদা controllers
-    final selectedVehicleType = 'Sedan'.obs;
-    final TextEditingController makeController = TextEditingController();
-    final TextEditingController modelController = TextEditingController();
-    final TextEditingController yearController = TextEditingController();
-    final TextEditingController colorController = TextEditingController();
-    final TextEditingController licensePlateController =
-        TextEditingController();
-
+  Widget _buildVehicleCard(int index, VehicleModel model) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 20.h),
@@ -94,11 +90,11 @@ class Vehicleinformation extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomText(text: "Vehicle $vehicleNumber", fontSize: 15.sp),
-              if (vehicleCount.value > 1)
+              CustomText(text: "Vehicle ${index + 1}", fontSize: 15.sp),
+              if (controller.vehicles.length > 1)
                 GestureDetector(
                   onTap: () {
-                    vehicleCount.value--; // Vehicle delete করো
+                    controller.removeVehicle(index); // Vehicle delete করো
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -140,19 +136,17 @@ class Vehicleinformation extends StatelessWidget {
           SizedBox(height: 10.h),
 
           // Vehicle Type Chips
-          Obx(() {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildVehicleTypeChip(selectedVehicleType, "Sedan"),
-                _buildVehicleTypeChip(selectedVehicleType, "SUV"),
-                _buildVehicleTypeChip(selectedVehicleType, "Sprinter"),
-                _buildVehicleTypeChip(selectedVehicleType, "Bus"),
-              ],
-            );
-          }),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildVehicleTypeChip(model, "Sedan"),
+              _buildVehicleTypeChip(model, "SUV"),
+              _buildVehicleTypeChip(model, "Sprinter"),
+              _buildVehicleTypeChip(model, "Bus"),
+            ],
+          ),
           SizedBox(height: 10.h),
-          Obx(() => _buildVehicleTypeChip(selectedVehicleType, "LimoStretch")),
+          _buildVehicleTypeChip(model, "LimoStretch"),
 
           SizedBox(height: 20.h),
           Row(
@@ -182,7 +176,7 @@ class Vehicleinformation extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     _buildTextField(
-                      controller: makeController,
+                      controller: model.makeController,
                       hintText: "Mercedes",
                     ),
                     SizedBox(height: 15.h),
@@ -204,7 +198,7 @@ class Vehicleinformation extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     _buildTextField(
-                      controller: yearController,
+                      controller: model.yearController,
                       hintText: "5 years maxim",
                     ),
                   ],
@@ -234,7 +228,7 @@ class Vehicleinformation extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     _buildTextField(
-                      controller: modelController,
+                      controller: model.modelController,
                       hintText: "S-Class",
                     ),
                     SizedBox(height: 15.h),
@@ -256,7 +250,7 @@ class Vehicleinformation extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     _buildTextField(
-                      controller: colorController,
+                      controller: model.colorController,
                       hintText: "Black(Fix)",
                     ),
                   ],
@@ -281,7 +275,7 @@ class Vehicleinformation extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           _buildTextField(
-            controller: licensePlateController,
+            controller: model.licensePlateController,
             hintText: "ABC-1234",
           ),
         ],
@@ -290,15 +284,12 @@ class Vehicleinformation extends StatelessWidget {
   }
 
   // Method to build the chip (with selected/unselected color)
-  Widget _buildVehicleTypeChip(
-    RxString selectedVehicleType,
-    String vehicleType,
-  ) {
+  Widget _buildVehicleTypeChip(VehicleModel model, String vehicleType) {
     return Obx(() {
-      bool isSelected = selectedVehicleType.value == vehicleType;
+      bool isSelected = model.selectedVehicleType.value == vehicleType;
       return GestureDetector(
         onTap: () {
-          selectedVehicleType.value = vehicleType;
+          model.selectedVehicleType.value = vehicleType;
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 15.w),

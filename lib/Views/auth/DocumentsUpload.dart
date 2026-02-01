@@ -607,7 +607,7 @@ class Documentsupload extends StatelessWidget {
   Widget _CustomContainer({required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(18.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(16.r),
@@ -628,7 +628,7 @@ class Documentsupload extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(color: AppColors.gray100),
-        contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
+        contentPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: BorderSide(color: AppColors.black200),
@@ -649,7 +649,7 @@ class Documentsupload extends StatelessWidget {
   Widget _buildDocumentIcon() {
     return Container(
       // Icon container with padding
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xFF364153), width: 1),
         // Dark background for icon
