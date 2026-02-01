@@ -48,7 +48,6 @@ class _JobofferpageState extends State<Jobofferpage> {
         onAccountTap: () {
           Get.toNamed(Routes.profileScreen);
         },
-
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -338,30 +337,75 @@ class CustomJobCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GestureDetector(
-                onTap: onArrowTap,
-                child: Container(
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.orange100,
-                    shape: BoxShape.circle,
+              Draggable<String>(
+                data: 'confirm',
+                feedback: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.orange100,
+                      shape: BoxShape.circle,
+                    ),
+                    child: SvgPicture.asset(
+                      AppIcons.arre_right_icon,
+                      width: 24.w,
+                      height: 24.w,
+                    ),
                   ),
-                  child: SvgPicture.asset(AppIcons.arre_right_icon),
+                ),
+                childWhenDragging: Opacity(
+                  opacity: 0,
+                  child: Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: const BoxDecoration(
+                      color: AppColors.orange100,
+                      shape: BoxShape.circle,
+                    ),
+                    child: SvgPicture.asset(AppIcons.arre_right_icon),
+                  ),
+                ),
+                child: GestureDetector(
+                  onTap: onArrowTap,
+                  child: Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.orange100,
+                      shape: BoxShape.circle,
+                    ),
+                    child: SvgPicture.asset(AppIcons.arre_right_icon),
+                  ),
                 ),
               ),
-              GestureDetector(
-                onTap: onPriceTap,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 15.h,
-                    horizontal: 100.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.orange100,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: CustomText(text: price, fontSize: 18.sp),
-                ),
+              DragTarget<String>(
+                onAcceptWithDetails: (details) {
+                  if (details.data == 'confirm') {
+                    onArrowTap?.call();
+                  }
+                },
+                builder: (context, candidateData, rejectedData) {
+                  bool isOver = candidateData.isNotEmpty;
+                  return GestureDetector(
+                    onTap: onPriceTap,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 15.h,
+                        horizontal: 100.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isOver
+                            ? AppColors.orange100.withOpacity(0.8)
+                            : AppColors.orange100,
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: isOver
+                            ? Border.all(color: Colors.white, width: 2)
+                            : null,
+                      ),
+                      child: CustomText(text: price, fontSize: 18.sp),
+                    ),
+                  );
+                },
               ),
             ],
           ),

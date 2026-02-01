@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
+import '../../../../../Core/routs.dart';
 import 'Controller/Ride_Complete_job.dart';
 
 class RideCompleteJob extends StatelessWidget {
@@ -153,6 +154,7 @@ class RideCompleteJob extends StatelessWidget {
                 backgroundColor: AppColors.orange100,
                 textColor: Colors.white,
                 onPressed: () {
+                  Get.toNamed(Routes.ratingsFeedback);
                   // Doing nothing as per requested "kichu hobe na"
                 },
               ),

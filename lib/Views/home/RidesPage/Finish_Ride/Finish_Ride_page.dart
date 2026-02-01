@@ -104,48 +104,113 @@ class FinishRidePage extends StatelessWidget {
 
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.toNamed(Routes.rideCompletedPage);
-                    },
-                    child: Row(
-                      children: [
-                        // Circular Action Button
-                        Container(
-                          width: 60.w,
-                          height: 60.w,
-                          padding: EdgeInsets.all(16.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.orange100,
-                            shape: BoxShape.circle,
-                          ),
-                          child: SvgPicture.asset(
-                            AppIcons.arre_right_icon,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.white,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        // Pill-shaped Finish Label
-                        Expanded(
+                  child: Row(
+                    children: [
+                      // Circular Action Button (Draggable)
+                      Draggable<String>(
+                        data: 'finish',
+                        feedback: Material(
+                          color: Colors.transparent,
                           child: Container(
+                            width: 60.w,
                             height: 60.w,
-                            alignment: Alignment.center,
+                            padding: EdgeInsets.all(16.w),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF2A2A2A),
-                              borderRadius: BorderRadius.circular(30.r),
+                              color: AppColors.orange100,
+                              shape: BoxShape.circle,
                             ),
-                            child: CustomText(
-                              text: "Finish ride",
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
+                            child: SvgPicture.asset(
+                              AppIcons.arre_right_icon,
+                              colorFilter: const ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                        childWhenDragging: Opacity(
+                          opacity: 0,
+                          child: Container(
+                            width: 60.w,
+                            height: 60.w,
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.orange100,
+                              shape: BoxShape.circle,
+                            ),
+                            child: SvgPicture.asset(
+                              AppIcons.arre_right_icon,
+                              colorFilter: const ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            Get.toNamed(Routes.rideCompletedPage);
+                          },
+                          child: Container(
+                            width: 60.w,
+                            height: 60.w,
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.orange100,
+                              shape: BoxShape.circle,
+                            ),
+                            child: SvgPicture.asset(
+                              AppIcons.arre_right_icon,
+                              colorFilter: const ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      // Pill-shaped Finish Label (DragTarget)
+                      Expanded(
+                        child: DragTarget<String>(
+                          onAcceptWithDetails: (details) {
+                            if (details.data == 'finish') {
+                              Get.toNamed(Routes.rideCompletedPage);
+                            }
+                          },
+                          builder: (context, candidateData, rejectedData) {
+                            bool isOver = candidateData.isNotEmpty;
+                            return GestureDetector(
+                              onTap: () {
+                                Get.toNamed(Routes.rideCompletedPage);
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                height: 60.w,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: isOver
+                                      ? const Color(0xFF3A3A3A)
+                                      : const Color(0xFF2A2A2A),
+                                  borderRadius: BorderRadius.circular(30.r),
+                                  border: isOver
+                                      ? Border.all(
+                                          color: Colors.white,
+                                          width: 2,
+                                        )
+                                      : null,
+                                ),
+                                child: CustomText(
+                                  text: "Finish ride",
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 

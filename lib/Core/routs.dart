@@ -15,6 +15,7 @@ import '../Views/auth/resetpassword/resetpasswordthree.dart';
 import '../Views/auth/resetpassword/resetpasswordtwo.dart';
 import '../Views/auth/resetpassword/success_resetpassword.dart';
 import '../Views/home/JobOfferPage/My_jobs/Approve/approve_page.dart';
+import '../Views/home/JobOfferPage/My_jobs/Ratings_Feedback/Ratings_Feedback.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ride_Complete_Job/Ride_Complete_Job.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Board/Ride_Progress_Board.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way/Ride_Progress_Way.dart';
@@ -63,6 +64,7 @@ class Routes {
   static const String rideProgressBoard = "/RideProgressBoard";
   static const String rideCompleteJob = "/RideCompleteJob";
   static const String profileScreen = "/ProfileScreen";
+  static const String ratingsFeedback= "/RatingsFeedback";
 
   static List<GetPage> routes = [
     GetPage(
@@ -218,6 +220,11 @@ class Routes {
     GetPage(
       name: profileScreen,
       page: () => ProfileScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: ratingsFeedback,
+      page: () => RatingsFeedback(),
       transition: Transition.noTransition,
     ),
   ];

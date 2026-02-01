@@ -23,10 +23,6 @@ class Ridespage extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         logoPath: AppImages.app_logo,
-        notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
