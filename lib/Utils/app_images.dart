@@ -7,6 +7,7 @@ class AppImages{
   static const String leather_image="$buseurl/leather_image.png";
   static const String profile_image="$buseurl/profile_image.jpg";
   static const String sadat_image="$buseurl/sadat_image.jpg";
+  static const String final_app_logo="$buseurl/final_app_logo.png";
 
 
 
