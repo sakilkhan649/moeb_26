@@ -54,6 +54,7 @@ class _JobofferpageState extends State<Jobofferpage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              SizedBox(height: 2.w),
               CustomJobButton(
                 text: "New Job",
                 onPressed: () {

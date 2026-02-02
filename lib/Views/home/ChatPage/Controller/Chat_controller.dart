@@ -16,7 +16,7 @@ class ChatController extends GetxController {
         lastMessage: "Perfect, see you at 2:30 PM",
         time: "10:30 AM",
         unreadCount: 2,
-        avatarPath: "assets/images/app_logo.png", // Updated to existing logo
+        avatarPath: "assets/images/app_logo_c.png", // Updated to existing logo
       ),
       ChatPreview(
         name: "Premium Rides LLC",

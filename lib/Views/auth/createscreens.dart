@@ -22,25 +22,15 @@ class Createscreens extends StatelessWidget {
               mainAxisAlignment: .center,
               children: [
                 // The logo (use an image asset or network image)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.5.w,
-                      ),
-                    ),
-                    width: 100.w,
-                    height: 100.w,
-                    child: Image.asset(
-                      AppImages.final_app_logo,
-                      fit: BoxFit.fill,
-                    ),
+                Container(
+                  width: 150.w,
+                  height: 70.w,
+                  child: Image.asset(
+                    AppImages.final_app_logo,
+                    fit: BoxFit.fill,
                   ),
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 12.h),
                 // Title Text
                 CustomText(text: "Elite Chauffeur Network"),
                 SizedBox(height: 11.h),

@@ -23,25 +23,17 @@ class Splashscreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // The logo (use an image asset or network image)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16.r),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 1.5.w,
-                  ),
-                ),
-                width: 100.w,
-                height: 100.w,
+
+               Container(
+                width: 150.w,
+                height: 70.w,
                 child: Image.asset(
                   AppImages.final_app_logo,
                   fit: BoxFit.fill,
                 ),
               ),
-            ),
-            SizedBox(height: 20.h),
+
+            SizedBox(height: 12.h),
             // Title Text
             CustomText(text: "Elite Chauffeur Network"),
             SizedBox(height: 10.h),

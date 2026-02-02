@@ -35,14 +35,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      toolbarHeight: 80.h,
       automaticallyImplyLeading: false,
-      titleSpacing: 16.w,
+      titleSpacing: 4.w,
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (logoPath != null && logoPath!.isNotEmpty) ...[
-            Image.asset(logoPath!, height: 50.h, width: 50.h),
+            Image.asset(logoPath!, height: 70.h, width: 150.w),
             SizedBox(width: 12.w),
           ],
           Expanded(
@@ -55,19 +54,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (title != null && title!.isNotEmpty)
-                    CustomText(
-                      text: title!,
-                      fontSize: 20.sp,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.w),
+                      child: CustomText(
+                        text: title!,
+                        fontSize: 20.sp,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
                   if (subtitle != null && subtitle!.isNotEmpty) ...[
                     SizedBox(height: 2.h),
-                    CustomTextgray(
-                      text: subtitle!,
-                      fontSize: 12.sp,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.w),
+                      child: CustomTextgray(
+                        text: subtitle!,
+                        fontSize: 12.sp,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
                   ],
                 ],
