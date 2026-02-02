@@ -23,12 +23,12 @@ class Ridespage extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         logoPath: AppImages.app_logo,
+        notificationCount: 3,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
-            SizedBox(height: 20.h),
             Row(
               children: [
                 Expanded(
@@ -48,7 +48,7 @@ class Ridespage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 15.h),
 
             /// CUSTOM TAB BAR
             Obx(
@@ -65,7 +65,7 @@ class Ridespage extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () => controller.changeTab(index),
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? AppColors.orange100
@@ -91,7 +91,7 @@ class Ridespage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 25.h),
+            SizedBox(height: 15.h),
 
             /// RIDES LIST (Based on selected tab)
             Expanded(
@@ -221,7 +221,7 @@ class CustomJobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(20.r),
@@ -256,7 +256,7 @@ class CustomJobCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 15.h),
+          SizedBox(height: 8.h),
 
           /// PICKUP LOCATION
           _buildRichInfo("PU: ", pickupLocation),

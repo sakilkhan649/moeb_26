@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'Core/Binding/initial_binding.dart';
 import 'Core/routs.dart';
 import 'Utils/app_colors.dart';
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         getPages: Routes.routes,
         initialRoute: Routes.splashScreen,
+        initialBinding: InitialBinding(),
       ),
     );
   }

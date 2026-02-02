@@ -35,7 +35,6 @@ class MyJobsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20.h),
               Stack(
                 alignment: Alignment.centerLeft,
                 children: [
@@ -56,9 +55,8 @@ class MyJobsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 10.h),
               Divider(color: Colors.white, thickness: 1.h),
-              SizedBox(height: 20.h),
+              SizedBox(height: 8.h),
 
               /// ================= JOB CARD =================
               Obx(() {
@@ -96,7 +94,7 @@ class MyJobsScreen extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.all(20.w),
+            padding: EdgeInsets.fromLTRB(10.w, 12.w, 10.w, 10.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -123,7 +121,7 @@ class MyJobsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 8.h),
 
                 /// PU / DO
                 Row(
@@ -164,7 +162,7 @@ class MyJobsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 6.h),
+                SizedBox(height: 8.h),
 
                 Row(
                   children: [
@@ -246,13 +244,12 @@ class MyJobsScreen extends StatelessWidget {
                   obscureText: false,
                   textInputType: TextInputType.text,
                 ),
-                SizedBox(height: 10.h),
               ],
             ),
           ),
           Positioned(
-            top: -0.w,
-            right: -5.w,
+            top: -4.w,
+            right: -13.w,
             child: PopupMenuButton<String>(
               icon: Icon(Icons.more_vert, color: Colors.white, size: 24.sp),
               color: Colors.white,
@@ -325,7 +322,7 @@ class MyJobsScreen extends StatelessWidget {
           Column(
             children: [
               Padding(
-                padding: EdgeInsets.all(20.w),
+                padding: EdgeInsets.fromLTRB(10.w, 12.w, 10.w, 10.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -352,7 +349,7 @@ class MyJobsScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 8.h),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -496,7 +493,7 @@ class MyJobsScreen extends StatelessWidget {
               /// Driver Section
               Container(
                 padding: EdgeInsets.all(16.w),
-                margin: EdgeInsets.all(10.w),
+                margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
                 decoration: BoxDecoration(
                   color: const Color(0xFF191111),
                   borderRadius: BorderRadius.circular(20.r),
@@ -668,12 +665,11 @@ class MyJobsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 10.h),
             ],
           ),
           Positioned(
-            top: -0.w,
-            right: -5.w,
+            top: -4.w,
+            right: -13.w,
             child: PopupMenuButton<String>(
               icon: Icon(Icons.more_vert, color: Colors.white, size: 24.sp),
               color: Colors.white,

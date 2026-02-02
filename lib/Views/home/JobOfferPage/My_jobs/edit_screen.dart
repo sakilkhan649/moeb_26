@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomTextField.dart';
@@ -25,26 +26,25 @@ class EditScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 60.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 30.h),
             _buildHeader(),
-            SizedBox(height: 20.h),
+            SizedBox(height: 10.h),
             _buildFieldWithLabel(
               "Pickup Location",
               pickupController,
               "e.g., JFK Airport, Terminal 4",
               Icons.location_on_outlined,
             ),
-            SizedBox(height: 20.h),
             _buildFieldWithLabel(
               "Drop-off Location",
               dropoffController,
               "e.g., Manhattan, Times Square",
               Icons.location_on_outlined,
             ),
-            SizedBox(height: 20.h),
             _buildFieldWithLabel(
               "Flight Number (Optional)",
               flightController,
@@ -52,7 +52,6 @@ class EditScreen extends StatelessWidget {
               Icons.flight,
               isRequired: false,
             ),
-            SizedBox(height: 20.h),
             _buildDateTimeRow(),
             SizedBox(height: 16.h),
             _buildVehicleSelection(editController),
@@ -63,7 +62,6 @@ class EditScreen extends StatelessWidget {
               "\$120",
               Icons.attach_money,
             ),
-            SizedBox(height: 20.h),
             _buildPaymentMethodDropdown(editController),
             SizedBox(height: 16.h),
             _buildFieldWithLabel(
@@ -94,7 +92,7 @@ class EditScreen extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 60.h),
+            SizedBox(height: 20.h),
           ],
         ),
       ),
@@ -140,11 +138,35 @@ class EditScreen extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _buildDateTimeField("Date", dateController, Icons.date_range),
+          child: Obx(() {
+            final date = editController.selectedDate.value;
+            dateController.text = date == null
+                ? ""
+                : "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+            return _buildDateTimeField(
+              "Date",
+              Icons.date_range,
+              dateController,
+              "Select Date",
+              (context) => editController.chooseDate(context),
+            );
+          }),
         ),
         SizedBox(width: 12.w),
         Expanded(
-          child: _buildDateTimeField("Time", timeController, Icons.access_time),
+          child: Builder(
+            builder: (context) => Obx(() {
+              final time = editController.selectedTime.value;
+              timeController.text = time == null ? "" : time.format(context);
+              return _buildDateTimeField(
+                "Time",
+                Icons.access_time,
+                timeController,
+                "Select Time",
+                (context) => editController.chooseTime(context),
+              );
+            }),
+          ),
         ),
       ],
     );
@@ -152,8 +174,10 @@ class EditScreen extends StatelessWidget {
 
   Widget _buildDateTimeField(
     String label,
-    TextEditingController ctrl,
     IconData icon,
+    TextEditingController ctrl,
+    String hint,
+    Function(BuildContext) onPressed,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,11 +197,18 @@ class EditScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 8.h),
-        Customtextfield(
-          controller: ctrl,
-          hintText: "",
-          obscureText: false,
-          textInputType: TextInputType.text,
+        Builder(
+          builder: (context) => GestureDetector(
+            onTap: () => onPressed(context),
+            child: AbsorbPointer(
+              child: Customtextfield(
+                controller: ctrl,
+                hintText: hint,
+                obscureText: false,
+                textInputType: TextInputType.none,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -268,39 +299,87 @@ class EditScreen extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Obx(
-          () => Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: AppColors.black200),
-            ),
-            child: DropdownButton<String>(
-              value: controller.paymentMethod.value,
+          () => DropdownButtonHideUnderline(
+            child: DropdownButton2<String>(
               isExpanded: true,
-              underline: SizedBox(),
-              dropdownColor: Colors.black,
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.grey,
-                size: 30.sp,
+              hint: Text(
+                'No Collect',
+                style: GoogleFonts.inter(
+                  color: AppColors.gray100,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-              style: GoogleFonts.inter(color: Colors.black, fontSize: 13.sp),
-              items: ['Collect', 'No collect']
+              value: controller.selectedRole.value.isEmpty
+                  ? null
+                  : controller.selectedRole.value,
+              items: controller.roles
                   .map(
-                    (value) => DropdownMenuItem(
-                      value: value,
+                    (role) => DropdownMenuItem(
+                      value: role,
                       child: Text(
-                        value,
+                        role,
                         style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 13.sp,
+                          color: Colors.black,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
                   )
                   .toList(),
-              onChanged: controller.changePaymentMethod,
+              onChanged: (value) {
+                if (value != null) {
+                  controller.pickRole(value);
+                }
+              },
+              buttonStyleData: ButtonStyleData(
+                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: AppColors.black200),
+                  color: Colors.transparent,
+                ),
+              ),
+              iconStyleData: IconStyleData(
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 24,
+                  color: AppColors.gray100,
+                ),
+              ),
+              dropdownStyleData: DropdownStyleData(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.r),
+                  color: Colors.white,
+                ),
+                offset: Offset(0, -5.h),
+                scrollbarTheme: ScrollbarThemeData(
+                  radius: Radius.circular(40.r),
+                  thickness: MaterialStateProperty.all(6),
+                  thumbVisibility: MaterialStateProperty.all(true),
+                ),
+              ),
+              menuItemStyleData: MenuItemStyleData(
+                height: 40.h,
+                padding: EdgeInsets.only(left: 14.w, right: 14.w),
+              ),
+              selectedItemBuilder: (context) {
+                return controller.roles.map((String value) {
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      value,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  );
+                }).toList();
+              },
             ),
           ),
         ),
@@ -310,7 +389,7 @@ class EditScreen extends StatelessWidget {
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.white)),
       ),

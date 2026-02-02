@@ -27,7 +27,6 @@ class Chatpage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20.h),
             // Header Section
             // Search Bar
             TextFormField(
@@ -60,7 +59,7 @@ class Chatpage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 10.h),
             // Chat List
             Expanded(
               child: Obx(() {

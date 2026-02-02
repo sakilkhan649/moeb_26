@@ -30,10 +30,11 @@ class ApplicationSubmited extends StatelessWidget {
 
                 // Title
                 CustomText(
-                  text: "Application Submitted",
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                    text: "Application Submitted",
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+
 
                 SizedBox(height: 16.h),
 
@@ -98,6 +99,20 @@ class ApplicationSubmited extends StatelessWidget {
                   },
                   child: Text(
                     "Next",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                TextButton(
+                  onPressed: () {
+                    Get.toNamed(Routes.accountSuccesScreen);
+                  },
+                  child: Text(
+                    "Success",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,

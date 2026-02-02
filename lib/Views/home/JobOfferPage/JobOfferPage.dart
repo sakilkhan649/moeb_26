@@ -54,7 +54,6 @@ class _JobofferpageState extends State<Jobofferpage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 20),
               CustomJobButton(
                 text: "New Job",
                 onPressed: () {
@@ -65,7 +64,7 @@ class _JobofferpageState extends State<Jobofferpage> {
                   );
                 },
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 15.h),
               CustomJobCard(
                 dateTime: "Tue, Jan 20 · 08:30 AM",
                 vehicleType: "SEDAN",
@@ -191,7 +190,7 @@ class CustomJobCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: const Color(0xFF1C1C1C),
         borderRadius: BorderRadius.circular(20.r),

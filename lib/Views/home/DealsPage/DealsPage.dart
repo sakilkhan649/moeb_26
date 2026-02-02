@@ -63,7 +63,7 @@ class Dealspage extends StatelessWidget {
 
         // Handle list of deals
         return ListView.builder(
-          padding: EdgeInsets.fromLTRB(20.w, 40.w, 20.w, 10.w),
+          padding: EdgeInsets.fromLTRB(20.w, 0.w, 20.w, 10.w),
           itemCount: controller.dealsList.length,
           itemBuilder: (context, index) {
             final deal = controller.dealsList[index];
@@ -85,7 +85,7 @@ class DealsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 20.h),
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: const Color(0xff1A1A1A), // Dark card background
         borderRadius: BorderRadius.circular(24.r),
@@ -119,7 +119,7 @@ class DealsCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
           // Title
           Text(
             deal.title,
@@ -129,7 +129,7 @@ class DealsCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 10.h),
           // Description
           Text(
             deal.description,
@@ -139,7 +139,7 @@ class DealsCard extends StatelessWidget {
               height: 1.5,
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 10.h),
           // Promo Code Section
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
@@ -198,7 +198,7 @@ class DealsCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 10.h),
           // Footer: Expiry and Use QR Button
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

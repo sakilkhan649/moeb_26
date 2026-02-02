@@ -372,7 +372,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 60.h),
+              SizedBox(height: 20.h),
             ],
           ),
         ),
@@ -403,7 +403,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: EdgeInsets.only(left: 20.w, top: 20.h, bottom: 16.h),
+      padding: EdgeInsets.only(left: 20.w, top: 5.h, bottom: 5.h),
       child: Text(
         title,
         style: GoogleFonts.inter(
@@ -417,7 +417,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildDetailRow(String label, RxString value) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 20.h),
+      padding: EdgeInsets.only(bottom: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

@@ -92,11 +92,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                           if (notificationCount > 0)
                             Positioned(
-                              top: -6.w,
-                              right: -5.w,
+                              top: -2.w,
+                              right: -1.w,
                               child: Container(
-                                width: 20.w,
-                                height: 20.w,
+                                width: 15.w,
+                                height: 15.w,
                                 decoration: BoxDecoration(
                                   color: Colors.orange,
                                   shape: BoxShape.circle,

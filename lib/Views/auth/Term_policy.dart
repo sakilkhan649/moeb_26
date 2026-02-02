@@ -510,9 +510,9 @@ class TermPolicy extends StatelessWidget {
       },
       child: Obx(
         () => AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          width: 28.w,
-          height: 28.w,
+          duration: Duration(milliseconds: 100),
+          width: 20.w,
+          height: 20.w,
           decoration: BoxDecoration(
             color: isChecked.value ? Colors.green : Colors.transparent,
             borderRadius: BorderRadius.circular(8.r),

@@ -32,7 +32,6 @@ class Marketplacepage extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
-            SizedBox(height: 20.h),
             // "List Item for Sale" Button
             CustomJobButton(
               text: "List Item for Sale",
@@ -44,7 +43,7 @@ class Marketplacepage extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 15.h),
             // Search Bar
             TextFormField(
               onChanged: (value) => controller.searchItems(value),
@@ -76,7 +75,7 @@ class Marketplacepage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 15.h),
             // Marketplace Items - Refactored to Column with Rows
             Expanded(
               child: Obx(() {

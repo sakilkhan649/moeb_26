@@ -11,8 +11,7 @@ import 'controller/splashcontroller.dart';
 class Splashscreen extends StatelessWidget {
   Splashscreen({super.key});
   // Initialize the GetX Controller
-  final SplashScreenController controller = Get.put(SplashScreenController());
-
+  final controller = Get.find<SplashScreenController>();
   // Start the timer as soon as the splash screen is loaded
 
   @override
