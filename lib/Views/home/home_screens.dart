@@ -57,7 +57,7 @@ class HomeScreens extends StatelessWidget {
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            height: 45.h,
+            height: 45.w,
             width: 45.w,
             decoration: BoxDecoration(
               color: isSelected ? const Color(0xFF000000) : Colors.transparent,

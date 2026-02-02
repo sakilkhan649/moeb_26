@@ -66,19 +66,24 @@ class CustomJobButton extends StatelessWidget {
               size: 24.sp, // Set the icon size
             ),
             SizedBox(width: 8.w), // Space between icon and text
-            Text(
-              text,
-              style:
-                  style ??
-                  GoogleFonts.inter(
-                    fontSize:
-                        fontSize ?? 16.sp, // Default font size with scaling
-                    fontWeight:
-                        fontWeight ?? FontWeight.bold, // Default to bold weight
-                    color:
-                        textColor ??
-                        Colors.black, // Default to white text color
-                  ),
+            Flexible(
+              child: Text(
+                text,
+                style:
+                    style ??
+                    GoogleFonts.inter(
+                      fontSize:
+                          fontSize ?? 16.sp, // Default font size with scaling
+                      fontWeight:
+                          fontWeight ??
+                          FontWeight.bold, // Default to bold weight
+                      color:
+                          textColor ??
+                          Colors.black, // Default to white text color
+                    ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ),
           ],
         ),

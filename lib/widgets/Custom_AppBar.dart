@@ -35,184 +35,179 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
+      toolbarHeight: 80.h,
       automaticallyImplyLeading: false,
-      flexibleSpace: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (logoPath != null && logoPath!.isNotEmpty)
-                Padding(
-                  padding: EdgeInsets.zero,
-                  child: Image.asset(logoPath!, height: 50.h, width: 50.h),
-                ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: (logoPath != null && logoPath!.isNotEmpty) ? 12.w : 0,
+      titleSpacing: 16.w,
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (logoPath != null && logoPath!.isNotEmpty) ...[
+            Image.asset(logoPath!, height: 50.h, width: 50.h),
+            SizedBox(width: 12.w),
+          ],
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (title != null && title!.isNotEmpty)
+                    CustomText(
+                      text: title!,
+                      fontSize: 20.sp,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  if (subtitle != null && subtitle!.isNotEmpty) ...[
+                    SizedBox(height: 2.h),
+                    CustomTextgray(
+                      text: subtitle!,
+                      fontSize: 12.sp,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Row(
+          children: [
+            GestureDetector(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(
+                    Icons.notifications_outlined,
+                    size: 30.sp,
+                    color: Colors.white,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  if (notificationCount > 0)
+                    Positioned(
+                      top: -2.w,
+                      right: -1.w,
+                      child: Container(
+                        width: 15.w,
+                        height: 15.w,
+                        decoration: BoxDecoration(
+                          color: Colors.orange,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            notificationCount > 99
+                                ? '99+'
+                                : '$notificationCount',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              onTap:
+                  onNotificationTap ??
+                  () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CustomNotificationPopup();
+                      },
+                    );
+                  },
+            ),
+            SizedBox(width: 10.w),
+            PopupMenuButton<int>(
+              icon: Icon(
+                Icons.person_outline,
+                size: 30.sp,
+                color: Colors.white,
+              ),
+              onSelected: (item) => handleMenuItemSelection(item),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(
                     children: [
-                      if (title != null && title!.isNotEmpty)
-                        CustomText(
-                          text: title!,
-                          fontSize: 20.sp,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.person_outline,
+                          color: Colors.black,
                         ),
-                      if (subtitle != null && subtitle!.isNotEmpty) ...[
-                        SizedBox(height: 2.h),
-                        CustomTextgray(
-                          text: subtitle!,
-                          fontSize: 12.sp,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ],
+                      ),
+                      const Text('Account'),
+                      SizedBox(width: 5.w),
+                      Icon(
+                        CupertinoIcons.chevron_forward,
+                        size: 24.sp,
+                        color: Colors.black,
+                      ),
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.zero,
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Icon(
-                            Icons.notifications_outlined,
-                            size: 30.sp,
-                            color: Colors.white,
-                          ),
-                          if (notificationCount > 0)
-                            Positioned(
-                              top: -2.w,
-                              right: -1.w,
-                              child: Container(
-                                width: 15.w,
-                                height: 15.w,
-                                decoration: BoxDecoration(
-                                  color: Colors.orange,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    notificationCount > 99
-                                        ? '99+'
-                                        : '$notificationCount',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.work_outline,
+                          color: Colors.black,
+                        ),
                       ),
-                      onTap:
-                          onNotificationTap ??
-                          () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CustomNotificationPopup();
-                              },
-                            );
-                          },
-                    ),
-                    SizedBox(width: 10.w),
-                    PopupMenuButton<int>(
-                      icon: Icon(
-                        Icons.person_outline,
-                        size: 30.sp,
-                        color: Colors.white,
+                      const Text('My Jobs'),
+                      SizedBox(width: 5.w),
+                      Icon(
+                        CupertinoIcons.chevron_forward,
+                        size: 24.sp,
+                        color: Colors.black,
                       ),
-                      onSelected: (item) => handleMenuItemSelection(item),
-                      itemBuilder: (context) => [
-                        PopupMenuItem<int>(
-                          value: 0,
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.person_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              const Text('Account'),
-                              SizedBox(width: 5.w),
-                              Icon(
-                                CupertinoIcons.chevron_forward,
-                                size: 24.sp,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem<int>(
-                          value: 1,
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.work_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              const Text('My Jobs'),
-                              SizedBox(width: 5.w),
-                              Icon(
-                                CupertinoIcons.chevron_forward,
-                                size: 24.sp,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem<int>(
-                          value: 2,
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.logout_outlined,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              const Text('Logout'),
-                              SizedBox(width: 10.w),
-                              Icon(
-                                CupertinoIcons.chevron_forward,
-                                size: 24.sp,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                      offset: const Offset(
-                        0,
-                        80,
-                      ), // Adjusted for taller AppBar height (80.h)
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.logout_outlined,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const Text('Logout'),
+                      SizedBox(width: 10.w),
+                      Icon(
+                        CupertinoIcons.chevron_forward,
+                        size: 24.sp,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              offset: const Offset(
+                0,
+                80,
+              ), // Adjusted for taller AppBar height (80.h)
+            ),
+            SizedBox(width: 16.w), // Right padding for actions
+          ],
         ),
-      ),
+      ],
     );
   }
 

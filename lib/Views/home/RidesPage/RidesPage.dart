@@ -21,83 +21,85 @@ class Ridespage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-      ),
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: CustomText(text: "MY Jobs", fontSize: 22.sp),
-                ),
-                Expanded(
-                  child: CustomJobButton(
-                    text: "New Job",
-                    onPressed: () {
-                      Get.bottomSheet(
-                        PostJobBottomSheet(),
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                      );
-                    },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomText(text: "MY Jobs", fontSize: 22.sp),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 15.h),
+                  Expanded(
+                    child: CustomJobButton(
+                      text: "New Job",
+                      onPressed: () {
+                        Get.bottomSheet(
+                          PostJobBottomSheet(),
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15.h),
 
-            /// CUSTOM TAB BAR
-            Obx(
-              () => Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xff1A1A1A),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Row(
-                  children: List.generate(_tabs.length, (index) {
-                    bool isSelected = controller.selectedTab.value == index;
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () => controller.changeTab(index),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 8.h),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.orange100
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(15.r),
-                          ),
-                          child: Center(
-                            child: Text(
-                              _tabs[index],
-                              style: GoogleFonts.inter(
-                                color: isSelected ? Colors.white : Colors.grey,
-                                fontSize: 14.sp,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
+              /// CUSTOM TAB BAR
+              Obx(
+                () => Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff1A1A1A),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Row(
+                    children: List.generate(_tabs.length, (index) {
+                      bool isSelected = controller.selectedTab.value == index;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () => controller.changeTab(index),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 8.h),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.orange100
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(15.r),
+                            ),
+                            child: Center(
+                              child: Text(
+                                _tabs[index],
+                                style: GoogleFonts.inter(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.grey,
+                                  fontSize: 14.sp,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    }),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 15.h),
+              SizedBox(height: 15.h),
 
-            /// RIDES LIST (Based on selected tab)
-            Expanded(
-              child: Obx(
+              /// RIDES LIST (Based on selected tab)
+              Obx(
                 () => ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: controller.currentRides.length,
+                  padding: EdgeInsets.only(bottom: 20.h),
                   itemBuilder: (context, index) {
                     final ride = controller.currentRides[index];
                     return GestureDetector(
@@ -128,8 +130,8 @@ class Ridespage extends StatelessWidget {
                   },
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -233,23 +235,30 @@ class CustomJobCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.grey,
-                    size: 16.sp,
-                  ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    dateTime,
-                    style: GoogleFonts.inter(
+              Expanded(
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_outlined,
                       color: Colors.grey,
-                      fontSize: 13.sp,
+                      size: 16.sp,
                     ),
-                  ),
-                ],
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Text(
+                        dateTime,
+                        style: GoogleFonts.inter(
+                          color: Colors.grey,
+                          fontSize: 13.sp,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              SizedBox(width: 10.w),
               VehicleTypeBadge(
                 vehicleType: vehicleType,
                 backgroundColor: vehicleTypeColor,
@@ -279,9 +288,16 @@ class CustomJobCard extends StatelessWidget {
             children: [
               Icon(Icons.person, color: Colors.grey, size: 18.sp),
               SizedBox(width: 10.w),
-              Text(
-                driverName,
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
+              Expanded(
+                child: Text(
+                  driverName,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 13.sp,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
             ],
           ),
@@ -292,9 +308,16 @@ class CustomJobCard extends StatelessWidget {
             children: [
               Icon(Icons.business_center, color: Colors.grey, size: 18.sp),
               SizedBox(width: 10.w),
-              Text(
-                companyName,
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
+              Expanded(
+                child: Text(
+                  companyName,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 13.sp,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
             ],
           ),

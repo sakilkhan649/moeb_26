@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
-import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 import 'package:moeb_26/widgets/Custom_Back_Button.dart';
@@ -24,8 +23,6 @@ class FinishRidePage extends StatefulWidget {
 }
 
 class _FinishRidePageState extends State<FinishRidePage> {
-  bool _isDragging = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,10 +100,8 @@ class _FinishRidePageState extends State<FinishRidePage> {
                 ),
                 SizedBox(height: 10.h),
 
-
                 Divider(color: Colors.white38, thickness: 1.h),
                 SizedBox(height: 5.h),
-
 
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -116,16 +111,6 @@ class _FinishRidePageState extends State<FinishRidePage> {
                       Draggable<String>(
                         data: 'finish',
                         axis: Axis.horizontal,
-                        onDragStarted: () {
-                          setState(() {
-                            _isDragging = true;
-                          });
-                        },
-                        onDragEnd: (details) {
-                          setState(() {
-                            _isDragging = false;
-                          });
-                        },
                         feedback: Material(
                           color: Colors.transparent,
                           child: Container(
@@ -146,19 +131,9 @@ class _FinishRidePageState extends State<FinishRidePage> {
                             ),
                           ),
                         ),
-                        childWhenDragging: Container(
-                          width: 60.w,
-                          height: 60.w,
-                          padding: EdgeInsets.all(16.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.orange100.withOpacity(0.2),
-                            shape: BoxShape.circle,
-                            // No shadow
-                          ),
-                          child: SvgPicture.asset(
-                            AppIcons.arre_right_icon,
-                            color: Colors.transparent,
-                          ),
+                        childWhenDragging: SvgPicture.asset(
+                          AppIcons.arre_right_icon,
+                          color: Colors.transparent,
                         ),
                         child: GestureDetector(
                           onTap: () {
@@ -184,6 +159,24 @@ class _FinishRidePageState extends State<FinishRidePage> {
                         ),
                       ),
                       SizedBox(width: 12.w),
+                      // Directional Arrows
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 30.sp,
+                          ),
+                          Transform.translate(
+                            offset: Offset(-8.w, 0), // Slight overlap for style
+                            child: Icon(
+                              Icons.chevron_right_rounded,
+                              color: const Color(0xFF6B6B6B),
+                              size: 30.sp,
+                            ),
+                          ),
+                        ],
+                      ),
                       // Pill-shaped Finish Label (DragTarget)
                       Expanded(
                         child: DragTarget<String>(
@@ -206,7 +199,7 @@ class _FinishRidePageState extends State<FinishRidePage> {
                                   color: isOver
                                       ? const Color(0xFFE1C16E)
                                       : const Color(0xFF2A2A2A),
-                                  borderRadius: BorderRadius.circular(30.r),
+                                  borderRadius: BorderRadius.circular(40.r),
                                   // No border
                                 ),
                                 child: CustomText(

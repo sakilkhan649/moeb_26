@@ -192,8 +192,6 @@ class CustomJobCard extends StatefulWidget {
 }
 
 class _CustomJobCardState extends State<CustomJobCard> {
-  bool _isDragging = false;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -350,16 +348,6 @@ class _CustomJobCardState extends State<CustomJobCard> {
               Draggable<String>(
                 data: 'confirm',
                 axis: Axis.horizontal,
-                onDragStarted: () {
-                  setState(() {
-                    _isDragging = true;
-                  });
-                },
-                onDragEnd: (details) {
-                  setState(() {
-                    _isDragging = false;
-                  });
-                },
                 feedback: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -376,19 +364,9 @@ class _CustomJobCardState extends State<CustomJobCard> {
                     ),
                   ),
                 ),
-                childWhenDragging: Container(
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.orange100.withOpacity(
-                      0.2,
-                    ), // Dimmed placeholder
-                    shape: BoxShape.circle,
-                    // No shadow
-                  ),
-                  child: SvgPicture.asset(
-                    AppIcons.arre_right_icon,
-                    color: Colors.transparent,
-                  ),
+                childWhenDragging: SvgPicture.asset(
+                  AppIcons.arre_right_icon,
+                  color: Colors.transparent,
                 ),
                 child: GestureDetector(
                   onTap: widget.onArrowTap,
@@ -402,6 +380,24 @@ class _CustomJobCardState extends State<CustomJobCard> {
                     child: SvgPicture.asset(AppIcons.arre_right_icon),
                   ),
                 ),
+              ),
+              // Directional Arrows
+              Row(
+                children: [
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.white,
+                    size: 30.sp,
+                  ),
+                  Transform.translate(
+                    offset: Offset(-8.w, 0), // Slight overlap for style
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      color: const Color(0xFF6B6B6B),
+                      size: 30.sp,
+                    ),
+                  ),
+                ],
               ),
               DragTarget<String>(
                 onAcceptWithDetails: (details) {
@@ -417,7 +413,7 @@ class _CustomJobCardState extends State<CustomJobCard> {
                       duration: const Duration(milliseconds: 200),
                       padding: EdgeInsets.symmetric(
                         vertical: 15.h,
-                        horizontal: 90.w,
+                        horizontal: 70.w,
                       ),
                       decoration: BoxDecoration(
                         color: isOver ? Color(0xFFE1C16E) : AppColors.orange100,

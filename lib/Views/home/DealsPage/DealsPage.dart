@@ -84,7 +84,7 @@ class DealsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20.h),
+      margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: const Color(0xff1A1A1A), // Dark card background
