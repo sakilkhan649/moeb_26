@@ -16,8 +16,15 @@ import '../../../../widgets/Custom_AppBar.dart';
 import '../../../../widgets/Custom_Card_Ditails.dart';
 import '../../../../widgets/Custom_Driver_Card.dart';
 
-class FinishRidePage extends StatelessWidget {
+class FinishRidePage extends StatefulWidget {
   const FinishRidePage({super.key});
+
+  @override
+  State<FinishRidePage> createState() => _FinishRidePageState();
+}
+
+class _FinishRidePageState extends State<FinishRidePage> {
+  bool _isDragging = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +40,12 @@ class FinishRidePage extends StatelessWidget {
         child: Column(
           children: [
             Divider(color: Colors.white38, thickness: 1.h),
-            SizedBox(height: 10.h),
             Padding(
               padding: EdgeInsets.only(left: 20.w),
               child: CustomBackButton(title: "Ride Details"),
             ),
-            SizedBox(height: 10.h),
             Divider(color: Colors.white38, thickness: 1.h),
-            SizedBox(height: 10.h),
+            SizedBox(height: 5.h),
             Column(
               mainAxisAlignment: .start,
               crossAxisAlignment: .start,
@@ -60,7 +65,7 @@ class FinishRidePage extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
 
                 // Status Steps Container (You can use this in your widget tree)
                 Padding(
@@ -87,7 +92,7 @@ class FinishRidePage extends StatelessWidget {
                     iconColor: Colors.grey,
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomTextgray(text: "Special Instructions"),
@@ -98,9 +103,10 @@ class FinishRidePage extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
 
-                SizedBox(height: 10.h),
+
                 Divider(color: Colors.white38, thickness: 1.h),
-                SizedBox(height: 10.h),
+                SizedBox(height: 5.h),
+
 
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -109,6 +115,17 @@ class FinishRidePage extends StatelessWidget {
                       // Circular Action Button (Draggable)
                       Draggable<String>(
                         data: 'finish',
+                        axis: Axis.horizontal,
+                        onDragStarted: () {
+                          setState(() {
+                            _isDragging = true;
+                          });
+                        },
+                        onDragEnd: (details) {
+                          setState(() {
+                            _isDragging = false;
+                          });
+                        },
                         feedback: Material(
                           color: Colors.transparent,
                           child: Container(
@@ -118,6 +135,7 @@ class FinishRidePage extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: AppColors.orange100,
                               shape: BoxShape.circle,
+                              // No shadow
                             ),
                             child: SvgPicture.asset(
                               AppIcons.arre_right_icon,
@@ -128,23 +146,18 @@ class FinishRidePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        childWhenDragging: Opacity(
-                          opacity: 0,
-                          child: Container(
-                            width: 60.w,
-                            height: 60.w,
-                            padding: EdgeInsets.all(16.w),
-                            decoration: BoxDecoration(
-                              color: AppColors.orange100,
-                              shape: BoxShape.circle,
-                            ),
-                            child: SvgPicture.asset(
-                              AppIcons.arre_right_icon,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcIn,
-                              ),
-                            ),
+                        childWhenDragging: Container(
+                          width: 60.w,
+                          height: 60.w,
+                          padding: EdgeInsets.all(16.w),
+                          decoration: BoxDecoration(
+                            color: AppColors.orange100.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                            // No shadow
+                          ),
+                          child: SvgPicture.asset(
+                            AppIcons.arre_right_icon,
+                            color: Colors.transparent,
                           ),
                         ),
                         child: GestureDetector(
@@ -158,6 +171,7 @@ class FinishRidePage extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: AppColors.orange100,
                               shape: BoxShape.circle,
+                              // No shadow
                             ),
                             child: SvgPicture.asset(
                               AppIcons.arre_right_icon,
@@ -190,15 +204,10 @@ class FinishRidePage extends StatelessWidget {
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: isOver
-                                      ? const Color(0xFF3A3A3A)
+                                      ? const Color(0xFFE1C16E)
                                       : const Color(0xFF2A2A2A),
                                   borderRadius: BorderRadius.circular(30.r),
-                                  border: isOver
-                                      ? Border.all(
-                                          color: Colors.white,
-                                          width: 2,
-                                        )
-                                      : null,
+                                  // No border
                                 ),
                                 child: CustomText(
                                   text: "Finish ride",

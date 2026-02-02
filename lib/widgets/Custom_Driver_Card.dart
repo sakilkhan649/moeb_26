@@ -28,7 +28,7 @@ class CustomDriverCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: Color(0xFF1C1C1C),
         borderRadius: BorderRadius.circular(16.r),
@@ -92,7 +92,7 @@ class CustomDriverCard extends StatelessWidget {
 
           // Vehicle Info Section
           if (showVehicleInfo && vehicleInfo != null) ...[
-            SizedBox(height: 24.h),
+            SizedBox(height: 10.h),
             Row(
               children: [
                 Icon(
@@ -113,7 +113,7 @@ class CustomDriverCard extends StatelessWidget {
           ],
 
           // Button Section
-          SizedBox(height: 24.h),
+          SizedBox(height: 10.h),
           _buildButton(),
         ],
       ),

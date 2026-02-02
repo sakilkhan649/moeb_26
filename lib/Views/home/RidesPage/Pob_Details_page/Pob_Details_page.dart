@@ -30,14 +30,12 @@ class PobDetailsPage extends StatelessWidget {
         child: Column(
           children: [
             Divider(color: Colors.white38, thickness: 1.h),
-            SizedBox(height: 10.h),
             Padding(
               padding: EdgeInsets.only(left: 20.w),
               child: CustomBackButton(title: "Ride Details"),
             ),
-            SizedBox(height: 10.h),
             Divider(color: Colors.white38, thickness: 1.h),
-            SizedBox(height: 10.h),
+            SizedBox(height: 5.h),
             Column(
               mainAxisAlignment: .start,
               crossAxisAlignment: .start,
@@ -57,7 +55,7 @@ class PobDetailsPage extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
 
                 // Status Steps Container (You can use this in your widget tree)
                 Padding(
@@ -84,7 +82,7 @@ class PobDetailsPage extends StatelessWidget {
                     iconColor: Colors.grey,
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomTextgray(text: "Special Instructions"),
@@ -95,7 +93,6 @@ class PobDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
 
-                SizedBox(height: 10.h),
                 Divider(color: Colors.white38, thickness: 1.h),
                 SizedBox(height: 10.h),
                 Padding(
@@ -109,7 +106,7 @@ class PobDetailsPage extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 80.h),
+                SizedBox(height: 30.h),
               ],
             ),
           ],

@@ -27,7 +27,6 @@ class ApprovePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20.h),
             Column(
               mainAxisAlignment: .start,
               crossAxisAlignment: .start,
@@ -47,7 +46,7 @@ class ApprovePage extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
 
                 // Status Steps Container (You can use this in your widget tree)
                 Padding(
@@ -74,7 +73,7 @@ class ApprovePage extends StatelessWidget {
                     iconColor: Colors.grey,
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
 
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
@@ -87,7 +86,7 @@ class ApprovePage extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 80.h),
+                SizedBox(height: 30.h),
               ],
             ),
           ],

@@ -30,7 +30,6 @@ class RideProgressBoard extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20.h),
             Column(
               mainAxisAlignment: .start,
               crossAxisAlignment: .start,
@@ -50,7 +49,7 @@ class RideProgressBoard extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: GestureDetector(
@@ -65,7 +64,7 @@ class RideProgressBoard extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
 
                 // Status Steps Container (You can use this in your widget tree)
                 Padding(
@@ -93,7 +92,7 @@ class RideProgressBoard extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(height: 80.h),
+                SizedBox(height: 30.h),
               ],
             ),
           ],

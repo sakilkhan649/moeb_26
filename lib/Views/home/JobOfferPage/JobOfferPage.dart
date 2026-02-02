@@ -83,7 +83,7 @@ class _JobofferpageState extends State<Jobofferpage> {
                 onArrowTap: () {
                   // Handle arrow tap
                   Get.toNamed(Routes.requestSubmitted);
-          
+
                   print("Arrow tapped");
                 },
                 onPriceTap: () {
@@ -92,7 +92,6 @@ class _JobofferpageState extends State<Jobofferpage> {
                 },
               ),
               SizedBox(height: 60.h),
-
             ],
           ),
         ),
@@ -149,7 +148,8 @@ class VehicleTypeBadge extends StatelessWidget {
 }
 
 /// ================= CUSTOM JOB CARD WIDGET =================
-class CustomJobCard extends StatelessWidget {
+/// ================= CUSTOM JOB CARD WIDGET =================
+class CustomJobCard extends StatefulWidget {
   final String dateTime;
   final String vehicleType;
   final String pickupLocation;
@@ -188,6 +188,13 @@ class CustomJobCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<CustomJobCard> createState() => _CustomJobCardState();
+}
+
+class _CustomJobCardState extends State<CustomJobCard> {
+  bool _isDragging = false;
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(10.w),
@@ -213,7 +220,7 @@ class CustomJobCard extends StatelessWidget {
                   ),
                   SizedBox(width: 5.w),
                   Text(
-                    dateTime,
+                    widget.dateTime,
                     style: GoogleFonts.inter(
                       color: Colors.grey,
                       fontSize: 12.sp,
@@ -222,8 +229,8 @@ class CustomJobCard extends StatelessWidget {
                 ],
               ),
               VehicleTypeBadge(
-                vehicleType: vehicleType,
-                backgroundColor: vehicleTypeColor,
+                vehicleType: widget.vehicleType,
+                backgroundColor: widget.vehicleTypeColor,
               ),
             ],
           ),
@@ -239,7 +246,7 @@ class CustomJobCard extends StatelessWidget {
                   style: const TextStyle(color: Colors.grey),
                 ),
                 TextSpan(
-                  text: pickupLocation,
+                  text: widget.pickupLocation,
                   style: const TextStyle(color: Colors.white),
                 ),
               ],
@@ -257,7 +264,7 @@ class CustomJobCard extends StatelessWidget {
                   style: const TextStyle(color: Colors.grey),
                 ),
                 TextSpan(
-                  text: dropoffLocation,
+                  text: widget.dropoffLocation,
                   style: const TextStyle(color: Colors.white),
                 ),
               ],
@@ -271,7 +278,7 @@ class CustomJobCard extends StatelessWidget {
               SvgPicture.asset(AppIcons.person_icon),
               SizedBox(width: 5.w),
               Text(
-                driverName,
+                widget.driverName,
                 style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
               ),
             ],
@@ -284,7 +291,7 @@ class CustomJobCard extends StatelessWidget {
               SvgPicture.asset(AppIcons.sadax_icon),
               SizedBox(width: 5.w),
               Text(
-                companyName,
+                widget.companyName,
                 style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
               ),
             ],
@@ -299,8 +306,8 @@ class CustomJobCard extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           CustomTextFieldGold(
-            controller: flightNumberController,
-            hintText: flightNumberHint,
+            controller: widget.flightNumberController,
+            hintText: widget.flightNumberHint,
             obscureText: false,
             textInputType: TextInputType.text,
           ),
@@ -314,8 +321,8 @@ class CustomJobCard extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           CustomTextFieldGold(
-            controller: paymentMethodController,
-            hintText: paymentMethodHint,
+            controller: widget.paymentMethodController,
+            hintText: widget.paymentMethodHint,
             obscureText: false,
             textInputType: TextInputType.text,
           ),
@@ -329,12 +336,12 @@ class CustomJobCard extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           CustomTextFieldGold(
-            controller: specialInstructionsController,
-            hintText: specialInstructionsHint,
+            controller: widget.specialInstructionsController,
+            hintText: widget.specialInstructionsHint,
             obscureText: false,
             textInputType: TextInputType.text,
           ),
-          SizedBox(height: 30.h),
+          SizedBox(height: 20.h),
 
           /// BOTTOM ACTION ROW
           Row(
@@ -342,6 +349,17 @@ class CustomJobCard extends StatelessWidget {
             children: [
               Draggable<String>(
                 data: 'confirm',
+                axis: Axis.horizontal,
+                onDragStarted: () {
+                  setState(() {
+                    _isDragging = true;
+                  });
+                },
+                onDragEnd: (details) {
+                  setState(() {
+                    _isDragging = false;
+                  });
+                },
                 feedback: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -349,6 +367,7 @@ class CustomJobCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.orange100,
                       shape: BoxShape.circle,
+                      // No shadow
                     ),
                     child: SvgPicture.asset(
                       AppIcons.arre_right_icon,
@@ -357,24 +376,28 @@ class CustomJobCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                childWhenDragging: Opacity(
-                  opacity: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: const BoxDecoration(
-                      color: AppColors.orange100,
-                      shape: BoxShape.circle,
-                    ),
-                    child: SvgPicture.asset(AppIcons.arre_right_icon),
+                childWhenDragging: Container(
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.orange100.withOpacity(
+                      0.2,
+                    ), // Dimmed placeholder
+                    shape: BoxShape.circle,
+                    // No shadow
+                  ),
+                  child: SvgPicture.asset(
+                    AppIcons.arre_right_icon,
+                    color: Colors.transparent,
                   ),
                 ),
                 child: GestureDetector(
-                  onTap: onArrowTap,
+                  onTap: widget.onArrowTap,
                   child: Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
                       color: AppColors.orange100,
                       shape: BoxShape.circle,
+                      // No shadow
                     ),
                     child: SvgPicture.asset(AppIcons.arre_right_icon),
                   ),
@@ -383,13 +406,13 @@ class CustomJobCard extends StatelessWidget {
               DragTarget<String>(
                 onAcceptWithDetails: (details) {
                   if (details.data == 'confirm') {
-                    onArrowTap?.call();
+                    widget.onArrowTap?.call();
                   }
                 },
                 builder: (context, candidateData, rejectedData) {
                   bool isOver = candidateData.isNotEmpty;
                   return GestureDetector(
-                    onTap: onPriceTap,
+                    onTap: widget.onPriceTap,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: EdgeInsets.symmetric(
@@ -397,15 +420,10 @@ class CustomJobCard extends StatelessWidget {
                         horizontal: 90.w,
                       ),
                       decoration: BoxDecoration(
-                        color: isOver
-                            ? AppColors.orange100.withOpacity(0.8)
-                            : AppColors.orange100,
+                        color: isOver ? Color(0xFFE1C16E) : AppColors.orange100,
                         borderRadius: BorderRadius.circular(16.r),
-                        border: isOver
-                            ? Border.all(color: Colors.white, width: 2)
-                            : null,
                       ),
-                      child: CustomText(text: price, fontSize: 18.sp),
+                      child: CustomText(text: widget.price, fontSize: 18.sp),
                     ),
                   );
                 },

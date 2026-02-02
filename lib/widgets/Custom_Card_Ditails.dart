@@ -53,7 +53,7 @@ class CustomJobDetailsCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.all(10.w),
         decoration: BoxDecoration(
           color: backgroundColor ?? const Color(0xFF1C1C1C),
           borderRadius: BorderRadius.circular(20.r),
@@ -145,7 +145,6 @@ class CustomJobDetailsCard extends StatelessWidget {
               label: "Amount",
               value: amount,
             ),
-            Divider(color: Colors.grey[700], thickness: 1.h),
           ],
         ),
       ),

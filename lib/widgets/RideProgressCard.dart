@@ -37,7 +37,7 @@ class RideProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(padding ?? 20.w),
+      padding: EdgeInsets.all(padding ?? 10.w),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(borderRadius ?? 16.r),
@@ -51,7 +51,7 @@ class RideProgressCard extends StatelessWidget {
             text: title,
             fontSize: titleFontSize ?? 15.sp,
           ),
-          SizedBox(height: 15.h),
+          SizedBox(height: 10.h),
           Row(
             children: [
               SvgPicture.asset(
