@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 class CreateAccountController extends GetxController {
   // Form key
 
-
   // Text Controllers - এইগুলা দিয়ে input নিব
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
@@ -35,10 +34,12 @@ class CreateAccountController extends GetxController {
 
   // City এর list
   final cities = [
-    'ATLANTA', 'AUSTIN', 'BOSTON', 'CHARLOTTE', 'DALLAS', 'DETROIT',
-    'FORT LAUDERDALE', 'FORT MYERS', 'HOUSTON', 'LAS VEGAS', 'MIAMI',
-    'NEW YORK', 'ORLANDO', 'PALM BEACH', 'PHILADELPHIA', 'SEATTLE',
-    'TAMPA', 'WASHINGTON DC'
+    'FL-Miami',
+    'FL-Orlando',
+    'FL-PalmBeach',
+    'FL-Fort Lauderdale',
+    'FL-Naples',
+    'FL-Tampa',
   ];
 
   // Password দেখাও/লুকাও
@@ -61,7 +62,6 @@ class CreateAccountController extends GetxController {
     selectedArea.value = area;
     serviceController.text = area;
   }
-
 
   // Controller বন্ধ করার সময় memory clean করো
   @override

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:moeb_26/Views/auth/VehicleInformation.dart';
-import 'package:moeb_26/Views/auth/createaccountscreen.dart';
+import 'package:moeb_26/Views/auth/CreateAccount/createaccountscreen.dart';
 import 'package:moeb_26/Views/auth/signscreen.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/my_jobs.dart';
 import '../Views/auth/Account_succes_screen.dart';

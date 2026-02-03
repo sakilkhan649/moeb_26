@@ -1,14 +1,17 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_const.dart';
-import '../../Core/routs.dart';
-import '../../Utils/app_colors.dart';
-import '../../widgets/CustomButton.dart';
-import '../../widgets/CustomText.dart';
-import '../../widgets/CustomTextField.dart';
-import '../../widgets/CustomTextGary.dart';
+import '../../../Core/routs.dart';
+import '../../../Utils/app_colors.dart';
+import '../../../widgets/CustomButton.dart';
+import '../../../widgets/CustomText.dart';
+import '../../../widgets/CustomTextField.dart';
+import '../../../widgets/CustomTextGary.dart';
 import 'CreateAccountController/CreateAccountController.dart';
+
 
 class Createaccountscreen extends StatelessWidget {
   Createaccountscreen({super.key});
@@ -113,64 +116,91 @@ class Createaccountscreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Obx(
-                  () => Customtextfield(
-                    controller: controller.serviceController,
-                    hintText: controller.selectedArea.value.isEmpty
-                        ? 'Select Service Area'
-                        : controller.selectedArea.value,
-                    obscureText: false,
-                    textInputType: TextInputType.name,
-                    suffixIcon: IconButton(
-                      onPressed: () async {
-                        // Dialog দেখাও
-                        String? selected = await showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: CustomTextgray(
-                                text: "Select Area",
-                                color: Colors.black,
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              backgroundColor: Colors.white,
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  children: controller.cities.map((city) {
-                                    return ListTile(
-                                      title: Text(
-                                        city,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15.sp,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.pop(context, city);
-                                      },
-                                    );
-                                  }).toList(),
+                  () => DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        'FL-Miami',
+                        style: GoogleFonts.inter(
+                          color: AppColors.gray100,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      value: controller.selectedArea.value.isEmpty
+                          ? null
+                          : controller.selectedArea.value,
+                      items: controller.cities
+                          .map(
+                            (role) => DropdownMenuItem(
+                              value: role,
+                              child: Text(
+                                role,
+                                style: GoogleFonts.inter(
+                                  color: Colors.black,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            );
-                          },
-                        );
-                        // যদি কিছু select করে তাহলে save করো
-                        if (selected != null) {
-                          controller.pickArea(selected);
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.pickArea(value);
                         }
                       },
-                      icon: Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 30,
-                        color: AppColors.gray100,
+                      buttonStyleData: ButtonStyleData(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 15.w,
+                          vertical: 8.h,
+                        ),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(color: AppColors.black200),
+                          color: Colors.transparent,
+                        ),
                       ),
+                      iconStyleData: IconStyleData(
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          size: 24.sp,
+                          color: AppColors.gray100,
+                        ),
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: Colors.white,
+                        ),
+                        offset: Offset(0, -5.h),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: Radius.circular(40.r),
+                          thickness: MaterialStateProperty.all(6),
+                          thumbVisibility: MaterialStateProperty.all(true),
+                        ),
+                      ),
+                      menuItemStyleData: MenuItemStyleData(
+                        height: 40.h,
+                        padding: EdgeInsets.only(left: 14.w, right: 14.w),
+                      ),
+                      selectedItemBuilder: (context) {
+                        return controller.cities.map((String value) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              value,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          );
+                        }).toList();
+                      },
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return "Enter your Service Area";
-                      return null;
-                    },
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -243,64 +273,91 @@ class Createaccountscreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Obx(
-                  () => Customtextfield(
-                    controller: controller.companyRoleController,
-                    hintText: controller.selectedRole.value.isEmpty
-                        ? 'Select Role'
-                        : controller.selectedRole.value,
-                    obscureText: false,
-                    textInputType: TextInputType.name,
-                    suffixIcon: IconButton(
-                      onPressed: () async {
-                        // Dialog দেখাও
-                        String? selected = await showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: CustomTextgray(
-                                text: "Select Role",
-                                color: Colors.black,
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              backgroundColor: Colors.white,
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  children: controller.roles.map((role) {
-                                    return ListTile(
-                                      title: Text(
-                                        role,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15.sp,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.pop(context, role);
-                                      },
-                                    );
-                                  }).toList(),
+                  () => DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        'Select Role',
+                        style: GoogleFonts.inter(
+                          color: AppColors.gray100,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      value: controller.selectedRole.value.isEmpty
+                          ? null
+                          : controller.selectedRole.value,
+                      items: controller.roles
+                          .map(
+                            (role) => DropdownMenuItem(
+                              value: role,
+                              child: Text(
+                                role,
+                                style: GoogleFonts.inter(
+                                  color: Colors.black,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            );
-                          },
-                        );
-                        // যদি কিছু select করে তাহলে save করো
-                        if (selected != null) {
-                          controller.pickRole(selected);
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.pickRole(value);
                         }
                       },
-                      icon: Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 30,
-                        color: AppColors.gray100,
+                      buttonStyleData: ButtonStyleData(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 15.w,
+                          vertical: 8.h,
+                        ),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(color: AppColors.black200),
+                          color: Colors.transparent,
+                        ),
                       ),
+                      iconStyleData: IconStyleData(
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          size: 24.sp,
+                          color: AppColors.gray100,
+                        ),
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: Colors.white,
+                        ),
+                        offset: Offset(0, -5.h),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: Radius.circular(40.r),
+                          thickness: MaterialStateProperty.all(6),
+                          thumbVisibility: MaterialStateProperty.all(true),
+                        ),
+                      ),
+                      menuItemStyleData: MenuItemStyleData(
+                        height: 40.h,
+                        padding: EdgeInsets.only(left: 14.w, right: 14.w),
+                      ),
+                      selectedItemBuilder: (context) {
+                        return controller.roles.map((String value) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              value,
+                              style: GoogleFonts.inter(
+                                color: Colors.black,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          );
+                        }).toList();
+                      },
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return "Enter your Company Role";
-                      return null;
-                    },
                   ),
                 ),
                 SizedBox(height: 20.h),
