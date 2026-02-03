@@ -3,6 +3,7 @@ import 'package:moeb_26/Views/auth/VehicleInformation.dart';
 import 'package:moeb_26/Views/auth/CreateAccount/createaccountscreen.dart';
 import 'package:moeb_26/Views/auth/signscreen.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/my_jobs.dart';
+import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved.dart';
 import '../Views/auth/Application_submited.dart';
@@ -65,6 +66,7 @@ class Routes {
   static const String rideCompleteJob = "/RideCompleteJob";
   static const String profileScreen = "/ProfileScreen";
   static const String ratingsFeedback= "/RatingsFeedback";
+  static const String serviceArea= "/ServiceArea";
 
   static List<GetPage> routes = [
     GetPage(
@@ -225,6 +227,11 @@ class Routes {
     GetPage(
       name: ratingsFeedback,
       page: () => RatingsFeedback(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: serviceArea,
+      page: () => ServiceArea(),
       transition: Transition.noTransition,
     ),
   ];

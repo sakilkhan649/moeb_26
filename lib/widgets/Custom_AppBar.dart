@@ -13,6 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onAccountTap;
   final VoidCallback? onMyJobsTap;
   final VoidCallback? onLogoutTap;
+  final VoidCallback? serviceAreaTap;
   final int notificationCount;
   final String? logoPath;
   final String? title;
@@ -24,6 +25,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onAccountTap,
     this.onMyJobsTap,
     this.onLogoutTap,
+    this.serviceAreaTap,
     this.notificationCount = 0,
     this.logoPath,
     this.title,
@@ -183,6 +185,27 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.location_on_outlined,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const Text('Service Area'),
+                      SizedBox(width: 5.w),
+                      Icon(
+                        CupertinoIcons.chevron_forward,
+                        size: 24.sp,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
                   value: 2,
                   child: Row(
                     children: [
@@ -206,7 +229,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ],
               offset: const Offset(
                 0,
-                80,
+                50,
               ), // Adjusted for taller AppBar height (80.h)
             ),
             SizedBox(width: 16.w), // Right padding for actions
@@ -233,6 +256,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         }
         break;
       case 2:
+        if (serviceAreaTap != null) {
+          serviceAreaTap!();
+        } else {
+          Get.toNamed(Routes.serviceArea);
+        }
+        break;
+      case 3:
         if (onLogoutTap != null) {
           onLogoutTap!();
         } else {
@@ -247,5 +277,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(80.h);
+  Size get preferredSize => Size.fromHeight(60.h);
 }
