@@ -36,7 +36,7 @@ class Createscreens extends StatelessWidget {
                 SizedBox(height: 11.h),
                 // Subtitle Text
                 CustomTextgray(text: "Where Excellence Connects"),
-                SizedBox(height: 200.h),
+                SizedBox(height: 150.h),
                 // Dots for the indicator (if needed)
                 CustomButton(
                   text: "Create Account",

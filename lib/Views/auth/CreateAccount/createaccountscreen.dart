@@ -120,7 +120,7 @@ class Createaccountscreen extends StatelessWidget {
                     child: DropdownButton2<String>(
                       isExpanded: true,
                       hint: Text(
-                        'FL-Miami',
+                        'Miami, FL',
                         style: GoogleFonts.inter(
                           color: AppColors.gray100,
                           fontSize: 14.sp,

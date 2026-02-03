@@ -34,12 +34,12 @@ class CreateAccountController extends GetxController {
 
   // City এর list
   final cities = [
-    'FL-Miami',
-    'FL-Orlando',
-    'FL-PalmBeach',
-    'FL-Fort Lauderdale',
-    'FL-Naples',
-    'FL-Tampa',
+    'Miami, FL',
+    'Orlando, FL',
+    'Palm Beach, FL',
+    'Fort Lauderdale, FL',
+    'Naples, FL',
+    'Tampa, FL',
   ];
 
   // Password দেখাও/লুকাও

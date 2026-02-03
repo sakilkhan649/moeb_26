@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../Core/routs.dart';
-import '../../Utils/app_colors.dart';
-import '../../widgets/CustomButton.dart';
-import '../../widgets/CustomText.dart';
-import '../../widgets/CustomTextGary.dart';
+import '../../../Core/routs.dart';
+import '../../../Utils/app_colors.dart';
+import '../../../widgets/CustomButton.dart';
+import '../../../widgets/CustomText.dart';
+import '../../../widgets/CustomTextGary.dart';
 import 'Controller/VehicleInformationController.dart';
 import 'Model/VehicleModel.dart';
+
 
 class Vehicleinformation extends StatelessWidget {
   Vehicleinformation({super.key});
