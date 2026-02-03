@@ -129,7 +129,7 @@ class TermPolicy extends StatelessWidget {
                               padding: EdgeInsets.all(20),
                               child: CustomTextgray(
                                 text:
-                                    "This Code of Conduct defines the professional standards required of all chauffeurs operating within the Elite Chauffeur Network. Compliance is mandatory.",
+                                    "This Code of Conduct defines the professional standards required of all chauffeurs operating within the Ekkali Network. Compliance is mandatory.",
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w400,
                               ),
