@@ -36,17 +36,17 @@ class CustomDropdown extends StatelessWidget {
         items: items
             .map(
               (item) => DropdownMenuItem(
-            value: item,
-            child: Text(
-              item,
-              style: GoogleFonts.inter(
-                color: Colors.black,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
+                value: item,
+                child: Text(
+                  item,
+                  style: GoogleFonts.inter(
+                    color: Colors.black,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
-          ),
-        )
+            )
             .toList(),
         onChanged: onChanged,
         buttonStyleData: ButtonStyleData(
@@ -88,9 +88,9 @@ class CustomDropdown extends StatelessWidget {
               child: Text(
                 item,
                 style: GoogleFonts.inter(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             );

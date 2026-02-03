@@ -1,8 +1,8 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:moeb_26/widgets/Custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:moeb_26/Utils/app_const.dart';
 import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
@@ -11,7 +11,6 @@ import '../../../widgets/CustomText.dart';
 import '../../../widgets/CustomTextField.dart';
 import '../../../widgets/CustomTextGary.dart';
 import 'CreateAccountController/CreateAccountController.dart';
-
 
 class Createaccountscreen extends StatelessWidget {
   Createaccountscreen({super.key});
@@ -115,92 +114,19 @@ class Createaccountscreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.h),
+                // Using CustomDropdown for clearer code and reusability
                 Obx(
-                  () => DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        'Miami, FL',
-                        style: GoogleFonts.inter(
-                          color: AppColors.gray100,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      value: controller.selectedArea.value.isEmpty
-                          ? null
-                          : controller.selectedArea.value,
-                      items: controller.cities
-                          .map(
-                            (role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(
-                                role,
-                                style: GoogleFonts.inter(
-                                  color: Colors.black,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.pickArea(value);
-                        }
-                      },
-                      buttonStyleData: ButtonStyleData(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 15.w,
-                          vertical: 8.h,
-                        ),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.r),
-                          border: Border.all(color: AppColors.black200),
-                          color: Colors.transparent,
-                        ),
-                      ),
-                      iconStyleData: IconStyleData(
-                        icon: Icon(
-                          Icons.keyboard_arrow_down,
-                          size: 24.sp,
-                          color: AppColors.gray100,
-                        ),
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
-                          color: Colors.white,
-                        ),
-                        offset: Offset(0, -5.h),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: Radius.circular(40.r),
-                          thickness: MaterialStateProperty.all(6),
-                          thumbVisibility: MaterialStateProperty.all(true),
-                        ),
-                      ),
-                      menuItemStyleData: MenuItemStyleData(
-                        height: 40.h,
-                        padding: EdgeInsets.only(left: 14.w, right: 14.w),
-                      ),
-                      selectedItemBuilder: (context) {
-                        return controller.cities.map((String value) {
-                          return Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              value,
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          );
-                        }).toList();
-                      },
-                    ),
+                  () => CustomDropdown(
+                    hintText: 'Miami, FL',
+                    value: controller.selectedArea.value.isEmpty
+                        ? null
+                        : controller.selectedArea.value,
+                    items: controller.cities,
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.pickArea(value);
+                      }
+                    },
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -272,92 +198,19 @@ class Createaccountscreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.h),
+                // Using CustomDropdown for consistent UI and less boilerplate
                 Obx(
-                  () => DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        'Select Role',
-                        style: GoogleFonts.inter(
-                          color: AppColors.gray100,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      value: controller.selectedRole.value.isEmpty
-                          ? null
-                          : controller.selectedRole.value,
-                      items: controller.roles
-                          .map(
-                            (role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(
-                                role,
-                                style: GoogleFonts.inter(
-                                  color: Colors.black,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.pickRole(value);
-                        }
-                      },
-                      buttonStyleData: ButtonStyleData(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 15.w,
-                          vertical: 8.h,
-                        ),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.r),
-                          border: Border.all(color: AppColors.black200),
-                          color: Colors.transparent,
-                        ),
-                      ),
-                      iconStyleData: IconStyleData(
-                        icon: Icon(
-                          Icons.keyboard_arrow_down,
-                          size: 24.sp,
-                          color: AppColors.gray100,
-                        ),
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
-                          color: Colors.white,
-                        ),
-                        offset: Offset(0, -5.h),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: Radius.circular(40.r),
-                          thickness: MaterialStateProperty.all(6),
-                          thumbVisibility: MaterialStateProperty.all(true),
-                        ),
-                      ),
-                      menuItemStyleData: MenuItemStyleData(
-                        height: 40.h,
-                        padding: EdgeInsets.only(left: 14.w, right: 14.w),
-                      ),
-                      selectedItemBuilder: (context) {
-                        return controller.roles.map((String value) {
-                          return Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              value,
-                              style: GoogleFonts.inter(
-                                color: Colors.black,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          );
-                        }).toList();
-                      },
-                    ),
+                  () => CustomDropdown(
+                    hintText: 'Select Role',
+                    value: controller.selectedRole.value.isEmpty
+                        ? null
+                        : controller.selectedRole.value,
+                    items: controller.roles,
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.pickRole(value);
+                      }
+                    },
                   ),
                 ),
                 SizedBox(height: 20.h),
