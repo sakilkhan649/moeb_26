@@ -185,7 +185,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 PopupMenuItem<int>(
-                  value: 1,
+                  value: 2,
                   child: Row(
                     children: [
                       IconButton(
@@ -206,7 +206,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 PopupMenuItem<int>(
-                  value: 2,
+                  value: 3,
                   child: Row(
                     children: [
                       IconButton(
