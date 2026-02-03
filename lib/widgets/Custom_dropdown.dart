@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../Utils/app_colors.dart';
 
-class CustomDropdown extends StatelessWidget {
+class CustomDropdown extends StatefulWidget {
   final String hintText;
   final String? value;
   final List<String> items;
@@ -20,20 +20,29 @@ class CustomDropdown extends StatelessWidget {
   });
 
   @override
+  State<CustomDropdown> createState() => _CustomDropdownState();
+}
+
+class _CustomDropdownState extends State<CustomDropdown> {
+  bool _isMenuOpen = false;
+
+  @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
         isExpanded: true,
         hint: Text(
-          hintText,
+          widget.hintText,
           style: GoogleFonts.inter(
             color: AppColors.gray100,
             fontSize: 14.sp,
             fontWeight: FontWeight.w400,
           ),
         ),
-        value: (value == null || value!.isEmpty) ? null : value,
-        items: items
+        value: (widget.value == null || widget.value!.isEmpty)
+            ? null
+            : widget.value,
+        items: widget.items
             .map(
               (item) => DropdownMenuItem(
                 value: item,
@@ -48,7 +57,7 @@ class CustomDropdown extends StatelessWidget {
               ),
             )
             .toList(),
-        onChanged: onChanged,
+        onChanged: widget.onChanged,
         buttonStyleData: ButtonStyleData(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
           width: double.infinity,
@@ -60,7 +69,7 @@ class CustomDropdown extends StatelessWidget {
         ),
         iconStyleData: IconStyleData(
           icon: Icon(
-            Icons.keyboard_arrow_down,
+            _isMenuOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
             size: 24.sp,
             color: AppColors.gray100,
           ),
@@ -82,7 +91,7 @@ class CustomDropdown extends StatelessWidget {
           padding: EdgeInsets.only(left: 14.w, right: 14.w),
         ),
         selectedItemBuilder: (context) {
-          return items.map((String item) {
+          return widget.items.map((String item) {
             return Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -95,6 +104,11 @@ class CustomDropdown extends StatelessWidget {
               ),
             );
           }).toList();
+        },
+        onMenuStateChange: (isOpen) {
+          setState(() {
+            _isMenuOpen = isOpen;
+          });
         },
       ),
     );

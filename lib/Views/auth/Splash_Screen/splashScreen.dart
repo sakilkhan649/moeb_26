@@ -48,8 +48,8 @@ class Splashscreen extends StatelessWidget {
                   3, // number of dots
                   (index) => Container(
                     margin: EdgeInsets.symmetric(horizontal: 4.w),
-                    width: 15.w,
-                    height: 15.h,
+                    width: 8.w,
+                    height: 8.w,
                     decoration: BoxDecoration(
                       color: index == controller.currentIndex.value
                           ? Colors.white

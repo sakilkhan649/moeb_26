@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/Views/home/ChatPage/ChatPage.dart';
 import 'package:moeb_26/Views/home/DealsPage/DealsPage.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/JobOfferPage.dart';
@@ -64,10 +66,14 @@ class HomeScreens extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.r),
             ),
             alignment: Alignment.center,
-            child: Icon(
-              _getIconForIndex(index),
-              size: 24.sp,
-              color: isSelected ? Colors.white : Colors.grey,
+            child: SvgPicture.asset(
+              _getSvgForIndex(index),
+              width: 24.w,
+              height: 24.w,
+              colorFilter: ColorFilter.mode(
+                isSelected ? Colors.white : Colors.grey,
+                BlendMode.srcIn,
+              ),
             ),
           ),
           SizedBox(height: 5.h), // Add some space between icon and label
@@ -83,20 +89,20 @@ class HomeScreens extends StatelessWidget {
     );
   }
 
-  IconData _getIconForIndex(int index) {
+  String _getSvgForIndex(int index) {
     switch (index) {
       case 0:
-        return Icons.work_outline;
+        return AppIcons.job_offer_icon;
       case 1:
-        return Icons.directions_car_outlined;
+        return AppIcons.rides_icon;
       case 2:
-        return Icons.chat_bubble_outline;
+        return AppIcons.chats_icon;
       case 3:
-        return Icons.shopping_bag_outlined;
+        return AppIcons.marketplace_icon;
       case 4:
-        return Icons.local_offer_outlined;
+        return AppIcons.deals_icon;
       default:
-        return Icons.work_outline;
+        return '';
     }
   }
 

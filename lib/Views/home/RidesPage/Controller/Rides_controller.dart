@@ -46,7 +46,7 @@ class RidesController extends GetxController {
       pickupAmount: "\$150",
       driverName: "Zahid",
       companyName: "ELITE",
-      vehicleTypeColor: Colors.blue,
+      vehicleTypeColor: Color(0xFF0A1F44),
     ),
   ].obs;
 

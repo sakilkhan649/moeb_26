@@ -35,8 +35,8 @@ class Createscreens extends StatelessWidget {
                 CustomText(text: "Elite Chauffeur Network"),
                 SizedBox(height: 11.h),
                 // Subtitle Text
-                CustomTextgray(text: "Where Excellence Connects"),
-                SizedBox(height: 150.h),
+                CustomTextgray(text: "Where Excellence Connects",fontSize: 16.sp,),
+                SizedBox(height: 240.h),
                 // Dots for the indicator (if needed)
                 CustomButton(
                   text: "Create Account",
@@ -44,7 +44,7 @@ class Createscreens extends StatelessWidget {
                     Get.toNamed(Routes.createaccountscreen);
                   },
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 12.h),
                 CustomButton(
                   text: "Sign In",
                   onPressed: () {
@@ -54,14 +54,14 @@ class Createscreens extends StatelessWidget {
                   textColor: Colors.white,
                   borderColor: AppColors.black200,
                 ),
-                SizedBox(height: 15.h),
+                SizedBox(height: 20.h),
                 // Subtitle Text
                 GestureDetector(
                   onTap: () {},
                   child: CustomTextgray(
                     text:
                         "By continuing, you agree to our Terms & Privacy Policy",
-                    fontSize: 12,
+                    fontSize: 12.sp,
                   ),
                 ),
               ],

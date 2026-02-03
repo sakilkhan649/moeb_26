@@ -86,6 +86,11 @@ class TermPolicy extends StatelessWidget {
   final check55 = false.obs;
   final check56 = false.obs;
   final check57 = false.obs;
+  final check58 = false.obs;
+  final check59 = false.obs;
+  final check60 = false.obs;
+  final check61 = false.obs;
+  final check62 = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +167,7 @@ class TermPolicy extends StatelessWidget {
 
                       // 🚗 VEHICLE STANDARDS
                       _buildSection(
-                        title: "Fragrance & Hygiene",
+                        title: "FRAGRANCE & HYGIENE",
                         children: [
                           _item(
                             check5,
@@ -402,7 +407,7 @@ class TermPolicy extends StatelessWidget {
                       ),
                       // শেষ লাইন (checkbox ছাড়া)
                       _buildSection(
-                        title: "Payment",
+                        title: "PAYMENT",
                         children: [
                           _item(
                             check51,
@@ -435,18 +440,47 @@ class TermPolicy extends StatelessWidget {
                         children: [
                           _item(
                             check56,
-                            "By accepting jobs through the platform, the chauffeur agrees to fully comply with this Elite Chauffeur Network Driver Code of Conduct.",
+                            "By accepting jobs through the platform, the chauffeur agrees to fully comply with this Ekkali Code of Conduct.",
                           ),
                         ],
                       ),
-                      SizedBox(height: 30.h),
+                      // ⚠️ ENFORCEMENT
+                      _buildSection(
+                        title: "INDEPENDENT PAYMENT RESPONSIBILITY",
+                        children: [
+                          _item(
+                            check57,
+                            "I acknowledge and agree that Ekkali Inc. does not collect, process, hold, invoice, or distribute payments of any kind.",
+                          ),
+                          _item(
+                            check58,
+                            "I acknowledge that I am an independent affiliate, and that Ekkali Inc. is not a payment processor, escrow service, broker, or financial intermediary.",
+                          ),
+                          _item(
+                            check59,
+                            "I understand and agree that I am solely and exclusively responsible for issuing invoices, collecting payments from clients, and settling payments with other affiliates when applicable.",
+                          ),
+                          _item(
+                            check60,
+                            "I agree that all payments are handled directly between the parties involved and must be completed using accepted professional methods, including credit/debit card, Zelle, Venmo, Cash App, or ACH transfer.",
+                          ),
+                          _item(
+                            check61,
+                            " I acknowledge and agree that Ekkali Inc. bears no responsibility or liability for payment disputes, non-payment, delays, chargebacks, or financial losses.",
+                          ),
+                          _item(
+                            check62,
+                            "I understand that failure to meet payment or professional obligations may result in temporary suspension or permanent removal from the Ekkali platform.",
+                          ),
+                        ],
+                      ),
                       CustomButton(
                         text: "Continue",
                         onPressed: () {
                           Get.toNamed(Routes.applicationSubmited);
                         },
                       ),
-                      SizedBox(height: 60.h),
+                      SizedBox(height: 40.h),
                     ],
                   ),
                 ),
@@ -466,7 +500,7 @@ class TermPolicy extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: title, fontSize: 16.sp, fontWeight: FontWeight.w600),
+        CustomText(text: title, fontSize: 13.sp, fontWeight: FontWeight.w600),
         SizedBox(height: 20.h),
         ...children,
         SizedBox(height: 20.h),
@@ -494,7 +528,7 @@ class TermPolicy extends StatelessWidget {
             SizedBox(width: 10.w),
             // Text
             Expanded(
-              child: CustomTextgray(text: text, fontSize: 13.sp),
+              child: CustomTextgray(text: text, fontSize: 12.sp),
             ),
           ],
         ),

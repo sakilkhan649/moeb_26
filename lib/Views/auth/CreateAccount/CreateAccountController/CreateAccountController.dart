@@ -26,10 +26,10 @@ class CreateAccountController extends GetxController {
 
   // Role এর list
   final roles = [
-    'Broker',
-    'Company Manager',
-    'Owner Operator/Driver',
+    'Company manager',
+    'Owner operator',
     'Driver',
+    'Dispatcher',
   ];
 
   // City এর list

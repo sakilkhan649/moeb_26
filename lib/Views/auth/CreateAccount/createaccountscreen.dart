@@ -117,7 +117,7 @@ class Createaccountscreen extends StatelessWidget {
                 // Using CustomDropdown for clearer code and reusability
                 Obx(
                   () => CustomDropdown(
-                    hintText: 'Miami, FL',
+                    hintText: 'Select Service Area',
                     value: controller.selectedArea.value.isEmpty
                         ? null
                         : controller.selectedArea.value,
@@ -201,7 +201,7 @@ class Createaccountscreen extends StatelessWidget {
                 // Using CustomDropdown for consistent UI and less boilerplate
                 Obx(
                   () => CustomDropdown(
-                    hintText: 'Select Role',
+                    hintText: 'Select Company Role',
                     value: controller.selectedRole.value.isEmpty
                         ? null
                         : controller.selectedRole.value,
@@ -216,24 +216,17 @@ class Createaccountscreen extends StatelessWidget {
                 SizedBox(height: 20.h),
 
                 // ========== Password ==========
-                Row(
-                  children: [
-                    CustomText(
-                      text: "Password",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14.sp,
-                    ),
-                    Text(
-                      " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
-                    ),
-                  ],
+                CustomText(
+                  text: "Create Password",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
                 ),
+
                 SizedBox(height: 8.h),
                 Obx(
                   () => Customtextfield(
                     controller: controller.passwordController,
-                    hintText: "Password",
+                    hintText: "Enter your password",
                     obscureText: !controller.showPassword.value,
                     textInputType: TextInputType.visiblePassword,
                     validator: (value) {
@@ -257,24 +250,17 @@ class Createaccountscreen extends StatelessWidget {
                 SizedBox(height: 20.h),
 
                 // ========== Confirm Password ==========
-                Row(
-                  children: [
-                    CustomText(
-                      text: "Confirm Password",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14.sp,
-                    ),
-                    Text(
-                      " *",
-                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
-                    ),
-                  ],
+                CustomText(
+                  text: "Confirm Password",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
                 ),
+
                 SizedBox(height: 8.h),
                 Obx(
                   () => Customtextfield(
                     controller: controller.confirmPasswordController,
-                    hintText: "Confirm Password",
+                    hintText: "Enter your password",
                     obscureText: !controller.showConfirmPassword.value,
                     textInputType: TextInputType.visiblePassword,
                     validator: (value) {

@@ -16,6 +16,13 @@ class AppIcons {
   static const String send_message_icon="$iconurl/send_message_icon.svg";
   static const String vmw_icon="$iconurl/vmw_icon.svg";
   static const String current_icon="$iconurl/current_icon.svg";
+  static const String job_offer_icon="$iconurl/job_offer_icon.svg";
+  static const String rides_icon="$iconurl/rides_icon.svg";
+  static const String marketplace_icon="$iconurl/marketplace_icon.svg";
+  static const String chats_icon="$iconurl/chats_icon.svg";
+  static const String deals_icon="$iconurl/deals_icon.svg";
+  static const String edit_icon="$iconurl/edit_icon.svg";
+  static const String delete_icon="$iconurl/delete_icon.svg";
 
 
 }

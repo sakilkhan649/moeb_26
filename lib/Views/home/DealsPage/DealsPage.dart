@@ -63,7 +63,7 @@ class Dealspage extends StatelessWidget {
 
         // Handle list of deals
         return ListView.builder(
-          padding: EdgeInsets.fromLTRB(20.w, 0.w, 20.w, 10.w),
+          padding: EdgeInsets.fromLTRB(20.w, 10.w, 20.w, 10.w),
           itemCount: controller.dealsList.length,
           itemBuilder: (context, index) {
             final deal = controller.dealsList[index];
@@ -87,7 +87,7 @@ class DealsCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: const Color(0xff1A1A1A), // Dark card background
+        color: const Color(0xFF1A1A1A), // Dark card background
         borderRadius: BorderRadius.circular(24.r),
         border: Border.all(color: const Color(0xff242424)),
       ),

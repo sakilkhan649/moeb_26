@@ -260,22 +260,21 @@ class MyJobsScreen extends StatelessWidget {
                   _showDeleteDialog();
                 }
               },
+
               itemBuilder: (_) => [
                 PopupMenuItem(
                   value: 'edit',
+                  height: 20.h,
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.edit_outlined,
-                        color: Colors.black,
-                        size: 20.sp,
-                      ),
-                      SizedBox(width: 5.w),
+                      SvgPicture.asset(AppIcons.edit_icon),
+                      SizedBox(width: 8.w),
                       Text(
                         "Edit",
                         style: GoogleFonts.inter(
                           color: Colors.black,
-                          fontSize: 13.sp,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -285,17 +284,14 @@ class MyJobsScreen extends StatelessWidget {
                   value: 'delete',
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.delete_outlined,
-                        color: Colors.black,
-                        size: 20.sp,
-                      ),
-                      SizedBox(width: 5.w),
+                      SvgPicture.asset(AppIcons.delete_icon),
+                      SizedBox(width: 8.w),
                       Text(
                         "Delete",
                         style: GoogleFonts.inter(
                           color: Colors.black,
-                          fontSize: 13.sp,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],

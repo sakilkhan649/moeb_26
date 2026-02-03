@@ -30,7 +30,7 @@ class CustomText extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle baseStyle = GoogleFonts.inter(
       color: color ?? Colors.white,
-      fontSize: fontSize ?? 28.sp,
+      fontSize: fontSize ?? 26.sp,
       fontWeight: fontWeight ?? FontWeight.w600,
     );
     return Text(

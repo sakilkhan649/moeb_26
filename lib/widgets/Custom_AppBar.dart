@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/Views/auth/Profile/widgets/LogoutBottomSheet.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
@@ -169,10 +171,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       IconButton(
                         onPressed: () {},
-                        icon: const Icon(
-                          Icons.work_outline,
-                          color: Colors.black,
-                        ),
+                          icon: SvgPicture.asset(
+                            AppIcons.job_offer_icon,
+                            colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                          )
                       ),
                       const Text('My Jobs'),
                       SizedBox(width: 5.w),
