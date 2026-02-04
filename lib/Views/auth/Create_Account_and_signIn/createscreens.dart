@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
-import '../../Utils/app_images.dart';
-import '../../widgets/CustomButton.dart';
-import '../../widgets/CustomText.dart';
-import '../../widgets/CustomTextGary.dart';
+import '../../../Utils/app_images.dart';
+import '../../../widgets/CustomButton.dart';
+import '../../../widgets/CustomText.dart';
+import '../../../widgets/CustomTextGary.dart';
 
 class Createscreens extends StatelessWidget {
   const Createscreens({super.key});
@@ -46,7 +46,7 @@ class Createscreens extends StatelessWidget {
                 ),
                 SizedBox(height: 12.h),
                 CustomButton(
-                  text: "Sign In",
+                  text: "Sign_In In",
                   onPressed: () {
                     Get.toNamed(Routes.signscreen);
                   },

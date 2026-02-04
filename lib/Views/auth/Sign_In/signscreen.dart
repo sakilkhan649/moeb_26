@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Utils/app_const.dart';
-import '../../Core/routs.dart';
-import '../../Utils/app_colors.dart';
-import '../../widgets/CustomButton.dart';
-import '../../widgets/CustomText.dart';
-import '../../widgets/CustomTextField.dart';
-import '../../widgets/CustomTextGary.dart';
+import '../../../Core/routs.dart';
+import '../../../Utils/app_colors.dart';
+import '../../../widgets/CustomButton.dart';
+import '../../../widgets/CustomText.dart';
+import '../../../widgets/CustomTextField.dart';
+import '../../../widgets/CustomTextGary.dart';
 
 class Signscreen extends StatelessWidget {
   Signscreen({super.key});
@@ -38,7 +38,7 @@ class Signscreen extends StatelessWidget {
                 SizedBox(height: 7.h),
                 // Subtitle Text
                 CustomTextgray(
-                  text: "Sign in to continue to your account",
+                  text: "Sign_In in to continue to your account",
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w400,
                 ),
@@ -116,7 +116,7 @@ class Signscreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h),
                 CustomButton(
-                  text: "Sign In",
+                  text: "Sign_In In",
                   onPressed: () {
                     Get.toNamed(Routes.homeScreens);
                     // Navigator.push()

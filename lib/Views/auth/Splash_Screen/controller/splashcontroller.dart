@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:moeb_26/Views/auth/createscreens.dart';
+import 'package:moeb_26/Views/auth/Create_Account_and_signIn/createscreens.dart';
 
 
 class SplashScreenController extends GetxController {

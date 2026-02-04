@@ -7,7 +7,7 @@ import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomTextField.dart';
 import 'package:moeb_26/widgets/CustomText_Field_Hight.dart';
-import 'Controller/edit_controller.dart';
+import '../Controller/edit_controller.dart';
 
 class EditScreen extends StatelessWidget {
   EditScreen({super.key});
@@ -288,7 +288,7 @@ class EditScreen extends StatelessWidget {
             Icon(Icons.payment, color: Colors.white, size: 18.sp),
             SizedBox(width: 8.w),
             Text(
-              'Payment Method *',
+              'Payment *',
               style: GoogleFonts.inter(
                 fontWeight: FontWeight.w400,
                 fontSize: 13.sp,

@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
-import '../../Core/routs.dart';
-import '../../widgets/Contact_support_popup.dart';
-import '../../widgets/CustomButton.dart';
+import '../../../Core/routs.dart';
+import '../../../widgets/Contact_support_popup.dart';
+import '../../../widgets/CustomButton.dart';
 
 /// Review Status Screen
 /// Shows application submission status with animated steps

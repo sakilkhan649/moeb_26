@@ -3,9 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
-import '../../Core/routs.dart';
-import '../../Utils/app_colors.dart';
-import '../../widgets/CustomButton.dart';
+import '../../../Core/routs.dart';
+import '../../../Utils/app_colors.dart';
+import '../../../widgets/CustomButton.dart';
 
 class TermPolicy extends StatelessWidget {
   TermPolicy({super.key});

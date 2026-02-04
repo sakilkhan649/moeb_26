@@ -147,7 +147,7 @@ class Resetpasswordscreen extends StatelessWidget {
                                 Get.toNamed(Routes.signscreen);
                               },
                               child: CustomTextgray(
-                                text: "Sign In",
+                                text: "Sign_In In",
                                 color: Color(0xFFA49898),
                               ),
                             ),

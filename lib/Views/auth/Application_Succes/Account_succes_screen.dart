@@ -5,9 +5,9 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 
-import '../../Core/routs.dart';
-import '../../Utils/app_colors.dart';
-import '../../widgets/CustomButton.dart';
+import '../../../Core/routs.dart';
+import '../../../Utils/app_colors.dart';
+import '../../../widgets/CustomButton.dart';
 
 class AccountSuccesScreen extends StatelessWidget {
   const AccountSuccesScreen({super.key});
@@ -29,7 +29,7 @@ class AccountSuccesScreen extends StatelessWidget {
               ),
               SizedBox(height: 20.h),
               CustomButton(
-                text: "Sign In",
+                text: "Sign_In In",
                 onPressed: () {
                   Get.toNamed(Routes.signscreen);
                 },

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/Views/auth/Profile/widgets/LogoutBottomSheet.dart';
@@ -142,25 +143,36 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 size: 30.sp,
                 color: Colors.white,
               ),
+              color: Color(0xFF1E1E1E), // Dark background
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                side: BorderSide(color: Color(0xFF364153)),
+              ),
               onSelected: (item) => handleMenuItemSelection(item),
               itemBuilder: (context) => [
                 PopupMenuItem<int>(
                   value: 0,
                   child: Row(
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.person_outline,
-                          color: Colors.black,
+                      Icon(
+                        Icons.person_outline,
+                        color: Colors.white,
+                        size: 24.sp,
+                      ),
+                      SizedBox(width: 12.w),
+                      Text(
+                        'Account',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const Text('Account'),
-                      SizedBox(width: 5.w),
+                      Spacer(),
                       Icon(
                         CupertinoIcons.chevron_forward,
-                        size: 24.sp,
-                        color: Colors.black,
+                        size: 20.sp,
+                        color: Colors.white,
                       ),
                     ],
                   ),
@@ -169,19 +181,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   value: 1,
                   child: Row(
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                          icon: SvgPicture.asset(
-                            AppIcons.job_offer_icon,
-                            colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
-                          )
+                      SvgPicture.asset(
+                        AppIcons.job_offer_icon,
+                        width: 24.sp,
+                        height: 24.sp,
+                        colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
                       ),
-                      const Text('My Jobs'),
-                      SizedBox(width: 5.w),
+                      SizedBox(width: 12.w),
+                      Text(
+                        'My Jobs',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Spacer(),
                       Icon(
                         CupertinoIcons.chevron_forward,
-                        size: 24.sp,
-                        color: Colors.black,
+                        size: 20.sp,
+                        color: Colors.white,
                       ),
                     ],
                   ),
@@ -190,19 +209,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   value: 2,
                   child: Row(
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.location_on_outlined,
-                          color: Colors.black,
+                      Icon(
+                        Icons.location_on_outlined,
+                        color: Colors.white,
+                        size: 24.sp,
+                      ),
+                      SizedBox(width: 12.w),
+                      Text(
+                        'Service Area',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const Text('Service Area'),
-                      SizedBox(width: 5.w),
+                      Spacer(),
                       Icon(
                         CupertinoIcons.chevron_forward,
-                        size: 24.sp,
-                        color: Colors.black,
+                        size: 20.sp,
+                        color: Colors.white,
                       ),
                     ],
                   ),
@@ -211,30 +236,33 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   value: 3,
                   child: Row(
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.logout_outlined,
-                          color: Colors.black,
+                      Icon(
+                        Icons.logout_outlined,
+                        color: Colors.white,
+                        size: 24.sp,
+                      ),
+                      SizedBox(width: 12.w),
+                      Text(
+                        'Logout',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const Text('Logout'),
-                      SizedBox(width: 10.w),
+                      Spacer(),
                       Icon(
                         CupertinoIcons.chevron_forward,
-                        size: 24.sp,
-                        color: Colors.black,
+                        size: 20.sp,
+                        color: Colors.white,
                       ),
                     ],
                   ),
                 ),
               ],
-              offset: const Offset(
-                0,
-                50,
-              ), // Adjusted for taller AppBar height (80.h)
+              offset: const Offset(0, 50),
             ),
-            SizedBox(width: 16.w), // Right padding for actions
+            SizedBox(width: 16.w),
           ],
         ),
       ],

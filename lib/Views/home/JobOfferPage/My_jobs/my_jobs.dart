@@ -251,8 +251,13 @@ class MyJobsScreen extends StatelessWidget {
             top: -4.w,
             right: -13.w,
             child: PopupMenuButton<String>(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                side: BorderSide(color: Color(0xFF364153), width: 1),
+              ),
               icon: Icon(Icons.more_vert, color: Colors.white, size: 24.sp),
-              color: Colors.white,
+              color: Color(0xFF1E1E1E),
+              padding: EdgeInsets.zero,
               onSelected: (value) {
                 if (value == 'edit') {
                   Get.toNamed(Routes.editScreen);
@@ -264,17 +269,26 @@ class MyJobsScreen extends StatelessWidget {
               itemBuilder: (_) => [
                 PopupMenuItem(
                   value: 'edit',
-                  height: 20.h,
+                  height: 45.h,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Row(
                     children: [
-                      SvgPicture.asset(AppIcons.edit_icon),
-                      SizedBox(width: 8.w),
+                      SvgPicture.asset(
+                        AppIcons.edit_icon,
+                        height: 22.h,
+                        width: 22.w,
+                        colorFilter: ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
                       Text(
                         "Edit",
                         style: GoogleFonts.inter(
-                          color: Colors.black,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -282,16 +296,26 @@ class MyJobsScreen extends StatelessWidget {
                 ),
                 PopupMenuItem(
                   value: 'delete',
+                  height: 45.h,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Row(
                     children: [
-                      SvgPicture.asset(AppIcons.delete_icon),
-                      SizedBox(width: 8.w),
+                      SvgPicture.asset(
+                        AppIcons.delete_icon,
+                        height: 22.h,
+                        width: 22.w,
+                        colorFilter: ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
                       Text(
                         "Delete",
                         style: GoogleFonts.inter(
-                          color: Colors.black,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],

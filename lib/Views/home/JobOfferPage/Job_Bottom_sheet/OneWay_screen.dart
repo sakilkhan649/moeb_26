@@ -68,7 +68,7 @@ class OnewayScreen extends StatelessWidget {
             "\$",
             Icons.attach_money,
           ),
-          CustomText(text: "Payment Method *", fontSize: 13.sp),
+          CustomText(text: "Payment *", fontSize: 13.sp),
           SizedBox(height: 8.h),
           Obx(
             () => DropdownButtonHideUnderline(

@@ -26,7 +26,7 @@ class DealsController extends GetxController {
       DealsItem(
         category: "Technology",
         title: "Free Month of Dashcam Cloud Storage",
-        description: "Sign up for BlackVue Cloud and get first month free",
+        description: "Sign_In up for BlackVue Cloud and get first month free",
         promoCode: "DASH1FREE",
         expiryDate: "Jan 31",
       ),
