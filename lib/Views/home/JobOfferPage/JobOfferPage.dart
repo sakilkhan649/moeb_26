@@ -314,7 +314,7 @@ class _CustomJobCardState extends State<CustomJobCard> {
 
           /// PAYMENT METHOD
           CustomTextgray(
-            text: "Payment Method",
+            text: "Payment",
             color: const Color(0xFF737373),
             fontWeight: FontWeight.w500,
           ),
