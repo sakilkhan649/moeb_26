@@ -285,7 +285,7 @@ class EditScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.payment, color: Colors.white, size: 18.sp),
+           // Icon(Icons.payment, color: Colors.white, size: 18.sp),
             SizedBox(width: 8.w),
             Text(
               'Payment *',

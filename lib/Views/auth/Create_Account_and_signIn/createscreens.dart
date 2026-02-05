@@ -46,7 +46,7 @@ class Createscreens extends StatelessWidget {
                 ),
                 SizedBox(height: 12.h),
                 CustomButton(
-                  text: "Sign_In In",
+                  text: "Sign In",
                   onPressed: () {
                     Get.toNamed(Routes.signscreen);
                   },
