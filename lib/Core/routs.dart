@@ -1,16 +1,18 @@
-import 'package:get/get.dart';
-import 'package:moeb_26/Views/auth/Vehicle/VehicleInformation.dart';
-import 'package:moeb_26/Views/auth/CreateAccount/createaccountscreen.dart';
-import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/my_jobs.dart';
+
+import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:get/get_navigation/src/routes/transitions_type.dart';
+
 import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Application_Succes/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved/Application_Not_Approved.dart';
 import '../Views/auth/Application_Submitted/Application_submited.dart';
+import '../Views/auth/CreateAccount/createaccountscreen.dart';
 import '../Views/auth/Documents_Upload/DocumentsUpload.dart';
 import '../Views/auth/Profile/profile.dart';
 import '../Views/auth/Sign_In/signscreen.dart';
 import '../Views/auth/Splash_Screen/splashScreen.dart';
 import '../Views/auth/Term_and_policy/Term_policy.dart';
+import '../Views/auth/Vehicle/VehicleInformation.dart';
 import '../Views/auth/resetpassword/resetpasswordscreen.dart';
 import '../Views/auth/resetpassword/resetpasswordthree.dart';
 import '../Views/auth/resetpassword/resetpasswordtwo.dart';
@@ -22,6 +24,7 @@ import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Board/Ride_Progress_Boa
 import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way/Ride_Progress_Way.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progress_Way_Location.dart';
 import '../Views/home/JobOfferPage/My_jobs/Edit_screen/edit_screen.dart';
+import '../Views/home/JobOfferPage/My_jobs/my_jobs.dart';
 import '../Views/home/JobOfferPage/Request_Submitted/Request_Submitted.dart';
 import '../Views/home/RidesPage/Finish_Ride/Finish_Ride_page.dart';
 import '../Views/home/RidesPage/On_My_Way_Details_page/On_My_Way_Details_page.dart';
