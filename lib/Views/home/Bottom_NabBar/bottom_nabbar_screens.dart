@@ -8,14 +8,16 @@ import 'package:moeb_26/Views/home/DealsPage/DealsPage.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/JobOfferPage.dart';
 import 'package:moeb_26/Views/home/MarketplacePage/MarketplacePage.dart';
 import 'package:moeb_26/Views/home/RidesPage/RidesPage.dart';
-import 'home_controller.dart';
+import 'Controller/bottom_nabbar_controller.dart';
 
 class HomeScreens extends StatelessWidget {
   const HomeScreens({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final NavigationController navController = Get.put(NavigationController());
+
+     final NavigationController navController = Get.find<NavigationController>();
+
 
     final List<Widget> pages = [
       Jobofferpage(),

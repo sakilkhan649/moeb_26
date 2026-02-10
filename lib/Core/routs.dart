@@ -10,6 +10,7 @@ import '../Views/auth/CreateAccount/createaccountscreen.dart';
 import '../Views/auth/Documents_Upload/DocumentsUpload.dart';
 import '../Views/auth/Profile/profile.dart';
 import '../Views/auth/Sign_In/signscreen.dart';
+import '../Views/auth/Splash_Screen/Binding/splash_binding.dart';
 import '../Views/auth/Splash_Screen/splashScreen.dart';
 import '../Views/auth/Term_and_policy/Term_policy.dart';
 import '../Views/auth/Vehicle/VehicleInformation.dart';
@@ -17,6 +18,7 @@ import '../Views/auth/resetpassword/resetpasswordscreen.dart';
 import '../Views/auth/resetpassword/resetpasswordthree.dart';
 import '../Views/auth/resetpassword/resetpasswordtwo.dart';
 import '../Views/auth/resetpassword/success_resetpassword.dart';
+import '../Views/home/Bottom_NabBar/Binding/Binging_Class.dart';
 import '../Views/home/JobOfferPage/My_jobs/Approve/approve_page.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ratings_Feedback/Ratings_Feedback.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ride_Complete_Job/Ride_Complete_Job.dart';
@@ -34,7 +36,7 @@ import '../Views/home/ChatPage/ChatPage.dart';
 import '../Views/home/ChatPage/ChatDetailPage.dart';
 import '../Views/home/RidesPage/Ride_Completed/Ride_Completed_page.dart';
 import '../Views/home/RidesPage/Ride_Details/Ride_Details_Page.dart';
-import '../Views/home/home_screens.dart';
+import '../Views/home/Bottom_NabBar/bottom_nabbar_screens.dart';
 
 class Routes {
   static const String splashScreen = "/SplashScreen";
@@ -76,6 +78,8 @@ class Routes {
       name: splashScreen,
       page: () => Splashscreen(),
       transition: Transition.noTransition,
+      binding: SplashBinding(),
+
     ),
     GetPage(
       name: signscreen,
@@ -136,6 +140,7 @@ class Routes {
       name: homeScreens,
       page: () => HomeScreens(),
       transition: Transition.noTransition,
+      binding: BottomNabbarBinding(),
     ),
     GetPage(
       name: myJobsScreen,
