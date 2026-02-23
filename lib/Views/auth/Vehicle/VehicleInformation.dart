@@ -9,66 +9,87 @@ import '../../../widgets/CustomTextGary.dart';
 import 'Controller/VehicleInformationController.dart';
 import 'Model/VehicleModel.dart';
 
-
 class Vehicleinformation extends StatelessWidget {
   Vehicleinformation({super.key});
 
   final VehicleInformationController controller = Get.put(
     VehicleInformationController(),
   );
+  final _formKey = GlobalKey<FormState>();
+  final RxBool showErrors = false.obs;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 100.w),
-            CustomText(text: "Vehicle Information", fontSize: 20.sp),
-            SizedBox(height: 7.h),
-            CustomTextgray(
-              text: "Add your professional vehicles",
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w400,
-            ),
-            SizedBox(height: 30.h),
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 100.w),
+              CustomText(text: "Vehicle Information", fontSize: 20.sp),
+              SizedBox(height: 7.h),
+              CustomTextgray(
+                text: "Add your professional vehicles",
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w400,
+              ),
+              SizedBox(height: 30.h),
 
-            // Vehicle list with buttons inside
-            Expanded(
-              child: Obx(
-                () => ListView(
-                  children: [
-                    // সব vehicle cards
-                    ...List.generate(
-                      controller.vehicles.length,
-                      (index) =>
-                          _buildVehicleCard(index, controller.vehicles[index]),
-                    ),
+              // Vehicle list with buttons inside
+              Expanded(
+                child: Obx(
+                  () => ListView(
+                    children: [
+                      // সব vehicle cards
+                      ...List.generate(
+                        controller.vehicles.length,
+                        (index) => _buildVehicleCard(
+                          index,
+                          controller.vehicles[index],
+                        ),
+                      ),
 
-                    SizedBox(height: 25.h),
+                      SizedBox(height: 25.h),
 
-                    // Add Another Vehicle Button
-                    CustomAddButton(
-                      onPressed: () {
-                        controller.addVehicle(); // নতুন vehicle add করো
-                      },
-                    ),
+                      // Add Another Vehicle Button
+                      CustomAddButton(
+                        onPressed: () {
+                          controller.addVehicle();
+                        },
+                      ),
 
-                    SizedBox(height: 30.h),
-                    CustomButton(
-                      text: "Continue",
-                      onPressed: () {
-                        Get.toNamed(Routes.documentsupload);
-                      },
-                    ),
-                    SizedBox(height: 60.h),
-                  ],
+                      SizedBox(height: 30.h),
+                      CustomButton(
+                        text: "Continue",
+                        onPressed: () {
+                          showErrors.value = true;
+
+                          // Validate form fields
+                          final isFormValid = _formKey.currentState!.validate();
+
+                          // Validate vehicle type selection
+                          bool allTypesSelected = true;
+                          for (var v in controller.vehicles) {
+                            if (v.selectedVehicleType.value.isEmpty) {
+                              allTypesSelected = false;
+                            }
+                          }
+
+                          if (isFormValid && allTypesSelected) {
+                            Get.toNamed(Routes.documentsupload);
+                          }
+                        },
+                      ),
+                      SizedBox(height: 60.h),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -149,6 +170,20 @@ class Vehicleinformation extends StatelessWidget {
           SizedBox(height: 10.h),
           _buildVehicleTypeChip(model, "LimoStretch"),
 
+          // Vehicle type validation error
+          Obx(() {
+            if (showErrors.value && model.selectedVehicleType.value.isEmpty) {
+              return Padding(
+                padding: EdgeInsets.only(left: 4.w, top: 6.h),
+                child: Text(
+                  'Select a Vehicle Type',
+                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                ),
+              );
+            }
+            return SizedBox.shrink();
+          }),
+
           SizedBox(height: 20.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,6 +214,10 @@ class Vehicleinformation extends StatelessWidget {
                     _buildTextField(
                       controller: model.makeController,
                       hintText: "Mercedes",
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return "Enter Make";
+                        return null;
+                      },
                     ),
                     SizedBox(height: 15.h),
                     Row(
@@ -201,6 +240,10 @@ class Vehicleinformation extends StatelessWidget {
                     _buildTextField(
                       controller: model.yearController,
                       hintText: "5 years maxim",
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return "Enter Year";
+                        return null;
+                      },
                     ),
                   ],
                 ),
@@ -231,6 +274,11 @@ class Vehicleinformation extends StatelessWidget {
                     _buildTextField(
                       controller: model.modelController,
                       hintText: "S-Class",
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return "Enter Model";
+                        return null;
+                      },
                     ),
                     SizedBox(height: 15.h),
                     Row(
@@ -253,6 +301,11 @@ class Vehicleinformation extends StatelessWidget {
                     _buildTextField(
                       controller: model.colorController,
                       hintText: "Black(Fix)",
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return "Enter Color";
+                        return null;
+                      },
                     ),
                   ],
                 ),
@@ -278,6 +331,10 @@ class Vehicleinformation extends StatelessWidget {
           _buildTextField(
             controller: model.licensePlateController,
             hintText: "ABC-1234",
+            validator: (value) {
+              if (value == null || value.isEmpty) return "Enter License Plate";
+              return null;
+            },
           ),
         ],
       ),
@@ -313,12 +370,14 @@ class Vehicleinformation extends StatelessWidget {
   Widget _buildTextField({
     required TextEditingController controller,
     required String hintText,
+    String? Function(String?)? validator,
   }) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(bottom: 16.h),
       child: TextFormField(
         controller: controller,
+        validator: validator,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),

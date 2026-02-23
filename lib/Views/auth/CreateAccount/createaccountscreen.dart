@@ -15,15 +15,19 @@ import 'CreateAccountController/CreateAccountController.dart';
 class Createaccountscreen extends StatelessWidget {
   Createaccountscreen({super.key});
 
+  // Reactive error messages for dropdowns (not covered by Form validation)
+  final RxString areaError = ''.obs;
+  final RxString roleError = ''.obs;
+
   final controller = Get.put(CreateAccountController());
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        body: Padding(
+    return Scaffold(
+      body: Form(
+        key: _formKey,
+        child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
             child: Column(
@@ -116,17 +120,34 @@ class Createaccountscreen extends StatelessWidget {
                 SizedBox(height: 8.h),
                 // Using CustomDropdown for clearer code and reusability
                 Obx(
-                  () => CustomDropdown(
-                    hintText: 'Select Service Area',
-                    value: controller.selectedArea.value.isEmpty
-                        ? null
-                        : controller.selectedArea.value,
-                    items: controller.cities,
-                    onChanged: (value) {
-                      if (value != null) {
-                        controller.pickArea(value);
-                      }
-                    },
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomDropdown(
+                        hintText: 'Select Service Area',
+                        value: controller.selectedArea.value.isEmpty
+                            ? null
+                            : controller.selectedArea.value,
+                        items: controller.cities,
+                        onChanged: (value) {
+                          if (value != null) {
+                            controller.pickArea(value);
+                            areaError.value = '';
+                          }
+                        },
+                      ),
+                      if (areaError.value.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(left: 12.w, top: 6.h),
+                          child: Text(
+                            areaError.value,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -200,17 +221,34 @@ class Createaccountscreen extends StatelessWidget {
                 SizedBox(height: 8.h),
                 // Using CustomDropdown for consistent UI and less boilerplate
                 Obx(
-                  () => CustomDropdown(
-                    hintText: 'Select Company Role',
-                    value: controller.selectedRole.value.isEmpty
-                        ? null
-                        : controller.selectedRole.value,
-                    items: controller.roles,
-                    onChanged: (value) {
-                      if (value != null) {
-                        controller.pickRole(value);
-                      }
-                    },
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomDropdown(
+                        hintText: 'Select Company Role',
+                        value: controller.selectedRole.value.isEmpty
+                            ? null
+                            : controller.selectedRole.value,
+                        items: controller.roles,
+                        onChanged: (value) {
+                          if (value != null) {
+                            controller.pickRole(value);
+                            roleError.value = '';
+                          }
+                        },
+                      ),
+                      if (roleError.value.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(left: 12.w, top: 6.h),
+                          child: Text(
+                            roleError.value,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -266,8 +304,8 @@ class Createaccountscreen extends StatelessWidget {
                     validator: (value) {
                       if (value == null || value.isEmpty)
                         return "Enter Confirm Password";
-                      if (!AppString.passRegexp.hasMatch(value))
-                        return "Invalid Confirm Password";
+                      if (value != controller.passwordController.text)
+                        return "Passwords do not match";
                       return null;
                     },
                     suffixIcon: IconButton(
@@ -287,8 +325,23 @@ class Createaccountscreen extends StatelessWidget {
                 CustomButton(
                   text: "Continue",
                   onPressed: () {
-                    //if (_formKey.currentState!.validate()) {}
-                    Get.toNamed(Routes.vehicleinformation);
+                    // Validate text fields via Form
+                    final isFormValid = _formKey.currentState!.validate();
+
+                    // Validate dropdowns manually
+                    bool dropdownsValid = true;
+                    if (controller.selectedArea.value.isEmpty) {
+                      areaError.value = 'Select a Service Area';
+                      dropdownsValid = false;
+                    }
+                    if (controller.selectedRole.value.isEmpty) {
+                      roleError.value = 'Select a Company Role';
+                      dropdownsValid = false;
+                    }
+
+                    if (isFormValid && dropdownsValid) {
+                      Get.toNamed(Routes.vehicleinformation);
+                    }
                   },
                 ),
                 SizedBox(height: 40.h),

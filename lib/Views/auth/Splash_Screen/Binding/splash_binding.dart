@@ -1,8 +1,7 @@
 import 'package:get/get.dart';
-
 import '../controller/splashcontroller.dart';
 
-class SplashBinding extends Bindings{
+class SplashBinding extends Bindings {
   @override
   void dependencies() {
     // TODO: implement dependencies

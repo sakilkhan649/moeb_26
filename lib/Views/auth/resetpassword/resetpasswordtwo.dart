@@ -18,13 +18,12 @@ class Resetpasswordtwo extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
 
-
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formkey,
-      child: Scaffold(
-        body: Center(
+    return Scaffold(
+      body: Form(
+        key: _formkey,
+        child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
             child: SingleChildScrollView(
@@ -46,7 +45,10 @@ class Resetpasswordtwo extends StatelessWidget {
                   ),
                   SizedBox(height: 26.h),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.w),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 15.w,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.transparent,
                       border: Border.all(color: Color(0xFF14F195)),
@@ -54,7 +56,10 @@ class Resetpasswordtwo extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(CupertinoIcons.check_mark, color: Color(0xFF14F195)),
+                        Icon(
+                          CupertinoIcons.check_mark,
+                          color: Color(0xFF14F195),
+                        ),
                         SizedBox(width: 10.w),
                         CustomText(
                           text: "Password reset link sent to your email!",
@@ -90,10 +95,9 @@ class Resetpasswordtwo extends StatelessWidget {
                   CustomButton(
                     text: "Send Reset Link",
                     onPressed: () {
-                      // Handle SignIn action, like form validation
-                      if (_formkey.currentState!.validate()) {}
-                      // Perform sign in action
-                      Get.toNamed(Routes.resetpasswordthree);
+                      if (_formkey.currentState!.validate()) {
+                        Get.toNamed(Routes.resetpasswordthree);
+                      }
                     },
                     backgroundColor: Colors.white,
                     textColor: Colors.black,

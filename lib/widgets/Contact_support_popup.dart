@@ -15,7 +15,7 @@ import '../Utils/app_icons.dart';
 // ============================================
 void showContactSupportBottomSheet() {
   Get.bottomSheet(
-    const ContactSupportBottomSheet(),
+    ContactSupportBottomSheet(),
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     isDismissible: true,
@@ -26,7 +26,9 @@ void showContactSupportBottomSheet() {
 // MAIN WIDGET: Contact Support Bottom Sheet
 // ============================================
 class ContactSupportBottomSheet extends StatelessWidget {
-  const ContactSupportBottomSheet({Key? key}) : super(key: key);
+  ContactSupportBottomSheet({Key? key}) : super(key: key);
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +57,14 @@ class ContactSupportBottomSheet extends StatelessWidget {
 
           // Form Content Section
           Expanded(
-            child: _buildFormContent(
-              subjectController,
-              messageController,
-              isSubmitting,
-              submitted,
+            child: Form(
+              key: _formKey,
+              child: _buildFormContent(
+                subjectController,
+                messageController,
+                isSubmitting,
+                submitted,
+              ),
             ),
           ),
         ],
@@ -140,6 +145,12 @@ class ContactSupportBottomSheet extends StatelessWidget {
           hintText: "problem",
           obscureText: false,
           textInputType: TextInputType.text,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter a subject";
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -164,10 +175,19 @@ class ContactSupportBottomSheet extends StatelessWidget {
         SizedBox(height: 8.h),
 
         // Multi-line Input Field
-        TextField(
+        TextFormField(
           controller: controller,
           style: TextStyle(color: Colors.white, fontSize: 16.sp),
           maxLines: 5,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter a message";
+            }
+            if (value.length < 10) {
+              return "Message must be at least 10 characters";
+            }
+            return null;
+          },
           decoration: InputDecoration(
             hintText: 'Describe your issue or question in detail...',
             hintStyle: TextStyle(
@@ -187,6 +207,14 @@ class ContactSupportBottomSheet extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16.r),
               borderSide: const BorderSide(color: Color(0xFF374151), width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16.r),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16.r),
+              borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
             contentPadding: EdgeInsets.all(16.w),
           ),
@@ -284,8 +312,9 @@ class ContactSupportBottomSheet extends StatelessWidget {
             iconColor: Colors.white,
             iconOnRight: false,
             onPressed: () {
-              Get.toNamed(Routes.chatPage);
-              // Send message logic here
+              if (_formKey.currentState!.validate()) {
+                Get.toNamed(Routes.chatPage);
+              }
             },
           ),
         ),

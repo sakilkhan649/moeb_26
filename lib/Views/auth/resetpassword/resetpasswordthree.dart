@@ -2,9 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
 import '../../../Utils/app_const.dart';
@@ -15,25 +12,29 @@ import '../../../widgets/CustomTextGary.dart';
 
 class Resetpasswordthree extends StatelessWidget {
   Resetpasswordthree({super.key});
-  TextEditingController passwordController = TextEditingController();
 
-  // Reactive variable to control password visibility
+  final TextEditingController tokenController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  // Reactive variables to control password visibility
   final isPasswordVisible = false.obs;
   final isPasswordVisibleTwo = false.obs;
   final _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formkey,
-      child: Scaffold(
-        body: Center(
+    return Scaffold(
+      body: Form(
+        key: _formkey,
+        child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
             child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: .center,
-                crossAxisAlignment: .center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
@@ -50,16 +51,13 @@ class Resetpasswordthree extends StatelessWidget {
                   SizedBox(height: 26.h),
 
                   Customtextfield(
-                    controller: passwordController,
+                    controller: tokenController,
                     hintText: "Reset Token",
                     obscureText: false,
-                    textInputType: TextInputType.visiblePassword,
+                    textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Enter your New Password";
-                      }
-                      if (!AppString.passRegexp.hasMatch(value)) {
-                        return "Invalid New Password";
+                        return "Enter Token";
                       }
                       return null;
                     },
@@ -102,17 +100,17 @@ class Resetpasswordthree extends StatelessWidget {
 
                   Obx(
                     () => Customtextfield(
-                      controller: passwordController,
+                      controller: confirmPasswordController,
                       hintText: "Confirm New Password",
-                      obscureText:
-                          !isPasswordVisible.value, // Toggle between true/false
+                      obscureText: !isPasswordVisibleTwo
+                          .value, // Toggle between true/false
                       textInputType: TextInputType.visiblePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Enter Confirm New Password";
                         }
-                        if (!AppString.passRegexp.hasMatch(value)) {
-                          return "Invalid Confirm New Password";
+                        if (value != passwordController.text) {
+                          return "Passwords do not match";
                         }
                         return null;
                       },
@@ -134,10 +132,9 @@ class Resetpasswordthree extends StatelessWidget {
                   CustomButton(
                     text: "Reset Password",
                     onPressed: () {
-                      // Handle SignIn action, like form validation
-                      if (_formkey.currentState!.validate()) {}
-                      // Perform sign in action
-                      Get.toNamed(Routes.successResetpassword);
+                      if (_formkey.currentState!.validate()) {
+                        Get.toNamed(Routes.successResetpassword);
+                      }
                     },
                     backgroundColor: Colors.white,
                     textColor: Colors.black,

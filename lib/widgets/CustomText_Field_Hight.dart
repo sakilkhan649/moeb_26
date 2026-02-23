@@ -25,15 +25,15 @@ class CustomtextFieldHight extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80.h,  // Fixed height of 80px
+      constraints: BoxConstraints(minHeight: 80.h),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         keyboardType: textInputType,
         validator: validator,
         style: TextStyle(color: Colors.white),
-        maxLines: 5,  // Max lines the field can expand to
-        minLines: 1,  // Min lines
+        maxLines: 5, // Max lines the field can expand to
+        minLines: 1, // Min lines
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.gray100),

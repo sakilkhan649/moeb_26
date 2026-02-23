@@ -23,15 +23,11 @@ class Splashscreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // The logo (use an image asset or network image)
-
-               Container(
-                width: 150.w,
-                height: 70.w,
-                child: Image.asset(
-                  AppImages.final_app_logo,
-                  fit: BoxFit.fill,
-                ),
-              ),
+            Container(
+              width: 150.w,
+              height: 70.w,
+              child: Image.asset(AppImages.final_app_logo, fit: BoxFit.fill),
+            ),
 
             SizedBox(height: 12.h),
             // Title Text

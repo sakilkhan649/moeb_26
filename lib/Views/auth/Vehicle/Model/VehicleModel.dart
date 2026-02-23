@@ -10,7 +10,7 @@ class VehicleModel {
   final TextEditingController licensePlateController;
 
   VehicleModel({String? initialType})
-    : selectedVehicleType = (initialType ?? 'Sedan').obs,
+    : selectedVehicleType = (initialType ?? '').obs,
       makeController = TextEditingController(),
       modelController = TextEditingController(),
       yearController = TextEditingController(),

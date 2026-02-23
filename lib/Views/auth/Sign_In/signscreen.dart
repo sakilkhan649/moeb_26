@@ -22,10 +22,10 @@ class Signscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formkey,
-      child: Scaffold(
-        body: Padding(
+    return Scaffold(
+      body: Form(
+        key: _formkey,
+        child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
             child: Column(
@@ -118,19 +118,22 @@ class Signscreen extends StatelessWidget {
                 CustomButton(
                   text: "Sign In",
                   onPressed: () {
-                    Get.toNamed(Routes.homeScreens);
-                    // Navigator.push()
                     if (_formkey.currentState!.validate()) {
-                      // Perform sign in action
+                      Get.toNamed(Routes.homeScreens);
                     }
                   },
                 ),
                 SizedBox(height: 30.h),
-                Center(
-                  child: CustomTextgray(
-                    text: "Don't have an account?",
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(Routes.createaccountscreen);
+                  },
+                  child: Center(
+                    child: CustomTextgray(
+                      text: "Don't have an account?",
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
               ],

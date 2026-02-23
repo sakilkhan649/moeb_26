@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/Utils/app_const.dart';
 import 'package:moeb_26/Views/auth/Profile/Controller/profile_controller.dart';
 
 class EditProfileBottomSheet extends StatelessWidget {
   EditProfileBottomSheet({super.key});
 
   final ProfileController controller = Get.find<ProfileController>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -60,71 +62,114 @@ class EditProfileBottomSheet extends StatelessWidget {
                   20.w,
                   MediaQuery.of(context).viewInsets.bottom + 20.h,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildField("Full Name", controller.nameController),
-                    _buildField("Email", controller.emailController),
-                    _buildField("Phone", controller.phoneController),
-                    _buildField(
-                      "Service Area",
-                      controller.serviceAreaController,
-                    ),
-                    _buildField("Nick Name", controller.nickNameController),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildField(
+                        "Full Name",
+                        controller.nameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter your name";
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildField(
+                        "Email",
+                        controller.emailController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter your email";
+                          }
+                          if (!AppString.emailRegexp.hasMatch(value)) {
+                            return "Invalid email format";
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildField(
+                        "Phone",
+                        controller.phoneController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter your phone number";
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildField(
+                        "Service Area",
+                        controller.serviceAreaController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter service area";
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildField("Nick Name", controller.nickNameController),
 
-                    SizedBox(height: 30.h),
+                      SizedBox(height: 30.h),
 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => Get.back(),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Cancel",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.black,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => Get.back(),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 16.h),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Cancel",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.black,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 16.w),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => controller.saveProfile(),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Save Changes",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
+                          SizedBox(width: 16.w),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  controller.saveProfile();
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 16.h),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Save Changes",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10.h),
-                  ],
+                        ],
+                      ),
+                      SizedBox(height: 10.h),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -134,7 +179,11 @@ class EditProfileBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildField(String label, TextEditingController textController) {
+  Widget _buildField(
+    String label,
+    TextEditingController textController, {
+    String? Function(String?)? validator,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: Column(
@@ -151,10 +200,12 @@ class EditProfileBottomSheet extends StatelessWidget {
           SizedBox(height: 8.h),
           TextFormField(
             controller: textController,
+            validator: validator,
             style: GoogleFonts.inter(color: Colors.white),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.black.withOpacity(0.2),
+              errorStyle: TextStyle(fontSize: 12.sp),
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 16.w,
                 vertical: 12.h,

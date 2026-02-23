@@ -13,13 +13,12 @@ class Resetpasswordscreen extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
 
-
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formkey,
-      child: Scaffold(
-        body: Center(
+    return Scaffold(
+      body: Form(
+        key: _formkey,
+        child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
             child: SingleChildScrollView(
@@ -123,10 +122,9 @@ class Resetpasswordscreen extends StatelessWidget {
                         CustomButton(
                           text: "Send Reset Link",
                           onPressed: () {
-                            // Handle SignIn action, like form validation
-                            if (_formkey.currentState!.validate()) {}
-                              // Perform sign in action
-                            Get.toNamed(Routes.resetpasswordtwo);
+                            if (_formkey.currentState!.validate()) {
+                              Get.toNamed(Routes.resetpasswordtwo);
+                            }
                           },
                           backgroundColor: Colors.white,
                           textColor: Colors.black,
@@ -147,7 +145,7 @@ class Resetpasswordscreen extends StatelessWidget {
                                 Get.toNamed(Routes.signscreen);
                               },
                               child: CustomTextgray(
-                                text: "Sign_In In",
+                                text: "Sign In",
                                 color: Color(0xFFA49898),
                               ),
                             ),
