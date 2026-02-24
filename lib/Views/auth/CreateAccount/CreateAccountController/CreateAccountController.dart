@@ -1,7 +1,12 @@
+import 'package:dio/src/response.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Response;
+import 'package:moeb_26/Core/routs.dart';
+import 'package:moeb_26/Services/auth_service.dart';
+import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 class CreateAccountController extends GetxController {
+  final AuthService _authService = Get.find<AuthService>();
   // Form key
 
   // Text Controllers - এইগুলা দিয়ে input নিব
@@ -19,6 +24,7 @@ class CreateAccountController extends GetxController {
   // Password দেখাবো কি লুকাবো
   var showPassword = false.obs;
   var showConfirmPassword = false.obs;
+  var isLoading = false.obs;
 
   // কোন role select করছে
   var selectedRole = ''.obs;
@@ -27,12 +33,7 @@ class CreateAccountController extends GetxController {
   var selectedArea = ''.obs;
 
   // Role এর list
-  final roles = [
-    'Company manager',
-    'Owner operator',
-    'Driver',
-    'Dispatcher',
-  ];
+  final roles = ['Company manager', 'Owner operator', 'Driver', 'Dispatcher'];
 
   // City এর list
   final cities = [
@@ -63,6 +64,33 @@ class CreateAccountController extends GetxController {
   void pickArea(String area) {
     selectedArea.value = area;
     serviceController.text = area;
+  }
+
+  Future<void> register() async {
+    try {
+      isLoading.value = true;
+
+      final Response<dynamic> response = await _authService.signup(
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        phone: phoneController.text,
+        home: homeAddressController.text,
+        serviceArea: serviceController.text,
+        experience: int.parse(yearController.text),
+        company: companyNameController.text,
+        companyRole: companyRoleController.text,
+      );
+
+      if (response.statusCode == 200) {
+        Helpers.showCustomSnackBar('Registration successful');
+        Get.offAllNamed(Routes.vehicleinformation);
+      }
+    } catch (e) {
+      Helpers.showCustomSnackBar(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // Controller বন্ধ করার সময় memory clean করো
