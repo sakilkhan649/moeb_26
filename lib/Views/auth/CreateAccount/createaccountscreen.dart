@@ -102,6 +102,37 @@ class Createaccountscreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 20.h),
+                // ========== Email Address ==========
+                Row(
+                  children: [
+                    CustomText(
+                      text: "Email Address",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.sp,
+                    ),
+                    Text(
+                      " *",
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Customtextfield(
+                  controller: controller.emailController,
+                  hintText: "your.email@example.com",
+                  obscureText: false,
+                  textInputType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Enter your Email";
+                    }
+                    if (!AppString.emailRegexp.hasMatch(value)) {
+                      return "Invalid Email";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20.h),
 
                 // ========== Service Area (Dropdown) ==========
                 Row(

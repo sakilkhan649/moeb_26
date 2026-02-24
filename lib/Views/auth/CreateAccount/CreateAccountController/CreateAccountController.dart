@@ -7,6 +7,7 @@ class CreateAccountController extends GetxController {
   // Text Controllers - এইগুলা দিয়ে input নিব
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
+  final emailController = TextEditingController();
   final serviceController = TextEditingController();
   final yearController = TextEditingController();
   final companyNameController = TextEditingController();
