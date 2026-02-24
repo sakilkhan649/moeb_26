@@ -10,6 +10,7 @@ class SellItemBottomSheet extends StatelessWidget {
   SellItemBottomSheet({super.key});
 
   final MarketplaceController controller = Get.find<MarketplaceController>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,128 +56,181 @@ class SellItemBottomSheet extends StatelessWidget {
             ),
 
             Expanded(
-              child: SingleChildScrollView(
-                controller: scrollController,
-                padding: EdgeInsets.fromLTRB(
-                  20.w,
-                  20.h,
-                  20.w,
-                  MediaQuery.of(context).viewInsets.bottom + 20.h,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel("Item Title *"),
-                    _buildTextField(
-                      controller: controller.titleController,
-                      hint: "e.g., Professional Car Phone Mount",
-                    ),
-                    SizedBox(height: 20.h),
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: EdgeInsets.fromLTRB(
+                    20.w,
+                    20.h,
+                    20.w,
+                    MediaQuery.of(context).viewInsets.bottom + 20.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLabel("Item Title *"),
+                      //dete hobe
+                      _buildTextField(
+                        textInputType: TextInputType.text,
+                        controller: controller.titleController,
+                        hint: "e.g., Professional Car Phone Mount",
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Title is required";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20.h),
 
-                    _buildLabel("Price *"),
-                    _buildTextField(
-                      controller: controller.priceController,
-                      hint: "\$50",
-                    ),
-                    SizedBox(height: 20.h),
+                      _buildLabel("Price *"),
+                      //dete hobe
+                      _buildTextField(
+                        textInputType: TextInputType.number,
+                        controller: controller.priceController,
+                        hint: "\$50",
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Price is required";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20.h),
 
-                    _buildLabel("Condition (Optional)"),
-                    Obx(
-                      () => Wrap(
-                        spacing: 10.w,
-                        runSpacing: 10.h,
-                        children: controller.conditions.map((condition) {
-                          bool isSelected =
-                              controller.selectedCondition.value == condition;
-                          return GestureDetector(
-                            onTap: () => controller.updateCondition(condition),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20.w,
-                                vertical: 12.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? const Color(0xFF1E2632)
-                                    : const Color(0xFF1A1A1A),
-                                borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(
+                      _buildLabel("Condition (Optional)"),
+                      Obx(
+                        () => Wrap(
+                          spacing: 10.w,
+                          runSpacing: 10.h,
+                          children: controller.conditions.map((condition) {
+                            bool isSelected =
+                                controller.selectedCondition.value == condition;
+                            return GestureDetector(
+                              onTap: () =>
+                                  controller.updateCondition(condition),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w,
+                                  vertical: 12.h,
+                                ),
+                                decoration: BoxDecoration(
                                   color: isSelected
-                                      ? const Color(0xFF323B49)
-                                      : const Color(0xFF242424),
+                                      ? const Color(0xFF1E2632)
+                                      : const Color(0xFF1A1A1A),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? const Color(0xFF323B49)
+                                        : const Color(0xFF242424),
+                                  ),
+                                ),
+                                child: Text(
+                                  condition,
+                                  style: GoogleFonts.inter(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.white.withOpacity(0.5),
+                                    fontSize: 14.sp,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                condition,
-                                style: GoogleFonts.inter(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : Colors.white.withOpacity(0.5),
-                                  fontSize: 14.sp,
-                                  fontWeight: isSelected
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+
+                      _buildLabel("Location *"),
+                      //dete hobe
+                      _buildTextField(
+                        textInputType: TextInputType.text,
+                        controller: controller.locationController,
+                        hint: "Manhattan, NY",
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Location is required";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20.h),
+
+                      _buildLabel("Description (Optional)"),
+                      //dete hobe
+                      _buildTextField(
+                        controller: controller.descriptionController,
+                        hint:
+                            "Describe the item, its features, and condition...",
+                        maxLines: 4,
+                      ),
+                      SizedBox(height: 20.h),
+
+                      _buildLabel("Photos (Optional)"),
+                      Obx(
+                        () => GestureDetector(
+                          onTap: () => controller.pickImage(),
+                          child: Container(
+                            width: double.infinity,
+                            padding: controller.selectedImage.value != null
+                                ? EdgeInsets.zero
+                                : EdgeInsets.symmetric(vertical: 40.h),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF000000),
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: const Color(0xFF1A1A1A),
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-
-                    _buildLabel("Location *"),
-                    _buildTextField(
-                      controller: controller.locationController,
-                      hint: "Manhattan, NY",
-                    ),
-                    SizedBox(height: 20.h),
-
-                    _buildLabel("Description (Optional)"),
-                    _buildTextField(
-                      controller: controller.descriptionController,
-                      hint: "Describe the item, its features, and condition...",
-                      maxLines: 4,
-                    ),
-                    SizedBox(height: 20.h),
-
-                    _buildLabel("Photos (Optional)"),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 40.h),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF000000),
-                        borderRadius: BorderRadius.circular(16.r),
-                        border: Border.all(color: const Color(0xFF1A1A1A)),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.file_upload_outlined,
-                            color: Colors.grey,
-                            size: 32.sp,
+                            child: controller.selectedImage.value != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    child: Image.file(
+                                      controller.selectedImage.value!,
+                                      height: 150.h,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Column(
+                                    children: [
+                                      Icon(
+                                        Icons.file_upload_outlined,
+                                        color: Colors.grey,
+                                        size: 32.sp,
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      Text(
+                                        "Upload or take Photos",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.grey,
+                                          fontSize: 14.sp,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                           ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            "Upload or take Photos",
-                            style: GoogleFonts.inter(
-                              color: Colors.grey,
-                              fontSize: 14.sp,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 30.h),
+                      SizedBox(height: 30.h),
 
-                    CustomButton(
-                      text: "List Item",
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black,
-                      onPressed: () => controller.listItem(),
-                    ),
-                    SizedBox(height: 20.h),
-                  ],
+                      CustomButton(
+                        text: "List Item",
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            controller.listItem();
+                          }
+                        },
+                      ),
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -204,10 +258,14 @@ class SellItemBottomSheet extends StatelessWidget {
     required TextEditingController controller,
     required String hint,
     int maxLines = 1,
+    String? Function(String?)? validator,
+    TextInputType textInputType = TextInputType.text,
   }) {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
+      validator: validator,
+      keyboardType: textInputType,
       style: GoogleFonts.inter(color: Colors.white),
       decoration: InputDecoration(
         hintText: hint,
@@ -226,6 +284,14 @@ class SellItemBottomSheet extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: BorderSide(color: AppColors.black200),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: Colors.red),
         ),
       ),
     );

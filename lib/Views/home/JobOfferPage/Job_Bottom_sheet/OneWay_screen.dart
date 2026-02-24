@@ -38,7 +38,9 @@ class OnewayScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            //dite hove
             _buildFieldWithLabel(
+              textInputType: TextInputType.text,
               "Pickup Location",
               pickupController,
               "e.g., JFK Airport, Terminal 4",
@@ -47,7 +49,9 @@ class OnewayScreen extends StatelessWidget {
                   ? "Pickup location is required"
                   : null,
             ),
+            //dite hove
             _buildFieldWithLabel(
+              textInputType: TextInputType.text,
               "Drop-off Location",
               dropoffController,
               "e.g., Manhattan, Times Square",
@@ -56,7 +60,9 @@ class OnewayScreen extends StatelessWidget {
                   ? "Drop-off location is required"
                   : null,
             ),
+            //dite hove
             _buildFieldWithLabel(
+              textInputType: TextInputType.text,
               "Flight Number (Optional)",
               flightController,
               "",
@@ -90,7 +96,9 @@ class OnewayScreen extends StatelessWidget {
               },
             ),
             SizedBox(height: 10.h),
+            //dite hove
             _buildFieldWithLabel(
+              textInputType: TextInputType.number,
               "Pay Amount",
               payController,
               "\$",
@@ -220,7 +228,9 @@ class OnewayScreen extends StatelessWidget {
               },
             ),
             SizedBox(height: 20.h),
+            //dite hove
             _buildFieldWithLabel(
+              textInputType: TextInputType.text,
               "Special Instructions (Optional)",
               specialController,
               "e.g., VIP client, suit required, name sign needed",
@@ -250,6 +260,7 @@ class OnewayScreen extends StatelessWidget {
     IconData icon, {
     bool isRequired = true,
     String? Function(String?)? validator,
+    TextInputType textInputType = TextInputType.none,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +284,7 @@ class OnewayScreen extends StatelessWidget {
           controller: ctrl,
           hintText: hint,
           obscureText: false,
-          textInputType: TextInputType.text,
+          textInputType: textInputType,
           validator: validator,
         ),
       ],

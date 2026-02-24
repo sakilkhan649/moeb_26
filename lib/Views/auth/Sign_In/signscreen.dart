@@ -38,7 +38,7 @@ class Signscreen extends StatelessWidget {
                 SizedBox(height: 7.h),
                 // Subtitle Text
                 CustomTextgray(
-                  text: "Sign_In in to continue to your account",
+                  text: "Sign in to continue to your account",
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w400,
                 ),

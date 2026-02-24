@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../Utils/app_images.dart';
 import '../Model/Marketplace_model.dart';
 
@@ -22,6 +24,16 @@ class MarketplaceController extends GetxController {
   final TextEditingController locationController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
+  final Rxn<File> selectedImage = Rxn<File>();
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedImage.value = File(image.path);
+    }
+  }
+
   void updateCondition(String condition) {
     selectedCondition.value = condition;
   }
@@ -36,6 +48,16 @@ class MarketplaceController extends GetxController {
       backgroundColor: const Color(0xff1A1A1A),
       colorText: Colors.white,
     );
+    _clearFields();
+  }
+
+  void _clearFields() {
+    titleController.clear();
+    priceController.clear();
+    locationController.clear();
+    descriptionController.clear();
+    selectedImage.value = null;
+    selectedCondition.value = "New";
   }
 
   @override
