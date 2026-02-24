@@ -37,6 +37,7 @@ import '../Views/home/ChatPage/ChatDetailPage.dart';
 import '../Views/home/RidesPage/Ride_Completed/Ride_Completed_page.dart';
 import '../Views/home/RidesPage/Ride_Details/Ride_Details_Page.dart';
 import '../Views/home/Bottom_NabBar/bottom_nabbar_screens.dart';
+import '../widgets/No_internet_screen.dart';
 
 class Routes {
   static const String splashScreen = "/SplashScreen";
@@ -72,6 +73,7 @@ class Routes {
   static const String profileScreen = "/ProfileScreen";
   static const String ratingsFeedback= "/RatingsFeedback";
   static const String serviceArea= "/ServiceArea";
+  static const String noInternetScreen= "/NoInternetScreen";
 
   static List<GetPage> routes = [
     GetPage(
@@ -240,6 +242,11 @@ class Routes {
     GetPage(
       name: serviceArea,
       page: () => ServiceArea(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: noInternetScreen,
+      page: () => NoInternetScreen(),
       transition: Transition.noTransition,
     ),
   ];

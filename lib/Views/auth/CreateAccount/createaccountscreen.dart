@@ -133,7 +133,33 @@ class Createaccountscreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 20.h),
-
+                // ========== Home Address ==========
+                Row(
+                  children: [
+                    CustomText(
+                      text: "Home Address",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.sp,
+                    ),
+                    Text(
+                      " *",
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Customtextfield(
+                  controller: controller.homeAddressController,
+                  hintText: "",
+                  obscureText: false,
+                  textInputType: TextInputType.name,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Enter your Home Address";
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20.h),
                 // ========== Service Area (Dropdown) ==========
                 Row(
                   children: [
@@ -371,7 +397,7 @@ class Createaccountscreen extends StatelessWidget {
                     }
 
                     if (isFormValid && dropdownsValid) {
-                      Get.toNamed(Routes.vehicleinformation);
+                      controller.registerUser();
                     }
                   },
                 ),

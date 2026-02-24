@@ -8,6 +8,7 @@ class CreateAccountController extends GetxController {
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
   final emailController = TextEditingController();
+  final homeAddressController = TextEditingController();
   final serviceController = TextEditingController();
   final yearController = TextEditingController();
   final companyNameController = TextEditingController();
