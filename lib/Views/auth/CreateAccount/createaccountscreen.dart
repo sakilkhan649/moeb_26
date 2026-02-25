@@ -397,7 +397,7 @@ class Createaccountscreen extends StatelessWidget {
                     }
 
                     if (isFormValid && dropdownsValid) {
-                      controller.registerUser();
+                      controller.register();
                     }
                   },
                 ),

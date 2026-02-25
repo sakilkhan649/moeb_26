@@ -33,7 +33,7 @@ class CreateAccountController extends GetxController {
   var selectedArea = ''.obs;
 
   // Role এর list
-  final roles = ['Company manager', 'Owner operator', 'Driver', 'Dispatcher'];
+  final roles = ['Company manager', 'Owner operator', 'Driver',];
 
   // City এর list
   final cities = [
@@ -70,6 +70,16 @@ class CreateAccountController extends GetxController {
     try {
       isLoading.value = true;
 
+      // Map the selected role to backend enum values
+      String roleToSubmit = companyRoleController.text;
+      if (roleToSubmit == 'Company manager') {
+        roleToSubmit = 'MANAGER';
+      } else if (roleToSubmit == 'Owner operator') {
+        roleToSubmit = 'OWNER';
+      } else if (roleToSubmit == 'Driver') {
+        roleToSubmit = 'DRIVER';
+      }
+
       final Response<dynamic> response = await _authService.signup(
         name: nameController.text,
         email: emailController.text,
@@ -79,11 +89,11 @@ class CreateAccountController extends GetxController {
         serviceArea: serviceController.text,
         experience: int.parse(yearController.text),
         company: companyNameController.text,
-        companyRole: companyRoleController.text,
+        companyRole: roleToSubmit,
       );
 
-      if (response.statusCode == 200) {
-        Helpers.showCustomSnackBar('Registration successful');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Helpers.showCustomSnackBar('Registration successful',isError: false);
         Get.offAllNamed(Routes.vehicleinformation);
       }
     } catch (e) {

@@ -1,12 +1,8 @@
-/*
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
-import 'package:gifting_app/routes/routes.dart';
-import '../../core/utils/app_dialog.dart';
-import '../../core/utils/custom_snackbar.dart';
-import '../../presentation/screens/auth_screen/verify_email.dart';
-import '../../presentation/widgets/email_verify_popup.dart';
+import 'package:moeb_26/Core/routs.dart';
+import 'package:moeb_26/widgets/Custom_snacbar.dart';
 
 class ApiChecker {
   /// Check Dio response and show snackbar if error occurs
@@ -14,7 +10,7 @@ class ApiChecker {
     // Success codes → 200 (OK), 201 (Created)
     if (response.statusCode != 200 && response.statusCode != 201) {
       if (response.statusCode == 401) {
-        Get.offAllNamed(RoutePages.loginScreen);
+        Get.offAllNamed(Routes.vehicleinformation);
         showCustomSnackBar(
           "Unauthorized! Please login again.",
           getXSnackBar: getXSnackBar,
@@ -47,4 +43,3 @@ class ApiChecker {
     showCustomSnackBar(message, getXSnackBar: getXSnackBar);
   }
 }
-*/
