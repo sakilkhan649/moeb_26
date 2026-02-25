@@ -49,23 +49,6 @@ class Resetpasswordthree extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                   SizedBox(height: 26.h),
-
-                  Customtextfield(
-                    controller: tokenController,
-                    hintText: "Reset Token",
-                    obscureText: false,
-                    textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter Token";
-                      }
-                      return null;
-                    },
-                    prefixIcon: Icon(Icons.vpn_key, color: AppColors.gray100),
-                  ),
-
-                  SizedBox(height: 26.h),
-
                   Obx(
                     () => Customtextfield(
                       controller: passwordController,

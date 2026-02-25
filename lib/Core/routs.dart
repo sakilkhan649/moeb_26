@@ -1,6 +1,7 @@
 
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
+import 'package:moeb_26/Views/auth/Otp_verification/otp_verifications.dart';
 
 import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Application_Succes/Account_succes_screen.dart';
@@ -74,6 +75,7 @@ class Routes {
   static const String ratingsFeedback= "/RatingsFeedback";
   static const String serviceArea= "/ServiceArea";
   static const String noInternetScreen= "/NoInternetScreen";
+  static const String otpVerificationScreen= "/OtpVerificationScreen";
 
   static List<GetPage> routes = [
     GetPage(
@@ -247,6 +249,11 @@ class Routes {
     GetPage(
       name: noInternetScreen,
       page: () => NoInternetScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: otpVerificationScreen,
+      page: () => OtpVerificationScreen(),
       transition: Transition.noTransition,
     ),
   ];

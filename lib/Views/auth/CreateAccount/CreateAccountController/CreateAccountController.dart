@@ -2,6 +2,7 @@ import 'package:dio/src/response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:moeb_26/Core/routs.dart';
+import 'package:moeb_26/Services/api_cheker.dart';
 import 'package:moeb_26/Services/auth_service.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
@@ -91,10 +92,10 @@ class CreateAccountController extends GetxController {
         company: companyNameController.text,
         companyRole: roleToSubmit,
       );
-
+      ApiChecker.checkWriteApi(response);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar('Registration successful',isError: false);
-        Get.offAllNamed(Routes.vehicleinformation);
+        Get.offAllNamed(Routes.otpVerificationScreen,arguments: {'email': emailController.text});
       }
     } catch (e) {
       Helpers.showCustomSnackBar(e.toString());

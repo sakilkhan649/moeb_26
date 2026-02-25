@@ -68,7 +68,10 @@ class AuthService extends GetxService {
   }
 
   /// ===================== LOGIN =====================
-  Future<Response> login({required String email, required String password}) async {
+  Future<Response> login({
+    required String email,
+    required String password,
+  }) async {
     try {
       final response = await _authRepo.login(email: email, password: password);
       await _handleAuthResponse(response);
@@ -101,11 +104,15 @@ class AuthService extends GetxService {
   }
 
   /// ===================== OTP VERIFY =====================
-  Future<Response> verifyOtp({required String email, required int otp}) async {
+  Future<Response> verifyOtp({
+    required String email,
+    required int otp, // 👈 controller থেকে আসছে
+  }) async {
     try {
-      final response = await _authRepo.otpVerify(email: email, oneTimeCode: otp);
-      // If OTP verification logs the user in directly:
-      // await _handleAuthResponse(response);
+      final response = await _authRepo.otpVerify(
+        email: email,
+        oneTimeCode: otp, // 👈 repo এ oneTimeCode
+      );
       return response;
     } catch (e) {
       rethrow;
