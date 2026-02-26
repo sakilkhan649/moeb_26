@@ -17,11 +17,14 @@ class OtpController extends GetxController {
   Timer? _timer;
 
   String email = ''; // 👈 final সরিয়ে empty রাখো
+  bool isRegister = false;
+
 
   @override
   void onInit() {
     super.onInit();
     email = Get.arguments?['email'] ?? ''; // 👈 onInit এ assign
+    isRegister = Get.arguments?['isRegister'] ?? false;
     print('=====> EMAIL: $email');
     startTimer();
   }
@@ -59,7 +62,13 @@ class OtpController extends GetxController {
 
       if (response.statusCode == 200) {
         Helpers.showCustomSnackBar('OTP Verified Successfully', isError: false);
-        Get.offAllNamed(Routes.vehicleinformation);
+
+        if(isRegister){
+          Get.offAllNamed(Routes.vehicleinformation);
+        }else{
+          Get.offAllNamed(Routes.resetpasswordthree);
+        }
+
       }
     } catch (e) {
       Helpers.showCustomSnackBar('You provided wrong OTP');

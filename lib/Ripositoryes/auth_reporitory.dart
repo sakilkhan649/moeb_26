@@ -89,24 +89,24 @@ class AuthRepo {
     });
   }
 
-  /// ===================== RESET PASSWORD =====================
-  Future<Response> resetPassword({
-    required String newPassword,
-    required String confirmPassword,
-  }) async {
-    return await apiClient.postData(ApiConstants.resetPassword, {
-      "newPassword": newPassword,
-      "confirmPassword": confirmPassword,
-    });
-  }
-
-  /// ===================== LOGOUT =====================
-  Future<Response> logout() async {
-
-
-    return await apiClient.postData(ApiConstants.logout, {
-    });
-  }
+  // /// ===================== RESET PASSWORD =====================
+  // Future<Response> resetPassword({
+  //   required String newPassword,
+  //   required String confirmPassword,
+  // }) async {
+  //   return await apiClient.postData(ApiConstants.resetPassword, {
+  //     "newPassword": newPassword,
+  //     "confirmPassword": confirmPassword,
+  //   });
+  // }
+  //
+  // /// ===================== LOGOUT =====================
+  // Future<Response> logout() async {
+  //
+  //
+  //   return await apiClient.postData(ApiConstants.logout, {
+  //   });
+  // }
 
   /// ===================== REFRESH TOKEN =====================
   Future<Response> refreshToken(String refreshToken) async {
@@ -115,18 +115,18 @@ class AuthRepo {
     });
   }
 
-  /// ===================== CHANGE PASSWORD =====================
-  Future<Response> changePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmPassword,
-  }) async {
-    return await apiClient.postData(ApiConstants.resetPassword, {
-      "currentPassword": currentPassword,
-      "newPassword": newPassword,
-      "confirmPassword": confirmPassword,
-    });
-  }
+  // /// ===================== CHANGE PASSWORD =====================
+  // Future<Response> changePassword({
+  //   required String currentPassword,
+  //   required String newPassword,
+  //   required String confirmPassword,
+  // }) async {
+  //   return await apiClient.postData(ApiConstants.resetPassword, {
+  //     "currentPassword": currentPassword,
+  //     "newPassword": newPassword,
+  //     "confirmPassword": confirmPassword,
+  //   });
+  // }
 
 
 }

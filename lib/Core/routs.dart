@@ -45,7 +45,7 @@ class Routes {
   static const String signscreen = "/Signscreen";
   static const String createaccountscreen = "/Createaccountscreen";
   static const String resetpasswordscreen = "/Resetpasswordscreen";
-  static const String resetpasswordtwo = "/Resetpasswordtwo";
+  //static const String resetpasswordtwo = "/Resetpasswordtwo";
   static const String resetpasswordthree = "/Resetpasswordthree";
   static const String successResetpassword = "/SuccessResetpassword";
   static const String vehicleinformation = "/Vehicleinformation";
@@ -76,6 +76,7 @@ class Routes {
   static const String serviceArea= "/ServiceArea";
   static const String noInternetScreen= "/NoInternetScreen";
   static const String otpVerificationScreen= "/OtpVerificationScreen";
+  static const String forgetotpVerificationScreen= "/OtpVerificationScreen";
 
   static List<GetPage> routes = [
     GetPage(
@@ -100,11 +101,11 @@ class Routes {
       page: () => Resetpasswordscreen(),
       transition: Transition.noTransition,
     ),
-    GetPage(
-      name: resetpasswordtwo,
-      page: () => Resetpasswordtwo(),
-      transition: Transition.noTransition,
-    ),
+    // GetPage(
+    //   name: resetpasswordtwo,
+    //   page: () => Resetpasswordtwo(),
+    //   transition: Transition.noTransition,
+    // ),
     GetPage(
       name: resetpasswordthree,
       page: () => Resetpasswordthree(),
@@ -253,6 +254,11 @@ class Routes {
     ),
     GetPage(
       name: otpVerificationScreen,
+      page: () => OtpVerificationScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: forgetotpVerificationScreen,
       page: () => OtpVerificationScreen(),
       transition: Transition.noTransition,
     ),

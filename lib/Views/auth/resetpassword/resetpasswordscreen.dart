@@ -7,17 +7,19 @@ import '../../../Utils/app_images.dart';
 import '../../../widgets/CustomButton.dart';
 import '../../../widgets/CustomText.dart';
 import '../../../widgets/CustomTextGary.dart';
+import 'ForgetPassword/forgetPassword_controller.dart';
+
 
 class Resetpasswordscreen extends StatelessWidget {
   Resetpasswordscreen({super.key});
-  TextEditingController emailController = TextEditingController();
-  final _formkey = GlobalKey<FormState>();
+
+  final _controller = Get.put(ForgotPasswordController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
-        key: _formkey,
+        key: _controller.formKey,
         child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
@@ -25,13 +27,10 @@ class Resetpasswordscreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // The logo (use an image asset or network image)
                   Image.asset(AppImages.app_logo, width: 100.w, height: 100.h),
                   SizedBox(height: 20.h),
-                  // Title Text
                   CustomText(text: "Elite Chauffeur Network"),
                   SizedBox(height: 30.h),
-                  // Subtitle Text
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 20.w,
@@ -43,17 +42,15 @@ class Resetpasswordscreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: Column(
-                      mainAxisAlignment: .start,
-                      crossAxisAlignment: .start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             IconButton(
-                              onPressed: () {
-                                Get.back();
-                              },
+                              onPressed: () => Get.back(),
                               icon: Icon(Icons.arrow_back, color: Colors.white),
                             ),
                             SizedBox(width: 10.w),
@@ -63,7 +60,7 @@ class Resetpasswordscreen extends StatelessWidget {
                         SizedBox(width: 10.w),
                         CustomTextgray(
                           text:
-                              "Enter your email address and we'll send you a link to reset your password.",
+                          "Enter your email address and we'll send you a link to reset your password.",
                           color: Color(0xFFE3DCDC),
                         ),
                         SizedBox(height: 20.h),
@@ -74,7 +71,7 @@ class Resetpasswordscreen extends StatelessWidget {
                         ),
                         SizedBox(height: 8.h),
                         TextFormField(
-                          controller: emailController,
+                          controller: _controller.emailController,
                           obscureText: false,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
@@ -86,50 +83,47 @@ class Resetpasswordscreen extends StatelessWidget {
                             }
                             return null;
                           },
-                          style: TextStyle(
-                            color: Colors.white,
-                          ), // Text color inside the field
+                          style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: "your.email@example.com", // Hint text
-                            hintStyle: TextStyle(
-                              color: Color(0xFFE3DCDC),
-                            ), // Hint text color
+                            hintText: "your.email@example.com",
+                            hintStyle: TextStyle(color: Color(0xFFE3DCDC)),
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 15.h,
                               horizontal: 10.w,
-                            ), // Adjust padding for input field
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16.r),
-                              borderSide: BorderSide(
-                                color: Color(0xFFE3DCDC),
-                              ), // Border color
+                              borderSide: BorderSide(color: Color(0xFFE3DCDC)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16.r),
-                              borderSide: BorderSide(
-                                color: Color(0xFFE3DCDC),
-                              ), // Focused border color
+                              borderSide: BorderSide(color: Color(0xFFE3DCDC)),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16.r),
-                              borderSide: BorderSide(
-                                color: Color(0xFFE3DCDC),
-                              ), // Enabled border color
+                              borderSide: BorderSide(color: Color(0xFFE3DCDC)),
                             ),
                           ),
                         ),
                         SizedBox(height: 20.h),
-                        CustomButton(
-                          text: "Send Reset Link",
-                          onPressed: () {
-                            if (_formkey.currentState!.validate()) {
-                              Get.toNamed(Routes.resetpasswordtwo);
-                            }
-                          },
-                          backgroundColor: Colors.white,
-                          textColor: Colors.black,
-                          borderColor: Colors.white,
+
+                        // ── Send Button ──
+                        Obx(
+                              () => CustomButton(
+                            text: _controller.isLoading.value
+                                ? "Sending..."
+                                : "Send Reset Link",
+                            onPressed: () {
+                              if (!_controller.isLoading.value) {
+                                _controller.forgotPassword();
+                              }
+                            },
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            borderColor: Colors.white,
+                          ),
                         ),
+
                         SizedBox(height: 20.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -141,9 +135,7 @@ class Resetpasswordscreen extends StatelessWidget {
                             ),
                             SizedBox(width: 10.w),
                             GestureDetector(
-                              onTap: () {
-                                Get.toNamed(Routes.signscreen);
-                              },
+                              onTap: () => Get.toNamed(Routes.signscreen),
                               child: CustomTextgray(
                                 text: "Sign In",
                                 color: Color(0xFFA49898),
@@ -154,7 +146,6 @@ class Resetpasswordscreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Dots for the indicator (if needed)
                 ],
               ),
             ),

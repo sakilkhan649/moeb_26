@@ -85,17 +85,17 @@ class AuthService extends GetxService {
     }
   }
 
-  /// ===================== LOGOUT =====================
-  Future<Response> logout() async {
-    try {
-      final response = await _authRepo.logout();
-      return response;
-    } catch (e) {
-      rethrow;
-    } finally {
-      await _clearLocalAuth();
-    }
-  }
+  // /// ===================== LOGOUT =====================
+  // Future<Response> logout() async {
+  //   try {
+  //     final response = await _authRepo.logout();
+  //     return response;
+  //   } catch (e) {
+  //     rethrow;
+  //   } finally {
+  //     await _clearLocalAuth();
+  //   }
+  // }
 
   /// ===================== FORGOT PASSWORD =====================
   Future<Response> forgotPassword(String email) async {
@@ -132,37 +132,37 @@ class AuthService extends GetxService {
     }
   }
 
-  /// ===================== RESET PASSWORD =====================
-  Future<void> resetPassword({
-    required String newPassword,
-    required String confirmPassword,
-  }) async {
-    try {
-      await _authRepo.resetPassword(
-        newPassword: newPassword,
-        confirmPassword: confirmPassword,
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  /// ===================== CHANGE PASSWORD =====================
-  Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmPassword,
-  }) async {
-    try {
-      await _authRepo.changePassword(
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-        confirmPassword: confirmPassword,
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // /// ===================== RESET PASSWORD =====================
+  // Future<void> resetPassword({
+  //   required String newPassword,
+  //   required String confirmPassword,
+  // }) async {
+  //   try {
+  //     await _authRepo.resetPassword(
+  //       newPassword: newPassword,
+  //       confirmPassword: confirmPassword,
+  //     );
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+  //
+  // /// ===================== CHANGE PASSWORD =====================
+  // Future<void> changePassword({
+  //   required String currentPassword,
+  //   required String newPassword,
+  //   required String confirmPassword,
+  // }) async {
+  //   try {
+  //     await _authRepo.changePassword(
+  //       currentPassword: currentPassword,
+  //       newPassword: newPassword,
+  //       confirmPassword: confirmPassword,
+  //     );
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   /// ===================== HELPER METHODS =====================
 
