@@ -59,16 +59,18 @@ class OtpController extends GetxController {
         email: email,
         otp: int.parse(pinController.text),
       );
-
       if (response.statusCode == 200) {
         Helpers.showCustomSnackBar('OTP Verified Successfully', isError: false);
 
-        if(isRegister){
+        if (isRegister) {
           Get.offAllNamed(Routes.vehicleinformation);
-        }else{
-          Get.offAllNamed(Routes.resetpasswordthree);
+        } else {
+          final resetToken = response.data['data']; // ✅ token নাও
+          Get.offAllNamed(
+            Routes.resetpasswordthree,
+            arguments: {'resetToken': resetToken}, // ✅ pass করো
+          );
         }
-
       }
     } catch (e) {
       Helpers.showCustomSnackBar('You provided wrong OTP');

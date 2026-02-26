@@ -1,33 +1,25 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
 import '../../../Utils/app_const.dart';
 import '../../../widgets/CustomButton.dart';
 import '../../../widgets/CustomText.dart';
 import '../../../widgets/CustomTextField.dart';
 import '../../../widgets/CustomTextGary.dart';
+import 'ResetPassword/resetPassword_controller.dart';
+
 
 class Resetpasswordthree extends StatelessWidget {
   Resetpasswordthree({super.key});
 
-  final TextEditingController tokenController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
-
-  // Reactive variables to control password visibility
-  final isPasswordVisible = false.obs;
-  final isPasswordVisibleTwo = false.obs;
-  final _formkey = GlobalKey<FormState>();
+  final _controller = Get.put(ResetPasswordController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
-        key: _formkey,
+        key: _controller.formKey,
         child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
@@ -41,20 +33,19 @@ class Resetpasswordthree extends StatelessWidget {
                     child: CustomText(text: "Forget Password"),
                   ),
                   SizedBox(height: 30.h),
-                  // Subtitle Text
                   CustomTextgray(
-                    text:
-                        "Enter your email address and we'll send you a link to reset your password.",
+                    text: "Enter your email address and we'll send you a link to reset your password.",
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
                   ),
                   SizedBox(height: 26.h),
+
+                  // ── New Password ──
                   Obx(
-                    () => Customtextfield(
-                      controller: passwordController,
+                        () => Customtextfield(
+                      controller: _controller.passwordController,
                       hintText: "New Password",
-                      obscureText:
-                          !isPasswordVisible.value, // Toggle between true/false
+                      obscureText: !_controller.isPasswordVisible.value,
                       textInputType: TextInputType.visiblePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -67,61 +58,61 @@ class Resetpasswordthree extends StatelessWidget {
                       },
                       prefixIcon: IconButton(
                         icon: Icon(
-                          isPasswordVisible.value
+                          _controller.isPasswordVisible.value
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
                           color: AppColors.gray100,
                         ),
-                        onPressed: () {
-                          isPasswordVisible.value =
-                              !isPasswordVisible.value; // Toggle visibility
-                        },
+                        onPressed: _controller.togglePassword,
                       ),
                     ),
                   ),
                   SizedBox(height: 26.h),
 
+                  // ── Confirm Password ──
                   Obx(
-                    () => Customtextfield(
-                      controller: confirmPasswordController,
+                        () => Customtextfield(
+                      controller: _controller.confirmPasswordController,
                       hintText: "Confirm New Password",
-                      obscureText: !isPasswordVisibleTwo
-                          .value, // Toggle between true/false
+                      obscureText: !_controller.isPasswordVisibleTwo.value,
                       textInputType: TextInputType.visiblePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Enter Confirm New Password";
                         }
-                        if (value != passwordController.text) {
+                        if (value != _controller.passwordController.text) {
                           return "Passwords do not match";
                         }
                         return null;
                       },
                       prefixIcon: IconButton(
                         icon: Icon(
-                          isPasswordVisibleTwo.value
+                          _controller.isPasswordVisibleTwo.value
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
                           color: AppColors.gray100,
                         ),
-                        onPressed: () {
-                          isPasswordVisibleTwo.value =
-                              !isPasswordVisibleTwo.value; // Toggle visibility
-                        },
+                        onPressed: _controller.toggleConfirmPassword,
                       ),
                     ),
                   ),
                   SizedBox(height: 50.h),
-                  CustomButton(
-                    text: "Reset Password",
-                    onPressed: () {
-                      if (_formkey.currentState!.validate()) {
-                        Get.toNamed(Routes.successResetpassword);
-                      }
-                    },
-                    backgroundColor: Colors.white,
-                    textColor: Colors.black,
-                    borderColor: Colors.white,
+
+                  // ── Reset Button ──
+                  Obx(
+                        () => CustomButton(
+                      text: _controller.isLoading.value
+                          ? "Resetting..."
+                          : "Reset Password",
+                      onPressed: () {
+                        if (!_controller.isLoading.value) {
+                          _controller.resetPassword();
+                        }
+                      },
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      borderColor: Colors.white,
+                    ),
                   ),
                 ],
               ),
