@@ -132,20 +132,23 @@ class AuthService extends GetxService {
     }
   }
 
-  // /// ===================== RESET PASSWORD =====================
-  // Future<void> resetPassword({
-  //   required String newPassword,
-  //   required String confirmPassword,
-  // }) async {
-  //   try {
-  //     await _authRepo.resetPassword(
-  //       newPassword: newPassword,
-  //       confirmPassword: confirmPassword,
-  //     );
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
+  /// ===================== RESET PASSWORD =====================
+  Future<Response> resetPassword({
+    required String resetToken,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      final response = await _authRepo.resetPassword(
+        resetToken: resetToken, // 👈 যোগ করো
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
   //
   // /// ===================== CHANGE PASSWORD =====================
   // Future<void> changePassword({

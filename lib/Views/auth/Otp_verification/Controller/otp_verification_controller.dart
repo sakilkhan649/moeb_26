@@ -19,7 +19,6 @@ class OtpController extends GetxController {
   String email = ''; // 👈 final সরিয়ে empty রাখো
   bool isRegister = false;
 
-
   @override
   void onInit() {
     super.onInit();
@@ -60,6 +59,7 @@ class OtpController extends GetxController {
         otp: int.parse(pinController.text),
       );
       if (response.statusCode == 200) {
+        print('=====> RESPONSE DATA: ${response.data}'); // 👈 add করো
         Helpers.showCustomSnackBar('OTP Verified Successfully', isError: false);
 
         if (isRegister) {
