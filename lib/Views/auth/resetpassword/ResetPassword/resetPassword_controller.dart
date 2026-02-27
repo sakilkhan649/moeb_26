@@ -21,6 +21,7 @@ class ResetPasswordController extends GetxController {
   void onInit() {
     super.onInit();
     _resetToken = Get.arguments?['resetToken'] ?? '';
+    print('=====> RESET TOKEN: $_resetToken'); // 👈 add করো
   }
 
   void togglePassword() => isPasswordVisible.value = !isPasswordVisible.value;

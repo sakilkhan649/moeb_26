@@ -14,7 +14,6 @@ import '../Config/storage_constants.dart';
 import '../Controller/internet_controller.dart';
 import '../widgets/Custom_snacbar.dart' as Helpers;
 
-
 class ApiClient extends GetxService {
   static late Dio dio;
   static String bearerToken = "";
@@ -120,6 +119,9 @@ class ApiClient extends GetxService {
           // 2️⃣ Token expired → try refresh FIRST
           if (e.response?.statusCode == 401 &&
               !e.requestOptions.path.contains(StorageConstants.refreshToken)) {
+            // TODO: API DOES NOT EXIST on backend.
+            // When refresh token API is ready, implement refresh here.
+            /*
             final refreshed = await refreshToken();
 
             if (refreshed) {
@@ -135,6 +137,10 @@ class ApiClient extends GetxService {
               logoutUser();
               return handler.reject(e);
             }
+            */
+
+            logoutUser();
+            return handler.reject(e);
           }
 
           // 3️⃣ Timeout
@@ -189,10 +195,10 @@ class ApiClient extends GetxService {
 
   /// GET
   Future<Response> getData(
-      String uri, {
-        Map<String, dynamic>? query,
-        CancelToken? cancelToken,
-      }) async {
+    String uri, {
+    Map<String, dynamic>? query,
+    CancelToken? cancelToken,
+  }) async {
     try {
       return await dio.get(
         uri,
@@ -206,11 +212,11 @@ class ApiClient extends GetxService {
 
   /// POST
   Future<Response> postData(
-      String uri,
-      dynamic body, {
-        CancelToken? cancelToken,
-        String? resetToken,
-      }) async {
+    String uri,
+    dynamic body, {
+    CancelToken? cancelToken,
+    String? resetToken,
+  }) async {
     try {
       return await dio.post(
         uri,
@@ -230,10 +236,10 @@ class ApiClient extends GetxService {
 
   /// PUT
   Future<Response> putData(
-      String uri,
-      dynamic body, {
-        CancelToken? cancelToken,
-      }) async {
+    String uri,
+    dynamic body, {
+    CancelToken? cancelToken,
+  }) async {
     try {
       return await dio.put(uri, data: body, cancelToken: cancelToken);
     } on DioException catch (e) {
@@ -243,10 +249,10 @@ class ApiClient extends GetxService {
 
   /// PATCH (missing before)
   Future<Response> patchData(
-      String uri,
-      dynamic body, {
-        CancelToken? cancelToken,
-      }) async {
+    String uri,
+    dynamic body, {
+    CancelToken? cancelToken,
+  }) async {
     try {
       return await dio.patch(uri, data: body, cancelToken: cancelToken);
     } on DioException catch (e) {
@@ -256,10 +262,10 @@ class ApiClient extends GetxService {
 
   /// DELETE
   Future<Response> deleteData(
-      String uri, {
-        dynamic body,
-        CancelToken? cancelToken,
-      }) async {
+    String uri, {
+    dynamic body,
+    CancelToken? cancelToken,
+  }) async {
     try {
       return await dio.delete(uri, data: body, cancelToken: cancelToken);
     } on DioException catch (e) {
@@ -269,12 +275,12 @@ class ApiClient extends GetxService {
 
   /// Multipart POST with progress
   Future<Response> postMultipartData(
-      String uri,
-      Map<String, dynamic> body, {
-        required List<MultipartBody> multipartBody,
-        Function(int, int)? onSendProgress,
-        CancelToken? cancelToken,
-      }) async {
+    String uri,
+    Map<String, dynamic> body, {
+    required List<MultipartBody> multipartBody,
+    Function(int, int)? onSendProgress,
+    CancelToken? cancelToken,
+  }) async {
     try {
       FormData formData = FormData.fromMap(body);
       for (MultipartBody element in multipartBody) {
@@ -298,12 +304,12 @@ class ApiClient extends GetxService {
 
   /// Multipart PUT with progress
   Future<Response> patchMultipartData(
-      String uri,
-      Map<String, dynamic> body, {
-        required List<MultipartBody> multipartBody,
-        Function(int, int)? onSendProgress,
-        CancelToken? cancelToken,
-      }) async {
+    String uri,
+    Map<String, dynamic> body, {
+    required List<MultipartBody> multipartBody,
+    Function(int, int)? onSendProgress,
+    CancelToken? cancelToken,
+  }) async {
     try {
       FormData formData = FormData.fromMap(body);
       for (MultipartBody element in multipartBody) {
@@ -327,11 +333,11 @@ class ApiClient extends GetxService {
 
   /// File Download
   Future<Response> downloadFile(
-      String url,
-      String savePath, {
-        Function(int, int)? onReceiveProgress,
-        CancelToken? cancelToken,
-      }) async {
+    String url,
+    String savePath, {
+    Function(int, int)? onReceiveProgress,
+    CancelToken? cancelToken,
+  }) async {
     try {
       return await dio.download(
         url,

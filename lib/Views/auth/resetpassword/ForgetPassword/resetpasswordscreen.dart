@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../Core/routs.dart';
-import '../../../Utils/app_const.dart';
-import '../../../Utils/app_images.dart';
-import '../../../widgets/CustomButton.dart';
-import '../../../widgets/CustomText.dart';
-import '../../../widgets/CustomTextGary.dart';
-import 'ForgetPassword/forgetPassword_controller.dart';
+import '../../../../Core/routs.dart';
+import '../../../../Utils/app_const.dart';
+import '../../../../Utils/app_images.dart';
+import '../../../../widgets/CustomButton.dart';
+import '../../../../widgets/CustomText.dart';
+import '../../../../widgets/CustomTextGary.dart';
+import 'forgetPassword_controller.dart';
 
 
 class Resetpasswordscreen extends StatelessWidget {

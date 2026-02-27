@@ -37,6 +37,7 @@ class LoginController extends GetxController {
       }
     } catch (e) {
       Helpers.showDebugLog("login error => $e");
+      Helpers.showCustomSnackBar('Invalid email or password', isError: true); // 👈 যোগ করো
     } finally {
       isLoading.value = false;
     }

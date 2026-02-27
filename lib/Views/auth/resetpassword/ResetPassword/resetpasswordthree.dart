@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../Utils/app_colors.dart';
-import '../../../Utils/app_const.dart';
-import '../../../widgets/CustomButton.dart';
-import '../../../widgets/CustomText.dart';
-import '../../../widgets/CustomTextField.dart';
-import '../../../widgets/CustomTextGary.dart';
-import 'ResetPassword/resetPassword_controller.dart';
+import '../../../../Utils/app_colors.dart';
+import '../../../../Utils/app_const.dart';
+import '../../../../widgets/CustomButton.dart';
+import '../../../../widgets/CustomText.dart';
+import '../../../../widgets/CustomTextField.dart';
+import '../../../../widgets/CustomTextGary.dart';
+import 'resetPassword_controller.dart';
 
 
 class Resetpasswordthree extends StatelessWidget {
