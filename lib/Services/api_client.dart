@@ -118,7 +118,11 @@ class ApiClient extends GetxService {
 
           // 2️⃣ Token expired → try refresh FIRST
           if (e.response?.statusCode == 401 &&
-              !e.requestOptions.path.contains(StorageConstants.refreshToken)) {
+              !e.requestOptions.path.contains(ApiConstants.refreshToken) &&
+              !e.requestOptions.path.contains(ApiConstants.resetPassword) &&
+              !e.requestOptions.path.contains(ApiConstants.login) &&
+              !e.requestOptions.path.contains(ApiConstants.signup) &&
+              !e.requestOptions.path.contains(ApiConstants.verifyEmail)) {
             // TODO: API DOES NOT EXIST on backend.
             // When refresh token API is ready, implement refresh here.
             /*

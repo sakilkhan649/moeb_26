@@ -2,7 +2,6 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:moeb_26/Views/auth/Otp_verification/otp_verifications.dart';
-
 import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Application_Succes/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved/Application_Not_Approved.dart';
@@ -10,15 +9,14 @@ import '../Views/auth/Application_Submitted/Application_submited.dart';
 import '../Views/auth/CreateAccount/createaccountscreen.dart';
 import '../Views/auth/Documents_Upload/DocumentsUpload.dart';
 import '../Views/auth/Profile/profile.dart';
+import '../Views/auth/Reset_password/ForgetPassword/resetpasswordscreen.dart';
+import '../Views/auth/Reset_password/ResetPassword/resetpasswordthree.dart';
+import '../Views/auth/Reset_password/success_resetpassword.dart';
 import '../Views/auth/Sign_In/signscreen.dart';
 import '../Views/auth/Splash_Screen/Binding/splash_binding.dart';
 import '../Views/auth/Splash_Screen/splashScreen.dart';
 import '../Views/auth/Term_and_policy/Term_policy.dart';
 import '../Views/auth/Vehicle/VehicleInformation.dart';
-import '../Views/auth/resetpassword/ForgetPassword/resetpasswordscreen.dart';
-import '../Views/auth/resetpassword/ResetPassword/resetpasswordthree.dart';
-import '../Views/auth/resetpassword/resetpasswordtwo.dart';
-import '../Views/auth/resetpassword/success_resetpassword.dart';
 import '../Views/home/Bottom_NabBar/Binding/Binging_Class.dart';
 import '../Views/home/JobOfferPage/My_jobs/Approve/approve_page.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ratings_Feedback/Ratings_Feedback.dart';

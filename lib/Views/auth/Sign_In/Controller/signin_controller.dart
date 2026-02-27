@@ -34,10 +34,20 @@ class LoginController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar('Login successful', isError: false);
         Get.offAllNamed(Routes.homeScreens);
+      } else {
+        final String errorMsg = response.data is Map
+            ? (response.data['message'] ?? 'Invalid email or password')
+            : 'Invalid email or password';
+
+        if (errorMsg.toLowerCase().contains('pending approval')) {
+          Get.toNamed(Routes.vehicleinformation);
+        } else {
+          Helpers.showCustomSnackBar(errorMsg, isError: true);
+        }
       }
     } catch (e) {
       Helpers.showDebugLog("login error => $e");
-      Helpers.showCustomSnackBar('Invalid email or password', isError: true); // 👈 যোগ করো
+      Helpers.showCustomSnackBar('Something went wrong', isError: true);
     } finally {
       isLoading.value = false;
     }

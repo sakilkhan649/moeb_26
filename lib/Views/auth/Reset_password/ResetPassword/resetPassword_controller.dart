@@ -25,7 +25,8 @@ class ResetPasswordController extends GetxController {
   }
 
   void togglePassword() => isPasswordVisible.value = !isPasswordVisible.value;
-  void toggleConfirmPassword() => isPasswordVisibleTwo.value = !isPasswordVisibleTwo.value;
+  void toggleConfirmPassword() =>
+      isPasswordVisibleTwo.value = !isPasswordVisibleTwo.value;
 
   Future<void> resetPassword() async {
     if (!formKey.currentState!.validate()) return;
@@ -40,8 +41,14 @@ class ResetPasswordController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Helpers.showCustomSnackBar('Your password has been successfully reset.', isError: false);
+        Helpers.showCustomSnackBar(
+          'Your password has been successfully reset.',
+          isError: false,
+        );
         Get.offAllNamed(Routes.successResetpassword);
+        Future.delayed(const Duration(seconds: 5), () {
+          Get.offAllNamed(Routes.signscreen);
+        });
       }
     } catch (e) {
       Helpers.showDebugLog("resetPassword error => $e");
