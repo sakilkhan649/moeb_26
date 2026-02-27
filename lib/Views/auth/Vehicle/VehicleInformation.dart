@@ -62,26 +62,30 @@ class Vehicleinformation extends StatelessWidget {
                       ),
 
                       SizedBox(height: 30.h),
-                      CustomButton(
-                        text: "Continue",
-                        onPressed: () {
-                          showErrors.value = true;
+                      Obx(
+                        () => controller.isLoading.value
+                            ? Center(child: CircularProgressIndicator())
+                            : CustomButton(
+                                text: "Continue",
+                                onPressed: () {
+                                  showErrors.value = true;
 
-                          // Validate form fields
-                          final isFormValid = _formKey.currentState!.validate();
+                                  final isFormValid = _formKey.currentState!
+                                      .validate();
 
-                          // Validate vehicle type selection
-                          bool allTypesSelected = true;
-                          for (var v in controller.vehicles) {
-                            if (v.selectedVehicleType.value.isEmpty) {
-                              allTypesSelected = false;
-                            }
-                          }
+                                  bool allTypesSelected = true;
+                                  for (var v in controller.vehicles) {
+                                    if (v.selectedVehicleType.value.isEmpty) {
+                                      allTypesSelected = false;
+                                    }
+                                  }
 
-                          if (isFormValid && allTypesSelected) {
-                            Get.toNamed(Routes.documentsupload);
-                          }
-                        },
+                                  if (isFormValid && allTypesSelected) {
+                                    controller
+                                        .submitVehicles(); // 👈 Get.toNamed এর বদলে API call
+                                  }
+                                },
+                              ),
                       ),
                       SizedBox(height: 60.h),
                     ],
