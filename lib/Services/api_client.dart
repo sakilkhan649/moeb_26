@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -216,26 +215,25 @@ class ApiClient extends GetxService {
 
   /// POST
   Future<Response> postData(
-    String uri,
-    dynamic body, {
-    CancelToken? cancelToken,
-    String? resetToken,
-  }) async {
-    try {
-      return await dio.post(
-        uri,
-        data: body,
-        cancelToken: cancelToken,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': resetToken,
-          },
-        ),
-      );
-    } on DioException catch (e) {
-      return _handleError(e);
-    }
+      String uri,
+      dynamic body, {
+        CancelToken? cancelToken,
+        String? resetToken,
+      }) async {
+    // 👇 try-catch সরাও, rethrow হবে
+    return await dio.post(
+      uri,
+      data: body,
+      cancelToken: cancelToken,
+      options: resetToken != null
+          ? Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $resetToken',
+        },
+      )
+          : null,
+    );
   }
 
   /// PUT

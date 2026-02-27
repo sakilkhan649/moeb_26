@@ -40,7 +40,7 @@ class LoginController extends GetxController {
             : 'Invalid email or password';
 
         if (errorMsg.toLowerCase().contains('pending approval')) {
-          Get.toNamed(Routes.vehicleinformation);
+          Get.toNamed(Routes.homeScreens);
         } else {
           Helpers.showCustomSnackBar(errorMsg, isError: true);
         }
