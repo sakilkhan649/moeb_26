@@ -34,13 +34,16 @@ class VehicleInformationController extends GetxController {
 
       final vehicleData = vehicles.map((v) => v.toJson()).toList();
 
-      final response = await _userService.updateProfile(
+      final response = await _userService.updateVehicles(
         vehicles: vehicleData,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Helpers.showCustomSnackBar('Vehicle information saved', isError: false);
-        Get.offAllNamed(Routes.documentsupload); // 👈 next route
+        Helpers.showCustomSnackBar('Vehicle saved!', isError: false);
+        Get.offNamed(
+          Routes.documentsupload,
+          arguments: {'vehicles': vehicleData}, // 👈 Documents screen এ pass
+        );
       } else {
         final message = response.data is Map
             ? (response.data['message'] ?? 'Something went wrong.')

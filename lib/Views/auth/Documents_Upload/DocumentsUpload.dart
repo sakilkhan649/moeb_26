@@ -257,21 +257,19 @@ class Documentsupload extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20.h),
-                CustomButton(
+                Obx(() => controller.isLoading.value
+                    ? Center(child: CircularProgressIndicator())
+                    : CustomButton(
                   text: "Submit Application",
                   onPressed: () {
                     controller.showErrors.value = true;
-
-                    // Validate expire date fields
                     final isFormValid = _formKey.currentState!.validate();
-
-                    // Validate required documents
                     final docsValid = controller.validateDocuments();
-
                     if (isFormValid && docsValid) {
-                      Get.toNamed(Routes.termPolicy);
+                      controller.submitDocuments(); // 👈
                     }
                   },
+                ),
                 ),
                 SizedBox(height: 60.h),
               ],
