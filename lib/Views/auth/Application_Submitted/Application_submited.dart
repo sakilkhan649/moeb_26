@@ -30,11 +30,10 @@ class ApplicationSubmited extends StatelessWidget {
 
                 // Title
                 CustomText(
-                    text: "Application Submitted",
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-
+                  text: "Application Submitted",
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
 
                 SizedBox(height: 16.h),
 
@@ -93,34 +92,34 @@ class ApplicationSubmited extends StatelessWidget {
                       "You'll receive an email notification once your application has been reviewed. Please check your spam folder as well.",
                 ),
                 SizedBox(height: 10.h),
-                TextButton(
-                  onPressed: () {
-                    Get.toNamed(Routes.applicationNotApproved);
-                  },
-                  child: Text(
-                    "Next",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                TextButton(
-                  onPressed: () {
-                    Get.toNamed(Routes.accountSuccesScreen);
-                  },
-                  child: Text(
-                    "Success",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
 
+                // TextButton(
+                //   onPressed: () {
+                //     Get.toNamed(Routes.applicationNotApproved);
+                //   },
+                //   child: Text(
+                //     "Next",
+                //     style: TextStyle(
+                //       color: Colors.white,
+                //       fontSize: 30,
+                //       fontWeight: FontWeight.bold,
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(height: 10.h),
+                // TextButton(
+                //   onPressed: () {
+                //     Get.toNamed(Routes.accountSuccesScreen);
+                //   },
+                //   child: Text(
+                //     "Success",
+                //     style: TextStyle(
+                //       color: Colors.white,
+                //       fontSize: 30,
+                //       fontWeight: FontWeight.bold,
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: 40.h),
               ],
             ),

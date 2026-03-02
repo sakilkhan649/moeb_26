@@ -40,7 +40,7 @@ class VehicleInformationController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar('Vehicle saved!', isError: false);
-        Get.offNamed(
+        Get.toNamed(
           Routes.documentsupload,
           arguments: {'vehicles': vehicleData}, // 👈 Documents screen এ pass
         );

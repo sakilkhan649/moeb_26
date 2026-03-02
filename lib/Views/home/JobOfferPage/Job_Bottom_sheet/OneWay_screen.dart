@@ -242,7 +242,16 @@ class OnewayScreen extends StatelessWidget {
               text: "New Job",
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  Get.toNamed(Routes.myJobsScreen);
+                  postJobController.submitOneWayJob(
+                    pickupLocation: pickupController.text,
+                    dropoffLocation: dropoffController.text,
+                    flightNumber: flightController.text,
+                    date: onewayControllerInstance.selectedDate.value!,
+                    time: onewayControllerInstance.selectedTime.value!,
+                    paymentAmount: payController.text,
+                    paymentType: onewayControllerInstance.selectedRole.value,
+                    instruction: specialController.text.isEmpty ? null : specialController.text,
+                  );
                 }
               },
             ),

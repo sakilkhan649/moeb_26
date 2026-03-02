@@ -8,7 +8,5 @@ class StorageConstants {
   static const String language = 'language';
   static const String theme = 'theme';
   static const String deviceToken = 'device_token';
-
-
 // Add your storage keys here
 }

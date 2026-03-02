@@ -95,7 +95,7 @@ class CreateAccountController extends GetxController {
       ApiChecker.checkWriteApi(response);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar('Registration successful',isError: false);
-        Get.offAllNamed(Routes.otpVerificationScreen,arguments: {'email': emailController.text,"isRegister":true,});
+        Get.toNamed(Routes.otpVerificationScreen,arguments: {'email': emailController.text,"isRegister":true,});
       }
     } catch (e) {
       Helpers.showCustomSnackBar(e.toString());

@@ -63,10 +63,10 @@ class OtpController extends GetxController {
         Helpers.showCustomSnackBar('OTP Verified Successfully', isError: false);
 
         if (isRegister) {
-          Get.offAllNamed(Routes.vehicleinformation);
+          Get.toNamed(Routes.vehicleinformation);
         } else {
           final resetToken = response.data['data']; // ✅ token নাও
-          Get.offAllNamed(
+          Get.toNamed(
             Routes.resetpasswordthree,
             arguments: {'resetToken': resetToken}, // ✅ pass করো
           );

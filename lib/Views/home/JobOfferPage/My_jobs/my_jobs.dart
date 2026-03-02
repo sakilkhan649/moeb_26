@@ -60,6 +60,17 @@ class MyJobsScreen extends StatelessWidget {
 
               /// ================= JOB CARD =================
               Obx(() {
+                if (controller.isLoadingList.value) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40.h),
+                      child: const CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
+                    ),
+                  );
+                }
+
                 if (controller.isDeleted.value) {
                   return Padding(
                     padding: EdgeInsets.only(top: 40.h),
@@ -74,7 +85,30 @@ class MyJobsScreen extends StatelessWidget {
                   return _buildJobAcceptanceDetailCard();
                 }
 
-                return _buildDefaultJobCard();
+                if (controller.jobsList.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40.h),
+                      child: Text(
+                        "No jobs found",
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: controller.jobsList.length,
+                  itemBuilder: (context, index) {
+                    final job = controller.jobsList[index];
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 16.h),
+                      child: _buildJobCard(job),
+                    );
+                  },
+                );
               }),
             ],
           ),
@@ -83,7 +117,39 @@ class MyJobsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDefaultJobCard() {
+  Widget _buildJobCard(dynamic job) {
+    // Safely extract properties
+    final dateRaw = job['date'] ?? '';
+    final timeRaw = job['time'] ?? '';
+
+    // Parse date if possible
+    String displayDate = "$dateRaw · $timeRaw";
+    try {
+      if (dateRaw.isNotEmpty) {
+        DateTime parsed = DateTime.parse(dateRaw);
+        // Basic format to keep it simple, e.g., "Tue, Jan 20"
+        displayDate =
+            "${_getWeekday(parsed.weekday)}, ${_getMonth(parsed.month)} ${parsed.day} · $timeRaw";
+      }
+    } catch (_) {}
+
+    final puLocation = job['pickupLocation'] ?? 'N/A';
+    final doLocation = job['dropoffLocation'] ?? 'N/A';
+    final vehicle = job['vehicleType'] ?? 'N/A';
+    final flight = job['flightNumber'] ?? 'N/A';
+    final paymentType = job['paymentType'] ?? 'N/A';
+    final instruction = job['instruction'] ?? 'N/A';
+    final jobType = job['jobType'] == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
+
+    // Local controllers for this specific card
+    final TextEditingController cardFlightController = TextEditingController(
+      text: flight,
+    );
+    final TextEditingController cardPaymentController = TextEditingController(
+      text: paymentType,
+    );
+    final TextEditingController cardInstructionController =
+        TextEditingController(text: instruction);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -111,7 +177,7 @@ class MyJobsScreen extends StatelessWidget {
                         ),
                         SizedBox(width: 5.w),
                         Text(
-                          "Tue, Jan 20 · 08:30 AM",
+                          displayDate,
                           style: GoogleFonts.inter(
                             color: Colors.grey,
                             fontSize: 12.sp,
@@ -127,19 +193,21 @@ class MyJobsScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        style: GoogleFonts.inter(fontSize: 14.sp),
-                        children: [
-                          const TextSpan(
-                            text: "PU: ",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          const TextSpan(
-                            text: "Dhaka Airport",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          style: GoogleFonts.inter(fontSize: 14.sp),
+                          children: [
+                            const TextSpan(
+                              text: "PU: ",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            TextSpan(
+                              text: puLocation,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Container(
@@ -152,7 +220,7 @@ class MyJobsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: Text(
-                        "SEDAN",
+                        vehicle.toUpperCase(),
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 10.sp,
@@ -166,19 +234,21 @@ class MyJobsScreen extends StatelessWidget {
 
                 Row(
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        style: GoogleFonts.inter(fontSize: 13.sp),
-                        children: [
-                          const TextSpan(
-                            text: "DO: ",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          const TextSpan(
-                            text: "Barisal",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          style: GoogleFonts.inter(fontSize: 13.sp),
+                          children: [
+                            const TextSpan(
+                              text: "DO: ",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            TextSpan(
+                              text: doLocation,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -191,7 +261,7 @@ class MyJobsScreen extends StatelessWidget {
                     SvgPicture.asset(AppIcons.sadax_icon),
                     SizedBox(width: 5.w),
                     Text(
-                      "SADAX",
+                      jobType,
                       style: GoogleFonts.inter(
                         color: Colors.white,
                         fontSize: 12.sp,
@@ -202,19 +272,21 @@ class MyJobsScreen extends StatelessWidget {
                 SizedBox(height: 16.h),
 
                 ///Fligt Number
-                const CustomTextgray(
-                  text: "Flight Number",
-                  color: Color(0xFF737373),
-                  fontWeight: FontWeight.w500,
-                ),
-                SizedBox(height: 8.h),
-                CustomTextFieldGold(
-                  controller: flightNumberController,
-                  hintText: "Flight AA 1234",
-                  obscureText: false,
-                  textInputType: TextInputType.text,
-                ),
-                SizedBox(height: 10.h),
+                if (flight != 'N/A' && flight != '') ...[
+                  const CustomTextgray(
+                    text: "Flight Number",
+                    color: Color(0xFF737373),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: 8.h),
+                  CustomTextFieldGold(
+                    controller: cardFlightController,
+                    hintText: "Flight AA 1234",
+                    obscureText: false,
+                    textInputType: TextInputType.text,
+                  ),
+                  SizedBox(height: 10.h),
+                ],
 
                 ///Payment Method
                 const CustomTextgray(
@@ -224,7 +296,7 @@ class MyJobsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 CustomTextFieldGold(
-                  controller: paymentMethodController,
+                  controller: cardPaymentController,
                   hintText: "Collect",
                   obscureText: false,
                   textInputType: TextInputType.text,
@@ -232,18 +304,20 @@ class MyJobsScreen extends StatelessWidget {
                 SizedBox(height: 10.h),
 
                 ///Special Instructions
-                const CustomTextgray(
-                  text: "Special Instructions",
-                  color: Color(0xFF737373),
-                  fontWeight: FontWeight.w500,
-                ),
-                SizedBox(height: 8.h),
-                CustomTextFieldGold(
-                  controller: specialInstructionsController,
-                  hintText: "Airport Expert, Vip Client",
-                  obscureText: false,
-                  textInputType: TextInputType.text,
-                ),
+                if (instruction != 'N/A' && instruction != '') ...[
+                  const CustomTextgray(
+                    text: "Special Instructions",
+                    color: Color(0xFF737373),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: 8.h),
+                  CustomTextFieldGold(
+                    controller: cardInstructionController,
+                    hintText: "Airport Expert, Vip Client",
+                    obscureText: false,
+                    textInputType: TextInputType.text,
+                  ),
+                ],
               ],
             ),
           ),
@@ -825,6 +899,58 @@ class MyJobsScreen extends StatelessWidget {
       ),
       barrierDismissible: false,
     );
+  }
+
+  String _getWeekday(int weekday) {
+    switch (weekday) {
+      case 1:
+        return 'Mon';
+      case 2:
+        return 'Tue';
+      case 3:
+        return 'Wed';
+      case 4:
+        return 'Thu';
+      case 5:
+        return 'Fri';
+      case 6:
+        return 'Sat';
+      case 7:
+        return 'Sun';
+      default:
+        return '';
+    }
+  }
+
+  String _getMonth(int month) {
+    switch (month) {
+      case 1:
+        return 'Jan';
+      case 2:
+        return 'Feb';
+      case 3:
+        return 'Mar';
+      case 4:
+        return 'Apr';
+      case 5:
+        return 'May';
+      case 6:
+        return 'Jun';
+      case 7:
+        return 'Jul';
+      case 8:
+        return 'Aug';
+      case 9:
+        return 'Sep';
+      case 10:
+        return 'Oct';
+      case 11:
+        return 'Nov';
+      case 12:
+        return 'Dec';
+      default:
+        return '';
+    }
   }
 }
 

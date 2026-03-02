@@ -215,11 +215,11 @@ class ApiClient extends GetxService {
 
   /// POST
   Future<Response> postData(
-      String uri,
-      dynamic body, {
-        CancelToken? cancelToken,
-        String? resetToken,
-      }) async {
+    String uri,
+    dynamic body, {
+    CancelToken? cancelToken,
+    String? resetToken,
+  }) async {
     // 👇 try-catch সরাও, rethrow হবে
     return await dio.post(
       uri,
@@ -227,11 +227,11 @@ class ApiClient extends GetxService {
       cancelToken: cancelToken,
       options: resetToken != null
           ? Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $resetToken',
-        },
-      )
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $resetToken',
+              },
+            )
           : null,
     );
   }
@@ -256,7 +256,17 @@ class ApiClient extends GetxService {
     CancelToken? cancelToken,
   }) async {
     try {
-      return await dio.patch(uri, data: body, cancelToken: cancelToken);
+      // If the body is FormData, ensure the correct content type is used.
+      Options? options;
+      if (body is FormData) {
+        options = Options(contentType: 'multipart/form-data');
+      }
+      return await dio.patch(
+        uri,
+        data: body,
+        options: options,
+        cancelToken: cancelToken,
+      );
     } on DioException catch (e) {
       return _handleError(e);
     }

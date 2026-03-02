@@ -60,8 +60,7 @@ class AuthService extends GetxService {
         companyRole: companyRole,
       );
 
-      // Optional: Auto login after signup or wait for verification
-      // handleAuthResponse(response);
+      await handleAuthResponse(response);
       return response;
     } catch (e) {
       rethrow;
@@ -72,13 +71,16 @@ class AuthService extends GetxService {
   Future<Response> login({
     required String email,
     required String password,
-
   }) async {
     try {
       // final deviceTocken = await _authRepo.getDeviceId();
-      final deviceTocken =AppConstants.deviceToken;
-      final response = await _authRepo.login(email: email, password: password,deviceToken:deviceTocken);
-      await _handleAuthResponse(response);
+      final deviceTocken = AppConstants.deviceToken;
+      final response = await _authRepo.login(
+        email: email,
+        password: password,
+        deviceToken: deviceTocken,
+      );
+      await handleAuthResponse(response);
       return response;
     } catch (e) {
       rethrow;
@@ -117,6 +119,7 @@ class AuthService extends GetxService {
         email: email,
         oneTimeCode: otp, // 👈 repo এ oneTimeCode
       );
+      await handleAuthResponse(response);
       return response;
     } catch (e) {
       rethrow;
@@ -169,28 +172,37 @@ class AuthService extends GetxService {
 
   /// ===================== HELPER METHODS =====================
 
-  /// Handles successful auth response (Login/Signup)
-  Future<void> _handleAuthResponse(Response response) async {
-    // Adjust these keys based on your actual API response structure
-    // Example: { "data": { "accessToken": "...", "refreshToken": "..." } }
-    final data = response.data;
+  /// Handles successful auth response (Login/Signup/Verify)
+  Future<void> handleAuthResponse(Response response) async {
+    try {
+      final data = response.data;
+      if (data == null) return;
 
-    // Check if data is nested
-    final authData = data['data'] ?? data;
+      // Check if data is nested
+      final authData = data['data'] ?? data;
 
-    final String? accessToken = authData['accessToken'] ?? authData['token'];
-    final String? refreshToken = authData['refreshToken'];
+      if (authData is Map<String, dynamic>) {
+        final String? accessToken =
+            authData['accessToken'] ?? authData['token'];
+        final String? refreshToken = authData['refreshToken'];
 
-    if (accessToken != null) {
-      await StorageService.setString(StorageConstants.bearerToken, accessToken);
-      isLoggedIn.value = true;
-    }
+        if (accessToken != null) {
+          await StorageService.setString(
+            StorageConstants.bearerToken,
+            accessToken,
+          );
+          isLoggedIn.value = true;
+        }
 
-    if (refreshToken != null) {
-      await StorageService.setString(
-        StorageConstants.refreshToken,
-        refreshToken,
-      );
+        if (refreshToken != null) {
+          await StorageService.setString(
+            StorageConstants.refreshToken,
+            refreshToken,
+          );
+        }
+      }
+    } catch (e) {
+      print("Error parsing auth response: $e");
     }
   }
 

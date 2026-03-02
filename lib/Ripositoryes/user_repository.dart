@@ -23,7 +23,7 @@ class UserRepo {
     }
 
     return await apiClient.patchData(
-      ApiConstants.updateProfile,
+      ApiConstants.userProfile,
       formData,
     );
   }
@@ -113,7 +113,7 @@ class UserRepo {
     }
 
     return await apiClient.patchData(
-      ApiConstants.updateProfile,
+      ApiConstants.userProfile,
       formData,
     );
   }

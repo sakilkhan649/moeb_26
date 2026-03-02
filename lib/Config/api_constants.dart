@@ -18,6 +18,8 @@ class ApiConstants {
   static const String changePassword = '/auth/change-password';
 
   // User Endpoints
-  static const String profile = '/user/profile';
-  static const String updateProfile = '/user/update';
+  //static const String profile = '/user/profile';
+  static const String userProfile = '/user/profile';
+  // Create JobEndpoint
+  static const String createJob = '/jobs';
 }

@@ -141,7 +141,7 @@ class DocumentsUploadController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar('Documents submitted!', isError: false);
-        Get.offAllNamed(Routes.termPolicy);
+        Get.toNamed(Routes.termPolicy);
       } else {
         final message = response.data is Map
             ? (response.data['message'] ?? 'Something went wrong.')

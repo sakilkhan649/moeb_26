@@ -15,6 +15,7 @@ class ByTheHour extends StatelessWidget {
   ByTheHour({super.key});
 
   final fromController = TextEditingController();
+  final dropoffController = TextEditingController();
   final durationController = TextEditingController();
   final dateController = TextEditingController();
   final pickupTimeController = TextEditingController();
@@ -46,6 +47,14 @@ class ByTheHour extends StatelessWidget {
               Icons.location_on_outlined,
               validator: (val) =>
                   (val == null || val.isEmpty) ? "Address is required" : null,
+            ),
+            _buildFieldWithLabel(
+              "To (Drop-off Location)",
+              dropoffController,
+              "e.g., Manhattan, Times Square",
+              Icons.location_on_outlined,
+              validator: (val) =>
+                  (val == null || val.isEmpty) ? "Drop-off is required" : null,
             ),
             _buildFieldWithLabel(
               "Duration",
@@ -253,7 +262,18 @@ class ByTheHour extends StatelessWidget {
               text: "New Job",
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  Get.toNamed(Routes.myJobsScreen);
+                  controller.submitByTheHourJob(
+                    pickupLocation: fromController.text,
+                    dropoffLocation: dropoffController.text,
+                    duration: durationController.text,
+                    date: onewayControllerInstance.selectedDate.value!,
+                    time: onewayControllerInstance.selectedTime.value!,
+                    paymentAmount: payController.text,
+                    paymentType: onewayControllerInstance.selectedRole.value,
+                    instruction: specialController.text.isEmpty
+                        ? null
+                        : specialController.text,
+                  );
                 }
               },
             ),
