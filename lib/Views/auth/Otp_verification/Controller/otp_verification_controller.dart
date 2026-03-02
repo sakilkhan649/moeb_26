@@ -29,7 +29,7 @@ class OtpController extends GetxController {
   }
 
   void startTimer() {
-    remainingSeconds.value = 600;
+    remainingSeconds.value = 180;
     canResend.value = false;
     _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
