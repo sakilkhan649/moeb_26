@@ -13,9 +13,14 @@ import '../../../../Core/routs.dart';
 import 'Controller/Job_bottom_sheet_Controller.dart';
 import 'Controller/Oneway_controller.dart';
 
-class OnewayScreen extends StatelessWidget {
-  OnewayScreen({super.key});
+class OnewayScreen extends StatefulWidget {
+  const OnewayScreen({super.key});
 
+  @override
+  State<OnewayScreen> createState() => _OnewayScreenState();
+}
+
+class _OnewayScreenState extends State<OnewayScreen> {
   final pickupController = TextEditingController();
   final dropoffController = TextEditingController();
   final flightController = TextEditingController();
@@ -26,6 +31,18 @@ class OnewayScreen extends StatelessWidget {
 
   final _formKey = GlobalKey<FormState>();
   final OnewayController onewayControllerInstance = Get.put(OnewayController());
+
+  @override
+  void dispose() {
+    pickupController.dispose();
+    dropoffController.dispose();
+    flightController.dispose();
+    dateController.dispose();
+    timeController.dispose();
+    payController.dispose();
+    specialController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,124 +125,110 @@ class OnewayScreen extends StatelessWidget {
             ),
             CustomText(text: "Payment *", fontSize: 13.sp),
             SizedBox(height: 8.h),
-            FormField<String>(
-              initialValue: onewayControllerInstance.selectedRole.value,
-              validator: (value) {
-                if (onewayControllerInstance.selectedRole.value.isEmpty) {
-                  return "Select payment";
-                }
-                return null;
-              },
-              builder: (FormFieldState<String> state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Obx(
-                      () => DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: Text(
-                            'Select payment',
-                            style: GoogleFonts.inter(
-                              color: AppColors.gray100,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          value:
-                              onewayControllerInstance
-                                  .selectedRole
-                                  .value
-                                  .isEmpty
-                              ? null
-                              : onewayControllerInstance.selectedRole.value,
-                          items: onewayControllerInstance.roles
-                              .map(
-                                (role) => DropdownMenuItem(
-                                  value: role,
-                                  child: Text(
-                                    role,
-                                    style: GoogleFonts.inter(
-                                      color: Colors.black,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (value) {
-                            if (value != null) {
-                              onewayControllerInstance.pickRole(value);
-                              state.didChange(value);
-                            }
-                          },
-                          buttonStyleData: ButtonStyleData(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 15.w,
-                              vertical: 8.h,
-                            ),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.r),
-                              border: Border.all(color: AppColors.black200),
-                              color: Colors.transparent,
-                            ),
-                          ),
-                          iconStyleData: IconStyleData(
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 24,
-                              color: AppColors.gray100,
-                            ),
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              color: Colors.white,
-                            ),
-                            offset: Offset(0, -5.h),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: Radius.circular(40.r),
-                              thickness: WidgetStateProperty.all(6),
-                              thumbVisibility: WidgetStateProperty.all(true),
-                            ),
-                          ),
-                          menuItemStyleData: MenuItemStyleData(
-                            height: 40.h,
-                            padding: EdgeInsets.only(left: 14.w, right: 14.w),
-                          ),
-                          selectedItemBuilder: (context) {
-                            return onewayControllerInstance.roles.map((
-                              String value,
-                            ) {
-                              return Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  value,
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              );
-                            }).toList();
-                          },
-                        ),
-                      ),
-                    ),
-                    if (state.hasError)
-                      Padding(
-                        padding: EdgeInsets.only(top: 8.h, left: 10.w),
+            Obx(
+              () => DropdownButtonFormField2<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 16.h),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: BorderSide(color: AppColors.black200),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: BorderSide(color: AppColors.black200),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: BorderSide(color: AppColors.black200),
+                  ),
+                  fillColor: Colors.transparent,
+                  filled: true,
+                ),
+                hint: Text(
+                  'Select payment',
+                  style: GoogleFonts.inter(
+                    color: AppColors.gray100,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                value:
+                    onewayControllerInstance.selectedRole.value.isEmpty
+                        ? null
+                        : onewayControllerInstance.selectedRole.value,
+                items: onewayControllerInstance.roles
+                    .map(
+                      (role) => DropdownMenuItem(
+                        value: role,
                         child: Text(
-                          state.errorText!,
-                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                          role,
+                          style: GoogleFonts.inter(
+                            color: Colors.black,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                  ],
-                );
-              },
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    onewayControllerInstance.pickRole(value);
+                  }
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Select payment";
+                  }
+                  return null;
+                },
+                buttonStyleData: ButtonStyleData(
+                  padding: EdgeInsets.only(right: 8.w),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                ),
+                iconStyleData: IconStyleData(
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 24,
+                    color: AppColors.gray100,
+                  ),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    color: Colors.white,
+                  ),
+                  offset: Offset(0, -5.h),
+                  scrollbarTheme: ScrollbarThemeData(
+                    radius: Radius.circular(40.r),
+                    thickness: WidgetStateProperty.all(6),
+                    thumbVisibility: WidgetStateProperty.all(true),
+                  ),
+                ),
+                menuItemStyleData: MenuItemStyleData(
+                  height: 40.h,
+                  padding: EdgeInsets.only(left: 14.w, right: 14.w),
+                ),
+                selectedItemBuilder: (context) {
+                  return onewayControllerInstance.roles.map((String value) {
+                    return Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        value,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    );
+                  }).toList();
+                },
+              ),
             ),
             SizedBox(height: 20.h),
             //dite hove
