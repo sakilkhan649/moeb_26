@@ -76,9 +76,13 @@ class Marketplacepage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 15.h),
-            // Marketplace Items - Refactored to Column with Rows
             Expanded(
               child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Color(0xFFF1A107)),
+                  );
+                }
                 if (controller.filteredItems.isEmpty) {
                   return Padding(
                     padding: EdgeInsets.only(top: 50.h),
@@ -101,11 +105,7 @@ class Marketplacepage extends StatelessWidget {
                         rightIndex < controller.filteredItems.length;
 
                     return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: 16.h,
-                        left: 0,
-                        right: 0,
-                      ),
+                      padding: EdgeInsets.only(bottom: 10.h, left: 0, right: 0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -114,12 +114,12 @@ class Marketplacepage extends StatelessWidget {
                               item: controller.filteredItems[leftIndex],
                             ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: 10.w),
                           Expanded(
                             child: hasRight
                                 ? MarketplaceCard(
-                              item: controller.filteredItems[rightIndex],
-                            )
+                                    item: controller.filteredItems[rightIndex],
+                                  )
                                 : const SizedBox(),
                           ),
                         ],
@@ -144,23 +144,15 @@ class MarketplaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A), // Matches specific dark background
-      ),
+      height: 270.h, // Updated height
+      decoration: BoxDecoration(color: const Color(0xFF1A1A1A)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Item Image with rounded top corners
-          ClipRRect(
-            child: Image.asset(
-              item.imagePath,
-              height: 130.h,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
+          ClipRRect(child: _buildImage()),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -171,11 +163,11 @@ class MarketplaceCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
                     color: Colors.white,
-                    fontSize: 15.sp, // Larger as per image
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 4.h),
                 // Price and Rating
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -183,8 +175,8 @@ class MarketplaceCard extends StatelessWidget {
                     Text(
                       "\$${item.price}",
                       style: GoogleFonts.inter(
-                        color: const Color(0xFFF1A107), // Gold price color
-                        fontSize: 20.sp, // Very prominent as per image
+                        color: const Color(0xFFF1A107),
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -193,76 +185,139 @@ class MarketplaceCard extends StatelessWidget {
                         Icon(
                           Icons.star,
                           color: const Color(0xFFF1A107),
-                          size: 18.sp,
+                          size: 14.sp,
                         ),
                         SizedBox(width: 4.w),
                         Text(
                           item.rating.toString(),
                           style: GoogleFonts.inter(
                             color: const Color(0xff949494),
-                            fontSize: 16.sp,
+                            fontSize: 12.sp,
                           ),
                         ),
                       ],
                     ),
                   ],
                 ),
-                SizedBox(height: 16.h),
-                // Condition and Contact Button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      item.condition,
-                      style: GoogleFonts.inter(
-                        color: const Color(0xff949494),
-                        fontSize: 13.sp,
-                      ),
+              ],
+            ),
+          ),
+          SizedBox(height: 4.h), // Reduced gap instead of Spacer
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  item.condition,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xff949494),
+                    fontSize: 12.sp,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Get.dialog(ContactSellerPopup(item: item));
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1A107),
+                      borderRadius: BorderRadius.circular(30.r),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Get.dialog(ContactSellerPopup(item: item));
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1A107),
-                          borderRadius: BorderRadius.circular(
-                            30.r,
-                          ), // Highly rounded pill
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 10.h,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              AppIcons.contact_icon,
-                              height: 18.sp,
-                              width: 18.sp,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.black,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              "Contact",
-                              style: GoogleFonts.inter(
-                                color: Colors.black,
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
                     ),
-                  ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset(
+                          AppIcons.contact_icon,
+                          height: 14.sp,
+                          width: 14.sp,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          "Contact",
+                          style: GoogleFonts.inter(
+                            color: Colors.black,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    if (item.imagePath.isEmpty) {
+      return _buildNoImagePlaceholder();
+    }
+
+    if (item.imagePath.startsWith('http')) {
+      return Image.network(
+        item.imagePath,
+        height: 130.h,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) =>
+            _buildNoImagePlaceholder(),
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            height: 130.h,
+            width: double.infinity,
+            color: Colors.grey[900],
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFFF1A107),
+                strokeWidth: 2,
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      return Image.asset(
+        item.imagePath,
+        height: 130.h,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) =>
+            _buildNoImagePlaceholder(),
+      );
+    }
+  }
+
+  Widget _buildNoImagePlaceholder() {
+    return Container(
+      height: 130.h,
+      width: double.infinity,
+      color: Colors.grey[900],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image_not_supported_outlined,
+            color: Colors.grey,
+            size: 30.sp,
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            "No Image",
+            style: GoogleFonts.inter(color: Colors.grey, fontSize: 12.sp),
           ),
         ],
       ),

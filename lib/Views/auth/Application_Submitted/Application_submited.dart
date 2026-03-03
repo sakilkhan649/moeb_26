@@ -8,8 +8,24 @@ import '../../../Utils/app_colors.dart';
 
 /// Review Status Screen
 /// Shows application submission status with animated steps
-class ApplicationSubmited extends StatelessWidget {
+class ApplicationSubmited extends StatefulWidget {
   const ApplicationSubmited({super.key});
+
+  @override
+  State<ApplicationSubmited> createState() => _ApplicationSubmitedState();
+}
+
+class _ApplicationSubmitedState extends State<ApplicationSubmited> {
+  @override
+  void initState() {
+    super.initState();
+    // Navigate to Createscreens after 10 seconds
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted) {
+        Get.offAllNamed(Routes.createscreens);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,34 +108,6 @@ class ApplicationSubmited extends StatelessWidget {
                       "You'll receive an email notification once your application has been reviewed. Please check your spam folder as well.",
                 ),
                 SizedBox(height: 10.h),
-
-                // TextButton(
-                //   onPressed: () {
-                //     Get.toNamed(Routes.applicationNotApproved);
-                //   },
-                //   child: Text(
-                //     "Next",
-                //     style: TextStyle(
-                //       color: Colors.white,
-                //       fontSize: 30,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
-                // SizedBox(height: 10.h),
-                // TextButton(
-                //   onPressed: () {
-                //     Get.toNamed(Routes.accountSuccesScreen);
-                //   },
-                //   child: Text(
-                //     "Success",
-                //     style: TextStyle(
-                //       color: Colors.white,
-                //       fontSize: 30,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
                 SizedBox(height: 40.h),
               ],
             ),

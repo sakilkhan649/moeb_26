@@ -1,12 +1,15 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
 import 'package:moeb_26/Config/app_constants.dart';
 import 'package:moeb_26/Services/storege_service.dart';
 
 import '../Config/storage_constants.dart';
+import '../Core/routs.dart';
 import '../Ripositoryes/auth_reporitory.dart';
 import 'api_client.dart';
 
@@ -46,6 +49,21 @@ class AuthService extends GetxService {
     required int experience,
     required String company,
     required String companyRole,
+    required List<Map<String, dynamic>> vehicles,
+    required File drivingLicenseFile,
+    required String drivingLicenseExpiry,
+    required File hackLicenseFile,
+    required String hackLicenseExpiry,
+    File? localPermitFile,
+    String? localPermitExpiry,
+    required File commercialInsuranceFile,
+    required String commercialInsuranceExpiry,
+    required File vehicleRegistrationFile,
+    required String vehicleRegistrationExpiry,
+    required File headshotFile,
+    required File vehiclePhotoFront,
+    required File vehiclePhotoRear,
+    required File vehiclePhotoInterior,
   }) async {
     try {
       final response = await _authRepo.signup(
@@ -58,9 +76,22 @@ class AuthService extends GetxService {
         experience: experience,
         company: company,
         companyRole: companyRole,
+        vehicles: vehicles,
+        drivingLicenseFile: drivingLicenseFile,
+        drivingLicenseExpiry: drivingLicenseExpiry,
+        hackLicenseFile: hackLicenseFile,
+        hackLicenseExpiry: hackLicenseExpiry,
+        localPermitFile: localPermitFile,
+        localPermitExpiry: localPermitExpiry,
+        commercialInsuranceFile: commercialInsuranceFile,
+        commercialInsuranceExpiry: commercialInsuranceExpiry,
+        vehicleRegistrationFile: vehicleRegistrationFile,
+        vehicleRegistrationExpiry: vehicleRegistrationExpiry,
+        headshotFile: headshotFile,
+        vehiclePhotoFront: vehiclePhotoFront,
+        vehiclePhotoRear: vehiclePhotoRear,
+        vehiclePhotoInterior: vehiclePhotoInterior,
       );
-
-      await handleAuthResponse(response);
       return response;
     } catch (e) {
       rethrow;
@@ -87,17 +118,20 @@ class AuthService extends GetxService {
     }
   }
 
-  // /// ===================== LOGOUT =====================
-  // Future<Response> logout() async {
-  //   try {
-  //     final response = await _authRepo.logout();
-  //     return response;
-  //   } catch (e) {
-  //     rethrow;
-  //   } finally {
-  //     await _clearLocalAuth();
-  //   }
-  // }
+  /// ===================== LOGOUT =====================
+  Future<Response> logout() async {
+    try {
+      final deviceToken = AppConstants.deviceToken;
+      final response = await _authRepo.logout(deviceToken: deviceToken);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        await _clearLocalAuth();
+        Get.offAllNamed(Routes.signscreen);
+      }
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   /// ===================== FORGOT PASSWORD =====================
   Future<Response> forgotPassword(String email) async {

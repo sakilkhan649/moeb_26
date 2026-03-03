@@ -6,6 +6,7 @@ import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Application_Succes/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved/Application_Not_Approved.dart';
 import '../Views/auth/Application_Submitted/Application_submited.dart';
+import '../Views/auth/Create_Account_and_signIn/createscreens.dart';
 import '../Views/auth/Change_password/change_password_screen.dart';
 import '../Views/auth/CreateAccount/createaccountscreen.dart';
 import '../Views/auth/Documents_Upload/DocumentsUpload.dart';
@@ -41,6 +42,7 @@ import '../widgets/No_internet_screen.dart';
 
 class Routes {
   static const String splashScreen = "/SplashScreen";
+  static const String createscreens = "/Createscreens";
   static const String signscreen = "/Signscreen";
   static const String createaccountscreen = "/Createaccountscreen";
   static const String resetpasswordscreen = "/Resetpasswordscreen";
@@ -85,6 +87,11 @@ class Routes {
       transition: Transition.noTransition,
       binding: SplashBinding(),
 
+    ),
+    GetPage(
+      name: createscreens,
+      page: () => Createscreens(),
+      transition: Transition.noTransition,
     ),
     GetPage(
       name: signscreen,

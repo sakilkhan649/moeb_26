@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:moeb_26/Views/auth/Signup_Flow/SignupController.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
-import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
 import '../../../widgets/CustomButton.dart';
 import 'controller/term_policy_controller.dart';
@@ -12,6 +12,7 @@ class TermPolicy extends StatelessWidget {
   TermPolicy({super.key});
 
   final controller = Get.put(TermPolicyController());
+  late final SignupController signupCtrl = Get.find<SignupController>();
 
   @override
   Widget build(BuildContext context) {
@@ -431,14 +432,14 @@ class TermPolicy extends StatelessWidget {
                             ),
                           ),
 
-                        CustomButton(
-                          text: "Continue",
-                          onPressed: () {
-                            if (controller.validate()) {
-                              Get.toNamed(Routes.applicationSubmited);
-                            }
-                          },
-                        ),
+                        Obx(() => CustomButton(
+                          text: signupCtrl.isLoading.value
+                              ? "Submitting..."
+                              : "Continue",
+                          onPressed: signupCtrl.isLoading.value
+                              ? null
+                              : () => controller.validate(),
+                        )),
                         SizedBox(height: 40.h),
                       ],
                     ),
