@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Views/auth/Create_Account_and_signIn/createscreens.dart';
 import 'package:uuid/uuid.dart';
 
@@ -10,23 +11,26 @@ import '../../../../Services/storege_service.dart';
 class SplashScreenController extends GetxController {
   RxInt currentIndex = 0.obs; // Reactive state for dot index
   @override
-  void onInit() async{
+  void onInit() async {
     // TODO: implement onInit
     super.onInit();
-   await getOrCreateDeviceToken();
+    await getOrCreateDeviceToken();
+    // Login check is now handled after 3 seconds in startTimer
   }
 
   // Start the timer and change the dot index over time
   void startTimer() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       if (currentIndex.value < 2) {
         currentIndex.value++; // Update the current dot index
+      } else {
+        timer.cancel();
       }
     });
 
-    // After 3 seconds, navigate to the next screen
-    Timer(Duration(seconds: 3), () {
-      Get.off(() => Createscreens());
+    // After 3 seconds, check login and navigate
+    Timer(const Duration(seconds: 3), () {
+      checkLogin();
     });
   }
 
@@ -40,5 +44,16 @@ class SplashScreenController extends GetxController {
     }
 
     return token;
+  }
+
+  Future<void> checkLogin() async {
+    final accessToken = await StorageService.getString(
+      StorageConstants.bearerToken,
+    );
+    if (accessToken.isNotEmpty) {
+      Get.offAllNamed(Routes.homeScreens);
+    } else {
+      Get.offAll(() => const Createscreens());
+    }
   }
 }
