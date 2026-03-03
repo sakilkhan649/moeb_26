@@ -47,7 +47,52 @@ class JobRepo {
 
   Future<Response> getJobs() async {
     return await apiClient.getData(
-      ApiConstants.createJob,
+      ApiConstants.myJobs,
     ); // Same endpoint /jobs
+  }
+
+  Future<Response> getAllJobOffers() async {
+    return await apiClient.getData(
+      ApiConstants.getAllJobOffers,
+    );
+  }
+
+  Future<Response> applyToJob({
+    required String jobId,
+  }) async {
+    return await apiClient.postData(
+      ApiConstants.applytoJob.replaceAll('{jobId}', jobId),
+      null,
+    );
+  }
+
+  Future<Response> getPendingJobs({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    return await apiClient.getData(
+      ApiConstants.myRides,
+      query: {'type': 'pending', 'page': page, 'limit': limit},
+    );
+  }
+
+  Future<Response> getUpcomingJobs({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    return await apiClient.getData(
+      ApiConstants.myRides,
+      query: {'type': 'upcoming', 'page': page, 'limit': limit},
+    );
+  }
+
+  Future<Response> getPastJobs({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    return await apiClient.getData(
+      ApiConstants.myRides,
+      query: {'type': 'past', 'page': page, 'limit': limit},
+    );
   }
 }

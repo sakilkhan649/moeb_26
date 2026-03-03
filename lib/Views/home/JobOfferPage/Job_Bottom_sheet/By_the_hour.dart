@@ -64,36 +64,37 @@ class ByTheHour extends StatelessWidget {
               validator: (val) =>
                   (val == null || val.isEmpty) ? "Duration is required" : null,
             ),
-            Obx(() {
-              final date = onewayControllerInstance.selectedDate.value;
-              dateController.text = date == null
-                  ? ""
-                  : "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-              return _buildDateTimeField(
-                "Date",
-                Icons.date_range,
-                dateController,
-                "Select Date",
-                () => onewayControllerInstance.chooseDate(context),
-                validator: (val) =>
-                    (val == null || val.isEmpty) ? "Date is required" : null,
-              );
-            }),
-            Obx(() {
-              final time = onewayControllerInstance.selectedTime.value;
-              pickupTimeController.text = time == null
-                  ? ""
-                  : time.format(context);
-              return _buildDateTimeField(
-                "Pickup Time",
-                Icons.access_time,
-                pickupTimeController,
-                "Select Time",
-                () => onewayControllerInstance.chooseTime(context),
-                validator: (val) =>
-                    (val == null || val.isEmpty) ? "Time is required" : null,
-              );
-            }),
+            _buildDateTimeField(
+              "Date",
+              Icons.date_range,
+              dateController,
+              "Select Date",
+              () async {
+                await onewayControllerInstance.chooseDate(context);
+                final date = onewayControllerInstance.selectedDate.value;
+                if (date != null) {
+                  dateController.text =
+                      "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                }
+              },
+              validator: (val) =>
+                  (val == null || val.isEmpty) ? "Date is required" : null,
+            ),
+            _buildDateTimeField(
+              "Pickup Time",
+              Icons.access_time,
+              pickupTimeController,
+              "Select Time",
+              () async {
+                await onewayControllerInstance.chooseTime(context);
+                final time = onewayControllerInstance.selectedTime.value;
+                if (time != null) {
+                  pickupTimeController.text = time.format(context);
+                }
+              },
+              validator: (val) =>
+                  (val == null || val.isEmpty) ? "Time is required" : null,
+            ),
             FormField<String>(
               initialValue: controller.selectedVehicle.value,
               validator: (value) {

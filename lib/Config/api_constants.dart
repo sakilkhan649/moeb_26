@@ -22,4 +22,9 @@ class ApiConstants {
   static const String userProfile = '/user/profile';
   // Create JobEndpoint
   static const String createJob = '/jobs';
+  static const String myJobs = '/jobs/my-jobs';
+
+  static const String getAllJobOffers = '/jobs';
+  static const String applytoJob = '/jobs/{jobId}/apply';
+  static const String myRides = '/jobs/my-rides';
 }

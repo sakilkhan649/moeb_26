@@ -94,14 +94,50 @@ class Ridespage extends StatelessWidget {
               SizedBox(height: 15.h),
 
               /// RIDES LIST (Based on selected tab)
-              Obx(
-                () => ListView.builder(
+              Obx(() {
+                if (controller.isLoadingList.value) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40.h),
+                      child: const CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
+                    ),
+                  );
+                }
+
+                if (controller.currentRides.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40.h),
+                      child: Text(
+                        "No rides found",
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: controller.currentRides.length,
                   padding: EdgeInsets.only(bottom: 20.h),
                   itemBuilder: (context, index) {
                     final ride = controller.currentRides[index];
+
+                    // Safely extract properties
+                    final dateRaw = ride.date?.toString() ?? '';
+                    final timeRaw = ride.time;
+                    String displayDate = "$dateRaw $timeRaw";
+                    try {
+                      if (dateRaw.isNotEmpty) {
+                        DateTime parsed = DateTime.parse(dateRaw);
+                        displayDate =
+                            "${parsed.year}-${parsed.month.toString().padLeft(2, '0')}-${parsed.day.toString().padLeft(2, '0')} $timeRaw";
+                      }
+                    } catch (_) {}
+
                     return GestureDetector(
                       // Logic in RidesPage.dart
                       onTap: () {
@@ -112,24 +148,20 @@ class Ridespage extends StatelessWidget {
                       },
 
                       child: CustomJobCard(
-                        dateTime: ride.dateTime,
+                        pickupPaymentType: ride.paymentType,
+                        dateTime: displayDate,
                         vehicleType: ride.vehicleType,
                         pickupLocation: ride.pickupLocation,
                         dropoffLocation: ride.dropoffLocation,
-                        pickupPayment: ride.pickupPayment,
-                        pickupAmount: ride.pickupAmount,
-                        driverName: ride.driverName,
-                        companyName: ride.companyName,
-                        flightNumberHint: "N/A",
-                        paymentMethodHint: ride.pickupPayment,
-                        specialInstructionsHint: "N/A",
-                        price: ride.pickupAmount,
-                        vehicleTypeColor: ride.vehicleTypeColor,
+                        pickupAmount: ride.paymentAmount.toString(),
+                        driverName: ride.applicant?.driver?.name ?? 'Unknown',
+                        companyName: ride.applicant?.driver?.name ?? 'Unknown',
+                        vehicleTypeColor: VehicleTypeColors.sedan,
                       ),
                     );
                   },
-                ),
-              ),
+                );
+              }),
             ],
           ),
         ),
@@ -191,31 +223,33 @@ class CustomJobCard extends StatelessWidget {
   final String vehicleType;
   final String pickupLocation;
   final String dropoffLocation;
-  final String pickupPayment;
+  // final String pickupPayment;
   final String pickupAmount;
   final String driverName;
   final String companyName;
-  final String flightNumberHint;
-  final String paymentMethodHint;
-  final String specialInstructionsHint;
-  final String price;
+  final String pickupPaymentType;
+  // final String flightNumberHint;
+  // final String paymentMethodHint;
+  // final String specialInstructionsHint;
+  // final String price;
   final Color vehicleTypeColor;
 
   const CustomJobCard({
+    required this.pickupPaymentType,
     Key? key,
     required this.dateTime,
     required this.vehicleType,
     required this.pickupLocation,
     required this.dropoffLocation,
-    required this.pickupPayment,
+    // required this.pickupPayment,
     required this.pickupAmount,
     required this.driverName,
     required this.companyName,
-    required this.flightNumberHint,
-    required this.paymentMethodHint,
-    required this.specialInstructionsHint,
-    required this.price,
 
+    // required this.flightNumberHint,
+    // required this.paymentMethodHint,
+    // required this.specialInstructionsHint,
+    // required this.price,
     this.vehicleTypeColor = Colors.red,
   }) : super(key: key);
 
@@ -276,7 +310,7 @@ class CustomJobCard extends StatelessWidget {
           SizedBox(height: 8.h),
 
           /// PAYMENT METHOD
-          _buildRichInfo("Payment: ", pickupPayment),
+          _buildRichInfo("Payment: ", pickupPaymentType),
           SizedBox(height: 8.h),
 
           /// AMOUNT

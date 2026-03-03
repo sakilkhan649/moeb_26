@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/Data/models/job_model.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 import '../../../../Core/routs.dart';
@@ -117,10 +118,10 @@ class MyJobsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildJobCard(dynamic job) {
+  Widget _buildJobCard(Job job) {
     // Safely extract properties
-    final dateRaw = job['date'] ?? '';
-    final timeRaw = job['time'] ?? '';
+    final dateRaw = job.date.toString();
+    final timeRaw = job.time;
 
     // Parse date if possible
     String displayDate = "$dateRaw · $timeRaw";
@@ -133,13 +134,13 @@ class MyJobsScreen extends StatelessWidget {
       }
     } catch (_) {}
 
-    final puLocation = job['pickupLocation'] ?? 'N/A';
-    final doLocation = job['dropoffLocation'] ?? 'N/A';
-    final vehicle = job['vehicleType'] ?? 'N/A';
-    final flight = job['flightNumber'] ?? 'N/A';
-    final paymentType = job['paymentType'] ?? 'N/A';
-    final instruction = job['instruction'] ?? 'N/A';
-    final jobType = job['jobType'] == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
+    final puLocation = job.pickupLocation;
+    final doLocation = job.dropoffLocation ?? 'N/A';
+    final vehicle = job.vehicleType;
+    final flight = job.flightNumber ?? 'N/A';
+    final paymentType = job.paymentType;
+    final instruction = job.instruction ?? 'N/A';
+    final jobType = job.jobType == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
 
     // Local controllers for this specific card
     final TextEditingController cardFlightController = TextEditingController(
@@ -280,6 +281,7 @@ class MyJobsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   CustomTextFieldGold(
+                    readOnly: true,
                     controller: cardFlightController,
                     hintText: "Flight AA 1234",
                     obscureText: false,
@@ -296,6 +298,7 @@ class MyJobsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 CustomTextFieldGold(
+                  readOnly: true,
                   controller: cardPaymentController,
                   hintText: "Collect",
                   obscureText: false,
@@ -312,6 +315,7 @@ class MyJobsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   CustomTextFieldGold(
+                    readOnly: true,
                     controller: cardInstructionController,
                     hintText: "Airport Expert, Vip Client",
                     obscureText: false,
@@ -530,6 +534,7 @@ class MyJobsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     CustomTextFieldGold(
+                      readOnly: true,
                       controller: flightNumberController,
                       hintText: "Flight AA 1234",
                       obscureText: false,
@@ -545,6 +550,7 @@ class MyJobsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     CustomTextFieldGold(
+                      readOnly: true,
                       controller: paymentMethodController,
                       hintText: "Collect",
                       obscureText: false,
@@ -560,6 +566,7 @@ class MyJobsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     CustomTextFieldGold(
+                      readOnly: true,
                       controller: specialInstructionsController,
                       hintText: "Airport Expert, Vip Client",
                       obscureText: false,
@@ -963,9 +970,10 @@ class CustomTextFieldGold extends StatelessWidget {
   final Widget? suffixIcon;
   final TextInputType textInputType;
   final String? Function(String?)? validator;
-
+  final bool readOnly;
   const CustomTextFieldGold({
-    Key? key,
+    this.readOnly = false,
+    super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
@@ -973,12 +981,13 @@ class CustomTextFieldGold extends StatelessWidget {
     this.suffixIcon,
     required this.textInputType,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      readOnly: readOnly,
       obscureText: obscureText,
       keyboardType: textInputType,
       validator: validator,

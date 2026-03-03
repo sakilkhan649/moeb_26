@@ -250,7 +250,9 @@ class OnewayScreen extends StatelessWidget {
                     time: onewayControllerInstance.selectedTime.value!,
                     paymentAmount: payController.text,
                     paymentType: onewayControllerInstance.selectedRole.value,
-                    instruction: specialController.text.isEmpty ? null : specialController.text,
+                    instruction: specialController.text.isEmpty
+                        ? null
+                        : specialController.text,
                   );
                 }
               },
@@ -304,37 +306,40 @@ class OnewayScreen extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Obx(() {
-            final date = onewayControllerInstance.selectedDate.value;
-            dateController.text = date == null
-                ? ""
-                : "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-            return _buildDateTimeField(
-              "Date",
-              Icons.date_range,
-              dateController,
-              "Select Date",
-              () => onewayControllerInstance.chooseDate(context),
-              validator: (val) =>
-                  (val == null || val.isEmpty) ? "Date is required" : null,
-            );
-          }),
+          child: _buildDateTimeField(
+            "Date",
+            Icons.date_range,
+            dateController,
+            "Select Date",
+            () async {
+              await onewayControllerInstance.chooseDate(context);
+              final date = onewayControllerInstance.selectedDate.value;
+              if (date != null) {
+                dateController.text =
+                    "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+              }
+            },
+            validator: (val) =>
+                (val == null || val.isEmpty) ? "Date is required" : null,
+          ),
         ),
         SizedBox(width: 12.w),
         Expanded(
-          child: Obx(() {
-            final time = onewayControllerInstance.selectedTime.value;
-            timeController.text = time == null ? "" : time.format(context);
-            return _buildDateTimeField(
-              "Time",
-              Icons.access_time,
-              timeController,
-              "Select Time",
-              () => onewayControllerInstance.chooseTime(context),
-              validator: (val) =>
-                  (val == null || val.isEmpty) ? "Time is required" : null,
-            );
-          }),
+          child: _buildDateTimeField(
+            "Time",
+            Icons.access_time,
+            timeController,
+            "Select Time",
+            () async {
+              await onewayControllerInstance.chooseTime(context);
+              final time = onewayControllerInstance.selectedTime.value;
+              if (time != null) {
+                timeController.text = time.format(context);
+              }
+            },
+            validator: (val) =>
+                (val == null || val.isEmpty) ? "Time is required" : null,
+          ),
         ),
       ],
     );

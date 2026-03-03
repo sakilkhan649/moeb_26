@@ -1,11 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_images.dart';
+import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/Controller/My_job_controller.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
 import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
@@ -35,6 +37,8 @@ class _JobofferpageState extends State<Jobofferpage> {
     specialInstructionsController.dispose();
     super.dispose();
   }
+
+  final BookingController controller = Get.put(BookingController());
 
   @override
   Widget build(BuildContext context) {
@@ -66,33 +70,111 @@ class _JobofferpageState extends State<Jobofferpage> {
                 },
               ),
               SizedBox(height: 15.h),
-              CustomJobCard(
-                dateTime: "Tue, Jan 20 · 08:30 AM",
-                vehicleType: "SEDAN",
-                pickupLocation: "Dhaka Airport",
-                dropoffLocation: "Barisal",
-                driverName: "Khaled",
-                companyName: "Khaled Transportation",
-                flightNumberHint: "Flight AA 1234",
-                paymentMethodHint: "Collect",
-                specialInstructionsHint: "Airport Expert, Vip Client",
-                price: "\$125",
-                flightNumberController: flightNumberController,
-                paymentMethodController: paymentMethodController,
-                specialInstructionsController: specialInstructionsController,
-                vehicleTypeColor: VehicleTypeColors.sedan,
-                onArrowTap: () {
-                  // Handle arrow tap
-                  Get.toNamed(Routes.requestSubmitted);
+              Obx(() {
+                if (controller.isLoadingList.value) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40.h),
+                      child: const CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
+                    ),
+                  );
+                }
 
-                  print("Arrow tapped");
-                },
-                onPriceTap: () {
-                  // Handle price tap
-                  print("Price tapped");
-                },
-              ),
-              SizedBox(height: 60.h),
+                // if (controller.isDeleted.value) {
+                //   return Padding(
+                //     padding: EdgeInsets.only(top: 40.h),
+                //     child: Text(
+                //       "Item Deleted",
+                //       style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                //     ),
+                //   );
+                // }
+
+                // if (controller.isJobAcceptanceView.value) {
+                //   return _buildJobAcceptanceDetailCard();
+                // }
+
+                if (controller.jobOffersList.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40.h),
+                      child: Text(
+                        "No jobs found",
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: controller.jobOffersList.length,
+                  itemBuilder: (context, index) {
+                    final job = controller.jobOffersList[index];
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 16.h),
+                      child: CustomJobCard(
+                        dateTime: job.date?.toString() ?? '',
+                        vehicleType: job.vehicleType,
+                        pickupLocation: job.pickupLocation,
+                        dropoffLocation: job.dropoffLocation ?? '',
+                        driverName: job.createdBy?.name ?? 'Unknown',
+                        companyName: job.createdBy?.name ?? 'Unknown',
+                        flightNumberHint: job.flightNumber ?? '',
+                        paymentMethodHint: job.paymentType,
+                        specialInstructionsHint: job.instruction ?? '',
+                        price: job.paymentAmount.toString(),
+                        flightNumberController: flightNumberController,
+                        paymentMethodController: paymentMethodController,
+                        specialInstructionsController:
+                            specialInstructionsController,
+                        vehicleTypeColor: VehicleTypeColors.sedan,
+                        onArrowTap: () {
+                          // Handle arrow tap
+                          controller.applyToJob(jobId: job.id);
+
+                          print("Arrow tapped");
+                        },
+                        onPriceTap: () {
+                          // Handle price tap
+                          print("Price tapped");
+                        },
+                      ),
+                    );
+                  },
+                );
+              }),
+
+              // CustomJobCard(
+              //   dateTime: "Tue, Jan 20 · 08:30 AM",
+              //   vehicleType: "SEDAN",
+              //   pickupLocation: "Dhaka Airport",
+              //   dropoffLocation: "Barisal",
+              //   driverName: "Khaled",
+              //   companyName: "Khaled Transportation",
+              //   flightNumberHint: "Flight AA 1234",
+              //   paymentMethodHint: "Collect",
+              //   specialInstructionsHint: "Airport Expert, Vip Client",
+              //   price: "\$125",
+              //   flightNumberController: flightNumberController,
+              //   paymentMethodController: paymentMethodController,
+              //   specialInstructionsController: specialInstructionsController,
+              //   vehicleTypeColor: VehicleTypeColors.sedan,
+              //   onArrowTap: () {
+              //     // Handle arrow tap
+              //     Get.toNamed(Routes.requestSubmitted);
+
+              //     print("Arrow tapped");
+              //   },
+              //   onPriceTap: () {
+              //     // Handle price tap
+              //     print("Price tapped");
+              //   },
+              // ),
+              // SizedBox(height: 60.h),
             ],
           ),
         ),
