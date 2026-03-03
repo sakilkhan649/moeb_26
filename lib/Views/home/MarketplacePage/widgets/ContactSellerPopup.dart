@@ -75,19 +75,35 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
               Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color(0xFF1E1E1E), // Slightly lighter than background to stand out
                   borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: const Color(0xFF242424)),
                 ),
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
-                      child: Image.asset(
-                        widget.item.imagePath,
-                        height: 50.w,
-                        width: 50.w,
-                        fit: BoxFit.cover,
-                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: widget.item.imagePath.startsWith('http')
+                          ? Image.network(
+                              widget.item.imagePath,
+                              height: 60.w,
+                              width: 60.w,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    height: 60.w,
+                                    width: 60.w,
+                                    color: Colors.grey[900],
+                                    child: const Icon(Icons.image_not_supported,
+                                        color: Colors.grey),
+                                  ),
+                            )
+                          : Image.asset(
+                              widget.item.imagePath,
+                              height: 60.w,
+                              width: 60.w,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
@@ -97,11 +113,11 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                           Text(
                             widget.item.name,
                             style: GoogleFonts.inter(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           SizedBox(height: 4.h),
@@ -109,7 +125,7 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                             "\$${widget.item.price}",
                             style: GoogleFonts.inter(
                               color: const Color(0xFFF1A107),
-                              fontSize: 14.sp,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

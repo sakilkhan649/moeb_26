@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:moeb_26/Views/auth/Signup_Flow/SignupController.dart';
 
 class TermPolicyController extends GetxController {
   // All 63 checkboxes as a reactive list
@@ -22,12 +23,13 @@ class TermPolicyController extends GetxController {
   // Check if all checkboxes are checked
   bool get allChecked => checks.every((e) => e);
 
-  // Validate — returns true if all checked
-  bool validate() {
+  // Validate — if all checked, trigger the final API call
+  void validate() {
     if (!allChecked) {
       showError.value = true;
-      return false;
+      return;
     }
-    return true;
+    // All agreed → submit all data via single POST /user
+    Get.find<SignupController>().submitAll();
   }
 }

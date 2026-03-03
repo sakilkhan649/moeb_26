@@ -1,13 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
-import 'package:moeb_26/Services/user_service.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
+import 'package:moeb_26/Views/auth/Signup_Flow/SignupController.dart';
 import '../Model/VehicleModel.dart';
 
 class VehicleInformationController extends GetxController {
-  final UserService _userService = Get.find<UserService>();
-
   final RxList<VehicleModel> vehicles = <VehicleModel>[].obs;
   var isLoading = false.obs;
 
@@ -29,35 +25,15 @@ class VehicleInformationController extends GetxController {
   }
 
   Future<void> submitVehicles() async {
-    try {
-      isLoading.value = true;
+    // Build vehicles list
+    final vehicleData = vehicles.map((v) => v.toJson()).toList();
 
-      final vehicleData = vehicles.map((v) => v.toJson()).toList();
+    // Save to SignupController (no API call here)
+    final signupCtrl = Get.find<SignupController>();
+    signupCtrl.saveVehicles(vehicleData);
 
-      final response = await _userService.updateVehicles(
-        vehicles: vehicleData,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Helpers.showCustomSnackBar('Vehicle saved!', isError: false);
-        Get.toNamed(
-          Routes.documentsupload,
-          arguments: {'vehicles': vehicleData}, // 👈 Documents screen এ pass
-        );
-      } else {
-        final message = response.data is Map
-            ? (response.data['message'] ?? 'Something went wrong.')
-            : 'Something went wrong.';
-        Helpers.showCustomSnackBar(message, isError: true);
-      }
-    } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Something went wrong.';
-      Helpers.showCustomSnackBar(message, isError: true);
-    } catch (e) {
-      Helpers.showCustomSnackBar('Something went wrong.', isError: true);
-    } finally {
-      isLoading.value = false;
-    }
+    // Navigate to next step
+    Get.toNamed(Routes.documentsupload);
   }
 
   @override

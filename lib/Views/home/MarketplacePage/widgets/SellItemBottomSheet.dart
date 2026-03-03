@@ -218,15 +218,23 @@ class SellItemBottomSheet extends StatelessWidget {
                       ),
                       SizedBox(height: 30.h),
 
-                      CustomButton(
-                        text: "List Item",
-                        backgroundColor: Colors.white,
-                        textColor: Colors.black,
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            controller.listItem();
-                          }
-                        },
+                      Obx(
+                        () => controller.isLoading.value
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : CustomButton(
+                                text: "List Item",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    controller.listItem();
+                                  }
+                                },
+                              ),
                       ),
                       SizedBox(height: 20.h),
                     ],

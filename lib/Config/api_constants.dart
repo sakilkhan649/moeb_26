@@ -20,6 +20,9 @@ class ApiConstants {
   // User Endpoints
   //static const String profile = '/user/profile';
   static const String userProfile = '/user/profile';
+  // Marketplace Endpoints
+  static const String items = '/items';
+
   // Create JobEndpoint
   static const String createJob = '/jobs';
   static const String myJobs = '/jobs/my-jobs';

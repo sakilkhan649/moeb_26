@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../Services/auth_service.dart';
+
 class LogoutBottomSheet extends StatelessWidget {
   const LogoutBottomSheet({super.key});
 
@@ -74,16 +76,8 @@ class LogoutBottomSheet extends StatelessWidget {
 
               // Confirm Logout Button
               GestureDetector(
-                onTap: () {
-                  // Handle actual logout logic here
-                  Get.back();
-                  Get.snackbar(
-                    "Logged Out",
-                    "You have been successfully logged out.",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.white,
-                    colorText: Colors.black,
-                  );
+                onTap: () async {
+                  await Get.find<AuthService>().logout();
                 },
                 child: Container(
                   width: double.infinity,

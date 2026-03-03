@@ -6,25 +6,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/Core/routs.dart';
-import 'package:moeb_26/Services/user_service.dart';
+import 'package:moeb_26/Views/auth/Signup_Flow/SignupController.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 class DocumentsUploadController extends GetxController {
-  final UserService _userService = Get.find<UserService>();
   final ImagePicker _imagePicker = ImagePicker();
 
   var isLoading = false.obs;
-
-  // 👈 Vehicle screen থেকে আসা data
-  List<Map<String, dynamic>> vehicles = [];
-
-  @override
-  void onInit() {
-    super.onInit();
-    vehicles = List<Map<String, dynamic>>.from(
-      Get.arguments?['vehicles'] ?? [],
-    );
-  }
 
   // ========== Date Picker ==========
   Future<void> selectDate(
@@ -119,38 +107,29 @@ class DocumentsUploadController extends GetxController {
     try {
       isLoading.value = true;
 
-      final response = await _userService.updateDocuments(
-        vehicles: vehicles, // 👈 vehicles pass করো
+      // Save all files/dates to SignupController
+      final signupCtrl = Get.find<SignupController>();
+      signupCtrl.saveDocuments(
         drivingLicense: licensePlateFile.value!,
-        drivingLicenseExpire: licensePlateExpireController.text,
+        drivingLicenseExpiry: licensePlateExpireController.text,
         hackLicense: hackLicenseFile.value!,
-        hackLicenseExpire: hackLicenseExpireController.text,
+        hackLicenseExpiry: hackLicenseExpireController.text,
         localPermit: localPermitFile.value,
-        localPermitExpire: localPermitExpireController.text.isEmpty
+        localPermitExpiry: localPermitExpireController.text.isEmpty
             ? null
             : localPermitExpireController.text,
         commercialInsurance: commercialInsuranceFile.value!,
-        commercialInsuranceExpire: commercialInsuranceExpireController.text,
+        commercialInsuranceExpiry: commercialInsuranceExpireController.text,
         vehicleRegistration: vehicleRegistrationFile.value!,
-        vehicleRegistrationExpire: vehicleRegistrationExpireController.text,
+        vehicleRegistrationExpiry: vehicleRegistrationExpireController.text,
         headshot: headshotFile.value!,
-        frontView: frontViewFile.value!,
-        rearView: rearViewFile.value!,
-        interiorView: interiorViewFile.value!,
+        front: frontViewFile.value!,
+        rear: rearViewFile.value!,
+        interior: interiorViewFile.value!,
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Helpers.showCustomSnackBar('Documents submitted!', isError: false);
-        Get.toNamed(Routes.termPolicy);
-      } else {
-        final message = response.data is Map
-            ? (response.data['message'] ?? 'Something went wrong.')
-            : 'Something went wrong.';
-        Helpers.showCustomSnackBar(message, isError: true);
-      }
-    } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Something went wrong.';
-      Helpers.showCustomSnackBar(message, isError: true);
+      // Navigate to TermPolicy (no API call here)
+      Get.toNamed(Routes.termPolicy);
     } catch (e) {
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {

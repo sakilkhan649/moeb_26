@@ -2,21 +2,22 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../Utils/app_images.dart';
+import '../../../../Services/marketplace_service.dart';
 import '../Model/Marketplace_model.dart';
 
 class MarketplaceController extends GetxController {
+  final MarketplaceService _marketplaceService = Get.put(MarketplaceService());
+
   var allItems = <MarketplaceItem>[].obs;
   var filteredItems = <MarketplaceItem>[].obs;
+  var isLoading = false.obs;
 
   // Sell Item Form States
   final RxString selectedCondition = "New".obs;
   final List<String> conditions = [
     "New",
-    "Like New",
-    "Excellent",
-    "Good",
-    "Fair",
+    "Used", // Changed to match API/Postman
+    "Refurbished",
   ];
 
   final TextEditingController titleController = TextEditingController();
@@ -26,6 +27,41 @@ class MarketplaceController extends GetxController {
 
   final Rxn<File> selectedImage = Rxn<File>();
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchItems();
+  }
+
+  Future<void> fetchItems({String? query}) async {
+    try {
+      isLoading.value = true;
+      final response = await _marketplaceService.getAllItems(searchTerm: query);
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data['data'];
+        final items = data.map((json) => MarketplaceItem.fromJson(json)).toList();
+        allItems.assignAll(items);
+        filteredItems.assignAll(items);
+      }
+    } catch (e) {
+      print("Error fetching items: $e");
+      Get.snackbar(
+        "Error",
+        "Failed to fetch marketplace items",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void searchItems(String query) {
+    // We can either filter locally or fetch from API
+    // Let's fetch from API as it has search support
+    fetchItems(query: query);
+  }
 
   Future<void> pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -38,17 +74,65 @@ class MarketplaceController extends GetxController {
     selectedCondition.value = condition;
   }
 
-  void listItem() {
-    // Logic to add item (mocked for now)
-    Get.back();
-    Get.snackbar(
-      "Success",
-      "Item listed successfully!",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xff1A1A1A),
-      colorText: Colors.white,
-    );
-    _clearFields();
+  Future<void> listItem() async {
+    if (titleController.text.isEmpty ||
+        priceController.text.isEmpty ||
+        locationController.text.isEmpty ||
+        descriptionController.text.isEmpty ||
+        selectedImage.value == null) {
+      Get.snackbar(
+        "Error",
+        "Please fill all fields and select an image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      final response = await _marketplaceService.createItem(
+        title: titleController.text,
+        price: priceController.text,
+        condition: selectedCondition.value,
+        location: locationController.text,
+        description: descriptionController.text,
+        photos: [selectedImage.value!],
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.back();
+        Get.snackbar(
+          "Success",
+          "Item listed successfully!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xff1A1A1A),
+          colorText: Colors.white,
+        );
+        _clearFields();
+        fetchItems(); // Refresh the list
+      } else {
+        Get.snackbar(
+          "Error",
+          "Failed to list item: ${response.statusMessage ?? 'Unknown error'}",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print("Error listing item: $e");
+      Get.snackbar(
+        "Error",
+        "An error occurred while listing the item",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void _clearFields() {
@@ -58,57 +142,6 @@ class MarketplaceController extends GetxController {
     descriptionController.clear();
     selectedImage.value = null;
     selectedCondition.value = "New";
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    // Initialize with dummy data based on the design
-    allItems.assignAll([
-      MarketplaceItem(
-        name: "Professional Car Phone Mount",
-        price: "25",
-        rating: 5.0,
-        imagePath: AppImages.car_image,
-        condition: "New",
-      ),
-      MarketplaceItem(
-        name: "Leather Seat Covers",
-        price: "25",
-        rating: 5.0,
-        imagePath: AppImages.set_image,
-        condition: "New",
-      ),
-      MarketplaceItem(
-        name: "Car Back Light (Red)",
-        price: "25",
-        rating: 5.0,
-        imagePath: AppImages.back_light_image,
-        condition: "New",
-      ),
-      MarketplaceItem(
-        name: "Leather Seat Covers",
-        price: "25",
-        rating: 5.0,
-        imagePath: AppImages.leather_image,
-        condition: "New",
-      ),
-    ]);
-    filteredItems.assignAll(allItems);
-  }
-
-  void searchItems(String query) {
-    if (query.isEmpty) {
-      filteredItems.assignAll(allItems);
-    } else {
-      filteredItems.assignAll(
-        allItems
-            .where(
-              (item) => item.name.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList(),
-      );
-    }
   }
 
   @override
