@@ -333,6 +333,11 @@ class ProfileScreen extends StatelessWidget {
                       "Support and Report",
                       onTap: () => showContactSupportBottomSheet(),
                     ),
+                     _buildSettingItem(
+                      Icons.chat_bubble_outline,
+                      "Password Change",
+                      onTap: () => Get.toNamed(Routes.changePasswordScreen),
+                    ),
                   ],
                 ),
               ),

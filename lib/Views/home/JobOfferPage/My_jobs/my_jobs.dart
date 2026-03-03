@@ -13,9 +13,14 @@ import '../../../../Utils/app_images.dart';
 import '../../../../widgets/Custom_AppBar.dart';
 import 'Controller/My_job_controller.dart';
 
-class MyJobsScreen extends StatelessWidget {
-  MyJobsScreen({super.key});
+class MyJobsScreen extends StatefulWidget {
+  const MyJobsScreen({super.key});
 
+  @override
+  State<MyJobsScreen> createState() => _MyJobsScreenState();
+}
+
+class _MyJobsScreenState extends State<MyJobsScreen> {
   final BookingController controller = Get.put(BookingController());
 
   final TextEditingController flightNumberController = TextEditingController();
@@ -23,6 +28,12 @@ class MyJobsScreen extends StatelessWidget {
   final TextEditingController specialInstructionsController =
       TextEditingController();
   final TextEditingController paymentController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.fetchJobs();
+  }
 
   @override
   Widget build(BuildContext context) {

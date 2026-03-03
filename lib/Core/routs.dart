@@ -6,6 +6,7 @@ import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Application_Succes/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved/Application_Not_Approved.dart';
 import '../Views/auth/Application_Submitted/Application_submited.dart';
+import '../Views/auth/Change_password/change_password_screen.dart';
 import '../Views/auth/CreateAccount/createaccountscreen.dart';
 import '../Views/auth/Documents_Upload/DocumentsUpload.dart';
 import '../Views/auth/Profile/profile.dart';
@@ -75,6 +76,7 @@ class Routes {
   static const String noInternetScreen= "/NoInternetScreen";
   static const String otpVerificationScreen= "/OtpVerificationScreen";
   static const String forgetotpVerificationScreen= "/OtpVerificationScreen";
+  static const String changePasswordScreen= "/ChangePasswordScreen";
 
   static List<GetPage> routes = [
     GetPage(
@@ -258,6 +260,11 @@ class Routes {
     GetPage(
       name: forgetotpVerificationScreen,
       page: () => OtpVerificationScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: changePasswordScreen,
+      page: () => ChangePasswordScreen(),
       transition: Transition.noTransition,
     ),
   ];

@@ -120,18 +120,18 @@ class AuthRepo {
     });
   }
 
-  // /// ===================== CHANGE PASSWORD =====================
-  // Future<Response> changePassword({
-  //   required String currentPassword,
-  //   required String newPassword,
-  //   required String confirmPassword,
-  // }) async {
-  //   return await apiClient.postData(ApiConstants.resetPassword, {
-  //     "currentPassword": currentPassword,
-  //     "newPassword": newPassword,
-  //     "confirmPassword": confirmPassword,
-  //   });
-  // }
+  /// ===================== CHANGE PASSWORD =====================
+  Future<Response> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    return await apiClient.postData(ApiConstants.changePassword, {
+      "currentPassword": currentPassword,
+      "newPassword": newPassword,
+      "confirmPassword": confirmPassword,
+    });
+  }
 
 
 }

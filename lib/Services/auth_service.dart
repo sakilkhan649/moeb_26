@@ -152,23 +152,23 @@ class AuthService extends GetxService {
       rethrow;
     }
   }
-  //
-  // /// ===================== CHANGE PASSWORD =====================
-  // Future<void> changePassword({
-  //   required String currentPassword,
-  //   required String newPassword,
-  //   required String confirmPassword,
-  // }) async {
-  //   try {
-  //     await _authRepo.changePassword(
-  //       currentPassword: currentPassword,
-  //       newPassword: newPassword,
-  //       confirmPassword: confirmPassword,
-  //     );
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
+  /// ===================== CHANGE PASSWORD =====================
+  Future<Response> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      final response = await _authRepo.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   /// ===================== HELPER METHODS =====================
 
