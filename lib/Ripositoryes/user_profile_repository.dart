@@ -10,4 +10,8 @@ class UserProfileRepo {
   Future<Response> getUserProfile() {
     return apiClient.getData(ApiConstants.userProfile);
   }
+
+  Future<Response> patchProfile(Map<String, dynamic> body) {
+    return apiClient.patchData(ApiConstants.userProfile, body);
+  }
 }

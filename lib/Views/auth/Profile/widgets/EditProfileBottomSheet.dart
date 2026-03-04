@@ -92,6 +92,7 @@ class EditProfileBottomSheet extends StatelessWidget {
                       ),
                       _buildField(
                         "Phone",
+                        keyboardType: TextInputType.phone,
                         controller.phoneController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -142,7 +143,8 @@ class EditProfileBottomSheet extends StatelessWidget {
                           Expanded(
                             child: GestureDetector(
                               onTap: () {
-                                if (_formKey.currentState!.validate()) {
+                                if (_formKey.currentState!.validate() &&
+                                    !controller.isUpdating.value) {
                                   controller.saveProfile();
                                 }
                               },
@@ -153,13 +155,25 @@ class EditProfileBottomSheet extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 child: Center(
-                                  child: Text(
-                                    "Save Changes",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  child: Obx(
+                                    () => controller.isUpdating.value
+                                        ? SizedBox(
+                                            height: 20.h,
+                                            width: 20.h,
+                                            child:
+                                                const CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                  strokeWidth: 2,
+                                                ),
+                                          )
+                                        : Text(
+                                            "Save Changes",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                   ),
                                 ),
                               ),
@@ -183,6 +197,7 @@ class EditProfileBottomSheet extends StatelessWidget {
     String label,
     TextEditingController textController, {
     String? Function(String?)? validator,
+    TextInputType? keyboardType,
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
@@ -201,6 +216,7 @@ class EditProfileBottomSheet extends StatelessWidget {
           TextFormField(
             controller: textController,
             validator: validator,
+            keyboardType: keyboardType,
             style: GoogleFonts.inter(color: Colors.white),
             decoration: InputDecoration(
               filled: true,
@@ -220,7 +236,7 @@ class EditProfileBottomSheet extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                borderSide: const BorderSide(color: Colors.orange),
+                borderSide: const BorderSide(color: Colors.grey),
               ),
             ),
           ),

@@ -18,6 +18,7 @@ class ProfileController extends GetxController {
   var profilePicture = "".obs;
 
   var isLoading = false.obs;
+  var isUpdating = false.obs;
   var userProfile = Rxn<UserProfileModel>();
 
   // Controllers for Edit Profile Form
@@ -76,20 +77,59 @@ class ProfileController extends GetxController {
     }
   }
 
-  void saveProfile() {
-    fullName.value = nameController.text;
-    email.value = emailController.text;
-    phone.value = phoneController.text;
-    serviceArea.value = serviceAreaController.text;
-    nickName.value = nickNameController.text;
-    Get.back();
-    Get.snackbar(
-      "Success",
-      "Profile updated successfully",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+  Future<void> saveProfile() async {
+    isUpdating.value = true;
+    try {
+      Map<String, dynamic> body = {
+        "name": nameController.text,
+        "phone": phoneController.text,
+        "serviceArea": serviceAreaController.text,
+        "nickName": nickNameController.text, // If backend supports it
+        // Add other fields as per API if needed, e.g., "home", "experience", "company"
+      };
+
+      var response = await _profileService.patchProfile(body);
+      if (response.statusCode == 200) {
+        var data = response.data['data'];
+        userProfile.value = UserProfileModel.fromJson(data);
+
+        // Update reactive variables
+        fullName.value = userProfile.value?.name ?? "";
+        email.value = userProfile.value?.email ?? "";
+        phone.value = userProfile.value?.phone ?? "";
+        serviceArea.value = userProfile.value?.serviceArea ?? "";
+        nickName.value = userProfile.value?.name ?? ""; // Local fallback
+        profilePicture.value = userProfile.value?.profilePicture ?? "";
+
+        Get.back(); // Close bottom sheet
+        Get.snackbar(
+          "Success",
+          "Profile updated successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          response.data['message'] ?? "Failed to update profile",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error updating profile: $e");
+      Get.snackbar(
+        "Error",
+        "Something went wrong while updating profile",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isUpdating.value = false;
+    }
   }
 
   @override

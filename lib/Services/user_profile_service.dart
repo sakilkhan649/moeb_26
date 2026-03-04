@@ -9,4 +9,8 @@ class UserProfileService {
   Future<Response> getUserProfile() {
     return userProfileRepo.getUserProfile();
   }
+
+  Future<Response> patchProfile(Map<String, dynamic> body) {
+    return userProfileRepo.patchProfile(body);
+  }
 }
