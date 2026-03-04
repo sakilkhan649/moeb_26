@@ -20,19 +20,16 @@ class RideProgressWayLocation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         logoPath: AppImages.app_logo,
         notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Column(
-              mainAxisAlignment: .start,
-              crossAxisAlignment: .start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
@@ -60,7 +57,6 @@ class RideProgressWayLocation extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10.h),
-
 
                 // Status Steps Container (You can use this in your widget tree)
                 Padding(

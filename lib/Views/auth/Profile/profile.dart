@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/Notifications/Notifications_popup.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
@@ -116,11 +119,11 @@ class ProfileScreen extends StatelessWidget {
                                   Icon(
                                     Icons.notifications_none,
                                     color: Colors.white,
-                                    size: 28.sp,
+                                    size: 30.sp,
                                   ),
                                   Positioned(
-                                    top: -4.w,
-                                    right: -2.w,
+                                    top: -2.w,
+                                    right: -1.w,
                                     child: Container(
                                       width: 15.w,
                                       height: 15.w,
@@ -143,60 +146,155 @@ class ProfileScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            SizedBox(width: 16.w),
-                            Theme(
-                              data: Theme.of(
-                                context,
-                              ).copyWith(cardColor: Colors.white),
-                              child: PopupMenuButton<int>(
-                                icon: Icon(
-                                  Icons.person_outline,
-                                  color: Colors.white,
-                                  size: 28.sp,
-                                ),
-                                offset: Offset(0, 40.h),
-                                onSelected: (item) {
-                                  switch (item) {
-                                    case 0:
-                                      // Refresh current page or navigate to account
-                                      Get.offNamed(Routes.profileScreen);
-                                      break;
-                                    case 1:
-                                      Get.toNamed(Routes.myJobsScreen);
-                                      break;
-                                    case 2:
-                                      Get.bottomSheet(
-                                        const LogoutBottomSheet(),
-                                        isScrollControlled: true,
-                                        backgroundColor: Colors.transparent,
-                                      );
-                                      break;
-                                  }
-                                },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem<int>(
-                                    value: 0,
-                                    child: _buildPopupItem(
-                                      Icons.person_outline,
-                                      'Account',
-                                    ),
-                                  ),
-                                  PopupMenuItem<int>(
-                                    value: 1,
-                                    child: _buildPopupItem(
-                                      Icons.work_outline,
-                                      'My Jobs',
-                                    ),
-                                  ),
-                                  PopupMenuItem<int>(
-                                    value: 2,
-                                    child: _buildPopupItem(
-                                      Icons.logout_outlined,
-                                      'Logout',
-                                    ),
-                                  ),
-                                ],
+                            SizedBox(width: 10.w),
+                            PopupMenuButton<int>(
+                              icon: Icon(
+                                Icons.person_outline,
+                                color: Colors.white,
+                                size: 30.sp,
                               ),
+                              color: const Color(0xFF1E1E1E), // Dark background
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                                side: const BorderSide(
+                                  color: Color(0xFF364153),
+                                ),
+                              ),
+                              offset: const Offset(0, 50),
+                              onSelected: (item) {
+                                switch (item) {
+                                  case 0:
+                                    Get.offNamed(Routes.profileScreen);
+                                    break;
+                                  case 1:
+                                    Get.toNamed(Routes.myJobsScreen);
+                                    break;
+                                  case 2:
+                                    Get.toNamed(Routes.serviceArea);
+                                    break;
+                                  case 3:
+                                    Get.bottomSheet(
+                                      const LogoutBottomSheet(),
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                    );
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem<int>(
+                                  value: 0,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.person_outline,
+                                        color: Colors.white,
+                                        size: 24.sp,
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Text(
+                                        'Account',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Icon(
+                                        CupertinoIcons.chevron_forward,
+                                        size: 20.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 1,
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        AppIcons.job_offer_icon,
+                                        width: 24.sp,
+                                        height: 24.sp,
+                                        colorFilter: const ColorFilter.mode(
+                                          Colors.white,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Text(
+                                        'My Jobs',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Icon(
+                                        CupertinoIcons.chevron_forward,
+                                        size: 20.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 2,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_on_outlined,
+                                        color: Colors.white,
+                                        size: 24.sp,
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Text(
+                                        'Service Area',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Icon(
+                                        CupertinoIcons.chevron_forward,
+                                        size: 20.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 3,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.logout_outlined,
+                                        color: Colors.white,
+                                        size: 24.sp,
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Text(
+                                        'Logout',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Icon(
+                                        CupertinoIcons.chevron_forward,
+                                        size: 20.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -490,25 +588,6 @@ class ProfileScreen extends StatelessWidget {
       trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16.sp),
       contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
       onTap: onTap,
-    );
-  }
-
-  Widget _buildPopupItem(IconData icon, String title) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.black, size: 20.sp),
-        SizedBox(width: 10.w),
-        Text(
-          title,
-          style: GoogleFonts.inter(
-            color: Colors.black,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const Spacer(),
-        Icon(Icons.arrow_forward_ios, color: Colors.black, size: 14.sp),
-      ],
     );
   }
 }

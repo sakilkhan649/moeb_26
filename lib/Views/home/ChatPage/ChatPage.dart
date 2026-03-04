@@ -14,13 +14,10 @@ class Chatpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Messages',
         subtitle: 'Elite Chauffeur Network',
         notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),

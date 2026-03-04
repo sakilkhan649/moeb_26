@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
-import '../../../Core/routs.dart';
 import '../../../widgets/Custom_AppBar.dart';
 import 'Controller/Marketplace_controller.dart';
 import 'Model/Marketplace_model.dart';
@@ -21,13 +20,10 @@ class Marketplacepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Marketplace',
         subtitle: 'WHERE THE NETWORK MEETS OPPORTUNITY',
         notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),

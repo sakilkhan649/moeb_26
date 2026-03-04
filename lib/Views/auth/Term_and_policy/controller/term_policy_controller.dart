@@ -30,6 +30,8 @@ class TermPolicyController extends GetxController {
       return;
     }
     // All agreed → submit all data via single POST /user
-    Get.find<SignupController>().submitAll();
+    if (Get.isRegistered<SignupController>()) {
+      Get.find<SignupController>().submitAll();
+    }
   }
 }

@@ -39,7 +39,10 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
+      appBar: const CustomAppBar(
+        logoPath: AppImages.app_logo,
+        notificationCount: 3,
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(

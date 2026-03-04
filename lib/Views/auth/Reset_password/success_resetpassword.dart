@@ -15,8 +15,8 @@ class SuccessResetpassword extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
         child: Center(
           child: Column(
-            mainAxisAlignment: .center,
-            crossAxisAlignment: .center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.w),
@@ -36,15 +36,15 @@ class SuccessResetpassword extends StatelessWidget {
                     ),
                   ],
                 ),
-
               ),
               SizedBox(height: 23.h),
-              CustomTextgray(text: "You can now log in using your new password.")
+              CustomTextgray(
+                text: "You can now log in using your new password.",
+              ),
             ],
           ),
         ),
       ),
-
     );
   }
 }

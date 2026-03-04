@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_images.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/Controller/My_job_controller.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
-import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
 import '../../../Utils/app_icons.dart';
 import '../../../widgets/CustomText.dart';
@@ -43,16 +39,7 @@ class _JobofferpageState extends State<Jobofferpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
-        onAccountTap: () {
-          Get.toNamed(Routes.profileScreen);
-        },
-      ),
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(

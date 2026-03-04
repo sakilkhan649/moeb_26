@@ -12,7 +12,9 @@ class TermPolicy extends StatelessWidget {
   TermPolicy({super.key});
 
   final controller = Get.put(TermPolicyController());
-  late final SignupController signupCtrl = Get.find<SignupController>();
+  late final SignupController? signupCtrl = Get.isRegistered<SignupController>()
+      ? Get.find<SignupController>()
+      : null;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +30,17 @@ class TermPolicy extends StatelessWidget {
                   child: Obx(
                     () => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(height: 20.h),
+                        SizedBox(height: 10.h),
+                        IconButton(
+                          onPressed: () => Get.back(),
+                          icon: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                            size: 22.sp,
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -432,14 +442,17 @@ class TermPolicy extends StatelessWidget {
                             ),
                           ),
 
-                        Obx(() => CustomButton(
-                          text: signupCtrl.isLoading.value
-                              ? "Submitting..."
-                              : "Continue",
-                          onPressed: signupCtrl.isLoading.value
-                              ? null
-                              : () => controller.validate(),
-                        )),
+                        if (signupCtrl != null)
+                          Obx(
+                            () => CustomButton(
+                              text: signupCtrl!.isLoading.value
+                                  ? "Submitting..."
+                                  : "Continue",
+                              onPressed: signupCtrl!.isLoading.value
+                                  ? null
+                                  : () => controller.validate(),
+                            ),
+                          ),
                         SizedBox(height: 40.h),
                       ],
                     ),

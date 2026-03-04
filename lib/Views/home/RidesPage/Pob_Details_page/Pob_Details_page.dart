@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
@@ -19,12 +18,9 @@ class PobDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         logoPath: AppImages.app_logo,
         notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -37,8 +33,8 @@ class PobDetailsPage extends StatelessWidget {
             Divider(color: Colors.white38, thickness: 1.h),
             SizedBox(height: 5.h),
             Column(
-              mainAxisAlignment: .start,
-              crossAxisAlignment: .start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),

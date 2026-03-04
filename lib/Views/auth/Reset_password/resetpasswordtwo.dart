@@ -28,8 +28,8 @@
 //             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
 //             child: SingleChildScrollView(
 //               child: Column(
-//                 mainAxisAlignment: .center,
-//                 crossAxisAlignment: .center,
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 crossAxisAlignment: CrossAxisAlignment.center,
 //                 children: [
 //                   Align(
 //                     alignment: Alignment.centerLeft,

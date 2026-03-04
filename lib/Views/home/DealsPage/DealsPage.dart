@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
-import '../../../Core/routs.dart';
 import '../../../widgets/Custom_AppBar.dart';
 import 'Controller/Deals_controller.dart';
 import 'Model/Deals_model.dart';
@@ -20,13 +19,10 @@ class Dealspage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Deals',
         subtitle: 'ELITE NETWORK EXCLUSIVE SAVINGS',
         notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
       ),
       body: Obx(() {
         if (controller.isLoading.value) {

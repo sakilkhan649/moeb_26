@@ -185,7 +185,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         AppIcons.job_offer_icon,
                         width: 24.sp,
                         height: 24.sp,
-                        colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                        colorFilter: ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
                       ),
                       SizedBox(width: 12.w),
                       Text(
