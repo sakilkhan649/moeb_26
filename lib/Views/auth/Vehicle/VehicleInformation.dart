@@ -244,6 +244,7 @@ class Vehicleinformation extends StatelessWidget {
                     _buildTextField(
                       controller: model.yearController,
                       hintText: "5 years maxim",
+                      keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) return "Enter Year";
                         return null;
@@ -374,6 +375,7 @@ class Vehicleinformation extends StatelessWidget {
   Widget _buildTextField({
     required TextEditingController controller,
     required String hintText,
+    TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
     return Container(
@@ -382,6 +384,7 @@ class Vehicleinformation extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         validator: validator,
+        keyboardType: keyboardType,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),

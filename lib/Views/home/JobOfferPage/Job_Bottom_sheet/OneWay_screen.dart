@@ -334,7 +334,8 @@ class OnewayScreen extends StatelessWidget {
               await onewayControllerInstance.chooseTime(context);
               final time = onewayControllerInstance.selectedTime.value;
               if (time != null) {
-                timeController.text = time.format(context);
+                timeController.text =
+                    onewayControllerInstance.formattedTime.value;
               }
             },
             validator: (val) =>
