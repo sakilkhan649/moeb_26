@@ -216,7 +216,13 @@ class ProfileScreen extends StatelessWidget {
                           );
                         }),
                         _buildHeaderButton("Edit Vehicles", () {
-                          Get.toNamed(Routes.vehicleinformation);
+                          Get.toNamed(
+                            Routes.vehicleinformation,
+                            arguments: {
+                              "vehicles":
+                                  controller.userProfile.value?.vehicles,
+                            },
+                          );
                         }),
                         _buildHeaderButton("My Jobs", () {
                           Get.toNamed(Routes.myJobsScreen);

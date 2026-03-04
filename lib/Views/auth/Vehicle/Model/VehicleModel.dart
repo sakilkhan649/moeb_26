@@ -10,12 +10,22 @@ class VehicleModel {
   final TextEditingController licensePlateController;
 
   VehicleModel({String? initialType})
-      : selectedVehicleType = (initialType ?? '').obs,
-        makeController = TextEditingController(),
-        modelController = TextEditingController(),
-        yearController = TextEditingController(),
-        colorController = TextEditingController(),
-        licensePlateController = TextEditingController();
+    : selectedVehicleType = (initialType ?? '').obs,
+      makeController = TextEditingController(),
+      modelController = TextEditingController(),
+      yearController = TextEditingController(),
+      colorController = TextEditingController(),
+      licensePlateController = TextEditingController();
+
+  factory VehicleModel.fromVehicle(dynamic vehicle) {
+    final model = VehicleModel(initialType: vehicle.carType);
+    model.makeController.text = vehicle.make;
+    model.modelController.text = vehicle.model;
+    model.yearController.text = vehicle.year.toString();
+    model.colorController.text = vehicle.colorInside;
+    model.licensePlateController.text = vehicle.licensePlate;
+    return model;
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -23,7 +33,7 @@ class VehicleModel {
       "make": makeController.text,
       "model": modelController.text,
       "year": int.tryParse(yearController.text) ?? 0,
-      "colorInside": colorController.text,  // 👈 same value
+      "colorInside": colorController.text, // 👈 same value
       "colorOutside": colorController.text, // 👈 same value
       "licensePlate": licensePlateController.text,
     };
