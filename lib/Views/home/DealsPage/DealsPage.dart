@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
 import '../../../Core/routs.dart';
 import '../../../widgets/Custom_AppBar.dart';
@@ -28,6 +29,12 @@ class Dealspage extends StatelessWidget {
         },
       ),
       body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xffF1A107)),
+          );
+        }
+
         // Handle empty state
         if (controller.dealsList.isEmpty) {
           return Center(
@@ -110,7 +117,7 @@ class DealsCard extends StatelessWidget {
                   border: Border.all(color: const Color(0xff242424)),
                 ),
                 child: Text(
-                  deal.category,
+                  deal.tags.isNotEmpty ? deal.tags.first : "Deal",
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: 12.sp,
@@ -166,7 +173,7 @@ class DealsCard extends StatelessWidget {
                       deal.promoCode,
                       style: GoogleFonts.inter(
                         color: const Color(0xffF1A107), // Gold color
-                        fontSize: 18.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                       ),
@@ -212,7 +219,7 @@ class DealsCard extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    "Expires ${deal.expiryDate}",
+                    "Expires ${DateFormat('MMM dd').format(deal.expiryDate)}",
                     style: GoogleFonts.inter(
                       color: Colors.grey[600],
                       fontSize: 13.sp,
@@ -223,7 +230,7 @@ class DealsCard extends StatelessWidget {
               // Use QR Button
               GestureDetector(
                 onTap: () {
-                  Get.dialog(const QrPopup());
+                  Get.dialog(QrPopup(qrCodeData: deal.qrCode));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(

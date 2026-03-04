@@ -1,49 +1,44 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../../../../Services/dealsItems_service.dart';
 import '../Model/Deals_model.dart';
 
 class DealsController extends GetxController {
+  final DealsService _dealsService = Get.put(DealsService());
+
   // Reactive list of deals
   final RxList<DealsItem> dealsList = <DealsItem>[].obs;
+  final RxBool isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Adding dummy data as per design
-    loadDummyDeals();
+    fetchDeals();
   }
 
-  void loadDummyDeals() {
-    dealsList.assignAll([
-      DealsItem(
-        category: "Service",
-        title: "20% Off Premium Car Wash",
-        description:
-            "Get your vehicle professionally detailed at Elite Auto Spa",
-        promoCode: "ELITE20",
-        expiryDate: "Feb 15",
-      ),
-      DealsItem(
-        category: "Technology",
-        title: "Free Month of Dashcam Cloud Storage",
-        description: "Sign_In up for BlackVue Cloud and get first month free",
-        promoCode: "DASH1FREE",
-        expiryDate: "Jan 31",
-      ),
-      DealsItem(
-        category: "Insurance",
-        title: "\$50 Off Insurance Premium",
-        description:
-            "Special rate for Elite Network members on commercial insurance",
-        promoCode: "INSURANCE50",
-        expiryDate: "Mar 1",
-      ),
-    ]);
-  }
+  Future<void> fetchDeals() async {
+    try {
+      isLoading.value = true;
+      final response = await _dealsService.getActiveDeals();
 
-  // Clear deals to test empty state
-  void clearDeals() {
-    dealsList.clear();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data['data'];
+        final items = data.map((json) => DealsItem.fromJson(json)).toList();
+        dealsList.assignAll(items);
+      }
+    } catch (e) {
+      print("Error fetching deals: $e");
+      Get.snackbar(
+        "Error",
+        "Failed to fetch deals",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // Copy promo code to clipboard
@@ -54,6 +49,8 @@ class DealsController extends GetxController {
       "Promo code $code copied to clipboard",
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
+      backgroundColor: const Color(0xff1A1A1A),
+      colorText: Colors.white,
     );
   }
 }

@@ -30,4 +30,6 @@ class ApiConstants {
   static const String getAllJobOffers = '/jobs';
   static const String applytoJob = '/jobs/{jobId}/apply';
   static const String myRides = '/jobs/my-rides';
+  //Deals Endpoints
+  static const String dealsItems = '/deals';
 }

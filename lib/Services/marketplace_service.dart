@@ -35,22 +35,19 @@ class MarketplaceService extends GetxService {
   Future<Response> createItem({
     required String title,
     required String price,
-    required String condition,
+    String? condition,
     required String location,
-    required String description,
-    required List<dynamic> photos,
+    String? description,
+    List<File>? photos,
   }) async {
     try {
-      // Convert to List<File> if needed
-      // The previous line was redundant and the conversion was excessively long.
-      // The instruction simplifies this to a direct cast.
       return await _marketplaceRepo.createItem(
         title: title,
         price: price,
         condition: condition,
         location: location,
         description: description,
-        photos: photos.cast<File>().toList(),
+        photos: photos,
       );
     } catch (e) {
       rethrow;

@@ -32,6 +32,7 @@ class Marketplacepage extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
+            SizedBox(height: 5.h),
             // "List Item for Sale" Button
             CustomJobButton(
               text: "List Item for Sale",

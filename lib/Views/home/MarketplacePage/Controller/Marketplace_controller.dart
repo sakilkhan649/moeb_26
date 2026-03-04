@@ -38,10 +38,12 @@ class MarketplaceController extends GetxController {
     try {
       isLoading.value = true;
       final response = await _marketplaceService.getAllItems(searchTerm: query);
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data['data'];
-        final items = data.map((json) => MarketplaceItem.fromJson(json)).toList();
+        final items = data
+            .map((json) => MarketplaceItem.fromJson(json))
+            .toList();
         allItems.assignAll(items);
         filteredItems.assignAll(items);
       }
@@ -77,12 +79,10 @@ class MarketplaceController extends GetxController {
   Future<void> listItem() async {
     if (titleController.text.isEmpty ||
         priceController.text.isEmpty ||
-        locationController.text.isEmpty ||
-        descriptionController.text.isEmpty ||
-        selectedImage.value == null) {
+        locationController.text.isEmpty) {
       Get.snackbar(
         "Error",
-        "Please fill all fields and select an image",
+        "Please fill title, price, and location",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -95,10 +95,14 @@ class MarketplaceController extends GetxController {
       final response = await _marketplaceService.createItem(
         title: titleController.text,
         price: priceController.text,
-        condition: selectedCondition.value,
+        condition: selectedCondition.value.isNotEmpty
+            ? selectedCondition.value
+            : null,
         location: locationController.text,
-        description: descriptionController.text,
-        photos: [selectedImage.value!],
+        description: descriptionController.text.isNotEmpty
+            ? descriptionController.text
+            : null,
+        photos: selectedImage.value != null ? [selectedImage.value!] : null,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

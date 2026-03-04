@@ -14,10 +14,7 @@ class MarketplaceRepo {
     int page = 1,
     int limit = 10,
   }) async {
-    final Map<String, dynamic> queryParams = {
-      'page': page,
-      'limit': limit,
-    };
+    final Map<String, dynamic> queryParams = {'page': page, 'limit': limit};
 
     if (searchTerm != null && searchTerm.isNotEmpty) {
       queryParams['searchTerm'] = searchTerm;
@@ -33,22 +30,28 @@ class MarketplaceRepo {
   Future<Response> createItem({
     required String title,
     required String price,
-    required String condition,
+    String? condition,
     required String location,
-    required String description,
-    required List<File> photos,
+    String? description,
+    List<File>? photos,
   }) async {
     final Map<String, dynamic> body = {
       'title': title,
       'price': price,
-      'condition': condition,
       'location': location,
-      'description': description,
     };
 
-    final List<MultipartBody> multipartBody = photos
-        .map((file) => MultipartBody('photos', file))
-        .toList();
+    if (condition != null && condition.isNotEmpty) {
+      body['condition'] = condition;
+    }
+
+    if (description != null && description.isNotEmpty) {
+      body['description'] = description;
+    }
+
+    final List<MultipartBody> multipartBody = photos != null
+        ? photos.map((file) => MultipartBody('photos', file)).toList()
+        : [];
 
     return await apiClient.postMultipartData(
       ApiConstants.items,

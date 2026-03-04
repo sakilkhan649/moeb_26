@@ -15,9 +15,7 @@ class HomeScreens extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-     final NavigationController navController = Get.find<NavigationController>();
-
+    final NavigationController navController = Get.find<NavigationController>();
 
     final List<Widget> pages = [
       Jobofferpage(),
@@ -27,23 +25,25 @@ class HomeScreens extends StatelessWidget {
       Dealspage(),
     ];
 
-    return Scaffold(
-      body: Obx(() => pages[navController.currentIndex.value]),
-      bottomNavigationBar: Obx(
-        () => Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-          decoration: BoxDecoration(
-            color: Color(0xFF191919), // Background color
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.r),
-              topRight: Radius.circular(16.r),
+    return SafeArea(
+      child: Scaffold(
+        body: Obx(() => pages[navController.currentIndex.value]),
+        bottomNavigationBar: Obx(
+          () => Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+            decoration: BoxDecoration(
+              color: Color(0xFF191919), // Background color
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.r),
+                topRight: Radius.circular(16.r),
+              ),
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              5,
-              (index) => _buildCustomIcon(index, navController),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(
+                5,
+                (index) => _buildCustomIcon(index, navController),
+              ),
             ),
           ),
         ),
