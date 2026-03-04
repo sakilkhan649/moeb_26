@@ -11,6 +11,7 @@ import 'Controller/Marketplace_controller.dart';
 import 'Model/Marketplace_model.dart';
 import 'widgets/ContactSellerPopup.dart';
 import 'widgets/SellItemBottomSheet.dart';
+import 'widgets/ImagePreviewPopup.dart';
 
 class Marketplacepage extends StatelessWidget {
   Marketplacepage({super.key});
@@ -151,7 +152,14 @@ class MarketplaceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Item Image with rounded top corners
-          ClipRRect(child: _buildImage()),
+          GestureDetector(
+            onTap: () {
+              Get.dialog(
+                ImagePreviewPopup(imagePath: item.imagePath, title: item.name),
+              );
+            },
+            child: ClipRRect(child: _buildImage()),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
             child: Column(

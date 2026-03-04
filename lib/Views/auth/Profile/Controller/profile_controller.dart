@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../Model/user_profile_model.dart';
+import '../../../../Services/user_profile_service.dart';
 
 class ProfileController extends GetxController {
+  final UserProfileService _profileService = Get.find<UserProfileService>();
+
   // Profile Data
-  var fullName = "Sadat".obs;
-  var email = "sadatviper@gmail.com".obs;
-  var phone = "01744114084".obs;
-  var serviceArea = "Brooklyn".obs;
-  var nickName = "Omi Khan".obs;
+  var fullName = "".obs;
+  var email = "".obs;
+  var phone = "".obs;
+  var serviceArea = "".obs;
+  var nickName = "".obs;
   var rating = 5.0.obs;
-  var ecn = "ECN-456985".obs;
+  var ecn = "ECN-456985"
+      .obs; // Assuming this is still static or come from another field
+  var profilePicture = "".obs;
+
+  var isLoading = false.obs;
+  var userProfile = Rxn<UserProfileModel>();
 
   // Controllers for Edit Profile Form
   late TextEditingController nameController;
@@ -21,11 +30,50 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    nameController = TextEditingController(text: fullName.value);
-    emailController = TextEditingController(text: email.value);
-    phoneController = TextEditingController(text: phone.value);
-    serviceAreaController = TextEditingController(text: serviceArea.value);
-    nickNameController = TextEditingController(text: nickName.value);
+    nameController = TextEditingController();
+    emailController = TextEditingController();
+    phoneController = TextEditingController();
+    serviceAreaController = TextEditingController();
+    nickNameController = TextEditingController();
+    fetchUserProfile();
+  }
+
+  Future<void> fetchUserProfile() async {
+    isLoading.value = true;
+    try {
+      var response = await _profileService.getUserProfile();
+      if (response.statusCode == 200) {
+        var data = response.data['data'];
+        userProfile.value = UserProfileModel.fromJson(data);
+
+        // Update reactive variables
+        fullName.value = userProfile.value?.name ?? "";
+        email.value = userProfile.value?.email ?? "";
+        phone.value = userProfile.value?.phone ?? "";
+        serviceArea.value = userProfile.value?.serviceArea ?? "";
+        nickName.value = userProfile.value?.name ?? "";
+        profilePicture.value = userProfile.value?.profilePicture ?? "";
+
+        // Update controllers for the edit form
+        nameController.text = fullName.value;
+        emailController.text = email.value;
+        phoneController.text = phone.value;
+        serviceAreaController.text = serviceArea.value;
+        nickNameController.text = nickName.value;
+      } else {
+        Get.snackbar(
+          "Error",
+          "Failed to load profile",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching profile: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void saveProfile() {

@@ -2,11 +2,13 @@ import 'package:get/get.dart';
 import '../../Controller/internet_controller.dart';
 import '../../Ripositoryes/auth_reporitory.dart';
 import '../../Ripositoryes/job_repository.dart';
+import '../../Ripositoryes/user_profile_repository.dart';
 import '../../Ripositoryes/user_repository.dart';
 import '../../Services/api_client.dart';
 import '../../Services/auth_service.dart';
 import '../../Services/job_service.dart';
 import '../../Services/storege_service.dart';
+import '../../Services/user_profile_service.dart';
 import '../../Services/user_service.dart';
 import '../../Views/auth/Splash_Screen/controller/splashcontroller.dart';
 
@@ -20,11 +22,13 @@ class InitialBinding extends Bindings {
     // Repos আগে
     Get.put(AuthRepo(apiClient: Get.find()), permanent: true);
     Get.put(UserRepo(apiClient: Get.find()), permanent: true); // 👈 যোগ করো
+    Get.put(UserProfileRepo(apiClient: Get.find()), permanent: true);
     Get.put(JobRepo(apiClient: Get.find()), permanent: true);
 
     // Services পরে
     Get.put(AuthService(), permanent: true);
     Get.put(UserService(), permanent: true); // 👈 যোগ করো
+    Get.put(UserProfileService(userProfileRepo: Get.find()), permanent: true);
     Get.put(JobService(), permanent: true);
 
     Get.lazyPut(() => SplashScreenController());

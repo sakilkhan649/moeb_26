@@ -75,7 +75,9 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
               Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E), // Slightly lighter than background to stand out
+                  color: const Color(
+                    0xFF1E1E1E,
+                  ), // Slightly lighter than background to stand out
                   borderRadius: BorderRadius.circular(16.r),
                   border: Border.all(color: const Color(0xFF242424)),
                 ),
@@ -83,7 +85,17 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12.r),
-                      child: widget.item.imagePath.startsWith('http')
+                      child: widget.item.imagePath.isEmpty
+                          ? Container(
+                              height: 60.w,
+                              width: 60.w,
+                              color: Colors.grey[900],
+                              child: const Icon(
+                                Icons.image_not_supported,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : widget.item.imagePath.startsWith('http')
                           ? Image.network(
                               widget.item.imagePath,
                               height: 60.w,
@@ -94,8 +106,10 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                                     height: 60.w,
                                     width: 60.w,
                                     color: Colors.grey[900],
-                                    child: const Icon(Icons.image_not_supported,
-                                        color: Colors.grey),
+                                    child: const Icon(
+                                      Icons.image_not_supported,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                             )
                           : Image.asset(
