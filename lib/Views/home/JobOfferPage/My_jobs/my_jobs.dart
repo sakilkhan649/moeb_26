@@ -12,6 +12,7 @@ import '../../../../Utils/app_colors.dart';
 import '../../../../Utils/app_icons.dart';
 import '../../../../Utils/app_images.dart';
 import '../../../../widgets/Custom_AppBar.dart';
+import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 import 'Controller/My_job_controller.dart';
 
 class MyJobsScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   @override
   void initState() {
     super.initState();
-    controller.fetchJobs();
+    // controller.fetchJobs(); // Already called in controller's onInit
   }
 
   @override
@@ -895,11 +896,9 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                       onPressed: () {
                         Get.back();
                         controller.deleteItem();
-                        Get.snackbar(
-                          "Deleted",
+                        Helpers.showCustomSnackBar(
                           "Item deleted successfully",
-                          colorText: Colors.white,
-                          backgroundColor: Colors.black,
+                          isError: false,
                         );
                       },
                       child: Text(
