@@ -9,6 +9,13 @@ class OnewayController extends GetxController {
   var selectedDate = Rxn<DateTime>();
   var selectedTime = Rxn<TimeOfDay>();
   var formattedTime = "".obs;
+  var isAsap = false.obs;
+  var showAsapError = false.obs;
+
+  void toggleAsap(bool? value) {
+    isAsap.value = value ?? false;
+    showAsapError.value = false;
+  }
 
   // Function to pick the role
   void pickRole(String role) {
