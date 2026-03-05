@@ -496,23 +496,34 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            style: GoogleFonts.inter(fontSize: 14.sp),
+                        Expanded(
+                          child: Row(
                             children: [
-                              const TextSpan(
-                                text: "PU: ",
-                                style: TextStyle(color: Colors.grey),
+                              Text(
+                                "PU: ",
+                                style: GoogleFonts.inter(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              TextSpan(
-                                text: puLocation,
-                                style: TextStyle(color: Colors.white),
+                              SizedBox(width: 4.w),
+                              Expanded(
+                                child: Text(
+                                  puLocation!,
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(  
+                          padding: EdgeInsets.symmetric(
                             horizontal: 10.w,
                             vertical: 6.h,
                           ),
@@ -535,19 +546,23 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
 
                     Row(
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            style: GoogleFonts.inter(fontSize: 13.sp),
-                            children: [
-                              const TextSpan(
-                                text: "DO: ",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              TextSpan(
-                                text: doLocation,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
+                        Expanded(
+                          child: RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              style: GoogleFonts.inter(fontSize: 13.sp),
+                              children: [
+                                const TextSpan(
+                                  text: "DO: ",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                TextSpan(
+                                  text: doLocation,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
