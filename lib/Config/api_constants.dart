@@ -32,4 +32,6 @@ class ApiConstants {
   static const String myRides = '/jobs/my-rides';
   //Deals Endpoints
   static const String dealsItems = '/deals';
+  static const String ratingsFeedback = '/user/my-reviews';
+
 }
