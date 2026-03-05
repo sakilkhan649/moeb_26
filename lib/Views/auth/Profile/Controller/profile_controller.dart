@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../Model/user_profile_model.dart';
 import '../../../../Services/user_profile_service.dart';
 
@@ -16,6 +20,7 @@ class ProfileController extends GetxController {
   var ecn = "ECN-456985"
       .obs; // Assuming this is still static or come from another field
   var profilePicture = "".obs;
+  var pickedImage = Rxn<File>();
 
   var isLoading = false.obs;
   var isUpdating = false.obs;
@@ -77,6 +82,15 @@ class ProfileController extends GetxController {
     }
   }
 
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      pickedImage.value = File(image.path);
+    }
+  }
+
   Future<void> saveProfile() async {
     isUpdating.value = true;
     try {
@@ -85,10 +99,22 @@ class ProfileController extends GetxController {
         "phone": phoneController.text,
         "serviceArea": serviceAreaController.text,
         "nickName": nickNameController.text, // If backend supports it
-        // Add other fields as per API if needed, e.g., "home", "experience", "company"
       };
 
-      var response = await _profileService.patchProfile(body);
+      dynamic requestBody;
+      if (pickedImage.value != null) {
+        requestBody = dio.FormData.fromMap({
+          ...body,
+          "profilePicture": await dio.MultipartFile.fromFile(
+            pickedImage.value!.path,
+            filename: pickedImage.value!.path.split('/').last,
+          ),
+        });
+      } else {
+        requestBody = body;
+      }
+
+      var response = await _profileService.patchProfile(requestBody);
       if (response.statusCode == 200) {
         var data = response.data['data'];
         userProfile.value = UserProfileModel.fromJson(data);
@@ -101,6 +127,7 @@ class ProfileController extends GetxController {
         nickName.value = userProfile.value?.name ?? ""; // Local fallback
         profilePicture.value = userProfile.value?.profilePicture ?? "";
 
+        pickedImage.value = null; // Clear picked image after success
         Get.back(); // Close bottom sheet
         Get.snackbar(
           "Success",

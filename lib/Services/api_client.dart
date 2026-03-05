@@ -122,9 +122,6 @@ class ApiClient extends GetxService {
               !e.requestOptions.path.contains(ApiConstants.login) &&
               !e.requestOptions.path.contains(ApiConstants.signup) &&
               !e.requestOptions.path.contains(ApiConstants.verifyEmail)) {
-            // TODO: API DOES NOT EXIST on backend.
-            // When refresh token API is ready, implement refresh here.
-            /*
             final refreshed = await refreshToken();
 
             if (refreshed) {
@@ -140,10 +137,6 @@ class ApiClient extends GetxService {
               logoutUser();
               return handler.reject(e);
             }
-            */
-
-            logoutUser();
-            return handler.reject(e);
           }
 
           // 3️⃣ Timeout
@@ -398,9 +391,14 @@ class ApiClient extends GetxService {
       });
 
       if (response.statusCode == 200) {
+        final data = response.data['data'];
         await StorageService.setString(
           StorageConstants.bearerToken,
-          response.data['accessToken'],
+          data['accessToken'],
+        );
+        await StorageService.setString(
+          StorageConstants.refreshToken,
+          data['refreshToken'],
         );
         return true;
       }

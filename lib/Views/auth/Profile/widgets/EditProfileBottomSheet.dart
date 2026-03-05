@@ -67,6 +67,68 @@ class EditProfileBottomSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Center(
+                        child: Stack(
+                          children: [
+                            Obx(
+                              () => Container(
+                                height: 100.h,
+                                width: 100.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.2),
+                                    width: 2,
+                                  ),
+                                  image: DecorationImage(
+                                    image: controller.pickedImage.value != null
+                                        ? FileImage(
+                                            controller.pickedImage.value!,
+                                          )
+                                        : (controller
+                                                  .userProfile
+                                                  .value
+                                                  ?.profilePicture
+                                                  .isEmpty ??
+                                              true)
+                                        ? const AssetImage(
+                                                "assets/images/profile.png",
+                                              )
+                                              as ImageProvider
+                                        : NetworkImage(
+                                            controller
+                                                .userProfile
+                                                .value!
+                                                .profilePicture,
+                                          ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () => controller.pickImage(),
+                                child: Container(
+                                  padding: EdgeInsets.all(8.h),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.black,
+                                    size: 16.sp,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
                       _buildField(
                         "Full Name",
                         controller.nameController,

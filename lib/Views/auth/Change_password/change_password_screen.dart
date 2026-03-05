@@ -19,6 +19,13 @@ class ChangePasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.black100,
+        title:CustomText(text: "Change Password"),
+        leading: IconButton(onPressed: (){
+          Get.back();
+        }, icon: Icon(Icons.arrow_back_ios,color: Colors.white,),
+      ),),
       body: Form(
         key: _formKey,
         child: Padding(
@@ -28,9 +35,6 @@ class ChangePasswordScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 100.h),
-                CustomText(text: "Change Password"),
-                SizedBox(height: 7.h),
                 CustomTextgray(
                   text:
                       "Enter your current password and new password to change your password.",
