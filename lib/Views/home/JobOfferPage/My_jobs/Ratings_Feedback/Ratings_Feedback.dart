@@ -1,109 +1,108 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'Controller/ratings_feedback_controller.dart';
 import '../../../../../Utils/app_images.dart';
 import '../../../../../widgets/CustomText.dart';
 import '../../../../../widgets/Custom_AppBar.dart';
 
 class RatingsFeedback extends StatelessWidget {
-  const RatingsFeedback({super.key});
+  RatingsFeedback({super.key});
+
+  final RatingsFeedbackController controller = Get.put(
+    RatingsFeedbackController(),
+  );
 
   @override
   Widget build(BuildContext context) {
-    // Dummy data for feedback
-    final List<Map<String, dynamic>> feedbackList = [
-      {
-        "rating": 4,
-        "feedback": "Professional Behavior",
-        "userName": "John D.",
-        "userImage": AppImages.profile_image,
-      },
-      {
-        "rating": 4,
-        "feedback": "On-Time Service.",
-        "userName": "John D.",
-        "userImage": AppImages.profile_image,
-      },
-      {
-        "rating": 4,
-        "feedback": "Clean & Comfortable Vehicle.",
-        "userName": "John D.",
-        "userImage": AppImages.profile_image,
-      },
-    ];
-
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: const CustomAppBar(
         logoPath: AppImages.app_logo,
         notificationCount: 3,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              children: [
-                SizedBox(height: 20.h),
-                // Header Section
-                SizedBox(
-                  width: double.infinity,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                          icon: Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                            size: 20.sp,
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFF1A107)),
+          );
+        }
+
+        return Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                children: [
+                  SizedBox(height: 20.h),
+                  // Header Section
+                  SizedBox(
+                    width: double.infinity,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.white,
+                              size: 20.sp,
+                            ),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                           ),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40.w),
-                        child: CustomText(
-                          text: "Ratings & Feedback",
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 40.w),
+                          child: CustomText(
+                            text: "Ratings & Feedback",
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w600,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Divider(color: Colors.white24, height: 1.h),
-                SizedBox(height: 10.h),
-              ],
+                  SizedBox(height: 20.h),
+                  Divider(color: Colors.white24, height: 1.h),
+                  SizedBox(height: 10.h),
+                ],
+              ),
             ),
-          ),
-          // Feedback List
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
-              physics: const BouncingScrollPhysics(),
-              itemCount: feedbackList.length,
-              itemBuilder: (context, index) {
-                final item = feedbackList[index];
-                return _buildFeedbackCard(
-                  rating: item['rating'],
-                  feedback: item['feedback'],
-                  userName: item['userName'],
-                  userImage: item['userImage'],
-                );
-              },
+            // Feedback List
+            Expanded(
+              child: controller.reviews.isEmpty
+                  ? Center(
+                      child: CustomText(
+                        text: "No feedback yet",
+                        fontSize: 16.sp,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: controller.reviews.length,
+                      itemBuilder: (context, index) {
+                        final item = controller.reviews[index];
+                        return _buildFeedbackCard(
+                          rating: item.rating,
+                          feedback: item.comment,
+                          userName: item.reviewerName,
+                          userImage: item.reviewerImage,
+                        );
+                      },
+                    ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 
@@ -155,7 +154,10 @@ class RatingsFeedback extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage(userImage),
+                    image: userImage.startsWith('http')
+                        ? NetworkImage(userImage)
+                        : const AssetImage(AppImages.profile_image)
+                              as ImageProvider,
                     fit: BoxFit.cover,
                   ),
                 ),

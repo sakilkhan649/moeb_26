@@ -36,7 +36,6 @@ class ApiConstants {
   static const String updateJob = '/jobs/{jobId}';
   //Deals Endpoints
   static const String dealsItems = '/deals';
-
-
+  static const String ratingsFeedback = '/user/my-reviews';
 
 }
