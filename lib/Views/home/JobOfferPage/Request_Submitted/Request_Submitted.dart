@@ -15,6 +15,9 @@ class RequestSubmitted extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the job data from arguments
+    final job = Get.arguments;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -76,20 +79,20 @@ class RequestSubmitted extends StatelessWidget {
               ),
               SizedBox(height: 30.h),
 
-              // Status Steps Container (You can use this in your widget tree)
+              // Status Steps Container
               CustomJobDetailsCard(
                 // Location details
-                pickupLocation: "Dhaka Airport",
-                dropoffLocation: "Barisal",
+                pickupLocation: job?.pickupLocation ?? "Unknown",
+                dropoffLocation: job?.dropoffLocation ?? "N/A",
 
                 // Job information
-                flightNumber: "Flight AA 1234",
-                dateTime: "Jan 20 · 08:30 AM",
-                vehicleType: "SEDAN",
-                jobPoster: "Khaled",
-                company: "Khaled Transportation",
-                payment: "Collect",
-                amount: "\$125",
+                flightNumber: job?.flightNumber ?? "N/A",
+                dateTime: job?.date?.toString() ?? "N/A",
+                vehicleType: job?.vehicleType ?? "Unknown",
+                jobPoster: job?.createdBy?.name ?? "Unknown",
+                company: job?.createdBy?.name ?? "Unknown",
+                payment: job?.paymentType ?? "Unknown",
+                amount: "\$${job?.paymentAmount ?? 0}",
 
                 // Optional: Custom colors
                 backgroundColor: const Color(0xFF1C1C1C),

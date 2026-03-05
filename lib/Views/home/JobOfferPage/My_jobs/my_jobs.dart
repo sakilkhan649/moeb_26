@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Data/models/job_model.dart';
+import 'package:moeb_26/Data/my_jobs_model.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 import '../../../../Core/routs.dart';
@@ -24,12 +25,6 @@ class MyJobsScreen extends StatefulWidget {
 
 class _MyJobsScreenState extends State<MyJobsScreen> {
   final BookingController controller = Get.put(BookingController());
-
-  final TextEditingController flightNumberController = TextEditingController();
-  final TextEditingController paymentMethodController = TextEditingController();
-  final TextEditingController specialInstructionsController =
-      TextEditingController();
-  final TextEditingController paymentController = TextEditingController();
 
   @override
   void initState() {
@@ -97,11 +92,11 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                   );
                 }
 
-                if (controller.isJobAcceptanceView.value) {
-                  return _buildJobAcceptanceDetailCard();
-                }
+                // if (2 == 2) {
+                //   return _buildJobAcceptanceDetailCard();
+                // }
 
-                if (controller.jobsList.isEmpty) {
+                if (controller.myJobsList.isEmpty) {
                   return Center(
                     child: Padding(
                       padding: EdgeInsets.only(top: 40.h),
@@ -116,12 +111,12 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.jobsList.length,
+                  itemCount: controller.myJobsList.length,
                   itemBuilder: (context, index) {
-                    final job = controller.jobsList[index];
+                    final job = controller.myJobsList[index];
                     return Padding(
                       padding: EdgeInsets.only(bottom: 16.h),
-                      child: _buildJobCard(job),
+                      child: _buildJobAcceptanceDetailCard(job),
                     );
                   },
                 );
@@ -133,8 +128,296 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     );
   }
 
-  Widget _buildJobCard(Job job) {
-    // Safely extract properties
+  // Widget _buildJobCard(Job job) {
+  //   // Safely extract properties
+  //   final dateRaw = job.date.toString();
+  //   final timeRaw = job.time;
+
+  //   // Parse date if possible
+  //   String displayDate = "$dateRaw · $timeRaw";
+  //   try {
+  //     if (dateRaw.isNotEmpty) {
+  //       DateTime parsed = DateTime.parse(dateRaw);
+  //       // Basic format to keep it simple, e.g., "Tue, Jan 20"
+  //       displayDate =
+  //           "${_getWeekday(parsed.weekday)}, ${_getMonth(parsed.month)} ${parsed.day} · $timeRaw";
+  //     }
+  //   } catch (_) {}
+
+  //   final puLocation = job.pickupLocation;
+  //   final doLocation = job.dropoffLocation ?? 'N/A';
+  //   final vehicle = job.vehicleType;
+  //   final flight = job.flightNumber ?? 'N/A';
+  //   final paymentType = job.paymentType;
+  //   final instruction = job.instruction ?? 'N/A';
+  //   final jobType = job.jobType == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
+
+  //   // Local controllers for this specific card
+  //   final TextEditingController cardFlightController = TextEditingController(
+  //     text: flight,
+  //   );
+  //   final TextEditingController cardPaymentController = TextEditingController(
+  //     text: paymentType,
+  //   );
+  //   final TextEditingController cardInstructionController =
+  //       TextEditingController(text: instruction);
+  //   return Container(
+  //     width: double.infinity,
+  //     decoration: BoxDecoration(
+  //       color: const Color(0xFF1C1C1C),
+  //       borderRadius: BorderRadius.circular(20.r),
+  //       border: Border.all(color: const Color(0xFF2A2A2A)),
+  //     ),
+  //     child: Stack(
+  //       children: [
+  //         Padding(
+  //           padding: EdgeInsets.fromLTRB(10.w, 12.w, 10.w, 10.w),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               /// HEADER
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Row(
+  //                     children: [
+  //                       Icon(
+  //                         Icons.calendar_today_outlined,
+  //                         color: Colors.grey,
+  //                         size: 18.sp,
+  //                       ),
+  //                       SizedBox(width: 5.w),
+  //                       Text(
+  //                         displayDate,
+  //                         style: GoogleFonts.inter(
+  //                           color: Colors.grey,
+  //                           fontSize: 12.sp,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 8.h),
+
+  //               /// PU / DO
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Expanded(
+  //                     child: RichText(
+  //                       text: TextSpan(
+  //                         style: GoogleFonts.inter(fontSize: 14.sp),
+  //                         children: [
+  //                           const TextSpan(
+  //                             text: "PU: ",
+  //                             style: TextStyle(color: Colors.grey),
+  //                           ),
+  //                           TextSpan(
+  //                             text: puLocation,
+  //                             style: const TextStyle(color: Colors.white),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Container(
+  //                     padding: EdgeInsets.symmetric(
+  //                       horizontal: 10.w,
+  //                       vertical: 6.h,
+  //                     ),
+  //                     decoration: BoxDecoration(
+  //                       color: Colors.red,
+  //                       borderRadius: BorderRadius.circular(6.r),
+  //                     ),
+  //                     child: Text(
+  //                       vehicle.toUpperCase(),
+  //                       style: GoogleFonts.inter(
+  //                         color: Colors.white,
+  //                         fontSize: 10.sp,
+  //                         fontWeight: FontWeight.bold,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 8.h),
+
+  //               Row(
+  //                 children: [
+  //                   Expanded(
+  //                     child: RichText(
+  //                       text: TextSpan(
+  //                         style: GoogleFonts.inter(fontSize: 13.sp),
+  //                         children: [
+  //                           const TextSpan(
+  //                             text: "DO: ",
+  //                             style: TextStyle(color: Colors.grey),
+  //                           ),
+  //                           TextSpan(
+  //                             text: doLocation,
+  //                             style: const TextStyle(color: Colors.white),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 10.h),
+
+  //               ///DATE AND TIME
+  //               Row(
+  //                 children: [
+  //                   SvgPicture.asset(AppIcons.sadax_icon),
+  //                   SizedBox(width: 5.w),
+  //                   Text(
+  //                     jobType,
+  //                     style: GoogleFonts.inter(
+  //                       color: Colors.white,
+  //                       fontSize: 12.sp,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 16.h),
+
+  //               ///Fligt Number
+  //               if (flight != 'N/A' && flight != '') ...[
+  //                 const CustomTextgray(
+  //                   text: "Flight Number",
+  //                   color: Color(0xFF737373),
+  //                   fontWeight: FontWeight.w500,
+  //                 ),
+  //                 SizedBox(height: 8.h),
+  //                 CustomTextFieldGold(
+  //                   readOnly: true,
+  //                   controller: cardFlightController,
+  //                   hintText: "Flight AA 1234",
+  //                   obscureText: false,
+  //                   textInputType: TextInputType.text,
+  //                 ),
+  //                 SizedBox(height: 10.h),
+  //               ],
+
+  //               ///Payment Method
+  //               const CustomTextgray(
+  //                 text: "Payment Method",
+  //                 color: Color(0xFF737373),
+  //                 fontWeight: FontWeight.w500,
+  //               ),
+  //               SizedBox(height: 8.h),
+  //               CustomTextFieldGold(
+  //                 readOnly: true,
+  //                 controller: cardPaymentController,
+  //                 hintText: "Collect",
+  //                 obscureText: false,
+  //                 textInputType: TextInputType.text,
+  //               ),
+  //               SizedBox(height: 10.h),
+
+  //               ///Special Instructions
+  //               if (instruction != 'N/A' && instruction != '') ...[
+  //                 const CustomTextgray(
+  //                   text: "Special Instructions",
+  //                   color: Color(0xFF737373),
+  //                   fontWeight: FontWeight.w500,
+  //                 ),
+  //                 SizedBox(height: 8.h),
+  //                 CustomTextFieldGold(
+  //                   readOnly: true,
+  //                   controller: cardInstructionController,
+  //                   hintText: "Airport Expert, Vip Client",
+  //                   obscureText: false,
+  //                   textInputType: TextInputType.text,
+  //                 ),
+  //               ],
+  //             ],
+  //           ),
+  //         ),
+  //         Positioned(
+  //           top: -4.w,
+  //           right: -13.w,
+  //           child: PopupMenuButton<String>(
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(12.r),
+  //               side: BorderSide(color: Color(0xFF364153), width: 1),
+  //             ),
+  //             icon: Icon(Icons.more_vert, color: Colors.white, size: 24.sp),
+  //             color: Color(0xFF1E1E1E),
+  //             padding: EdgeInsets.zero,
+  //             onSelected: (value) {
+  //               if (value == 'edit') {
+  //                 Get.toNamed(Routes.editScreen);
+  //               } else {
+  //                 _showDeleteDialog();
+  //               }
+  //             },
+
+  //             itemBuilder: (_) => [
+  //               PopupMenuItem(
+  //                 value: 'edit',
+  //                 height: 45.h,
+  //                 padding: EdgeInsets.symmetric(horizontal: 16.w),
+  //                 child: Row(
+  //                   children: [
+  //                     SvgPicture.asset(
+  //                       AppIcons.edit_icon,
+  //                       height: 22.h,
+  //                       width: 22.w,
+  //                       colorFilter: ColorFilter.mode(
+  //                         Colors.white,
+  //                         BlendMode.srcIn,
+  //                       ),
+  //                     ),
+  //                     SizedBox(width: 12.w),
+  //                     Text(
+  //                       "Edit",
+  //                       style: GoogleFonts.inter(
+  //                         color: Colors.white,
+  //                         fontSize: 14.sp,
+  //                         fontWeight: FontWeight.w500,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //               PopupMenuItem(
+  //                 value: 'delete',
+  //                 height: 45.h,
+  //                 padding: EdgeInsets.symmetric(horizontal: 16.w),
+  //                 child: Row(
+  //                   children: [
+  //                     SvgPicture.asset(
+  //                       AppIcons.delete_icon,
+  //                       height: 22.h,
+  //                       width: 22.w,
+  //                       colorFilter: ColorFilter.mode(
+  //                         Colors.white,
+  //                         BlendMode.srcIn,
+  //                       ),
+  //                     ),
+  //                     SizedBox(width: 12.w),
+  //                     Text(
+  //                       "Delete",
+  //                       style: GoogleFonts.inter(
+  //                         color: Colors.white,
+  //                         fontSize: 14.sp,
+  //                         fontWeight: FontWeight.w500,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _buildJobAcceptanceDetailCard(JobData job) {
     final dateRaw = job.date.toString();
     final timeRaw = job.time;
 
@@ -156,273 +439,19 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final paymentType = job.paymentType;
     final instruction = job.instruction ?? 'N/A';
     final jobType = job.jobType == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
+    final amount = job.paymentAmount;
 
     // Local controllers for this specific card
     final TextEditingController cardFlightController = TextEditingController(
       text: flight,
     );
-    final TextEditingController cardPaymentController = TextEditingController(
-      text: paymentType,
-    );
+    final TextEditingController cardPaymentTypeController =
+        TextEditingController(text: paymentType);
     final TextEditingController cardInstructionController =
         TextEditingController(text: instruction);
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1C),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: const Color(0xFF2A2A2A)),
-      ),
-      child: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(10.w, 12.w, 10.w, 10.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// HEADER
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today_outlined,
-                          color: Colors.grey,
-                          size: 18.sp,
-                        ),
-                        SizedBox(width: 5.w),
-                        Text(
-                          displayDate,
-                          style: GoogleFonts.inter(
-                            color: Colors.grey,
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-
-                /// PU / DO
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.inter(fontSize: 14.sp),
-                          children: [
-                            const TextSpan(
-                              text: "PU: ",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                            TextSpan(
-                              text: puLocation,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(6.r),
-                      ),
-                      child: Text(
-                        vehicle.toUpperCase(),
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.inter(fontSize: 13.sp),
-                          children: [
-                            const TextSpan(
-                              text: "DO: ",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                            TextSpan(
-                              text: doLocation,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10.h),
-
-                ///DATE AND TIME
-                Row(
-                  children: [
-                    SvgPicture.asset(AppIcons.sadax_icon),
-                    SizedBox(width: 5.w),
-                    Text(
-                      jobType,
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16.h),
-
-                ///Fligt Number
-                if (flight != 'N/A' && flight != '') ...[
-                  const CustomTextgray(
-                    text: "Flight Number",
-                    color: Color(0xFF737373),
-                    fontWeight: FontWeight.w500,
-                  ),
-                  SizedBox(height: 8.h),
-                  CustomTextFieldGold(
-                    readOnly: true,
-                    controller: cardFlightController,
-                    hintText: "Flight AA 1234",
-                    obscureText: false,
-                    textInputType: TextInputType.text,
-                  ),
-                  SizedBox(height: 10.h),
-                ],
-
-                ///Payment Method
-                const CustomTextgray(
-                  text: "Payment Method",
-                  color: Color(0xFF737373),
-                  fontWeight: FontWeight.w500,
-                ),
-                SizedBox(height: 8.h),
-                CustomTextFieldGold(
-                  readOnly: true,
-                  controller: cardPaymentController,
-                  hintText: "Collect",
-                  obscureText: false,
-                  textInputType: TextInputType.text,
-                ),
-                SizedBox(height: 10.h),
-
-                ///Special Instructions
-                if (instruction != 'N/A' && instruction != '') ...[
-                  const CustomTextgray(
-                    text: "Special Instructions",
-                    color: Color(0xFF737373),
-                    fontWeight: FontWeight.w500,
-                  ),
-                  SizedBox(height: 8.h),
-                  CustomTextFieldGold(
-                    readOnly: true,
-                    controller: cardInstructionController,
-                    hintText: "Airport Expert, Vip Client",
-                    obscureText: false,
-                    textInputType: TextInputType.text,
-                  ),
-                ],
-              ],
-            ),
-          ),
-          Positioned(
-            top: -4.w,
-            right: -13.w,
-            child: PopupMenuButton<String>(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                side: BorderSide(color: Color(0xFF364153), width: 1),
-              ),
-              icon: Icon(Icons.more_vert, color: Colors.white, size: 24.sp),
-              color: Color(0xFF1E1E1E),
-              padding: EdgeInsets.zero,
-              onSelected: (value) {
-                if (value == 'edit') {
-                  Get.toNamed(Routes.editScreen);
-                } else {
-                  _showDeleteDialog();
-                }
-              },
-
-              itemBuilder: (_) => [
-                PopupMenuItem(
-                  value: 'edit',
-                  height: 45.h,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        AppIcons.edit_icon,
-                        height: 22.h,
-                        width: 22.w,
-                        colorFilter: ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        "Edit",
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'delete',
-                  height: 45.h,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        AppIcons.delete_icon,
-                        height: 22.h,
-                        width: 22.w,
-                        colorFilter: ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        "Delete",
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    final TextEditingController cardAmountController = TextEditingController(
+      text: amount.toString(),
     );
-  }
-
-  Widget _buildJobAcceptanceDetailCard() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -452,7 +481,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             ),
                             SizedBox(width: 5.w),
                             Text(
-                              "Tue, Jan 20 · 08:30 AM",
+                              displayDate,
                               style: GoogleFonts.inter(
                                 color: Colors.grey,
                                 fontSize: 12.sp,
@@ -467,17 +496,28 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            style: GoogleFonts.inter(fontSize: 14.sp),
+                        Expanded(
+                          child: Row(
                             children: [
-                              const TextSpan(
-                                text: "PU: ",
-                                style: TextStyle(color: Colors.grey),
+                              Text(
+                                "PU: ",
+                                style: GoogleFonts.inter(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              const TextSpan(
-                                text: "Dhaka Airport",
-                                style: TextStyle(color: Colors.white),
+                              SizedBox(width: 4.w),
+                              Expanded(
+                                child: Text(
+                                  puLocation!,
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),
@@ -492,7 +532,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Text(
-                            "SEDAN",
+                            vehicle!,
                             style: GoogleFonts.inter(
                               color: Colors.white,
                               fontSize: 10.sp,
@@ -506,19 +546,23 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
 
                     Row(
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            style: GoogleFonts.inter(fontSize: 13.sp),
-                            children: [
-                              const TextSpan(
-                                text: "DO: ",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              const TextSpan(
-                                text: "Barisal",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
+                        Expanded(
+                          child: RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              style: GoogleFonts.inter(fontSize: 13.sp),
+                              children: [
+                                const TextSpan(
+                                  text: "DO: ",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                TextSpan(
+                                  text: doLocation,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -531,7 +575,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                         SvgPicture.asset(AppIcons.sadax_icon),
                         SizedBox(width: 5.w),
                         Text(
-                          "SADAX",
+                          jobType,
                           style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 12.sp,
@@ -550,7 +594,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     SizedBox(height: 8.h),
                     CustomTextFieldGold(
                       readOnly: true,
-                      controller: flightNumberController,
+                      controller: cardFlightController,
                       hintText: "Flight AA 1234",
                       obscureText: false,
                       textInputType: TextInputType.text,
@@ -566,7 +610,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     SizedBox(height: 8.h),
                     CustomTextFieldGold(
                       readOnly: true,
-                      controller: paymentMethodController,
+                      controller: cardPaymentTypeController,
                       hintText: "Collect",
                       obscureText: false,
                       textInputType: TextInputType.text,
@@ -582,7 +626,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     SizedBox(height: 8.h),
                     CustomTextFieldGold(
                       readOnly: true,
-                      controller: specialInstructionsController,
+                      controller: cardInstructionController,
                       hintText: "Airport Expert, Vip Client",
                       obscureText: false,
                       textInputType: TextInputType.text,
@@ -597,7 +641,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     ),
                     SizedBox(height: 8.h),
                     CustomTextFieldGold(
-                      controller: specialInstructionsController,
+                      readOnly: true,
+                      controller: cardAmountController,
                       hintText: "\$",
                       obscureText: false,
                       textInputType: TextInputType.text,
@@ -607,180 +652,186 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
               ),
 
               /// Driver Section
-              Container(
-                padding: EdgeInsets.all(16.w),
-                margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF191111),
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(color: Color(0xFF2A2A2A)),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 30.r,
-                          backgroundImage: AssetImage(
-                            AppImages.sadat_image,
-                          ), // Placeholder
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+              if (job.applicant?.driver == null) Text("No Driver Assigned"),
+              if (job.applicant?.driver != null)
+                Container(
+                  padding: EdgeInsets.all(16.w),
+                  margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF191111),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: Color(0xFF2A2A2A)),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30.r,
+                            backgroundImage: NetworkImage(
+                              job.applicant?.driver?.profilePicture ?? "",
+                            ), // Placeholder
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      job.applicant?.driver?.name ?? "",
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Icon(
+                                      Icons.directions_car,
+                                      color: Colors.white,
+                                      size: 20.sp,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Expanded(
+                                      child: Text(
+                                        "BMW 7 Series, Black",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white.withOpacity(0.4),
+                                          fontSize: 12.sp,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 4.h),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star_border_outlined,
+                                      color: const Color(0xFFD08700),
+                                      size: 20.sp,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      "4.9/5",
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white.withOpacity(0.4),
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.h),
+
+                      /// Chat Button
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.chatPage);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 15.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    "Sadat",
+                              Icon(
+                                Icons.chat_bubble_outline,
+                                color: Colors.black.withOpacity(0.6),
+                                size: 24.sp,
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                "Chat with Driver",
+                                style: GoogleFonts.inter(
+                                  color: Colors.black.withOpacity(0.6),
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+
+                      /// Reject/Approve Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 15.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Reject",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.black,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 20.w),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.toNamed(Routes.approvePage);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 15.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.orange100,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Approve",
                                     style: GoogleFonts.inter(
                                       color: Colors.white,
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  const Spacer(),
-                                  Icon(
-                                    Icons.directions_car,
-                                    color: Colors.white,
-                                    size: 20.sp,
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    "BMW 7 Series, Black",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white.withOpacity(0.4),
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                              SizedBox(height: 4.h),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.star_border_outlined,
-                                    color: const Color(0xFFD08700),
-                                    size: 20.sp,
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    "4.9/5",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white.withOpacity(0.4),
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-
-                    /// Chat Button
-                    GestureDetector(
-                      onTap: () {
-                        Get.toNamed(Routes.chatPage);
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 15.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.chat_bubble_outline,
-                              color: Colors.black.withOpacity(0.6),
-                              size: 24.sp,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              "Chat with Driver",
-                              style: GoogleFonts.inter(
-                                color: Colors.black.withOpacity(0.6),
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 24.h),
-
-                    /// Reject/Approve Buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 15.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Reject",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.black,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 20.w),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.toNamed(Routes.approvePage);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 15.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.orange100,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Approve",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
           Positioned(
