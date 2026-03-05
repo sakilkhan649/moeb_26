@@ -182,33 +182,33 @@ class ProfileScreen extends StatelessWidget {
                                 }
                               },
                               itemBuilder: (context) => [
-                                PopupMenuItem<int>(
-                                  value: 0,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.person_outline,
-                                        color: Colors.white,
-                                        size: 24.sp,
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      Text(
-                                        'Account',
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Icon(
-                                        CupertinoIcons.chevron_forward,
-                                        size: 20.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                // PopupMenuItem<int>(
+                                //   value: 0,
+                                //   child: Row(
+                                //     children: [
+                                //       Icon(
+                                //         Icons.person_outline,
+                                //         color: Colors.white,
+                                //         size: 24.sp,
+                                //       ),
+                                //       SizedBox(width: 12.w),
+                                //       Text(
+                                //         'Account',
+                                //         style: GoogleFonts.inter(
+                                //           color: Colors.white,
+                                //           fontSize: 14.sp,
+                                //           fontWeight: FontWeight.w500,
+                                //         ),
+                                //       ),
+                                //       const Spacer(),
+                                //       Icon(
+                                //         CupertinoIcons.chevron_forward,
+                                //         size: 20.sp,
+                                //         color: Colors.white,
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                                 PopupMenuItem<int>(
                                   value: 1,
                                   child: Row(
@@ -267,33 +267,33 @@ class ProfileScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                PopupMenuItem<int>(
-                                  value: 3,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.logout_outlined,
-                                        color: Colors.white,
-                                        size: 24.sp,
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      Text(
-                                        'Logout',
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Icon(
-                                        CupertinoIcons.chevron_forward,
-                                        size: 20.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                // PopupMenuItem<int>(
+                                //   value: 3,
+                                //   child: Row(
+                                //     children: [
+                                //       Icon(
+                                //         Icons.logout_outlined,
+                                //         color: Colors.white,
+                                //         size: 24.sp,
+                                //       ),
+                                //       SizedBox(width: 12.w),
+                                //       Text(
+                                //         'Logout',
+                                //         style: GoogleFonts.inter(
+                                //           color: Colors.white,
+                                //           fontSize: 14.sp,
+                                //           fontWeight: FontWeight.w500,
+                                //         ),
+                                //       ),
+                                //       const Spacer(),
+                                //       Icon(
+                                //         CupertinoIcons.chevron_forward,
+                                //         size: 20.sp,
+                                //         color: Colors.white,
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                               ],
                             ),
                           ],
@@ -441,22 +441,38 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       _buildSettingItem(
-                        Icons.chat_bubble_outline,
+                        SvgPicture.asset(
+                          AppIcons.ratings_icon,
+                          height: 24.sp,
+                          width: 24.sp,
+                        ),
                         "Ratings & Feedback",
                         onTap: () => Get.toNamed(Routes.ratingsFeedback),
                       ),
                       _buildSettingItem(
-                        Icons.settings_outlined,
+                        SvgPicture.asset(
+                          AppIcons.settings_icon,
+                          height: 24.sp,
+                          width: 24.sp,
+                        ),
                         "Terms & Condition",
                         onTap: () => Get.toNamed(Routes.termPolicy),
                       ),
                       _buildSettingItem(
-                        Icons.support_agent_outlined,
+                        SvgPicture.asset(
+                          AppIcons.support_icon,
+                          height: 24.sp,
+                          width: 24.sp,
+                        ),
                         "Support and Report",
                         onTap: () => showContactSupportBottomSheet(),
                       ),
                       _buildSettingItem(
-                        Icons.chat_bubble_outline,
+                        SvgPicture.asset(
+                          AppIcons.password_icon,
+                          height: 24.sp,
+                          width: 24.sp,
+                        ),
                         "Password Change",
                         onTap: () => Get.toNamed(Routes.changePasswordScreen),
                       ),
@@ -578,9 +594,9 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingItem(IconData icon, String title, {VoidCallback? onTap}) {
+  Widget _buildSettingItem(Widget icon, String title, {VoidCallback? onTap}) {
     return ListTile(
-      leading: Icon(icon, color: Colors.grey, size: 22.sp),
+      leading: icon,
       title: Text(
         title,
         style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),

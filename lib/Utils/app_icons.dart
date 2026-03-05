@@ -23,6 +23,10 @@ class AppIcons {
   static const String deals_icon="$iconurl/deals_icon.svg";
   static const String edit_icon="$iconurl/edit_icon.svg";
   static const String delete_icon="$iconurl/delete_icon.svg";
+  static const String ratings_icon="$iconurl/ratings_icon.svg";
+  static const String settings_icon="$iconurl/settings_icon.svg";
+  static const String support_icon="$iconurl/support_icon.svg";
+  static const String password_icon="$iconurl/password_icon.svg";
 
 
 }

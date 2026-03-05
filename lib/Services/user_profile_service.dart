@@ -10,7 +10,7 @@ class UserProfileService {
     return userProfileRepo.getUserProfile();
   }
 
-  Future<Response> patchProfile(Map<String, dynamic> body) {
+  Future<Response> patchProfile(dynamic body) {
     return userProfileRepo.patchProfile(body);
   }
 }

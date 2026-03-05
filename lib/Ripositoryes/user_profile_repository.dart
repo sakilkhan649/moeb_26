@@ -11,7 +11,7 @@ class UserProfileRepo {
     return apiClient.getData(ApiConstants.userProfile);
   }
 
-  Future<Response> patchProfile(Map<String, dynamic> body) {
+  Future<Response> patchProfile(dynamic body) {
     return apiClient.patchData(ApiConstants.userProfile, body);
   }
 }
