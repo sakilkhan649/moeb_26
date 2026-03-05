@@ -83,4 +83,38 @@ class JobRepo {
       query: {'type': 'past', 'page': page, 'limit': limit},
     );
   }
+
+
+  Future<Response> rejectApplicant({required String jobId}) async {
+    return await apiClient.patchData(
+      ApiConstants.rejectApplicant.replaceAll('{jobId}', jobId),
+      null,
+    );
+  }
+
+  Future<Response> approveApplicant({required String jobId}) async {
+    return await apiClient.patchData(
+      ApiConstants.approveApplicant.replaceAll('{jobId}', jobId),
+      null,
+    );
+  }
+
+  Future<Response> cancelJobOffer({required String jobId}) async {
+    return await apiClient.patchData(
+      ApiConstants.cancelJobOffer.replaceAll('{jobId}', jobId),
+      null,
+    );
+  }
+
+  Future<Response> updateJob({required String jobId}) async {
+    return await apiClient.patchData(
+      ApiConstants.updateJob.replaceAll('{jobId}', jobId),
+      null,
+    );
+  }
+  Future<Response> deleteJob({required String jobId}) async {
+    return await apiClient.deleteData(
+      ApiConstants.updateJob.replaceAll('{jobId}', jobId),
+    );
+  }
 }

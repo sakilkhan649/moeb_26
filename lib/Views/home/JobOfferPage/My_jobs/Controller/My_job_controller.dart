@@ -3,11 +3,13 @@ import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Data/models/job_model.dart';
 import 'package:moeb_26/Data/my_jobs_model.dart';
+import 'package:moeb_26/Ripositoryes/job_repository.dart';
 import 'package:moeb_26/Services/job_service.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 class BookingController extends GetxController {
   final JobService _jobService = Get.find<JobService>();
+  final JobRepo _jobRepo = Get.find<JobRepo>();
 
   var isDeleted = false.obs;
   var isJobAcceptanceView = false.obs;
@@ -152,6 +154,62 @@ class BookingController extends GetxController {
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
       print("Error applying for job: $e");
+      Helpers.showCustomSnackBar('Something went wrong.', isError: true);
+    } finally {
+      isLoadingList.value = false;
+    }
+  }
+
+
+  Future<void> rejectApplicant({required String jobId}) async {
+    try {
+      isLoadingList.value = true;
+      final response = await _jobRepo.rejectApplicant(jobId: jobId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Find the job object before removing it from the list
+        final rejectedJob = jobOffersList.firstWhere((job) => job.id == jobId);
+
+        // Remove the job from the list
+        jobOffersList.removeWhere((job) => job.id == jobId);
+
+        Helpers.showCustomSnackBar('Job rejected successfully.', isError: false);
+        Get.toNamed(Routes.requestSubmitted, arguments: rejectedJob);
+      } else {
+        final message = response.data is Map
+            ? (response.data['message'] ?? 'Failed to reject job.')
+            : 'Failed to reject job.';
+        Helpers.showCustomSnackBar(message, isError: true);
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data['message'] ?? 'Failed to reject job.';
+      Helpers.showCustomSnackBar(message, isError: true);
+    } catch (e) {
+      print("Error rejecting job: $e");
+      Helpers.showCustomSnackBar('Something went wrong.', isError: true);
+    } finally {
+      isLoadingList.value = false;
+    }
+  }
+
+  Future<void> approveApplicant({required String jobId}) async {
+    try {
+      isLoadingList.value = true;
+      final response = await _jobRepo.approveApplicant(jobId: jobId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final approvedJob = jobOffersList.firstWhere((job) => job.id == jobId);
+        Helpers.showCustomSnackBar('Job approved successfully.', isError: false);
+        Get.toNamed(Routes.approvePage, arguments: approvedJob);
+      } else {
+        final message = response.data is Map
+            ? (response.data['message'] ?? 'Failed to approve job.')
+            : 'Failed to approve job.';
+        Helpers.showCustomSnackBar(message, isError: true);
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data['message'] ?? 'Failed to approve job.';
+      Helpers.showCustomSnackBar(message, isError: true);
+    } catch (e) {
+      print("Error approving job: $e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
       isLoadingList.value = false;

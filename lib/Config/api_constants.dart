@@ -30,6 +30,13 @@ class ApiConstants {
   static const String getAllJobOffers = '/jobs';
   static const String applytoJob = '/jobs/{jobId}/apply';
   static const String myRides = '/jobs/my-rides';
+  static const String rejectApplicant = '/jobs/{jobId}/reject-applicant';
+  static const String approveApplicant = '/jobs/{jobId}/approve-applicant';
+  static const String cancelJobOffer = '/jobs/{jobId}/cancel';
+  static const String updateJob = '/jobs/{jobId}';
   //Deals Endpoints
   static const String dealsItems = '/deals';
+
+
+
 }

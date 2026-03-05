@@ -802,8 +802,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                           SizedBox(width: 20.w),
                           Expanded(
                             child: GestureDetector(
-                              onTap: () {
-                                Get.toNamed(Routes.approvePage);
+                              onTap:()async{
+                                await controller.approveApplicant(jobId: job.id.toString());
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
