@@ -21,6 +21,7 @@ class MyItemsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Item Image
           GestureDetector(
             onTap: () {
               Get.dialog(
@@ -34,6 +35,7 @@ class MyItemsCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Item Name
                 SizedBox(
                   height: 38.h,
                   child: Text(
@@ -48,6 +50,7 @@ class MyItemsCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 4.h),
+                // Price and Condition
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -71,14 +74,19 @@ class MyItemsCard extends StatelessWidget {
               ],
             ),
           ),
-          const Spacer(),
+          SizedBox(height: 4.h),
+          // Bottom Row: Status badge + Popup menu icon
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 2.h,
+                  ),
                   decoration: BoxDecoration(
                     color: item.status == 'Active'
                         ? Colors.green.withOpacity(0.2)
@@ -96,75 +104,113 @@ class MyItemsCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                PopupMenuButton<String>(
-                  icon: Icon(Icons.more_vert, color: Colors.white, size: 20.sp),
-                  color: const Color(0xFF2C2C2E),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  onSelected: (value) {
-                    if (value == 'edit') {
-                      if (!Get.isRegistered<MarketplaceController>()) {
-                        Get.put(MarketplaceController());
+                SizedBox(
+                  width: 20.w,
+                  height: 20.h,
+                  child: PopupMenuButton<String>(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    iconSize: 18.sp,
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                      size: 18.sp,
+                    ),
+                    color: const Color(0xFF2C2C2E),
+                    elevation: 8,
+                    offset: Offset(-30, -90),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      side: BorderSide(
+                        color: Colors.white.withOpacity(0.1),
+                        width: 1,
+                      ),
+                    ),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        final MarketplaceController mpc;
+                        if (Get.isRegistered<MarketplaceController>()) {
+                          mpc = Get.find<MarketplaceController>();
+                        } else {
+                          mpc = Get.put(MarketplaceController());
+                        }
+
+                        mpc.prefillForEdit(
+                          item.name,
+                          item.price.toString(),
+                          item.location,
+                          item.condition,
+                          item.description,
+                        );
+
+                        Get.bottomSheet(
+                          SellItemBottomSheet(editItemId: item.id),
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                        );
+                      } else if (value == 'delete') {
+                        _showDeleteDialog(context);
                       }
-                      final MarketplaceController mpc =
-                          Get.find<MarketplaceController>();
-
-                      mpc.prefillForEdit(
-                        item.name,
-                        item.price.toString(),
-                        item.location,
-                        item.condition,
-                        item.description,
-                      );
-
-                      Get.bottomSheet(
-                        SellItemBottomSheet(editItemId: item.id),
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                      );
-                    } else if (value == 'delete') {
-                      _showDeleteDialog(context);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit, color: Colors.white, size: 18.sp),
-                          SizedBox(width: 8.w),
-                          Text(
-                            "Edit",
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 14.sp,
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(6.w),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Icon(
+                                Icons.edit_rounded,
+                                color: Colors.blueAccent,
+                                size: 16.sp,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.delete_outline,
-                            color: Colors.red,
-                            size: 18.sp,
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            "Delete",
-                            style: GoogleFonts.inter(
-                              color: Colors.red,
-                              fontSize: 14.sp,
+                            SizedBox(width: 12.w),
+                            Text(
+                              "Edit",
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(6.w),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Icon(
+                                Icons.delete_outline_rounded,
+                                color: Colors.redAccent,
+                                size: 16.sp,
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Text(
+                              "Delete",
+                              style: GoogleFonts.inter(
+                                color: Colors.redAccent,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -234,7 +280,6 @@ class MyItemsCard extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              // We need to access the controller here
               final MyItemsController controller =
                   Get.find<MyItemsController>();
               controller.deleteItem(item.id);
