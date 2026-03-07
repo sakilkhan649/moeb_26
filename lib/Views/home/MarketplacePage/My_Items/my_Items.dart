@@ -37,7 +37,7 @@ class MyItems extends StatelessWidget {
                 if (controller.myItems.isEmpty) {
                   return Center(
                     child: Text(
-                      "No products found",
+                      "No items found",
                       style: GoogleFonts.inter(color: Colors.white),
                     ),
                   );
@@ -66,8 +66,8 @@ class MyItems extends StatelessWidget {
                           Expanded(
                             child: hasRight
                                 ? MyItemsCard(
-                              item: controller.myItems[rightIndex],
-                            )
+                                    item: controller.myItems[rightIndex],
+                                  )
                                 : const SizedBox(),
                           ),
                         ],

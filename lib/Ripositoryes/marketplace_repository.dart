@@ -27,6 +27,25 @@ class MarketplaceRepo {
     return await apiClient.getData(ApiConstants.items, query: queryParams);
   }
 
+  Future<Response> getMyItems({
+    String? searchTerm,
+    int page = 1,
+    int limit = 10,
+    String? sort = '-createdAt',
+  }) async {
+    final Map<String, dynamic> queryParams = {'page': page, 'limit': limit};
+
+    if (sort != null && sort.isNotEmpty) {
+      queryParams['sort'] = sort;
+    }
+
+    if (searchTerm != null && searchTerm.isNotEmpty) {
+      queryParams['searchTerm'] = searchTerm;
+    }
+
+    return await apiClient.getData(ApiConstants.myItems, query: queryParams);
+  }
+
   Future<Response> createItem({
     required String title,
     required String price,

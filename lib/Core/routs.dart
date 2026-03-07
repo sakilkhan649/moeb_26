@@ -28,8 +28,7 @@ import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progr
 import '../Views/home/JobOfferPage/My_jobs/Edit_screen/edit_screen.dart';
 import '../Views/home/JobOfferPage/My_jobs/my_jobs.dart';
 import '../Views/home/JobOfferPage/Request_Submitted/Request_Submitted.dart';
-import '../Views/home/MarketplacePage/My_Items/my_Items.dart';
-import '../Views/home/MarketplacePage/My_Items/my_items.dart' hide MyItems;
+import '../Views/home/MarketplacePage/My_Items/my_items.dart';
 import '../Views/home/RidesPage/Finish_Ride/Finish_Ride_page.dart';
 import '../Views/home/RidesPage/On_My_Way_Details_page/On_My_Way_Details_page.dart';
 import '../Views/home/RidesPage/Pob_Details_page/Pob_Details_page.dart';

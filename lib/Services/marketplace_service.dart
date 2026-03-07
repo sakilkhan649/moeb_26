@@ -32,6 +32,24 @@ class MarketplaceService extends GetxService {
     }
   }
 
+  Future<Response> getMyItems({
+    String? searchTerm,
+    int page = 1,
+    int limit = 10,
+    String? sort = '-createdAt',
+  }) async {
+    try {
+      return await _marketplaceRepo.getMyItems(
+        searchTerm: searchTerm,
+        page: page,
+        limit: limit,
+        sort: sort,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> createItem({
     required String title,
     required String price,

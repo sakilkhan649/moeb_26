@@ -11,15 +11,13 @@ class MyItemsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchMyProducts();
+    fetchMyItems();
   }
 
-  Future<void> fetchMyProducts() async {
+  Future<void> fetchMyItems() async {
     try {
       isLoading.value = true;
-      // Reusing getAllItems but in a real app this might be a specific endpoint
-      // for the current user's products. For now, we'll fetch all.
-      final response = await _marketplaceService.getAllItems();
+      final response = await _marketplaceService.getMyItems();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data['data'];
