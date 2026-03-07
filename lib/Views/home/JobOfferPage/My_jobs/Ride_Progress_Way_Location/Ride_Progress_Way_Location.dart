@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:moeb_26/Data/my_jobs_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
-import 'package:moeb_26/widgets/CustomText.dart';
 import '../../../../../Core/routs.dart';
 import '../../../../../Utils/app_icons.dart';
 import '../../../../../Utils/app_images.dart';
@@ -13,12 +13,39 @@ import '../../../../../widgets/Custom_AppBar.dart';
 import '../../../../../widgets/Custom_Card_Ditails.dart';
 import '../../../../../widgets/Custom_Driver_Card.dart';
 import '../../../../../widgets/RideProgressCard.dart';
+import '../Controller/My_job_controller.dart';
 
 class RideProgressWayLocation extends StatelessWidget {
   RideProgressWayLocation({super.key});
 
+  final BookingController controller = Get.find<BookingController>();
+
   @override
   Widget build(BuildContext context) {
+    // Get the job data passed from the previous screen
+    final JobData? job = Get.arguments as JobData?;
+
+    // Format date and time
+    String displayDateTime = "N/A";
+    if (job?.date != null) {
+      try {
+        DateTime parsedDate = DateTime.parse(job!.date!);
+        displayDateTime = "${DateFormat('MMM dd').format(parsedDate)} · ${job.time}";
+      } catch (_) {
+        displayDateTime = "${job!.date} · ${job.time}";
+      }
+    } else if (job != null) {
+      displayDateTime = job.time ?? "N/A";
+    }
+
+    final driver = job?.assignedTo;
+    final vehicle = (driver?.vehicles != null && driver!.vehicles!.isNotEmpty)
+        ? driver.vehicles!.first
+        : null;
+    final vehicleInfo = vehicle != null
+        ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
+        : job?.vehicleType ?? "N/A";
+
     return Scaffold(
       appBar: const CustomAppBar(
         logoPath: AppImages.app_logo,
@@ -34,15 +61,15 @@ class RideProgressWayLocation extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomDriverCard(
-                    profileImage: AppImages.profile_image,
-                    name: "Khaled",
-                    rating: "5.0",
-                    vehicleNumber: "ECN-1",
-                    vehicleInfo: "BMW 7 Series, Black",
+                    profileImage: driver?.profilePicture ?? AppImages.profile_image,
+                    name: driver?.name ?? "No Driver",
+                    rating: "${driver?.averageRating ?? 0.0}",
+                    vehicleNumber: vehicle?.licensePlate ?? "N/A",
+                    vehicleInfo: vehicleInfo,
                     buttonText: "Chat with Job Poster",
-                    buttonIcon: Icons.chat_bubble_outline, // যেকোনো icon
+                    buttonIcon: Icons.chat_bubble_outline,
                     onButtonPressed: () {
-                      Get.toNamed(Routes.chatPage);
+                      Get.toNamed(Routes.chatPage, arguments: job);
                     },
                   ),
                 ),
@@ -52,28 +79,28 @@ class RideProgressWayLocation extends StatelessWidget {
                   child: RideProgressCard(
                     title: "Ride Progress",
                     statusLabel: "Current Status : ",
-                    statusValue: "At the Location",
+                    statusValue: job?.rideStatus ?? "N/A",
                     iconPath: AppIcons.current_icon,
                   ),
                 ),
                 SizedBox(height: 10.h),
 
-                // Status Steps Container (You can use this in your widget tree)
+                // Status Steps Container
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomJobDetailsCard(
                     // Location details
-                    pickupLocation: "Dhaka Airport",
-                    dropoffLocation: "Barisal",
+                    pickupLocation: job?.pickupLocation ?? "N/A",
+                    dropoffLocation: job?.dropoffLocation ?? "N/A",
 
                     // Job information
-                    flightNumber: "Flight AA 1234",
-                    dateTime: "Jan 20 · 08:30 AM",
-                    vehicleType: "SEDAN",
-                    jobPoster: "Khaled",
-                    company: "Khaled Transportation",
-                    payment: "Collect",
-                    amount: "\$125",
+                    flightNumber: job?.flightNumber ?? "N/A",
+                    dateTime: displayDateTime,
+                    vehicleType: job?.vehicleType ?? "N/A",
+                    jobPoster: job?.assignedTo?.name ?? "Unknown",
+                    company: "N/A",
+                    payment: job?.paymentType ?? "N/A",
+                    amount: job != null ? "\$${job.paymentAmount}" : "N/A",
 
                     // Optional: Custom colors
                     backgroundColor: const Color(0xFF1C1C1C),
@@ -92,7 +119,9 @@ class RideProgressWayLocation extends StatelessWidget {
                     backgroundColor: AppColors.orange100,
                     textColor: Colors.black,
                     onPressed: () {
-                      _showDeleteDialog();
+                      if (job?.id != null) {
+                        _showDeleteDialog(job!.id!);
+                      }
                     },
                   ),
                 ),
@@ -106,7 +135,7 @@ class RideProgressWayLocation extends StatelessWidget {
   }
 
   /// ================= DELETE DIALOG =================
-  void _showDeleteDialog() {
+  void _showDeleteDialog(String jobId) {
     Get.dialog(
       Dialog(
         backgroundColor: Colors.black,
@@ -161,8 +190,10 @@ class RideProgressWayLocation extends StatelessWidget {
                   SizedBox(width: 16.w),
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        Get.toNamed(Routes.rideProgressBoard);
+                      onTap: () async {
+                        Get.back(); // Close dialog
+                        await controller.cancelJobOffer(jobId: jobId);
+                        Get.back(); // Return to My Jobs page
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 16.h),

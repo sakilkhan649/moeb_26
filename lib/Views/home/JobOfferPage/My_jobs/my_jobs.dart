@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:moeb_26/Data/models/job_model.dart';
 import 'package:moeb_26/Data/my_jobs_model.dart';
+import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progress_Way_Location.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 import '../../../../Core/routs.dart';
@@ -29,7 +29,10 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   @override
   void initState() {
     super.initState();
-    // controller.fetchJobs(); // Already called in controller's onInit
+    // Refresh jobs list every time the screen is entered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchJobs();
+    });
   }
 
   @override
@@ -39,396 +42,126 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
         logoPath: AppImages.app_logo,
         notificationCount: 3,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                alignment: Alignment.centerLeft,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      controller.setJobAcceptanceView(false);
-                      Get.toNamed(Routes.homeScreens);
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 20.sp,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: CustomText(text: "My Jobs", fontSize: 20.sp),
-                  ),
-                ],
-              ),
-              Divider(color: Colors.white, thickness: 1.h),
-              SizedBox(height: 8.h),
-
-              /// ================= JOB CARD =================
-              Obx(() {
-                if (controller.isLoadingList.value) {
-                  return Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 40.h),
-                      child: const CircularProgressIndicator(
-                        color: AppColors.orange100,
+      body: RefreshIndicator(
+        color: AppColors.orange100,
+        onRefresh: () async {
+          await controller.fetchJobs();
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              controller.setJobAcceptanceView(false);
+                              Get.toNamed(Routes.homeScreens);
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.white,
+                              size: 20.sp,
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: CustomText(text: "My Jobs", fontSize: 20.sp),
+                          ),
+                        ],
                       ),
-                    ),
-                  );
-                }
+                      Divider(color: Colors.white, thickness: 1.h),
+                      SizedBox(height: 8.h),
 
-                if (controller.isDeleted.value) {
-                  return Padding(
-                    padding: EdgeInsets.only(top: 40.h),
-                    child: Text(
-                      "Item Deleted",
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                    ),
-                  );
-                }
+                      /// ================= JOB CARD =================
+                      Obx(() {
+                        if (controller.isLoadingList.value && controller.myJobsList.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 40.h),
+                              child: const CircularProgressIndicator(
+                                color: AppColors.orange100,
+                              ),
+                            ),
+                          );
+                        }
 
-                // if (2 == 2) {
-                //   return _buildJobAcceptanceDetailCard();
-                // }
+                        if (controller.myJobsList.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 40.h),
+                              child: Text(
+                                "No jobs found",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
 
-                if (controller.myJobsList.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 40.h),
-                      child: Text(
-                        "No jobs found",
-                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                      ),
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.myJobsList.length,
-                  itemBuilder: (context, index) {
-                    final job = controller.myJobsList[index];
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 16.h),
-                      child: _buildJobAcceptanceDetailCard(job),
-                    );
-                  },
-                );
-              }),
-            ],
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.myJobsList.length,
+                          itemBuilder: (context, index) {
+                            final job = controller.myJobsList[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 16.h),
+                              child: _buildJobAcceptanceDetailCard(job),
+                            );
+                          },
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  // Widget _buildJobCard(Job job) {
-  //   // Safely extract properties
-  //   final dateRaw = job.date.toString();
-  //   final timeRaw = job.time;
-
-  //   // Parse date if possible
-  //   String displayDate = "$dateRaw · $timeRaw";
-  //   try {
-  //     if (dateRaw.isNotEmpty) {
-  //       DateTime parsed = DateTime.parse(dateRaw);
-  //       // Basic format to keep it simple, e.g., "Tue, Jan 20"
-  //       displayDate =
-  //           "${_getWeekday(parsed.weekday)}, ${_getMonth(parsed.month)} ${parsed.day} · $timeRaw";
-  //     }
-  //   } catch (_) {}
-
-  //   final puLocation = job.pickupLocation;
-  //   final doLocation = job.dropoffLocation ?? 'N/A';
-  //   final vehicle = job.vehicleType;
-  //   final flight = job.flightNumber ?? 'N/A';
-  //   final paymentType = job.paymentType;
-  //   final instruction = job.instruction ?? 'N/A';
-  //   final jobType = job.jobType == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
-
-  //   // Local controllers for this specific card
-  //   final TextEditingController cardFlightController = TextEditingController(
-  //     text: flight,
-  //   );
-  //   final TextEditingController cardPaymentController = TextEditingController(
-  //     text: paymentType,
-  //   );
-  //   final TextEditingController cardInstructionController =
-  //       TextEditingController(text: instruction);
-  //   return Container(
-  //     width: double.infinity,
-  //     decoration: BoxDecoration(
-  //       color: const Color(0xFF1C1C1C),
-  //       borderRadius: BorderRadius.circular(20.r),
-  //       border: Border.all(color: const Color(0xFF2A2A2A)),
-  //     ),
-  //     child: Stack(
-  //       children: [
-  //         Padding(
-  //           padding: EdgeInsets.fromLTRB(10.w, 12.w, 10.w, 10.w),
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               /// HEADER
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   Row(
-  //                     children: [
-  //                       Icon(
-  //                         Icons.calendar_today_outlined,
-  //                         color: Colors.grey,
-  //                         size: 18.sp,
-  //                       ),
-  //                       SizedBox(width: 5.w),
-  //                       Text(
-  //                         displayDate,
-  //                         style: GoogleFonts.inter(
-  //                           color: Colors.grey,
-  //                           fontSize: 12.sp,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //               SizedBox(height: 8.h),
-
-  //               /// PU / DO
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   Expanded(
-  //                     child: RichText(
-  //                       text: TextSpan(
-  //                         style: GoogleFonts.inter(fontSize: 14.sp),
-  //                         children: [
-  //                           const TextSpan(
-  //                             text: "PU: ",
-  //                             style: TextStyle(color: Colors.grey),
-  //                           ),
-  //                           TextSpan(
-  //                             text: puLocation,
-  //                             style: const TextStyle(color: Colors.white),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Container(
-  //                     padding: EdgeInsets.symmetric(
-  //                       horizontal: 10.w,
-  //                       vertical: 6.h,
-  //                     ),
-  //                     decoration: BoxDecoration(
-  //                       color: Colors.red,
-  //                       borderRadius: BorderRadius.circular(6.r),
-  //                     ),
-  //                     child: Text(
-  //                       vehicle.toUpperCase(),
-  //                       style: GoogleFonts.inter(
-  //                         color: Colors.white,
-  //                         fontSize: 10.sp,
-  //                         fontWeight: FontWeight.bold,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               SizedBox(height: 8.h),
-
-  //               Row(
-  //                 children: [
-  //                   Expanded(
-  //                     child: RichText(
-  //                       text: TextSpan(
-  //                         style: GoogleFonts.inter(fontSize: 13.sp),
-  //                         children: [
-  //                           const TextSpan(
-  //                             text: "DO: ",
-  //                             style: TextStyle(color: Colors.grey),
-  //                           ),
-  //                           TextSpan(
-  //                             text: doLocation,
-  //                             style: const TextStyle(color: Colors.white),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               SizedBox(height: 10.h),
-
-  //               ///DATE AND TIME
-  //               Row(
-  //                 children: [
-  //                   SvgPicture.asset(AppIcons.sadax_icon),
-  //                   SizedBox(width: 5.w),
-  //                   Text(
-  //                     jobType,
-  //                     style: GoogleFonts.inter(
-  //                       color: Colors.white,
-  //                       fontSize: 12.sp,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               SizedBox(height: 16.h),
-
-  //               ///Fligt Number
-  //               if (flight != 'N/A' && flight != '') ...[
-  //                 const CustomTextgray(
-  //                   text: "Flight Number",
-  //                   color: Color(0xFF737373),
-  //                   fontWeight: FontWeight.w500,
-  //                 ),
-  //                 SizedBox(height: 8.h),
-  //                 CustomTextFieldGold(
-  //                   readOnly: true,
-  //                   controller: cardFlightController,
-  //                   hintText: "Flight AA 1234",
-  //                   obscureText: false,
-  //                   textInputType: TextInputType.text,
-  //                 ),
-  //                 SizedBox(height: 10.h),
-  //               ],
-
-  //               ///Payment Method
-  //               const CustomTextgray(
-  //                 text: "Payment Method",
-  //                 color: Color(0xFF737373),
-  //                 fontWeight: FontWeight.w500,
-  //               ),
-  //               SizedBox(height: 8.h),
-  //               CustomTextFieldGold(
-  //                 readOnly: true,
-  //                 controller: cardPaymentController,
-  //                 hintText: "Collect",
-  //                 obscureText: false,
-  //                 textInputType: TextInputType.text,
-  //               ),
-  //               SizedBox(height: 10.h),
-
-  //               ///Special Instructions
-  //               if (instruction != 'N/A' && instruction != '') ...[
-  //                 const CustomTextgray(
-  //                   text: "Special Instructions",
-  //                   color: Color(0xFF737373),
-  //                   fontWeight: FontWeight.w500,
-  //                 ),
-  //                 SizedBox(height: 8.h),
-  //                 CustomTextFieldGold(
-  //                   readOnly: true,
-  //                   controller: cardInstructionController,
-  //                   hintText: "Airport Expert, Vip Client",
-  //                   obscureText: false,
-  //                   textInputType: TextInputType.text,
-  //                 ),
-  //               ],
-  //             ],
-  //           ),
-  //         ),
-  //         Positioned(
-  //           top: -4.w,
-  //           right: -13.w,
-  //           child: PopupMenuButton<String>(
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(12.r),
-  //               side: BorderSide(color: Color(0xFF364153), width: 1),
-  //             ),
-  //             icon: Icon(Icons.more_vert, color: Colors.white, size: 24.sp),
-  //             color: Color(0xFF1E1E1E),
-  //             padding: EdgeInsets.zero,
-  //             onSelected: (value) {
-  //               if (value == 'edit') {
-  //                 Get.toNamed(Routes.editScreen);
-  //               } else {
-  //                 _showDeleteDialog();
-  //               }
-  //             },
-
-  //             itemBuilder: (_) => [
-  //               PopupMenuItem(
-  //                 value: 'edit',
-  //                 height: 45.h,
-  //                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-  //                 child: Row(
-  //                   children: [
-  //                     SvgPicture.asset(
-  //                       AppIcons.edit_icon,
-  //                       height: 22.h,
-  //                       width: 22.w,
-  //                       colorFilter: ColorFilter.mode(
-  //                         Colors.white,
-  //                         BlendMode.srcIn,
-  //                       ),
-  //                     ),
-  //                     SizedBox(width: 12.w),
-  //                     Text(
-  //                       "Edit",
-  //                       style: GoogleFonts.inter(
-  //                         color: Colors.white,
-  //                         fontSize: 14.sp,
-  //                         fontWeight: FontWeight.w500,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               PopupMenuItem(
-  //                 value: 'delete',
-  //                 height: 45.h,
-  //                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-  //                 child: Row(
-  //                   children: [
-  //                     SvgPicture.asset(
-  //                       AppIcons.delete_icon,
-  //                       height: 22.h,
-  //                       width: 22.w,
-  //                       colorFilter: ColorFilter.mode(
-  //                         Colors.white,
-  //                         BlendMode.srcIn,
-  //                       ),
-  //                     ),
-  //                     SizedBox(width: 12.w),
-  //                     Text(
-  //                       "Delete",
-  //                       style: GoogleFonts.inter(
-  //                         color: Colors.white,
-  //                         fontSize: 14.sp,
-  //                         fontWeight: FontWeight.w500,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _buildJobAcceptanceDetailCard(JobData job) {
     final dateRaw = job.date.toString();
     final timeRaw = job.time;
 
+    // Parse time to 12h format with AM/PM
+    String formattedTime = timeRaw ?? "";
+    try {
+      if (timeRaw != null && timeRaw.contains(':')) {
+        final parts = timeRaw.split(':');
+        int hour = int.parse(parts[0]);
+        int minute = int.parse(parts[1].split(' ')[0]);
+        final timeOfDay = TimeOfDay(hour: hour, minute: minute);
+        
+        // Manual conversion to 12h format
+        final period = hour >= 12 ? "PM" : "AM";
+        final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+        formattedTime = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+      }
+    } catch (_) {}
+
     // Parse date if possible
-    String displayDate = "$dateRaw · $timeRaw";
+    String displayDate = formattedTime.isNotEmpty ? "${dateRaw} · $formattedTime" : dateRaw;
     try {
       if (dateRaw.isNotEmpty) {
         DateTime parsed = DateTime.parse(dateRaw);
         // Basic format to keep it simple, e.g., "Tue, Jan 20"
         displayDate =
-            "${_getWeekday(parsed.weekday)}, ${_getMonth(parsed.month)} ${parsed.day} · $timeRaw";
+            "${_getWeekday(parsed.weekday)}, ${_getMonth(parsed.month)} ${parsed.day} · $formattedTime";
       }
     } catch (_) {}
 
@@ -440,6 +173,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final instruction = job.instruction ?? 'N/A';
     final jobType = job.jobType == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
     final amount = job.paymentAmount;
+    final status = job.status;
 
     // Local controllers for this specific card
     final TextEditingController cardFlightController = TextEditingController(
@@ -485,6 +219,63 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                               style: GoogleFonts.inter(
                                 color: Colors.grey,
                                 fontSize: 12.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                        PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: Colors.white,
+                            size: 24.sp,
+                          ),
+                          color: Colors.white,
+                          onSelected: (value) {
+                            if (value == 'edit') {
+                              Get.toNamed(Routes.editScreen, arguments: job);
+                            } else {
+                              _showDeleteDialog(jobId: job.id.toString());
+                            }
+                          },
+                          itemBuilder: (_) => [
+                            PopupMenuItem(
+                              value: 'edit',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.edit_outlined,
+                                    color: Colors.black,
+                                    size: 20.sp,
+                                  ),
+                                  SizedBox(width: 5.w),
+                                  Text(
+                                    "Edit",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.black,
+                                      fontSize: 13.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.delete_outlined,
+                                    color: Colors.black,
+                                    size: 20.sp,
+                                  ),
+                                  SizedBox(width: 5.w),
+                                  Text(
+                                    "Delete",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.black,
+                                      fontSize: 13.sp,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -652,244 +443,232 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
               ),
 
               /// Driver Section
-              if (job.applicant?.driver == null) Text("No Driver Assigned"),
-              if (job.applicant?.driver != null)
-                Container(
-                  padding: EdgeInsets.all(16.w),
-                  margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF191111),
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: Color(0xFF2A2A2A)),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 30.r,
-                            backgroundImage: NetworkImage(
-                              job.applicant?.driver?.profilePicture ?? "",
-                            ), // Placeholder
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      job.applicant?.driver?.name ?? "",
-                                      style: GoogleFonts.inter(
-                                        color: Colors.white,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w600,
+              if ((status == 'PENDING' && job.applicant?.driver != null) ||
+                  (status == 'ASSIGNED' && job.assignedTo != null) ||
+                  (status == 'COMPLETED' && job.assignedTo != null))
+                Builder(builder: (context) {
+                  final driver = status == 'PENDING'
+                      ? job.applicant?.driver
+                      : job.assignedTo;
+                  final vehicle = (driver?.vehicles != null && driver!.vehicles!.isNotEmpty)
+                      ? driver.vehicles!.first
+                      : null;
+                  final vehicleInfo = vehicle != null
+                      ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
+                      : job.vehicleType ?? "N/A";
+
+                  return Container(
+                    padding: EdgeInsets.all(16.w),
+                    margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF191111),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(color: const Color(0xFF2A2A2A)),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 30.r,
+                              backgroundImage: (driver?.profilePicture != null && driver!.profilePicture!.isNotEmpty)
+                                  ? NetworkImage(driver.profilePicture!)
+                                  : const AssetImage(AppImages.profile_image) as ImageProvider,
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        driver?.name ?? "",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                                    const Spacer(),
-                                    Icon(
-                                      Icons.directions_car,
-                                      color: Colors.white,
-                                      size: 20.sp,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Expanded(
-                                      child: Text(
-                                        "BMW 7 Series, Black",
+                                      const Spacer(),
+                                      Icon(
+                                        Icons.directions_car,
+                                        color: Colors.white,
+                                        size: 20.sp,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Expanded(
+                                        child: Text(
+                                          vehicleInfo,
+                                          style: GoogleFonts.inter(
+                                            color: Colors.white.withOpacity(0.4),
+                                            fontSize: 12.sp,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star_border_outlined,
+                                        color: const Color(0xFFD08700),
+                                        size: 20.sp,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        "${driver?.averageRating ?? 0.0}/5",
                                         style: GoogleFonts.inter(
                                           color: Colors.white.withOpacity(0.4),
                                           fontSize: 12.sp,
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16.h),
+
+                        /// Chat Button
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(Routes.chatPage, arguments: job);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 15.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.chat_bubble_outline,
+                                  color: Colors.black.withOpacity(0.6),
+                                  size: 24.sp,
                                 ),
-                                SizedBox(height: 4.h),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.star_border_outlined,
-                                      color: const Color(0xFFD08700),
-                                      size: 20.sp,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      "4.9/5",
-                                      style: GoogleFonts.inter(
-                                        color: Colors.white.withOpacity(0.4),
-                                        fontSize: 12.sp,
-                                      ),
-                                    ),
-                                  ],
+                                SizedBox(width: 8.w),
+                                Text(
+                                  "Chat with Driver",
+                                  style: GoogleFonts.inter(
+                                    color: Colors.black.withOpacity(0.6),
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 16.h),
+                        ),
+                        SizedBox(height: 24.h),
 
-                      /// Chat Button
-                      GestureDetector(
-                        onTap: () {
-                          Get.toNamed(Routes.chatPage);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 15.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.chat_bubble_outline,
-                                color: Colors.black.withOpacity(0.6),
-                                size: 24.sp,
+                        /// Reject/Approve or View Button
+                        if (status == 'ASSIGNED' || status == 'COMPLETED')
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(RideProgressWayLocation(), arguments: job);
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 15.h,
                               ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                "Chat with Driver",
-                                style: GoogleFonts.inter(
-                                  color: Colors.black.withOpacity(0.6),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
+                              decoration: BoxDecoration(
+                                color: AppColors.orange100,
+                                borderRadius: BorderRadius.circular(16.r),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "View",
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        else if (status == 'PENDING')
+                          Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await controller.rejectApplicant(
+                                      jobId: job.id.toString(),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                      vertical: 15.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Reject",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.black,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 20.w),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await controller.approveApplicant(
+                                      jobId: job.id.toString(),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                      vertical: 15.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.orange100,
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Approve",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 24.h),
-
-                      /// Reject/Approve Buttons
-                      Row(
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                Get.back();
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 15.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Reject",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.black,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 20.w),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap:()async{
-                                await controller.approveApplicant(jobId: job.id.toString());
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 15.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.orange100,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Approve",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                      ],
+                    ),
+                  );
+                }),
             ],
-          ),
-          Positioned(
-            top: -4.w,
-            right: -13.w,
-            child: PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert, color: Colors.white, size: 24.sp),
-              color: Colors.white,
-              onSelected: (value) {
-                if (value == 'edit') {
-                  Get.toNamed(Routes.editScreen);
-                } else {
-                  _showDeleteDialog();
-                }
-              },
-              itemBuilder: (_) => [
-                PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.edit_outlined,
-                        color: Colors.black,
-                        size: 20.sp,
-                      ),
-                      SizedBox(width: 5.w),
-                      Text(
-                        "Edit",
-                        style: GoogleFonts.inter(
-                          color: Colors.black,
-                          fontSize: 13.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.delete_outlined,
-                        color: Colors.black,
-                        size: 20.sp,
-                      ),
-                      SizedBox(width: 5.w),
-                      Text(
-                        "Delete",
-                        style: GoogleFonts.inter(
-                          color: Colors.black,
-                          fontSize: 13.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
         ],
       ),
@@ -897,7 +676,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   }
 
   /// ================= DELETE DIALOG =================
-  void _showDeleteDialog() {
+  void _showDeleteDialog({required String jobId}) {
     Get.dialog(
       Dialog(
         backgroundColor: const Color(0xFF2A2A2A),
@@ -946,7 +725,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                       ),
                       onPressed: () {
                         Get.back();
-                        controller.deleteItem();
+                        controller.deleteJob(jobId: jobId);
                         Helpers.showCustomSnackBar(
                           "Item deleted successfully",
                           isError: false,

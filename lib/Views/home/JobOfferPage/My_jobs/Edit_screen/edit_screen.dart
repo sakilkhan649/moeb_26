@@ -9,9 +9,14 @@ import 'package:moeb_26/widgets/CustomTextField.dart';
 import 'package:moeb_26/widgets/CustomText_Field_Hight.dart';
 import '../Controller/edit_controller.dart';
 
-class EditScreen extends StatelessWidget {
+class EditScreen extends StatefulWidget {
   EditScreen({super.key});
 
+  @override
+  State<EditScreen> createState() => _EditScreenState();
+}
+
+class _EditScreenState extends State<EditScreen> {
   final pickupController = TextEditingController();
   final dropoffController = TextEditingController();
   final flightController = TextEditingController();
@@ -21,6 +26,18 @@ class EditScreen extends StatelessWidget {
   final specialController = TextEditingController();
 
   final EditController editController = Get.put(EditController());
+
+  @override
+  void initState() {
+    super.initState();
+    if (editController.job != null) {
+      pickupController.text = editController.job!.pickupLocation ?? '';
+      dropoffController.text = editController.job!.dropoffLocation ?? '';
+      flightController.text = editController.job!.flightNumber ?? '';
+      payController.text = editController.job!.paymentAmount?.toString() ?? '';
+      specialController.text = editController.job!.instruction ?? '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +51,23 @@ class EditScreen extends StatelessWidget {
             _buildHeader(),
             SizedBox(height: 10.h),
             _buildFieldWithLabel(
-              "Pickup Location",
-              pickupController,
-              "e.g., JFK Airport, Terminal 4",
-              Icons.location_on_outlined,
+              label: "Pickup Location",
+              ctrl: pickupController,
+              hint: "e.g., JFK Airport, Terminal 4",
+              icon: Icons.location_on_outlined,
             ),
             _buildFieldWithLabel(
-              "Drop-off Location",
-              dropoffController,
-              "e.g., Manhattan, Times Square",
-              Icons.location_on_outlined,
+              label: "Drop-off Location",
+              ctrl: dropoffController,
+              hint: "e.g., Manhattan, Times Square",
+              icon: Icons.location_on_outlined,
             ),
             _buildFieldWithLabel(
-              "Flight Number (Optional)",
-              flightController,
-              "",
-              Icons.flight,
+              readOnly: true,
+              label: "Flight Number (Optional)",
+              ctrl: flightController,
+              hint: "",
+              icon: Icons.flight,
               isRequired: false,
             ),
             _buildDateTimeRow(),
@@ -57,39 +75,58 @@ class EditScreen extends StatelessWidget {
             _buildVehicleSelection(editController),
             SizedBox(height: 16.h),
             _buildFieldWithLabel(
-              "Pay Amount",
-              payController,
-              "\$120",
-              Icons.attach_money,
+              label: "Pay Amount",
+              ctrl: payController,
+              hint: '\$120',
+              icon: Icons.attach_money,
+              isRequired: false,
             ),
             _buildPaymentMethodDropdown(editController),
             SizedBox(height: 16.h),
             _buildFieldWithLabel(
-              "Special Instructions (Optional)",
-              specialController,
-              "e.g., VIP client, suit required, name sign needed",
-              Icons.notes,
               isRequired: false,
+              label: "Special Instructions (Optional)",
+              ctrl: specialController,
+              hint: "e.g., VIP client, suit required, name sign needed",
+              icon: Icons.notes,
             ),
             SizedBox(height: 24.h),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    text: "Cancel",
-                    backgroundColor: Colors.white,
-                    onPressed: () {},
-                  ),
-                ),
-                SizedBox(width: 20.w),
-                Expanded(
-                  child: CustomButton(
-                    text: "Save",
-                    backgroundColor: AppColors.orange100,
-                    onPressed: () {},
-                  ),
-                ),
-              ],
+            Obx(
+              () => editController.isLoading.value
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: "Cancel",
+                            backgroundColor: Colors.white,
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 20.w),
+                        Expanded(
+                          child: CustomButton(
+                            text: "Save",
+                            backgroundColor: AppColors.orange100,
+                            onPressed: () {
+                              editController.updateJob(
+                                pickupLocation: pickupController.text,
+                                dropoffLocation: dropoffController.text,
+                                paymentAmount:
+                                    double.tryParse(payController.text) ?? 0.0,
+                                instruction: specialController.text,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
             ),
 
             SizedBox(height: 20.h),
@@ -99,11 +136,12 @@ class EditScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFieldWithLabel(
-    String label,
-    TextEditingController ctrl,
-    String hint,
-    IconData icon, {
+  Widget _buildFieldWithLabel({
+    bool readOnly = false,
+    required String label,
+    required TextEditingController ctrl,
+    required String hint,
+    required IconData icon,
     bool isRequired = true,
   }) {
     return Column(
@@ -125,6 +163,7 @@ class EditScreen extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         CustomtextFieldHight(
+          readOnly: readOnly,
           controller: ctrl,
           hintText: hint,
           obscureText: false,
@@ -285,7 +324,7 @@ class EditScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-           // Icon(Icons.payment, color: Colors.white, size: 18.sp),
+            // Icon(Icons.payment, color: Colors.white, size: 18.sp),
             SizedBox(width: 8.w),
             Text(
               'Payment *',

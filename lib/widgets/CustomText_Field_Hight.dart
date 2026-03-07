@@ -20,7 +20,10 @@ class CustomtextFieldHight extends StatelessWidget {
     this.suffixIcon,
     required this.textInputType,
     this.validator,
+    this.readOnly = false,
   });
+
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,7 @@ class CustomtextFieldHight extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        readOnly: readOnly,
         keyboardType: textInputType,
         validator: validator,
         style: TextStyle(color: Colors.white),

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:moeb_26/Utils/app_images.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/Controller/My_job_controller.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
@@ -60,106 +61,142 @@ class _JobofferpageState extends State<Jobofferpage> {
         color: AppColors.orange100,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: [
-                SizedBox(height: 2.w),
-                CustomJobButton(
-                  text: "New Job",
-                  onPressed: () {
-                    Get.bottomSheet(
-                      PostJobBottomSheet(),
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                    );
-                  },
-                ),
-                SizedBox(height: 15.h),
-                Obx(() {
-                  if (controller.isLoadingList.value &&
-                      controller.jobOffersList.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 40.h),
-                        child: const CircularProgressIndicator(
-                          color: AppColors.orange100,
-                        ),
-                      ),
-                    );
-                  }
-
-                  if (controller.jobOffersList.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 40.h),
-                        child: Text(
-                          "No jobs found",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-
-                  return Column(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Column(
                     children: [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: controller.jobOffersList.length,
-                        itemBuilder: (context, index) {
-                          final job = controller.jobOffersList[index];
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 16.h),
-                            child: CustomJobCard(
-                              dateTime: job.date?.toString() ?? '',
-                              vehicleType: job.vehicleType,
-                              pickupLocation: job.pickupLocation,
-                              dropoffLocation: job.dropoffLocation ?? '',
-                              driverName: job.createdBy?.name ?? 'Unknown',
-                              companyName: job.createdBy?.name ?? 'Unknown',
-                              flightNumberHint: job.flightNumber ?? '',
-                              paymentMethodHint: job.paymentType,
-                              specialInstructionsHint: job.instruction ?? '',
-                              price: job.paymentAmount.toString(),
-                              flightNumberController: flightNumberController,
-                              paymentMethodController: paymentMethodController,
-                              specialInstructionsController:
-                                  specialInstructionsController,
-                              vehicleTypeColor: VehicleTypeColors.sedan,
-                              onArrowTap: () {
-                                // Handle arrow tap
-                                controller.applyToJob(jobId: job.id);
-
-                                print("Arrow tapped");
-                              },
-                              onPriceTap: () {
-                                // Handle price tap
-                                print("Price tapped");
-                              },
-                            ),
+                      SizedBox(height: 2.w),
+                      CustomJobButton(
+                        text: "New Job",
+                        onPressed: () {
+                          Get.bottomSheet(
+                            PostJobBottomSheet(),
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
                           );
                         },
                       ),
-                      if (controller.isLoadMore.value)
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.h),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.orange100,
+                      SizedBox(height: 15.h),
+                      Obx(() {
+                        if (controller.isLoadingList.value &&
+                            controller.jobOffersList.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 40.h),
+                              child: const CircularProgressIndicator(
+                                color: AppColors.orange100,
+                              ),
                             ),
-                          ),
-                        ),
-                      SizedBox(height: 10.h),
+                          );
+                        }
+
+                        if (controller.jobOffersList.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 40.h),
+                              child: Text(
+                                "No jobs found",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.jobOffersList.length,
+                              itemBuilder: (context, index) {
+                          final job = controller.jobOffersList[index];
+
+                          // Format Date and Time
+                          String formattedDateTime = "";
+                          if (job.date != null) {
+                            String dateStr = DateFormat('EEE, MMM dd').format(job.date!);
+                            
+                            String timeStr = job.time;
+                            try {
+                              if (timeStr.contains(':')) {
+                                final parts = timeStr.split(':');
+                                int hour = int.parse(parts[0]);
+                                int minute = int.parse(parts[1].split(' ')[0]);
+                                
+                                final period = hour >= 12 ? "PM" : "AM";
+                                final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+                                String formattedTime = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+                                formattedDateTime = "$dateStr · $formattedTime";
+                              } else {
+                                formattedDateTime = "$dateStr · $timeStr";
+                              }
+                            } catch (_) {
+                              formattedDateTime = "$dateStr · $timeStr";
+                            }
+                          } else {
+                            formattedDateTime = job.time;
+                          }
+
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 16.h),
+                            child: CustomJobCard(
+                              dateTime: formattedDateTime,
+                              vehicleType: job.vehicleType,
+                                    pickupLocation: job.pickupLocation,
+                                    dropoffLocation: job.dropoffLocation ?? '',
+                                    driverName: job.createdBy?.name ?? 'Unknown',
+                                    companyName: job.createdBy?.name ?? 'Unknown',
+                                    flightNumberHint: job.flightNumber ?? '',
+                                    paymentMethodHint: job.paymentType,
+                                    specialInstructionsHint: job.instruction ?? '',
+                                    price: job.paymentAmount.toString(),
+                                    flightNumberController: flightNumberController,
+                                    paymentMethodController: paymentMethodController,
+                                    specialInstructionsController:
+                                        specialInstructionsController,
+                                    vehicleTypeColor: VehicleTypeColors.sedan,
+                                    onArrowTap: () {
+                                      // Handle arrow tap
+                                      controller.applyToJob(jobId: job.id);
+
+                                      print("Arrow tapped");
+                                    },
+                                    onPriceTap: () {
+                                      // Handle price tap
+                                      print("Price tapped");
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            if (controller.isLoadMore.value)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20.h),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.orange100,
+                                  ),
+                                ),
+                              ),
+                            SizedBox(height: 10.h),
+                          ],
+                        );
+                      }),
                     ],
-                  );
-                }),
-              ],
-            ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

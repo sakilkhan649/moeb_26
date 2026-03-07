@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:moeb_26/Data/models/my_rides_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
@@ -17,6 +19,17 @@ class RideDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the ride data passed from the previous screen
+    final Ride? ride = Get.arguments as Ride?;
+
+    // Format date and time
+    String displayDateTime = "N/A";
+    if (ride?.date != null) {
+      displayDateTime = "${DateFormat('MMM dd').format(ride!.date!)} · ${ride.time}";
+    } else if (ride != null) {
+      displayDateTime = ride.time;
+    }
+
     return Scaffold(
       appBar: const CustomAppBar(
         logoPath: AppImages.app_logo,
@@ -39,36 +52,36 @@ class RideDetailsPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomDriverCard(
-                    profileImage: AppImages.profile_image,
-                    name: "Khaled",
-                    rating: "5.0",
-                    vehicleNumber: "ECN-1",
-                    vehicleInfo: "BMW 7 Series, Black",
+                    profileImage: ride?.applicant?.driver?.profilePicture ?? AppImages.profile_image,
+                    name: ride?.applicant?.driver?.name ?? "Unknown",
+                    rating: "5.0", // Assuming rating is 5.0 for now
+                    vehicleNumber: "N/A", // Not available in Ride model
+                    vehicleInfo: ride?.vehicleType ?? "N/A",
                     buttonText: "Chat with Job Poster",
-                    buttonIcon: Icons.chat_bubble_outline, // যেকোনো icon
+                    buttonIcon: Icons.chat_bubble_outline,
                     onButtonPressed: () {
-                      Get.toNamed(Routes.chatPage);
+                      Get.toNamed(Routes.chatPage, arguments: ride);
                     },
                   ),
                 ),
                 SizedBox(height: 10.h),
 
-                // Status Steps Container (You can use this in your widget tree)
+                // Status Steps Container
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomJobDetailsCard(
                     // Location details
-                    pickupLocation: "Dhaka Airport",
-                    dropoffLocation: "Barisal",
+                    pickupLocation: ride?.pickupLocation ?? "N/A",
+                    dropoffLocation: ride?.dropoffLocation ?? "N/A",
 
                     // Job information
-                    flightNumber: "Flight AA 1234",
-                    dateTime: "Jan 20 · 08:30 AM",
-                    vehicleType: "SEDAN",
-                    jobPoster: "Khaled",
-                    company: "Khaled Transportation",
-                    payment: "Collect",
-                    amount: "\$125",
+                    flightNumber: "N/A", // Not available in Ride model
+                    dateTime: displayDateTime,
+                    vehicleType: ride?.vehicleType ?? "N/A",
+                    jobPoster: ride?.applicant?.driver?.name ?? "Unknown",
+                    company: ride?.applicant?.driver?.name ?? "Unknown",
+                    payment: ride?.paymentType ?? "N/A",
+                    amount: ride != null ? "\$${ride.paymentAmount}" : "N/A",
 
                     // Optional: Custom colors
                     backgroundColor: const Color(0xFF1C1C1C),
@@ -85,7 +98,7 @@ class RideDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
                 CustomInfoBox(
-                  text: "Bona nit. Flight AA 1234, VIP client, suit required",
+                  text: "N/A", // Special instructions not available in Ride model
                 ),
                 SizedBox(height: 10.h),
 
@@ -98,7 +111,7 @@ class RideDetailsPage extends StatelessWidget {
                     backgroundColor: AppColors.orange100,
                     textColor: Colors.white,
                     onPressed: () {
-                      Get.toNamed(Routes.onMyWayDetailsPage);
+                      Get.toNamed(Routes.onMyWayDetailsPage, arguments: ride);
                     },
                   ),
                 ),
@@ -107,8 +120,8 @@ class RideDetailsPage extends StatelessWidget {
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomButton(
                     text: "Back to Jobs",
-                    backgroundColor: Color(0xFF1C1C1C),
-                    borderColor: Color(0xFF2A2A2A),
+                    backgroundColor: const Color(0xFF1C1C1C),
+                    borderColor: const Color(0xFF2A2A2A),
                     textColor: Colors.white,
                     onPressed: () {
                       Get.back();

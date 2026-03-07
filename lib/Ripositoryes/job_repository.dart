@@ -46,7 +46,10 @@ class JobRepo {
   }
 
   Future<Response> getJobs({int page = 1, int limit = 10}) async {
-    return await apiClient.getData(ApiConstants.myJobs, query: {'page': page, 'limit': limit}); // Same endpoint /jobs
+    return await apiClient.getData(
+      ApiConstants.myJobs,
+      query: {'page': page, 'limit': limit},
+    ); // Same endpoint /jobs
   }
 
   Future<Response> getAllJobOffers({int page = 1, int limit = 10}) async {
@@ -84,7 +87,6 @@ class JobRepo {
     );
   }
 
-
   Future<Response> rejectApplicant({required String jobId}) async {
     return await apiClient.patchData(
       ApiConstants.rejectApplicant.replaceAll('{jobId}', jobId),
@@ -106,12 +108,32 @@ class JobRepo {
     );
   }
 
-  Future<Response> updateJob({required String jobId}) async {
-    return await apiClient.patchData(
-      ApiConstants.updateJob.replaceAll('{jobId}', jobId),
-      null,
-    );
+  Future<Response> updateJob({
+    required String jobId,
+    required String pickupLocation,
+    required double paymentAmount,
+    required String instruction,
+    required String dropoffLocation,
+    required String date,
+    required String time,
+    required String vehicleType,
+    required String paymentType,
+    required String jobType,
+  }) async {
+    return await apiClient
+        .patchData(ApiConstants.updateJob.replaceAll('{jobId}', jobId), {
+          "pickupLocation": pickupLocation,
+          "paymentAmount": paymentAmount,
+          "instruction": instruction,
+          "dropoffLocation": dropoffLocation,
+          "date": date,
+          "time": time,
+          "vehicleType": vehicleType,
+          "paymentType": paymentType,
+          "jobType": jobType,
+        });
   }
+
   Future<Response> deleteJob({required String jobId}) async {
     return await apiClient.deleteData(
       ApiConstants.updateJob.replaceAll('{jobId}', jobId),

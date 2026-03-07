@@ -116,4 +116,14 @@ class RidesController extends GetxController {
   void changeTab(int index) {
     selectedTab.value = index;
   }
+ 
+   Future<void> refreshCurrentTab() async {
+     if (selectedTab.value == 0) {
+       await fetchUpcomingJobs();
+     } else if (selectedTab.value == 1) {
+       await fetchPastJobs();
+     } else {
+       await fetchPendingJobs();
+     }
+   }
 }

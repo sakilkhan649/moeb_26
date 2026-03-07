@@ -54,7 +54,9 @@ class JobData {
   String? createdBy;
   String? createdAt;
   String? updatedAt;
+  String? rideStatus;
   Applicant? applicant;
+  Driver? assignedTo;
 
   JobData({
     this.id,
@@ -72,7 +74,9 @@ class JobData {
     this.createdBy,
     this.createdAt,
     this.updatedAt,
+    this.rideStatus,
     this.applicant,
+    this.assignedTo,
   });
 
   JobData.fromJson(Map<String, dynamic> json) {
@@ -91,9 +95,12 @@ class JobData {
     createdBy = json['createdBy'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    rideStatus = json['rideStatus'];
 
     applicant =
         json['applicant'] != null ? Applicant.fromJson(json['applicant']) : null;
+    assignedTo =
+        json['assignedTo'] != null ? Driver.fromJson(json['assignedTo']) : null;
   }
 }
 
@@ -116,8 +123,20 @@ class Driver {
   String? email;
   String? phone;
   String? profilePicture;
+  double? averageRating;
+  int? totalReviews;
+  List<Vehicle>? vehicles;
 
-  Driver({this.id, this.name, this.email, this.phone, this.profilePicture});
+  Driver({
+    this.id,
+    this.name,
+    this.email,
+    this.phone,
+    this.profilePicture,
+    this.averageRating,
+    this.totalReviews,
+    this.vehicles,
+  });
 
   Driver.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
@@ -125,5 +144,46 @@ class Driver {
     email = json['email'];
     phone = json['phone'];
     profilePicture = json['profilePicture'];
+    averageRating = (json['averageRating'] as num?)?.toDouble();
+    totalReviews = json['totalReviews'];
+    if (json['vehicles'] != null) {
+      vehicles = <Vehicle>[];
+      json['vehicles'].forEach((v) {
+        vehicles!.add(Vehicle.fromJson(v));
+      });
+    }
+  }
+}
+
+class Vehicle {
+  String? id;
+  String? carType;
+  String? make;
+  String? model;
+  String? colorInside;
+  String? colorOutside;
+  int? year;
+  String? licensePlate;
+
+  Vehicle({
+    this.id,
+    this.carType,
+    this.make,
+    this.model,
+    this.colorInside,
+    this.colorOutside,
+    this.year,
+    this.licensePlate,
+  });
+
+  Vehicle.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    carType = json['carType'];
+    make = json['make'];
+    model = json['model'];
+    colorInside = json['colorInside'];
+    colorOutside = json['colorOutside'];
+    year = json['year'];
+    licensePlate = json['licensePlate'];
   }
 }
