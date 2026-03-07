@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../Services/marketplace_service.dart';
 import '../Model/Marketplace_model.dart';
+import '../My_Items/Controller/my_items_controller.dart' as my_items;
 
 class MarketplaceController extends GetxController {
   final MarketplaceService _marketplaceService = Get.put(MarketplaceService());
@@ -76,7 +77,7 @@ class MarketplaceController extends GetxController {
     selectedCondition.value = condition;
   }
 
-  Future<void> listItem() async {
+  Future<void> listItem({String? editItemId}) async {
     if (titleController.text.isEmpty ||
         priceController.text.isEmpty ||
         locationController.text.isEmpty) {
@@ -92,44 +93,70 @@ class MarketplaceController extends GetxController {
 
     try {
       isLoading.value = true;
-      final response = await _marketplaceService.createItem(
-        title: titleController.text,
-        price: priceController.text,
-        condition: selectedCondition.value.isNotEmpty
-            ? selectedCondition.value
-            : null,
-        location: locationController.text,
-        description: descriptionController.text.isNotEmpty
-            ? descriptionController.text
-            : null,
-        photos: selectedImage.value != null ? [selectedImage.value!] : null,
-      );
+      final response = editItemId == null
+          ? await _marketplaceService.createItem(
+              title: titleController.text,
+              price: priceController.text,
+              condition: selectedCondition.value.isNotEmpty
+                  ? selectedCondition.value
+                  : null,
+              location: locationController.text,
+              description: descriptionController.text.isNotEmpty
+                  ? descriptionController.text
+                  : null,
+              photos: selectedImage.value != null
+                  ? [selectedImage.value!]
+                  : null,
+            )
+          : await _marketplaceService.updateItem(
+              itemId: editItemId,
+              title: titleController.text,
+              price: priceController.text,
+              condition: selectedCondition.value.isNotEmpty
+                  ? selectedCondition.value
+                  : null,
+              location: locationController.text,
+              description: descriptionController.text.isNotEmpty
+                  ? descriptionController.text
+                  : null,
+              photos: selectedImage.value != null
+                  ? [selectedImage.value!]
+                  : null,
+              // status could also be updated here if needed
+            );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back();
         Get.snackbar(
           "Success",
-          "Item listed successfully!",
+          editItemId == null
+              ? "Item listed successfully!"
+              : "Item updated successfully!",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: const Color(0xff1A1A1A),
           colorText: Colors.white,
         );
         _clearFields();
-        fetchItems(); // Refresh the list
+        fetchItems(); // Refresh the general list
+
+        // Also refresh My Items list if that controller is active
+        if (Get.isRegistered<my_items.MyItemsController>()) {
+          Get.find<my_items.MyItemsController>().fetchMyItems();
+        }
       } else {
         Get.snackbar(
           "Error",
-          "Failed to list item: ${response.statusMessage ?? 'Unknown error'}",
+          "Failed to ${editItemId == null ? 'list' : 'update'} item: ${response.statusMessage ?? 'Unknown error'}",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
       }
     } catch (e) {
-      print("Error listing item: $e");
+      print("Error processing item: $e");
       Get.snackbar(
         "Error",
-        "An error occurred while listing the item",
+        "An error occurred while ${editItemId == null ? 'listing' : 'updating'} the item",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -146,6 +173,26 @@ class MarketplaceController extends GetxController {
     descriptionController.clear();
     selectedImage.value = null;
     selectedCondition.value = "New";
+  }
+
+  void prefillForEdit(
+    String title,
+    String price,
+    String location,
+    String condition,
+    String description,
+  ) {
+    titleController.text = title;
+    priceController.text = price;
+    locationController.text = location;
+    descriptionController.text = description;
+    if (condition.isNotEmpty && conditions.contains(condition)) {
+      selectedCondition.value = condition;
+    } else {
+      selectedCondition.value = "Used";
+    }
+    selectedImage.value =
+        null; // Can't easily prefill remote file into File system without download
   }
 
   @override

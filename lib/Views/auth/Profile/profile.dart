@@ -179,6 +179,9 @@ class ProfileScreen extends StatelessWidget {
                                       backgroundColor: Colors.transparent,
                                     );
                                     break;
+                                  case 4:
+                                    Get.toNamed(Routes.myPropucts);
+                                    break;
                                 }
                               },
                               itemBuilder: (context) => [
@@ -252,6 +255,33 @@ class ProfileScreen extends StatelessWidget {
                                       SizedBox(width: 12.w),
                                       Text(
                                         'Service Area',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Icon(
+                                        CupertinoIcons.chevron_forward,
+                                        size: 20.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 4,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: Colors.white,
+                                        size: 24.sp,
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Text(
+                                        'My Items',
                                         style: GoogleFonts.inter(
                                           color: Colors.white,
                                           fontSize: 14.sp,
