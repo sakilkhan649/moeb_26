@@ -7,7 +7,9 @@ import 'package:moeb_26/widgets/CustomButton.dart';
 import '../../../../Utils/app_colors.dart';
 
 class SellItemBottomSheet extends StatelessWidget {
-  SellItemBottomSheet({super.key});
+  final String? editItemId;
+
+  SellItemBottomSheet({super.key, this.editItemId});
 
   final MarketplaceController controller = Get.find<MarketplaceController>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -36,7 +38,7 @@ class SellItemBottomSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Sell Item",
+                    editItemId == null ? "Sell Item" : "Edit Item",
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontSize: 20.sp,
@@ -226,12 +228,14 @@ class SellItemBottomSheet extends StatelessWidget {
                                 ),
                               )
                             : CustomButton(
-                                text: "List Item",
+                                text: editItemId == null
+                                    ? "List Item"
+                                    : "Update Item",
                                 backgroundColor: Colors.white,
                                 textColor: Colors.black,
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    controller.listItem();
+                                    controller.listItem(editItemId: editItemId);
                                   }
                                 },
                               ),

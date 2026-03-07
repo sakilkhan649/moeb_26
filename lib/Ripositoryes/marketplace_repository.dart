@@ -78,4 +78,48 @@ class MarketplaceRepo {
       multipartBody: multipartBody,
     );
   }
+
+  Future<Response> updateItem({
+    required String itemId,
+    required String title,
+    required String price,
+    String? condition,
+    required String location,
+    String? description,
+    List<File>? photos, // For new photos
+    String? status,
+  }) async {
+    final Map<String, dynamic> body = {
+      'title': title,
+      'price': price,
+      'location': location,
+    };
+
+    if (condition != null && condition.isNotEmpty) {
+      body['condition'] = condition;
+    }
+
+    if (description != null && description.isNotEmpty) {
+      body['description'] = description;
+    }
+
+    if (status != null && status.isNotEmpty) {
+      body['status'] = status;
+    }
+
+    final List<MultipartBody> multipartBody =
+        photos != null && photos.isNotEmpty
+        ? photos.map((file) => MultipartBody('photos', file)).toList()
+        : [];
+
+    return await apiClient.patchMultipartData(
+      '${ApiConstants.items}/$itemId',
+      body,
+      multipartBody: multipartBody,
+    );
+  }
+
+  Future<Response> deleteItem(String itemId) async {
+    return await apiClient.deleteData('${ApiConstants.items}/$itemId');
+  }
 }

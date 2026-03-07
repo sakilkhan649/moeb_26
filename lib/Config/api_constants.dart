@@ -39,5 +39,6 @@ class ApiConstants {
   static const String ratingsFeedback = '/user/my-reviews';
   //My Items
   static const String myItems = '/items/my-items';
+  static const String myItemsUpdate = '/items/{{itemId}}';
 
 }

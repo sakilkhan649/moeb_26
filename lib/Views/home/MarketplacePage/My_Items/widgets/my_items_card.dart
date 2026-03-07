@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../Model/my_items_model.dart';
+import '../Controller/my_items_controller.dart';
 import '../../widgets/ImagePreviewPopup.dart';
+import '../../widgets/SellItemBottomSheet.dart';
+import '../../Controller/Marketplace_controller.dart';
 
 class MyItemsCard extends StatelessWidget {
   final MyItemsModel item;
@@ -93,15 +96,75 @@ class MyItemsCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    // Handle edit or delete
-                  },
-                  child: Icon(
-                    Icons.more_vert,
-                    color: Colors.white,
-                    size: 20.sp,
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, color: Colors.white, size: 20.sp),
+                  color: const Color(0xFF2C2C2E),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
+                  onSelected: (value) {
+                    if (value == 'edit') {
+                      if (!Get.isRegistered<MarketplaceController>()) {
+                        Get.put(MarketplaceController());
+                      }
+                      final MarketplaceController mpc =
+                          Get.find<MarketplaceController>();
+
+                      mpc.prefillForEdit(
+                        item.name,
+                        item.price.toString(),
+                        item.location,
+                        item.condition,
+                        item.description,
+                      );
+
+                      Get.bottomSheet(
+                        SellItemBottomSheet(editItemId: item.id),
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                      );
+                    } else if (value == 'delete') {
+                      _showDeleteDialog(context);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.white, size: 18.sp),
+                          SizedBox(width: 8.w),
+                          Text(
+                            "Edit",
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                            size: 18.sp,
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            "Delete",
+                            style: GoogleFonts.inter(
+                              color: Colors.red,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -139,6 +202,52 @@ class MyItemsCard extends StatelessWidget {
           color: Colors.grey,
           size: 40.sp,
         ),
+      ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        title: Text(
+          "Delete Item",
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          "Are you sure you want to delete this item? This action cannot be undone.",
+          style: GoogleFonts.inter(color: const Color(0xff949494)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "Cancel",
+              style: GoogleFonts.inter(color: Colors.white),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              // We need to access the controller here
+              final MyItemsController controller =
+                  Get.find<MyItemsController>();
+              controller.deleteItem(item.id);
+            },
+            child: Text(
+              "Delete",
+              style: GoogleFonts.inter(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

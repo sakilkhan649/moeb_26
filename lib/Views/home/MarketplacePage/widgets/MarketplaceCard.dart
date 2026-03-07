@@ -62,23 +62,23 @@ class MarketplaceCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: const Color(0xFFF1A107),
-                          size: 14.sp,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          item.rating.toString(),
-                          style: GoogleFonts.inter(
-                            color: const Color(0xff949494),
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Icon(
+                    //       Icons.star,
+                    //       color: const Color(0xFFF1A107),
+                    //       size: 14.sp,
+                    //     ),
+                    //     SizedBox(width: 4.w),
+                    //     Text(
+                    //       item.rating.toString(),
+                    //       style: GoogleFonts.inter(
+                    //         color: const Color(0xff949494),
+                    //         fontSize: 12.sp,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ],
