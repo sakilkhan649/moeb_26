@@ -17,6 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMyJobsTap;
   final VoidCallback? onLogoutTap;
   final VoidCallback? serviceAreaTap;
+  final VoidCallback? onMyProductsTap;
   final int notificationCount;
   final String? logoPath;
   final String? title;
@@ -29,6 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onMyJobsTap,
     this.onLogoutTap,
     this.serviceAreaTap,
+    this.onMyProductsTap,
     this.notificationCount = 0,
     this.logoPath,
     this.title,
@@ -236,6 +238,33 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 PopupMenuItem<int>(
+                  value: 4,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.shopping_bag_outlined,
+                        color: Colors.white,
+                        size: 24.sp,
+                      ),
+                      SizedBox(width: 12.w),
+                      Text(
+                        'My Items',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Spacer(),
+                      Icon(
+                        CupertinoIcons.chevron_forward,
+                        size: 20.sp,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
                   value: 3,
                   child: Row(
                     children: [
@@ -304,6 +333,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
           );
+        }
+        break;
+      case 4:
+        if (onMyProductsTap != null) {
+          onMyProductsTap!();
+        } else {
+          Get.toNamed(Routes.myPropucts);
         }
         break;
     }

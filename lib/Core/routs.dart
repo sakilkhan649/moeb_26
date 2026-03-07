@@ -1,4 +1,3 @@
-
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:moeb_26/Views/auth/Otp_verification/otp_verifications.dart';
@@ -29,6 +28,8 @@ import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progr
 import '../Views/home/JobOfferPage/My_jobs/Edit_screen/edit_screen.dart';
 import '../Views/home/JobOfferPage/My_jobs/my_jobs.dart';
 import '../Views/home/JobOfferPage/Request_Submitted/Request_Submitted.dart';
+import '../Views/home/MarketplacePage/My_Items/my_Items.dart';
+import '../Views/home/MarketplacePage/My_Items/my_items.dart' hide MyItems;
 import '../Views/home/RidesPage/Finish_Ride/Finish_Ride_page.dart';
 import '../Views/home/RidesPage/On_My_Way_Details_page/On_My_Way_Details_page.dart';
 import '../Views/home/RidesPage/Pob_Details_page/Pob_Details_page.dart';
@@ -73,12 +74,13 @@ class Routes {
   static const String rideProgressBoard = "/RideProgressBoard";
   static const String rideCompleteJob = "/RideCompleteJob";
   static const String profileScreen = "/ProfileScreen";
-  static const String ratingsFeedback= "/RatingsFeedback";
-  static const String serviceArea= "/ServiceArea";
-  static const String noInternetScreen= "/NoInternetScreen";
-  static const String otpVerificationScreen= "/OtpVerificationScreen";
-  static const String forgetotpVerificationScreen= "/OtpVerificationScreen";
-  static const String changePasswordScreen= "/ChangePasswordScreen";
+  static const String ratingsFeedback = "/RatingsFeedback";
+  static const String serviceArea = "/ServiceArea";
+  static const String noInternetScreen = "/NoInternetScreen";
+  static const String otpVerificationScreen = "/OtpVerificationScreen";
+  static const String forgetotpVerificationScreen = "/OtpVerificationScreen";
+  static const String changePasswordScreen = "/ChangePasswordScreen";
+  static const String myPropucts = "/MyPropucts";
 
   static List<GetPage> routes = [
     GetPage(
@@ -86,7 +88,6 @@ class Routes {
       page: () => Splashscreen(),
       transition: Transition.noTransition,
       binding: SplashBinding(),
-
     ),
     GetPage(
       name: createscreens,
@@ -272,6 +273,11 @@ class Routes {
     GetPage(
       name: changePasswordScreen,
       page: () => ChangePasswordScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: myPropucts,
+      page: () => MyItems(),
       transition: Transition.noTransition,
     ),
   ];
