@@ -56,16 +56,34 @@ class ChatDetailController extends GetxController {
   Future<void> sendMessage() async {
     final text = messageController.text.trim();
     if (text.isNotEmpty) {
+      // ১. টেম্পোরারি মেসেজ তৈরি করে লিস্টে যোগ করা (Instant UI update)
+      final tempId = DateTime.now().millisecondsSinceEpoch.toString();
+      final tempMessage = ChatMessage(
+        id: tempId,
+        chatId: chat.id,
+        text: text,
+        senderId: userService.userId,
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      );
+
+      messages.insert(0, tempMessage);
       messageController.clear();
+
       try {
         final sentMessage = await socketRepo.sendMessage(chat.id, text);
         if (sentMessage != null) {
-          // If the socket doesn't echo back our own message, we add it manually
-          if (!messages.any((m) => m.id == sentMessage.id)) {
+          // ২. টেম্পোরারি মেসেজটি সরিয়ে সার্ভার থেকে আসা আসল মেসেজটি যোগ করা
+          int index = messages.indexWhere((m) => m.id == tempId);
+          if (index != -1) {
+            messages[index] = sentMessage;
+          } else if (!messages.any((m) => m.id == sentMessage.id)) {
             messages.insert(0, sentMessage);
           }
         }
       } catch (e) {
+        // এরর হলে টেম্পোরারি মেসেজটি রিমুভ করা
+        messages.removeWhere((m) => m.id == tempId);
         Get.snackbar('Error', 'Failed to send message');
       }
     }

@@ -126,14 +126,12 @@ class ChatDetailPage extends StatelessWidget {
                     bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
                     bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
                   ),
-                  border: isMe
-                      ? null
-                      : Border.all(color: const Color(0xff333333)),
+                  border: Border.all(color: const Color(0xff333333)),
                 ),
                 child: Text(
                   message.text,
                   style: GoogleFonts.inter(
-                    color: isMe ? Colors.black : Colors.white,
+                    color: isMe ? Colors.white : Colors.white,
                     fontSize: 14.sp,
                     height: 1.4,
                     fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
