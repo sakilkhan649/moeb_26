@@ -14,6 +14,7 @@ class ChatDetailController extends GetxController {
   final RxList<ChatMessage> messages = <ChatMessage>[].obs;
   final TextEditingController messageController = TextEditingController();
   final RxBool isLoading = false.obs;
+  Worker? _messageWorker;
 
   late ChatPreview chat;
 
@@ -31,32 +32,18 @@ class ChatDetailController extends GetxController {
     );
     socketService.joinRoom(chat.id);
 
-    // Listen for new messages
-    socketService.on('NEW_MESSAGE', (data) {
-      debugPrint('📥 ChatDetailController: Received NEW_MESSAGE event');
-      debugPrint('📦 ChatDetailController: Data: $data');
+    // Listen for global message updates
+    _messageWorker = ever(socketService.lastReceivedMessage, (newMessage) {
+      if (newMessage != null) {
+        debugPrint(
+          '📥 ChatDetailController: Received message from global stream',
+        );
 
-      if (data != null) {
-        try {
-          final newMessage = ChatMessage.fromJson(data);
-          debugPrint(
-            '✅ ChatDetailController: Parsed message ID: ${newMessage.id}',
-          );
-
-          // Only add if it belongs to this chat and isn't already here
-          if (newMessage.chatId == chat.id &&
-              !messages.any((m) => m.id == newMessage.id)) {
-            messages.insert(0, newMessage);
-            debugPrint('➕ ChatDetailController: Message added to UI list');
-          } else {
-            debugPrint(
-              'ℹ️ ChatDetailController: Message ignored (different chatId or already exists)',
-            );
-          }
-        } catch (e) {
-          debugPrint(
-            '❌ ChatDetailController: Error parsing NEW_MESSAGE data: $e',
-          );
+        // Only add if it belongs to this chat and isn't already here
+        if (newMessage.chatId == chat.id &&
+            !messages.any((m) => m.id == newMessage.id)) {
+          messages.insert(0, newMessage);
+          debugPrint('➕ ChatDetailController: Message added to UI list');
         }
       }
     });
@@ -121,7 +108,7 @@ class ChatDetailController extends GetxController {
   @override
   void onClose() {
     socketService.leaveRoom(chat.id);
-    socketService.off('NEW_MESSAGE');
+    _messageWorker?.dispose();
     messageController.dispose();
     super.onClose();
   }
