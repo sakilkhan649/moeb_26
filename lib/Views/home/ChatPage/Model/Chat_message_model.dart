@@ -41,7 +41,8 @@ class ChatMessage {
   }
 
   /// Check if this message was sent by the given userId
-  bool isSentBy(String userId) {
+  bool isSentBy(String? userId) {
+    if (userId == null || userId.isEmpty) return false;
     return senderId == userId || sender?.id == userId;
   }
 
@@ -57,4 +58,3 @@ class ChatMessage {
     }
   }
 }
-

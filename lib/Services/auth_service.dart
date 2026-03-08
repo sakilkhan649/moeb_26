@@ -38,7 +38,10 @@ class AuthService extends GetxService {
     if (userData.isNotEmpty) {
       try {
         final Map<String, dynamic> user = jsonDecode(userData);
-        Get.find<UserService>().userId = user['_id'] ?? "";
+        final id = user['_id'] ?? user['id'];
+        if (id != null) {
+          Get.find<UserService>().userId = id.toString();
+        }
       } catch (_) {}
     }
     isLoggedIn.value = token.isNotEmpty;
@@ -196,6 +199,7 @@ class AuthService extends GetxService {
       rethrow;
     }
   }
+
   /// ===================== CHANGE PASSWORD =====================
   Future<Response> changePassword({
     required String currentPassword,
@@ -246,12 +250,15 @@ class AuthService extends GetxService {
         }
 
         final user = authData['user'] ?? authData;
-        if (user is Map<String, dynamic> && user.containsKey('_id')) {
-          await StorageService.setString(
-            StorageConstants.userData,
-            jsonEncode(user),
-          );
-          Get.find<UserService>().userId = user['_id'];
+        if (user is Map<String, dynamic>) {
+          final id = user['_id'] ?? user['id'];
+          if (id != null) {
+            await StorageService.setString(
+              StorageConstants.userData,
+              jsonEncode(user),
+            );
+            Get.find<UserService>().userId = id.toString();
+          }
         }
       }
     } catch (e) {
