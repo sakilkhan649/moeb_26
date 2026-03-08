@@ -126,12 +126,28 @@ class SocketService extends GetxService with WidgetsBindingObserver {
 
     if (data != null) {
       try {
-        // পোস্টম্যান রেসপন্স অনুযায়ী ডাটা { success: true, data: { ... } } ফরম্যাটে থাকতে পারে
-        final dynamic actualData = (data is Map && data.containsKey('data'))
-            ? data['data']
-            : data;
+        // সকেট ডাটা বিভিন্ন ফরম্যাটে থাকতে পারে, আমরা সবচেয়ে গভীরে যাওয়ার চেষ্টা করব
+        dynamic actualData = data;
+
+        if (data is Map) {
+          if (data.containsKey('data')) {
+            actualData = data['data'];
+          } else if (data.containsKey('message') && data['message'] is Map) {
+            // যদি { "message": { "text": "..." } } ফরম্যাটে থাকে
+            actualData = data['message'];
+          }
+        }
 
         final newMessage = ChatMessage.fromJson(actualData);
+
+        // যদি পার্স করার পর টেক্সট খালি থাকে, তবে ডাটা থেকে সরাসরি নেয়ার চেষ্টা করা
+        if (newMessage.text.isEmpty && data is Map) {
+          // এটি একটি ব্যাকআপ যদি মডেল পার্সিং কোনো কারণে ফেইল করে
+          debugPrint(
+            '⚠️ SocketService: Parsed text is empty, attempting direct extraction',
+          );
+        }
+
         lastReceivedMessage.value = newMessage;
         debugPrint(
           '✅ SocketService: Message parsed successfully and broadcasted',

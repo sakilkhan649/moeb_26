@@ -41,7 +41,14 @@ class ChatMessage {
     // Double check if id is nested in some other way or if it's a top level field
     final String id = json['_id']?.toString() ?? json['id']?.toString() ?? '';
     final String chatId = json['chatId']?.toString() ?? '';
-    final String text = json['text']?.toString() ?? '';
+
+    // Support multiple keys for message text (text, message, content)
+    final String text =
+        json['text']?.toString() ??
+        json['message']?.toString() ??
+        json['content']?.toString() ??
+        '';
+
     final String createdAt = json['createdAt']?.toString() ?? '';
     final String updatedAt = json['updatedAt']?.toString() ?? '';
 
