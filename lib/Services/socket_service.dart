@@ -17,7 +17,7 @@ class SocketService extends GetxService {
 
   Future<void> initSocket() async {
     final token = await StorageService.getString(StorageConstants.bearerToken);
-    
+
     // Extract socket URL from ApiConstants.baseUrl
     // baseUrl: 'http://10.10.7.33:5002/api/v1' -> socketUrl: 'http://10.10.7.33:5002'
     String socketUrl = ApiConstants.baseUrl.replaceAll('/api/v1', '');
@@ -25,9 +25,16 @@ class SocketService extends GetxService {
     socket = IO.io(socketUrl, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
-      'extraHeaders': {
-        'Authorization': 'Bearer $token',
-      },
+      'reconnection': true, // অটো রিকানেকশন অন রাখা
+      'reconnectionAttempts': 10, // রিকানেক্ট ট্রাই করার সংখ্যা বাড়ানো হলো
+      'reconnectionDelay':
+          1000, // রিকানেকশন শুরু করার সময় কমানো হলো (১ সেকেন্ড)
+      'reconnectionDelayMax': 5000, // সর্বোচ্চ ৫ সেকেন্ড গ্যাপ দিবে
+      'randomizationFactor':
+          0.5, // কানেকশন ট্রাইয়ের সময় রেন্ডমাইজ করবে যাতে সার্ভারে চাপ না পড়ে
+      'timeout':
+          20000, // ২০ সেকেন্ড টাইমআউট (ডিফল্ট ২০০০ থাকে অনেক সময় যা কম হতে পারে)
+      'extraHeaders': {'Authorization': 'Bearer $token'},
     });
 
     socket.onConnect((_) {
