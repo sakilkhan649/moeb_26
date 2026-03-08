@@ -66,9 +66,9 @@ class SocketService extends GetxService with WidgetsBindingObserver {
       'randomizationFactor': 0.5,
       'timeout': 20000,
       'extraHeaders': {'Authorization': 'Bearer $token'},
-      'query': {
-        'token': token, // Also send token in query for compatibility
-      },
+      'query': {'token': token},
+      // socket.io v3/v4 এর জন্য 'auth' অপশনটি অনেক সময় প্রয়োজন হয়
+      'auth': {'token': token},
     });
 
     socket.onConnect((_) {
@@ -78,11 +78,7 @@ class SocketService extends GetxService with WidgetsBindingObserver {
         '🔗 SocketService: Transport: ${socket.io.engine?.transport?.name}',
       );
 
-      // Re-join room if we were in one before disconnection
       if (_currentRoomId != null) {
-        debugPrint(
-          '🔄 SocketService: Re-joining room after reconnection: $_currentRoomId',
-        );
         socket.emit('join-room', _currentRoomId);
       }
     });
@@ -104,6 +100,17 @@ class SocketService extends GetxService with WidgetsBindingObserver {
       debugPrint('🚨 SocketService: Error: $err');
     });
 
+    // সব ধরণের মেসেজ ইভেন্ট লিসেন করা
+    final List<String> messageEvents = [
+      'NEW_MESSAGE',
+      'new_message',
+      'message',
+      'receive-message',
+    ];
+    for (var event in messageEvents) {
+      socket.on(event, (data) => _handleIncomingMessage(data, event));
+    }
+
     // Reconnection events for debugging
     socket.onReconnect((_) => debugPrint('🔄 SocketService: Reconnected'));
     socket.onReconnectAttempt(
@@ -111,6 +118,30 @@ class SocketService extends GetxService with WidgetsBindingObserver {
     );
 
     socket.connect();
+  }
+
+  void _handleIncomingMessage(dynamic data, String eventName) {
+    debugPrint('📥 SocketService: Received event [$eventName]');
+    debugPrint('📦 SocketService: Raw Data: $data');
+
+    if (data != null) {
+      try {
+        // পোস্টম্যান রেসপন্স অনুযায়ী ডাটা { success: true, data: { ... } } ফরম্যাটে থাকতে পারে
+        final dynamic actualData = (data is Map && data.containsKey('data'))
+            ? data['data']
+            : data;
+
+        final newMessage = ChatMessage.fromJson(actualData);
+        lastReceivedMessage.value = newMessage;
+        debugPrint(
+          '✅ SocketService: Message parsed successfully and broadcasted',
+        );
+      } catch (e) {
+        debugPrint(
+          '❌ SocketService: Error parsing message from event [$eventName]: $e',
+        );
+      }
+    }
   }
 
   void joinRoom(String roomId) {

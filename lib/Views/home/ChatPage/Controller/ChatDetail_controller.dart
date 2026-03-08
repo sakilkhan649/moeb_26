@@ -54,6 +54,7 @@ class ChatDetailController extends GetxController {
       isLoading.value = true;
       final fetchedMessages = await socketRepo.getMessages(chat.id);
       messages.assignAll(fetchedMessages);
+      update();
     } catch (e) {
       Get.snackbar('Error', 'Failed to load messages');
     } finally {
