@@ -34,7 +34,7 @@ class ChatDetailController extends GetxController {
 
     // Listen for global message updates
     _messageWorker = ever(socketService.lastReceivedMessage, (newMessage) {
-      if (newMessage != null) {
+      if (newMessage != null && newMessage.text.trim().isNotEmpty) {
         debugPrint(
           '📥 ChatDetailController: Received message from global stream',
         );

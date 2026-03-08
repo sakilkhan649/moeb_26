@@ -104,6 +104,11 @@ class ChatDetailPage extends StatelessWidget {
   }
 
   Widget _buildMessageBubble(ChatMessage message) {
+    // যদি মেসেজের টেক্সট খালি থাকে, তবে কিছুই দেখাবে না
+    if (message.text.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Obx(() {
       final String currentUserId = controller.userService.userId;
       final bool isMe = message.isSentBy(currentUserId);
