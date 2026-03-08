@@ -13,6 +13,19 @@ class RideCompletedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dynamic ride = Get.arguments;
+    String rideTitle = "Airport Transfer";
+    try {
+      if (ride != null) {
+        if (ride is Map) {
+          rideTitle = ride['title'] ?? "Ride Completed";
+        } else {
+          rideTitle = "${ride.pickupLocation ?? ''} to ${ride.dropoffLocation ?? ''}";
+          if (rideTitle == " to ") rideTitle = "Ride Completed";
+        }
+      }
+    } catch (_) {}
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -60,11 +73,12 @@ class RideCompletedPage extends StatelessWidget {
               SizedBox(height: 8.h),
               // Subtitle
               Text(
-                "Airport Transfer - JFK to Manhattan",
+                rideTitle,
                 style: GoogleFonts.inter(
                   color: Colors.grey[600],
                   fontSize: 14.sp,
                 ),
+                textAlign: TextAlign.center,
               ),
               SizedBox(height: 40.h),
               // Rating Stars
@@ -146,13 +160,21 @@ class RideCompletedPage extends StatelessWidget {
               ),
               SizedBox(height: 40.h),
               // Submit Button
-              CustomButton(
-                text: "Submit Review",
-                backgroundColor: AppColors.orange100,
-                textColor: Colors.white,
-                onPressed: () {
-                  controller.submitReview();
-                },
+              Obx(
+                () => controller.isLoading.value
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.orange100,
+                        ),
+                      )
+                    : CustomButton(
+                        text: "Submit Review",
+                        backgroundColor: AppColors.orange100,
+                        textColor: Colors.white,
+                        onPressed: () {
+                          controller.submitReview();
+                        },
+                      ),
               ),
               SizedBox(height: 12.h),
               // Skip Button

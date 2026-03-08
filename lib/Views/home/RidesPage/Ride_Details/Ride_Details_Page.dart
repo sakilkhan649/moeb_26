@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
 import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
+import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 import 'package:moeb_26/widgets/Custom_Back_Button.dart';
 import 'package:moeb_26/widgets/Custom_InfoBox.dart';
@@ -29,15 +32,23 @@ class RideDetailsPage extends StatelessWidget {
 
     if (ride == null) {
       return Scaffold(
-        appBar: const CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 0),
-        body: const Center(child: Text("No ride details found", style: TextStyle(color: Colors.white))),
+        appBar: const CustomAppBar(
+          logoPath: AppImages.app_logo,
+          notificationCount: 0,
+        ),
+        body: const Center(
+          child: Text(
+            "No ride details found",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
       );
     }
 
     // Set initial status to controller (with ID to prevent stale overwrites)
     String initialRideStatus = "PENDING";
     String rideId = "";
-    
+
     if (ride is UpcomingRideData || ride is FinishRideData) {
       initialRideStatus = ride.rideStatus ?? "PENDING";
       rideId = ride.id ?? "";
@@ -73,12 +84,12 @@ class RideDetailsPage extends StatelessWidget {
       paymentType = r.paymentType ?? "N/A";
       amount = r.paymentAmount != null ? "\$${r.paymentAmount}" : "N/A";
       flightNumber = r.flightNumber ?? "N/A";
-      
+
       final driver = r.createdBy;
       posterName = driver?.name ?? "Unknown";
       posterImage = driver?.profilePicture ?? AppImages.profile_image;
       rating = driver?.averageRating?.toString() ?? "0.0";
-      
+
       if (driver?.vehicles != null && driver!.vehicles!.isNotEmpty) {
         final v = driver.vehicles!.first;
         vehicleInfo = "${v.make} ${v.model}, ${v.colorOutside}";
@@ -86,7 +97,7 @@ class RideDetailsPage extends StatelessWidget {
       } else {
         vehicleInfo = vehicleType;
       }
-      
+
       dateRaw = r.date ?? "";
       timeRaw = r.time ?? "";
     } else if (ride is Ride) {
@@ -97,13 +108,14 @@ class RideDetailsPage extends StatelessWidget {
       vehicleType = r.vehicleType;
       paymentType = r.paymentType;
       amount = "\$${r.paymentAmount}";
-      
+
       final driver = r.applicant?.driver;
       posterName = driver?.name ?? "Unknown";
-      posterImage = (driver?.profilePicture != null && driver!.profilePicture.isNotEmpty)
+      posterImage =
+          (driver?.profilePicture != null && driver!.profilePicture.isNotEmpty)
           ? driver.profilePicture
           : AppImages.profile_image;
-      
+
       vehicleInfo = vehicleType;
       dateRaw = r.date?.toString() ?? "";
       timeRaw = r.time;
@@ -129,10 +141,13 @@ class RideDetailsPage extends StatelessWidget {
         int minute = int.parse(parts[1].split(' ')[0]);
         final period = hour >= 12 ? "PM" : "AM";
         final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-        formattedTime = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+        formattedTime =
+            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
       } catch (_) {}
     }
-    displayDateTime = dateStr.isNotEmpty ? "$dateStr · $formattedTime" : formattedTime;
+    displayDateTime = dateStr.isNotEmpty
+        ? "$dateStr · $formattedTime"
+        : formattedTime;
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -196,47 +211,160 @@ class RideDetailsPage extends StatelessWidget {
                   child: CustomTextgray(text: "Special Instructions"),
                 ),
                 SizedBox(height: 10.h),
-                CustomInfoBox(
-                  text: instruction,
-                ),
+                CustomInfoBox(text: instruction),
                 SizedBox(height: 10.h),
 
                 Divider(color: Colors.white38, thickness: 1.h),
                 SizedBox(height: 10.h),
 
                 // Dynamic Action Button based on rideStatus
-                Padding(
-                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: Obx(() {
-                    String status = controller.currentRideStatus.value;
-                    String buttonText = "On My Way";
-                    String nextStatus = "ON_THE_WAY";
-                    bool isVisible = true;
+                Obx(() {
+                  String status = controller.currentRideStatus.value;
+                  
+                  if (status == "POB") {
+                    // --- FINISH RIDE DRAGGABLE SECTION ---
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Row(
+                        children: [
+                          Draggable<String>(
+                            data: 'finish',
+                            axis: Axis.horizontal,
+                            feedback: Material(
+                              color: Colors.transparent,
+                              child: Container(
+                                width: 60.w,
+                                height: 60.w,
+                                padding: EdgeInsets.all(16.w),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.orange100,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: SvgPicture.asset(
+                                  AppIcons.arre_right_icon,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            childWhenDragging: SvgPicture.asset(
+                              AppIcons.arre_right_icon,
+                              color: Colors.transparent,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                controller.updateStatus(id, "FINISHED", rideData: ride);
+                              },
+                              child: Container(
+                                width: 60.w,
+                                height: 60.w,
+                                padding: EdgeInsets.all(16.w),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.orange100,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: SvgPicture.asset(
+                                  AppIcons.arre_right_icon,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                color: Colors.white,
+                                size: 30.sp,
+                              ),
+                              Transform.translate(
+                                offset: Offset(-8.w, 0),
+                                child: Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: const Color(0xFF6B6B6B),
+                                  size: 30.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: DragTarget<String>(
+                              onAcceptWithDetails: (details) {
+                                if (details.data == 'finish') {
+                                  controller.updateStatus(id, "FINISHED", rideData: ride);
+                                }
+                              },
+                              builder: (context, candidateData, rejectedData) {
+                                bool isOver = candidateData.isNotEmpty;
+                                return GestureDetector(
+                                  onTap: () {
+                                    controller.updateStatus(id, "FINISHED", rideData: ride);
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    height: 60.w,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: isOver
+                                          ? const Color(0xFFE1C16E)
+                                          : const Color(0xFF2A2A2A),
+                                      borderRadius: BorderRadius.circular(40.r),
+                                    ),
+                                    child: CustomText(
+                                      text: "Finish ride",
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
-                    if (status == "ON_THE_WAY") {
-                      buttonText = "At the Location";
-                      nextStatus = "AT_THE_LOCATION";
-                    } else if (status == "AT_THE_LOCATION") {
-                      buttonText = "POB";
-                      nextStatus = "POB";
-                    } else if (status == "POB") {
-                      isVisible = false; // POB handled separately later
-                    } else if (status != "PENDING" && status != "") {
-                      isVisible = false;
-                    }
+                  // --- STEP BUTTONS (On My Way, At Location, POB) ---
+                  String buttonText = "On My Way";
+                  String nextStatus = "ON_THE_WAY";
+                  bool isVisible = true;
 
-                    if (!isVisible) return const SizedBox.shrink();
+                  if (status == "ON_THE_WAY") {
+                    buttonText = "At the Location";
+                    nextStatus = "AT_THE_LOCATION";
+                  } else if (status == "AT_THE_LOCATION") {
+                    buttonText = "POB";
+                    nextStatus = "POB";
+                  } else if (status != "PENDING" && status != "") {
+                    isVisible = false;
+                  }
 
-                    return controller.isLoading.value
-                        ? const Center(child: CircularProgressIndicator(color: AppColors.orange100))
+                  if (!isVisible) return const SizedBox.shrink();
+
+                  return Padding(
+                    padding: EdgeInsets.only(left: 20.w, right: 20.w),
+                    child: controller.isLoading.value
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.orange100,
+                            ),
+                          )
                         : CustomButton(
                             text: buttonText,
                             backgroundColor: AppColors.orange100,
                             textColor: Colors.white,
-                            onPressed: () => controller.updateStatus(id, nextStatus),
-                          );
-                  }),
-                ),
+                            onPressed: () =>
+                                controller.updateStatus(id, nextStatus),
+                          ),
+                  );
+                }),
 
                 SizedBox(height: 20.h),
                 Padding(

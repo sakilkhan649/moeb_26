@@ -4,6 +4,7 @@ import 'package:moeb_26/Ripositoryes/job_repository.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 import 'package:moeb_26/Views/home/RidesPage/Controller/Rides_controller.dart';
+import '../../../../../Core/routs.dart';
 
 class RideDetailsController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();
@@ -20,7 +21,7 @@ class RideDetailsController extends GetxController {
     }
   }
 
-  Future<void> updateStatus(String jobId, String nextStatus) async {
+  Future<void> updateStatus(String jobId, String nextStatus, {dynamic rideData}) async {
     try {
       isLoading.value = true;
       final response = await _jobRepo.updateRideStatus(
@@ -38,10 +39,14 @@ class RideDetailsController extends GetxController {
           }
         } catch (_) {}
 
-        Helpers.showCustomSnackBar(
-          "Ride status updated to $nextStatus",
-          isError: false,
-        );
+        if (nextStatus == "FINISHED") {
+          Get.toNamed(Routes.rideCompletedPage, arguments: rideData ?? {"id": jobId});
+        } else {
+          Helpers.showCustomSnackBar(
+            "Ride status updated to $nextStatus",
+            isError: false,
+          );
+        }
       } else {
         Helpers.showCustomSnackBar(
           response.data['message'] ?? "Failed to update status",
