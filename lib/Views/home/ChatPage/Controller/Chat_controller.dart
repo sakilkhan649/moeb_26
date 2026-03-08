@@ -1,39 +1,33 @@
 import 'package:get/get.dart';
+import '../../../../Ripositoryes/socket_repository.dart';
+import '../../../../Services/user_service.dart';
 import '../Model/Chat_model.dart';
 
 class ChatController extends GetxController {
+  final SocketRepository socketRepo = Get.find();
+  
   var chats = <ChatPreview>[].obs;
   var filteredChats = <ChatPreview>[].obs;
   var searchController = "".obs;
+  var isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Dummy data based on the image provided
-    chats.assignAll([
-      ChatPreview(
-        name: "Live Chat: Elite Chauffeur",
-        lastMessage: "Perfect, see you at 2:30 PM",
-        time: "10:30 AM",
-        unreadCount: 2,
-        avatarPath: "assets/images/app_logo_c.png", // Updated to existing logo
-      ),
-      ChatPreview(
-        name: "Premium Rides LLC",
-        lastMessage: "Thanks for accepting the job!",
-        time: "Yesterday",
-        unreadCount: 0,
-        initials: "P",
-      ),
-      ChatPreview(
-        name: "Michael Chen",
-        lastMessage: "Is the phone mount still available?",
-        time: "Jan 15",
-        unreadCount: 1,
-        initials: "M",
-      ),
-    ]);
-    filteredChats.assignAll(chats);
+    fetchChats();
+  }
+
+  Future<void> fetchChats() async {
+    try {
+      isLoading.value = true;
+      final fetchedChats = await socketRepo.getChats();
+      chats.assignAll(fetchedChats);
+      filteredChats.assignAll(chats);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load chats');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void filterChats(String query) {
@@ -42,12 +36,13 @@ class ChatController extends GetxController {
       filteredChats.assignAll(chats);
     } else {
       filteredChats.assignAll(
-        chats
-            .where(
-              (chat) => chat.name.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList(),
+        chats.where((chat) {
+          final currentUserId = Get.find<UserService>().userId;
+          final other = chat.getOtherParticipant(currentUserId);
+          return other?.name.toLowerCase().contains(query.toLowerCase()) ?? false;
+        }).toList(),
       );
     }
   }
 }
+

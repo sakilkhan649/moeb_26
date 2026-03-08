@@ -145,7 +145,7 @@ class DealsCard extends StatelessWidget {
           SizedBox(height: 10.h),
           // Promo Code Section
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
             decoration: BoxDecoration(
               color: const Color(0xff1E1E1E),
               borderRadius: BorderRadius.circular(16.r),
@@ -169,7 +169,7 @@ class DealsCard extends StatelessWidget {
                       deal.promoCode,
                       style: GoogleFonts.inter(
                         color: const Color(0xffF1A107), // Gold color
-                        fontSize: 14.sp,
+                        fontSize: 11.sp,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                       ),
@@ -181,8 +181,8 @@ class DealsCard extends StatelessWidget {
                   onTap: () => controller.copyToClipboard(deal.promoCode),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 10.h,
+                      horizontal: 12.w,
+                      vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,

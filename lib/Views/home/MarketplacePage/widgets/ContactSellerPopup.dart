@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../Core/routs.dart';
+import '../../../../Ripositoryes/socket_repository.dart';
 import '../../../../widgets/CustomButton.dart';
 import '../Model/Marketplace_model.dart';
 
@@ -17,7 +18,9 @@ class ContactSellerPopup extends StatefulWidget {
 
 class _ContactSellerPopupState extends State<ContactSellerPopup> {
   final TextEditingController _messageController = TextEditingController();
+  final SocketRepository _socketRepo = Get.find();
   int _charCount = 0;
+  bool _isSending = false;
 
   @override
   void initState() {
@@ -190,15 +193,37 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
               ),
               SizedBox(height: 24.h),
               // Buttons
-              CustomButton(
-                text: "Send Message",
-                backgroundColor: const Color(0xFFF1A107),
-                textColor: Colors.white,
-                onPressed: () {
-                  Get.back(); // Close popup
-                  Get.toNamed(Routes.chatPage); // Navigate to ChatPage
-                },
-              ),
+              _isSending
+                  ? const Center(child: CircularProgressIndicator(color: Color(0xFFF1A107)))
+                  : CustomButton(
+                      text: "Send Message",
+                      backgroundColor: const Color(0xFFF1A107),
+                      textColor: Colors.white,
+                      onPressed: () async {
+                        final text = _messageController.text.trim();
+                        if (text.isEmpty) {
+                          Get.snackbar('Error', 'Please enter a message');
+                          return;
+                        }
+
+                        setState(() => _isSending = true);
+                        try {
+                          final chat = await _socketRepo.contactSeller(
+                            widget.item.createdBy.id,
+                            widget.item.id,
+                          );
+                          if (chat != null) {
+                            await _socketRepo.sendMessage(chat.id, text);
+                            Get.back(); // Close popup
+                            Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                          }
+                        } catch (e) {
+                          Get.snackbar('Error', 'Failed to contact seller');
+                        } finally {
+                          if (mounted) setState(() => _isSending = false);
+                        }
+                      },
+                    ),
               SizedBox(height: 12.h),
               CustomButton(
                 text: "Cancel",

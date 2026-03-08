@@ -5,6 +5,10 @@ import '../Ripositoryes/user_repository.dart';
 
 class UserService extends GetxService {
   late UserRepo _userRepo;
+  final RxString _userId = "".obs;
+
+  String get userId => _userId.value;
+  set userId(String value) => _userId.value = value;
 
   @override
   void onInit() {

@@ -5,10 +5,12 @@ import '../../Ripositoryes/job_repository.dart';
 import '../../Ripositoryes/user_profile_repository.dart';
 import '../../Ripositoryes/ratings_feedback_repository.dart';
 import '../../Ripositoryes/user_repository.dart';
+import '../../Ripositoryes/socket_repository.dart';
 import '../../Services/api_client.dart';
 import '../../Services/auth_service.dart';
 import '../../Services/job_service.dart';
 import '../../Services/storege_service.dart';
+import '../../Services/socket_service.dart';
 import '../../Services/user_profile_service.dart';
 import '../../Services/ratings_feedback_service.dart';
 import '../../Services/user_service.dart';
@@ -27,8 +29,10 @@ class InitialBinding extends Bindings {
     Get.put(UserProfileRepo(apiClient: Get.find()), permanent: true);
     Get.put(JobRepo(apiClient: Get.find()), permanent: true);
     Get.put(RatingsFeedbackRepo(apiClient: Get.find()), permanent: true);
+    Get.put(SocketRepository(apiClient: Get.find()), permanent: true);
 
     // Services পরে
+    Get.put(SocketService(), permanent: true);
     Get.put(AuthService(), permanent: true);
     Get.put(UserService(), permanent: true); // 👈 যোগ করো
     Get.put(UserProfileService(userProfileRepo: Get.find()), permanent: true);
