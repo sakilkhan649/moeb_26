@@ -66,8 +66,8 @@ class ChatPreview {
   final String id;
   final List<ChatParticipant> participants;
   final ChatItem? item;
-  final String? lastMessage;
-  final String? lastMessageAt;
+  String? lastMessage;
+  String? lastMessageAt;
   final String createdBy;
   final String createdAt;
   final String updatedAt;

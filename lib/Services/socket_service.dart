@@ -1,29 +1,54 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:moeb_26/Views/home/ChatPage/Controller/Chat_controller.dart';
+import 'package:moeb_26/Views/home/ChatPage/Model/Chat_message_model.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../Config/api_constants.dart';
 import '../Services/storege_service.dart';
 import '../Config/storage_constants.dart';
 
-class SocketService extends GetxService {
+class SocketService extends GetxService with WidgetsBindingObserver {
   late IO.Socket socket;
   final isConnected = false.obs;
   String? _currentRoomId;
 
+  // Stream for global message updates
+  final Rxn<ChatMessage> lastReceivedMessage = Rxn<ChatMessage>();
+
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     initSocket();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('📱 SocketService: App resumed, checking connection...');
+      if (!socket.connected) {
+        socket.connect();
+      }
+    }
+  }
+
   Future<void> initSocket() async {
-    // If socket already exists, dispose it first to avoid multiple connections
+    // If socket already exists and is connected, don't re-init
+    if (Get.isRegistered<IO.Socket>() && socket.connected) {
+      debugPrint('ℹ️ SocketService: Socket already connected, skipping init');
+      return;
+    }
+
+    // If exists but not connected, dispose and re-create
     if (Get.isRegistered<IO.Socket>()) {
       socket.dispose();
     }
 
     final token = await StorageService.getString(StorageConstants.bearerToken);
+    if (token.isEmpty) {
+      debugPrint('⚠️ SocketService: No token found, skipping connection');
+      return;
+    }
 
     // Extract socket URL from ApiConstants.baseUrl
     String baseUrl = ApiConstants.baseUrl;
@@ -41,6 +66,9 @@ class SocketService extends GetxService {
       'randomizationFactor': 0.5,
       'timeout': 20000,
       'extraHeaders': {'Authorization': 'Bearer $token'},
+      'query': {
+        'token': token, // Also send token in query for compatibility
+      },
     });
 
     socket.onConnect((_) {
@@ -58,7 +86,7 @@ class SocketService extends GetxService {
 
     socket.onDisconnect((_) {
       isConnected.value = false;
-      debugPrint('❌ SocketService: Disconnected from server');
+      debugPrint('❌ SocketService: Disconnected from server-------');
     });
 
     socket.onConnectError((err) {
