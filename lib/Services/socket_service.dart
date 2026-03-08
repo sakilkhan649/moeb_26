@@ -9,6 +9,7 @@ import '../Config/storage_constants.dart';
 class SocketService extends GetxService {
   late IO.Socket socket;
   final isConnected = false.obs;
+  String? _currentRoomId;
 
   @override
   void onInit() {
@@ -17,10 +18,14 @@ class SocketService extends GetxService {
   }
 
   Future<void> initSocket() async {
+    // If socket already exists, dispose it first to avoid multiple connections
+    if (Get.isRegistered<IO.Socket>()) {
+      socket.dispose();
+    }
+
     final token = await StorageService.getString(StorageConstants.bearerToken);
 
     // Extract socket URL from ApiConstants.baseUrl
-    // baseUrl: 'http://10.10.7.33:5002/api/v1' -> socketUrl: 'http://10.10.7.33:5002'
     String baseUrl = ApiConstants.baseUrl;
     String socketUrl = baseUrl.replaceAll('/api/v1', '');
 
@@ -41,6 +46,14 @@ class SocketService extends GetxService {
     socket.onConnect((_) {
       isConnected.value = true;
       debugPrint('✅ SocketService: Connected to server');
+
+      // Re-join room if we were in one before disconnection
+      if (_currentRoomId != null) {
+        debugPrint(
+          '🔄 SocketService: Re-joining room after reconnection: $_currentRoomId',
+        );
+        socket.emit('join-room', _currentRoomId);
+      }
     });
 
     socket.onDisconnect((_) {
@@ -61,36 +74,26 @@ class SocketService extends GetxService {
     socket.onReconnectAttempt(
       (count) => debugPrint('🔄 SocketService: Reconnect attempt #$count'),
     );
-    socket.onReconnectError(
-      (err) => debugPrint('⚠️ SocketService: Reconnect error: $err'),
-    );
-    socket.onReconnectFailed(
-      (_) => debugPrint('❌ SocketService: Reconnect failed'),
-    );
 
     socket.connect();
   }
 
   void joinRoom(String roomId) {
+    _currentRoomId = roomId;
     if (socket.connected) {
       socket.emit('join-room', roomId);
       debugPrint('➡️ SocketService: Emitted join-room for roomId: $roomId');
     } else {
       debugPrint(
-        '⚠️ SocketService: Cannot join room, socket not connected. RoomId: $roomId',
+        '⚠️ SocketService: Cannot join room, socket not connected. Reconnecting... RoomId: $roomId',
       );
-      // Reconnect if not connected
       socket.connect();
-      socket.once('connect', (_) {
-        socket.emit('join-room', roomId);
-        debugPrint(
-          '➡️ SocketService: Connected and then emitted join-room for roomId: $roomId',
-        );
-      });
+      // Room will be joined in onConnect callback
     }
   }
 
   void leaveRoom(String roomId) {
+    _currentRoomId = null;
     if (socket.connected) {
       socket.emit('leave-room', roomId);
       debugPrint('⬅️ SocketService: Emitted leave-room for roomId: $roomId');

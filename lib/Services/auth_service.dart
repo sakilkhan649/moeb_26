@@ -8,6 +8,7 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
 import 'package:moeb_26/Config/app_constants.dart';
+import 'package:moeb_26/Services/socket_service.dart';
 import 'package:moeb_26/Services/storege_service.dart';
 
 import 'package:moeb_26/Services/user_service.dart';
@@ -242,6 +243,10 @@ class AuthService extends GetxService {
             accessToken,
           );
           isLoggedIn.value = true;
+          // Refresh socket with new token
+          try {
+            Get.find<SocketService>().initSocket();
+          } catch (_) {}
         }
 
         if (refreshToken != null) {
