@@ -1,6 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:moeb_26/Config/storage_constants.dart';
+import 'package:moeb_26/Services/storege_service.dart';
+import 'package:moeb_26/Services/user_profile_service.dart';
 import '../Ripositoryes/user_repository.dart';
 
 class UserService extends GetxService {
@@ -14,6 +19,41 @@ class UserService extends GetxService {
   void onInit() {
     super.onInit();
     _userRepo = UserRepo(apiClient: Get.find());
+    fetchUserId(); // Initial attempt to get the ID
+  }
+
+  /// Fetch user profile and store the ID if not already set
+  Future<void> fetchUserId() async {
+    try {
+      // 1. Try to get from storage first (fastest)
+      final String userData = await StorageService.getString(
+        StorageConstants.userData,
+      );
+      if (userData.isNotEmpty) {
+        final Map<String, dynamic> user = json.decode(userData);
+        final id = user['_id'] ?? user['id'];
+        if (id != null) {
+          _userId.value = id.toString();
+          debugPrint("✅ UserService: Set userId from Storage: $id");
+          // Continue to fetch from API anyway to keep it fresh
+        }
+      }
+
+      // 2. Fetch from API
+      final profileService = Get.find<UserProfileService>();
+      final response = await profileService.getUserProfile();
+      if (response.statusCode == 200) {
+        final id =
+            response.data['data']['_id']?.toString() ??
+            response.data['data']['id']?.toString();
+        if (id != null) {
+          _userId.value = id;
+          debugPrint("✅ UserService: Set userId from profile API: $id");
+        }
+      }
+    } catch (e) {
+      debugPrint("❌ UserService: Error fetching userId: $e");
+    }
   }
 
   Future<UserService> init() async {

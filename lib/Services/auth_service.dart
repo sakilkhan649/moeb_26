@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -41,6 +42,7 @@ class AuthService extends GetxService {
         final id = user['_id'] ?? user['id'];
         if (id != null) {
           Get.find<UserService>().userId = id.toString();
+          debugPrint("✅ Logged in user ID: $id");
         }
       } catch (_) {}
     }

@@ -14,7 +14,7 @@ class ChatDetailController extends GetxController {
   final RxList<ChatMessage> messages = <ChatMessage>[].obs;
   final TextEditingController messageController = TextEditingController();
   final RxBool isLoading = false.obs;
-  
+
   late ChatPreview chat;
 
   @override
@@ -27,13 +27,14 @@ class ChatDetailController extends GetxController {
 
   void setupSocket() {
     socketService.joinRoom(chat.id);
-    
+
     // Listen for new messages
     socketService.on('new-message', (data) {
       if (data != null) {
         final newMessage = ChatMessage.fromJson(data);
         // Only add if it belongs to this chat and isn't already here
-        if (newMessage.chatId == chat.id && !messages.any((m) => m.id == newMessage.id)) {
+        if (newMessage.chatId == chat.id &&
+            !messages.any((m) => m.id == newMessage.id)) {
           messages.insert(0, newMessage);
         }
       }
@@ -78,4 +79,3 @@ class ChatDetailController extends GetxController {
     super.onClose();
   }
 }
-

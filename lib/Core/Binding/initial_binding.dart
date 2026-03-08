@@ -32,9 +32,9 @@ class InitialBinding extends Bindings {
     Get.put(SocketRepository(apiClient: Get.find()), permanent: true);
 
     // Services পরে
+    Get.put(UserService(), permanent: true); // 👈 AuthService এর আগে দাও
     Get.put(SocketService(), permanent: true);
     Get.put(AuthService(), permanent: true);
-    Get.put(UserService(), permanent: true); // 👈 যোগ করো
     Get.put(UserProfileService(userProfileRepo: Get.find()), permanent: true);
     Get.put(JobService(), permanent: true);
     Get.put(
