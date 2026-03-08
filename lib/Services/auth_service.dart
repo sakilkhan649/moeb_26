@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -7,6 +8,8 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
 import 'package:moeb_26/Config/app_constants.dart';
 import 'package:moeb_26/Services/storege_service.dart';
+
+import 'package:moeb_26/Services/user_service.dart';
 
 import '../Config/storage_constants.dart';
 import '../Core/routs.dart';
@@ -31,6 +34,13 @@ class AuthService extends GetxService {
 
   Future<void> _checkLoginStatus() async {
     final token = await StorageService.getString(StorageConstants.bearerToken);
+    final userData = await StorageService.getString(StorageConstants.userData);
+    if (userData.isNotEmpty) {
+      try {
+        final Map<String, dynamic> user = jsonDecode(userData);
+        Get.find<UserService>().userId = user['_id'] ?? "";
+      } catch (_) {}
+    }
     isLoggedIn.value = token.isNotEmpty;
   }
 
@@ -233,6 +243,15 @@ class AuthService extends GetxService {
             StorageConstants.refreshToken,
             refreshToken,
           );
+        }
+
+        final user = authData['user'] ?? authData;
+        if (user is Map<String, dynamic> && user.containsKey('_id')) {
+          await StorageService.setString(
+            StorageConstants.userData,
+            jsonEncode(user),
+          );
+          Get.find<UserService>().userId = user['_id'];
         }
       }
     } catch (e) {

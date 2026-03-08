@@ -40,5 +40,11 @@ class ApiConstants {
   //My Items
   static const String myItems = '/items/my-items';
   static const String myItemsUpdate = '/items/{{itemId}}';
+  
+  //socket_io endpoints
+  static const String chats= '/chats';
+  static const String chatsId= '/chats/{{chatId}}';
+  static const String messages= '/messages/{{chatId}}';
+
 
 }

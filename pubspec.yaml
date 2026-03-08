@@ -48,6 +48,7 @@ dependencies:
   internet_connection_checker_plus: ^2.0.0
   pinput: ^6.0.0
   uuid: ^4.5.3
+  socket_io_client: ^3.1.4
 
 dev_dependencies:
   flutter_test:

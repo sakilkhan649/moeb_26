@@ -43,6 +43,9 @@ class ChatDetailPage extends StatelessWidget {
   }
 
   PreferredSizeWidget _buildAppBar() {
+    final currentUserId = controller.userService.userId;
+    final other = chat.getOtherParticipant(currentUserId);
+    
     return AppBar(
       backgroundColor: Colors.black,
       elevation: 0,
@@ -56,12 +59,12 @@ class ChatDetailPage extends StatelessWidget {
           CircleAvatar(
             radius: 20.r,
             backgroundColor: const Color(0xffE0E0E0),
-            backgroundImage: chat.avatarPath != null
-                ? AssetImage(chat.avatarPath!) as ImageProvider
+            backgroundImage: other?.profilePicture != null
+                ? NetworkImage(other!.profilePicture!) as ImageProvider
                 : null,
-            child: chat.avatarPath == null
+            child: other?.profilePicture == null
                 ? Text(
-                    chat.initials ?? '',
+                    other?.initials ?? '?',
                     style: GoogleFonts.inter(
                       color: Colors.grey[700],
                       fontWeight: FontWeight.bold,
@@ -72,7 +75,7 @@ class ChatDetailPage extends StatelessWidget {
           ),
           SizedBox(width: 12.w),
           Text(
-            chat.name,
+            other?.name ?? 'Chat',
             style: GoogleFonts.inter(
               color: Colors.white,
               fontSize: 18.sp,
@@ -84,13 +87,15 @@ class ChatDetailPage extends StatelessWidget {
     );
   }
 
+
   Widget _buildMessageBubble(ChatMessage message) {
+    final bool isMe = message.isSentBy(controller.userService.userId);
     return Align(
-      alignment: message.isSender
+      alignment: isMe
           ? Alignment.centerRight
           : Alignment.centerLeft,
       child: Column(
-        crossAxisAlignment: message.isSender
+        crossAxisAlignment: isMe
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
@@ -125,6 +130,7 @@ class ChatDetailPage extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildMessageInput() {
     return Container(
