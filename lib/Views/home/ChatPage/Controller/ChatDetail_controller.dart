@@ -29,7 +29,7 @@ class ChatDetailController extends GetxController {
     socketService.joinRoom(chat.id);
 
     // Listen for new messages
-    socketService.on('new-message', (data) {
+    socketService.on('NEW_MESSAGE', (data) {
       if (data != null) {
         final newMessage = ChatMessage.fromJson(data);
         // Only add if it belongs to this chat and isn't already here
@@ -92,7 +92,7 @@ class ChatDetailController extends GetxController {
   @override
   void onClose() {
     socketService.leaveRoom(chat.id);
-    socketService.off('new-message');
+    socketService.off('NEW_MESSAGE');
     messageController.dispose();
     super.onClose();
   }
