@@ -139,4 +139,14 @@ class JobRepo {
       ApiConstants.updateJob.replaceAll('{jobId}', jobId),
     );
   }
+
+  Future<Response> updateRideStatus({
+    required String jobId,
+    required String rideStatus,
+  }) async {
+    return await apiClient.patchData(
+      ApiConstants.updateRideStatus.replaceAll('{jobId}', jobId),
+      {"rideStatus": rideStatus},
+    );
+  }
 }

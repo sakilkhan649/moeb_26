@@ -34,6 +34,7 @@ class ApiConstants {
   static const String approveApplicant = '/jobs/{jobId}/approve-applicant';
   static const String cancelJobOffer = '/jobs/{jobId}/cancel';
   static const String updateJob = '/jobs/{jobId}';
+  static const String updateRideStatus = '/jobs/{jobId}/ride-status';
   //Deals Endpoints
   static const String dealsItems = '/deals';
   static const String ratingsFeedback = '/user/my-reviews';

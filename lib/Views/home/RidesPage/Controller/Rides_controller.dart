@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
+import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/Ripositoryes/job_repository.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
@@ -22,8 +24,8 @@ class RidesController extends GetxController {
     fetchPastJobs();
   }
 
-  RxList<Ride> upcomingRides = <Ride>[].obs;
-  RxList<Ride> pastRides = <Ride>[].obs;
+  RxList<UpcomingRideData> upcomingRides = <UpcomingRideData>[].obs;  
+  RxList<FinishRideData> pastRides = <FinishRideData>[].obs;
   RxList<Ride> pendingRides = <Ride>[].obs;
 
   Future<void> fetchPendingJobs() async {
@@ -59,8 +61,8 @@ class RidesController extends GetxController {
       final response = await _jobRepo.getUpcomingJobs();
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null && response.data['data'] != null) {
-          final jobResponse = MyRidesResponse.fromJson(response.data);
-          upcomingRides.assignAll(jobResponse.data);
+          final jobResponse = UpcomingRidesModel.fromJson(response.data);
+          upcomingRides.assignAll(jobResponse.data ?? []);
         }
       } else {
         final message = response.data is Map
@@ -86,8 +88,8 @@ class RidesController extends GetxController {
       final response = await _jobRepo.getPastJobs();
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null && response.data['data'] != null) {
-          final jobResponse = MyRidesResponse.fromJson(response.data);
-          pastRides.assignAll(jobResponse.data);
+          final jobResponse = FinishRidesModel.fromJson(response.data);
+          pastRides.assignAll(jobResponse.data ?? []);
         }
       } else {
         final message = response.data is Map
@@ -107,11 +109,7 @@ class RidesController extends GetxController {
     }
   }
 
-  List<Ride> get currentRides {
-    if (selectedTab.value == 0) return upcomingRides;
-    if (selectedTab.value == 1) return pastRides;
-    return pendingRides;
-  }
+
 
   void changeTab(int index) {
     selectedTab.value = index;

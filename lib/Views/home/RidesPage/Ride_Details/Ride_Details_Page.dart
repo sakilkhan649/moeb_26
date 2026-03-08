@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
+import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
@@ -13,22 +15,124 @@ import '../../../../Utils/app_images.dart';
 import '../../../../widgets/Custom_AppBar.dart';
 import '../../../../widgets/Custom_Card_Ditails.dart';
 import '../../../../widgets/Custom_Driver_Card.dart';
+import 'Controller/Ride_Details_controller.dart';
 
 class RideDetailsPage extends StatelessWidget {
-  const RideDetailsPage({super.key});
+  RideDetailsPage({super.key});
+
+  final RideDetailsController controller = Get.put(RideDetailsController());
 
   @override
   Widget build(BuildContext context) {
-    // Get the ride data passed from the previous screen
-    final Ride? ride = Get.arguments as Ride?;
+    // Get the ride data passed from the previous screen (could be Ride, UpcomingRideData, or FinishRideData)
+    final dynamic ride = Get.arguments;
 
-    // Format date and time
-    String displayDateTime = "N/A";
-    if (ride?.date != null) {
-      displayDateTime = "${DateFormat('MMM dd').format(ride!.date!)} · ${ride.time}";
-    } else if (ride != null) {
-      displayDateTime = ride.time;
+    if (ride == null) {
+      return Scaffold(
+        appBar: const CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 0),
+        body: const Center(child: Text("No ride details found", style: TextStyle(color: Colors.white))),
+      );
     }
+
+    // Set initial status to controller (with ID to prevent stale overwrites)
+    String initialRideStatus = "PENDING";
+    String rideId = "";
+    
+    if (ride is UpcomingRideData || ride is FinishRideData) {
+      initialRideStatus = ride.rideStatus ?? "PENDING";
+      rideId = ride.id ?? "";
+    } else if (ride is Ride) {
+      initialRideStatus = ride.rideStatus ?? "PENDING";
+      rideId = ride.id;
+    }
+    controller.setInitialStatus(rideId, initialRideStatus);
+
+    // --- DATA EXTRACTION BASED ON MODEL ---
+    String id = rideId;
+    String pickupLocation = "N/A";
+    String dropoffLocation = "N/A";
+    String vehicleType = "N/A";
+    String paymentType = "N/A";
+    String amount = "N/A";
+    String rating = "0.0";
+    String posterName = "Unknown";
+    String posterImage = AppImages.profile_image;
+    String vehicleInfo = "N/A";
+    String vehicleNumber = "N/A";
+    String flightNumber = "N/A";
+    String instruction = "N/A";
+    String dateRaw = "";
+    String timeRaw = "";
+
+    if (ride is UpcomingRideData || ride is FinishRideData) {
+      final dynamic r = ride;
+      id = r.id ?? "";
+      pickupLocation = r.pickupLocation ?? "N/A";
+      dropoffLocation = r.dropoffLocation ?? "N/A";
+      vehicleType = r.vehicleType ?? "N/A";
+      paymentType = r.paymentType ?? "N/A";
+      amount = r.paymentAmount != null ? "\$${r.paymentAmount}" : "N/A";
+      flightNumber = r.flightNumber ?? "N/A";
+      
+      final driver = r.createdBy;
+      posterName = driver?.name ?? "Unknown";
+      posterImage = driver?.profilePicture ?? AppImages.profile_image;
+      rating = driver?.averageRating?.toString() ?? "0.0";
+      
+      if (driver?.vehicles != null && driver!.vehicles!.isNotEmpty) {
+        final v = driver.vehicles!.first;
+        vehicleInfo = "${v.make} ${v.model}, ${v.colorOutside}";
+        vehicleNumber = v.licensePlate ?? "N/A";
+      } else {
+        vehicleInfo = vehicleType;
+      }
+      
+      dateRaw = r.date ?? "";
+      timeRaw = r.time ?? "";
+    } else if (ride is Ride) {
+      final r = ride;
+      id = r.id;
+      pickupLocation = r.pickupLocation;
+      dropoffLocation = r.dropoffLocation;
+      vehicleType = r.vehicleType;
+      paymentType = r.paymentType;
+      amount = "\$${r.paymentAmount}";
+      
+      final driver = r.applicant?.driver;
+      posterName = driver?.name ?? "Unknown";
+      posterImage = (driver?.profilePicture != null && driver!.profilePicture.isNotEmpty)
+          ? driver.profilePicture
+          : AppImages.profile_image;
+      
+      vehicleInfo = vehicleType;
+      dateRaw = r.date?.toString() ?? "";
+      timeRaw = r.time;
+    }
+
+    // --- DATE & TIME FORMATTING (12h AM/PM) ---
+    String displayDateTime = "N/A";
+    String dateStr = "";
+    if (dateRaw.isNotEmpty) {
+      try {
+        DateTime parsed = DateTime.parse(dateRaw);
+        dateStr = DateFormat('MMM dd').format(parsed);
+      } catch (_) {
+        dateStr = dateRaw;
+      }
+    }
+
+    String formattedTime = timeRaw;
+    if (timeRaw.contains(':')) {
+      try {
+        final parts = timeRaw.split(':');
+        int hour = int.parse(parts[0]);
+        int minute = int.parse(parts[1].split(' ')[0]);
+        final period = hour >= 12 ? "PM" : "AM";
+        final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+        formattedTime = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+      } catch (_) {}
+    }
+    displayDateTime = dateStr.isNotEmpty ? "$dateStr · $formattedTime" : formattedTime;
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -41,7 +145,7 @@ class RideDetailsPage extends StatelessWidget {
             Divider(color: Colors.white38, thickness: 1.h),
             Padding(
               padding: EdgeInsets.only(left: 20.w),
-              child: CustomBackButton(title: "Ride Details"),
+              child: const CustomBackButton(title: "Ride Details"),
             ),
             Divider(color: Colors.white38, thickness: 1.h),
             SizedBox(height: 5.h),
@@ -52,11 +156,11 @@ class RideDetailsPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomDriverCard(
-                    profileImage: ride?.applicant?.driver?.profilePicture ?? AppImages.profile_image,
-                    name: ride?.applicant?.driver?.name ?? "Unknown",
-                    rating: "5.0", // Assuming rating is 5.0 for now
-                    vehicleNumber: "N/A", // Not available in Ride model
-                    vehicleInfo: ride?.vehicleType ?? "N/A",
+                    profileImage: posterImage,
+                    name: posterName,
+                    rating: rating,
+                    vehicleNumber: vehicleNumber,
+                    vehicleInfo: vehicleInfo,
                     buttonText: "Chat with Job Poster",
                     buttonIcon: Icons.chat_bubble_outline,
                     onButtonPressed: () {
@@ -70,20 +174,15 @@ class RideDetailsPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomJobDetailsCard(
-                    // Location details
-                    pickupLocation: ride?.pickupLocation ?? "N/A",
-                    dropoffLocation: ride?.dropoffLocation ?? "N/A",
-
-                    // Job information
-                    flightNumber: "N/A", // Not available in Ride model
+                    pickupLocation: pickupLocation,
+                    dropoffLocation: dropoffLocation,
+                    flightNumber: flightNumber,
                     dateTime: displayDateTime,
-                    vehicleType: ride?.vehicleType ?? "N/A",
-                    jobPoster: ride?.applicant?.driver?.name ?? "Unknown",
-                    company: ride?.applicant?.driver?.name ?? "Unknown",
-                    payment: ride?.paymentType ?? "N/A",
-                    amount: ride != null ? "\$${ride.paymentAmount}" : "N/A",
-
-                    // Optional: Custom colors
+                    vehicleType: vehicleType,
+                    jobPoster: posterName,
+                    company: posterName,
+                    payment: paymentType,
+                    amount: amount,
                     backgroundColor: const Color(0xFF1C1C1C),
                     borderColor: const Color(0xFF2A2A2A),
                     labelColor: Colors.grey,
@@ -98,23 +197,47 @@ class RideDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
                 CustomInfoBox(
-                  text: "N/A", // Special instructions not available in Ride model
+                  text: instruction,
                 ),
                 SizedBox(height: 10.h),
 
                 Divider(color: Colors.white38, thickness: 1.h),
                 SizedBox(height: 10.h),
+
+                // Dynamic Action Button based on rideStatus
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: CustomButton(
-                    text: "On My Way",
-                    backgroundColor: AppColors.orange100,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      Get.toNamed(Routes.onMyWayDetailsPage, arguments: ride);
-                    },
-                  ),
+                  child: Obx(() {
+                    String status = controller.currentRideStatus.value;
+                    String buttonText = "On My Way";
+                    String nextStatus = "ON_THE_WAY";
+                    bool isVisible = true;
+
+                    if (status == "ON_THE_WAY") {
+                      buttonText = "At the Location";
+                      nextStatus = "AT_THE_LOCATION";
+                    } else if (status == "AT_THE_LOCATION") {
+                      buttonText = "POB";
+                      nextStatus = "POB";
+                    } else if (status == "POB") {
+                      isVisible = false; // POB handled separately later
+                    } else if (status != "PENDING" && status != "") {
+                      isVisible = false;
+                    }
+
+                    if (!isVisible) return const SizedBox.shrink();
+
+                    return controller.isLoading.value
+                        ? const Center(child: CircularProgressIndicator(color: AppColors.orange100))
+                        : CustomButton(
+                            text: buttonText,
+                            backgroundColor: AppColors.orange100,
+                            textColor: Colors.white,
+                            onPressed: () => controller.updateStatus(id, nextStatus),
+                          );
+                  }),
                 ),
+
                 SizedBox(height: 20.h),
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),

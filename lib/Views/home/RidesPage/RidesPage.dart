@@ -1,8 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:moeb_26/Data/models/finish_rides_model.dart';
+import 'package:moeb_26/Data/models/my_rides_model.dart';
+import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/Utils/app_images.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
@@ -62,118 +65,25 @@ class Ridespage extends StatelessWidget {
                       SizedBox(height: 15.h),
 
                       /// CUSTOM TAB BAR
-                      Obx(
-                        () => Container(
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            color: const Color(0xff1A1A1A),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Row(
-                            children: List.generate(_tabs.length, (index) {
-                              bool isSelected = controller.selectedTab.value == index;
-                              return Expanded(
-                                child: GestureDetector(
-                                  onTap: () => controller.changeTab(index),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? AppColors.orange100
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(15.r),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        _tabs[index],
-                                        style: GoogleFonts.inter(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.grey,
-                                          fontSize: 14.sp,
-                                          fontWeight: isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.w400,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                      ),
+                      _buildTabBar(),
                       SizedBox(height: 15.h),
 
                       /// RIDES LIST (Based on selected tab)
                       Obx(() {
                         if (controller.isLoadingList.value) {
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 40.h),
-                              child: const CircularProgressIndicator(
-                                color: AppColors.orange100,
-                              ),
-                            ),
-                          );
+                          return _buildLoading();
                         }
 
-                        if (controller.currentRides.isEmpty) {
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 40.h),
-                              child: Text(
-                                "No rides found",
-                                style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                              ),
-                            ),
-                          );
+                        switch (controller.selectedTab.value) {
+                          case 0:
+                            return _buildUpcomingList();
+                          case 1:
+                            return _buildPastList();
+                          case 2:
+                            return _buildPendingList();
+                          default:
+                            return const SizedBox.shrink();
                         }
-
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: controller.currentRides.length,
-                          padding: EdgeInsets.only(bottom: 20.h),
-                          itemBuilder: (context, index) {
-                            final ride = controller.currentRides[index];
-
-                            // Safely extract properties
-                            final dateRaw = ride.date?.toString() ?? '';
-                            final timeRaw = ride.time;
-                            String displayDate = "$dateRaw $timeRaw";
-                            try {
-                              if (dateRaw.isNotEmpty) {
-                                DateTime parsed = DateTime.parse(dateRaw);
-                                displayDate =
-                                    "${parsed.year}-${parsed.month.toString().padLeft(2, '0')}-${parsed.day.toString().padLeft(2, '0')} $timeRaw";
-                              }
-                            } catch (_) {}
-
-                            return GestureDetector(
-                              // Logic in RidesPage.dart
-                              onTap: () {
-                                if (controller.selectedTab.value == 2) {
-                                  // Index 2 is "Pending"
-                                  Get.toNamed(Routes.requestUnderReview, arguments: ride);
-                                }
-                              },
-
-                              child: CustomJobCard(
-                                pickupPaymentType: ride.paymentType,
-                                dateTime: displayDate,
-                                vehicleType: ride.vehicleType,
-                                pickupLocation: ride.pickupLocation,
-                                dropoffLocation: ride.dropoffLocation,
-                                pickupAmount: ride.paymentAmount.toString(),
-                                driverName: ride.applicant?.driver?.name ?? 'Unknown',
-                                companyName: ride.applicant?.driver?.name ?? 'Unknown',
-                                vehicleTypeColor: VehicleTypeColors.sedan,
-                              ),
-                            );
-                          },
-                        );
                       }),
                     ],
                   ),
@@ -182,6 +92,209 @@ class Ridespage extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTabBar() {
+    return Obx(
+      () => Container(
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: const Color(0xff1A1A1A),
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Row(
+          children: List.generate(_tabs.length, (index) {
+            bool isSelected = controller.selectedTab.value == index;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () => controller.changeTab(index),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.orange100 : Colors.transparent,
+                    borderRadius: BorderRadius.circular(15.r),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _tabs[index],
+                      style: GoogleFonts.inter(
+                        color: isSelected ? Colors.white : Colors.grey,
+                        fontSize: 14.sp,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoading() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(top: 40.h),
+        child: const CircularProgressIndicator(color: AppColors.orange100),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(top: 40.h),
+        child: Text(
+          "No rides found",
+          style: TextStyle(color: Colors.white, fontSize: 16.sp),
+        ),
+      ),
+    );
+  }
+
+  // --- UPCOMING LIST ---
+  Widget _buildUpcomingList() {
+    if (controller.upcomingRides.isEmpty) return _buildEmptyState();
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: controller.upcomingRides.length,
+      padding: EdgeInsets.only(bottom: 20.h),
+      itemBuilder: (context, index) {
+        final UpcomingRideData ride = controller.upcomingRides[index];
+        return _buildRideCard(
+          ride: ride,
+          onTap: () => Get.toNamed(Routes.rideDetailsPage, arguments: ride),
+          date: ride.date,
+          time: ride.time,
+          pickup: ride.pickupLocation,
+          dropoff: ride.dropoffLocation,
+          vehicle: ride.vehicleType,
+          payment: ride.paymentType,
+          amount: ride.paymentAmount?.toString(),
+          name: ride.createdBy?.name,
+          email: ride.createdBy?.email,
+        );
+      },
+    );
+  }
+
+  // --- PAST LIST ---
+  Widget _buildPastList() {
+    if (controller.pastRides.isEmpty) return _buildEmptyState();
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: controller.pastRides.length,
+      padding: EdgeInsets.only(bottom: 20.h),
+      itemBuilder: (context, index) {
+        final FinishRideData ride = controller.pastRides[index];
+        return _buildRideCard(
+          ride: ride,
+          onTap: null, // No action for past rides
+          date: ride.date,
+          time: ride.time,
+          pickup: ride.pickupLocation,
+          dropoff: ride.dropoffLocation,
+          vehicle: ride.vehicleType,
+          payment: ride.paymentType,
+          amount: ride.paymentAmount?.toString(),
+          name: ride.createdBy?.name,
+          email: ride.createdBy?.email,
+        );
+      },
+    );
+  }
+
+  // --- PENDING LIST ---
+  Widget _buildPendingList() {
+    if (controller.pendingRides.isEmpty) return _buildEmptyState();
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: controller.pendingRides.length,
+      padding: EdgeInsets.only(bottom: 20.h),
+      itemBuilder: (context, index) {
+        final Ride ride = controller.pendingRides[index];
+        return _buildRideCard(
+          ride: ride,
+          onTap: () => Get.toNamed(Routes.requestUnderReview, arguments: ride),
+          date: ride.date?.toString(),
+          time: ride.time,
+          pickup: ride.pickupLocation,
+          dropoff: ride.dropoffLocation,
+          vehicle: ride.vehicleType,
+          payment: ride.paymentType,
+          amount: ride.paymentAmount.toString(),
+          name: ride.applicant?.driver?.name,
+          email: ride.applicant?.driver?.email,
+        );
+      },
+    );
+  }
+
+  // --- COMMON CARD BUILDER ---
+  Widget _buildRideCard({
+    required dynamic ride,
+    required VoidCallback? onTap,
+    String? date,
+    String? time,
+    String? pickup,
+    String? dropoff,
+    String? vehicle,
+    String? payment,
+    String? amount,
+    String? name,
+    String? email,
+  }) {
+    // Format Date and Time
+    String displayDateTime = "";
+    String dateStr = "";
+    if (date != null && date.isNotEmpty) {
+      try {
+        DateTime parsed = DateTime.parse(date);
+        dateStr = DateFormat('EEE, MMM dd').format(parsed);
+      } catch (_) {
+        dateStr = date;
+      }
+    }
+
+    String timeStr = time ?? "";
+    if (timeStr.contains(':')) {
+      try {
+        final parts = timeStr.split(':');
+        int hour = int.parse(parts[0]);
+        int minute = int.parse(parts[1].split(' ')[0]);
+        final period = hour >= 12 ? "PM" : "AM";
+        final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+        timeStr = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+      } catch (_) {}
+    }
+    displayDateTime = dateStr.isNotEmpty ? "$dateStr · $timeStr" : timeStr;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: CustomJobCard(
+        pickupPaymentType: payment ?? 'N/A',
+        dateTime: displayDateTime,
+        vehicleType: vehicle ?? 'N/A',
+        pickupLocation: pickup ?? 'N/A',
+        dropoffLocation: dropoff ?? 'N/A',
+        pickupAmount: amount ?? '0',
+        driverName: name ?? 'Unknown',
+        companyName: email ?? 'N/A',
+        vehicleTypeColor: (vehicle?.toLowerCase() == 'suv')
+            ? VehicleTypeColors.suv
+            : (vehicle?.toLowerCase() == 'van')
+                ? VehicleTypeColors.van
+                : VehicleTypeColors.sedan,
       ),
     );
   }

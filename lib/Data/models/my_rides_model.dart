@@ -70,6 +70,7 @@ class Ride {
   final String status;
   final DateTime? date;
   final String time;
+  final String? rideStatus;
   final Applicant? applicant;
 
   Ride({
@@ -82,6 +83,7 @@ class Ride {
     required this.status,
     this.date,
     required this.time,
+    this.rideStatus,
     this.applicant,
   });
 
@@ -96,6 +98,7 @@ class Ride {
           : 0,
       paymentType: json['paymentType'] ?? '',
       status: json['status'] ?? '',
+      rideStatus: json['rideStatus'],
       date: json['date'] != null
           ? DateTime.tryParse(json['date'].toString())
           : null,
