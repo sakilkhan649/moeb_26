@@ -84,6 +84,20 @@ class ChatDetailPage extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+          SizedBox(width: 8.w),
+          // সকেট স্ট্যাটাস ইন্ডিকেটর
+          Obx(
+            () => Container(
+              width: 8.w,
+              height: 8.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: controller.socketService.isConnected.value
+                    ? Colors.green
+                    : Colors.red,
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -74,6 +74,9 @@ class SocketService extends GetxService with WidgetsBindingObserver {
     socket.onConnect((_) {
       isConnected.value = true;
       debugPrint('✅ SocketService: Connected to server');
+      debugPrint(
+        '🔗 SocketService: Transport: ${socket.io.engine?.transport?.name}',
+      );
 
       // Re-join room if we were in one before disconnection
       if (_currentRoomId != null) {
@@ -84,13 +87,17 @@ class SocketService extends GetxService with WidgetsBindingObserver {
       }
     });
 
-    socket.onDisconnect((_) {
+    socket.onDisconnect((reason) {
       isConnected.value = false;
-      debugPrint('❌ SocketService: Disconnected from server-------');
+      debugPrint('❌ SocketService: Disconnected from server. Reason: $reason');
     });
 
     socket.onConnectError((err) {
       debugPrint('⚠️ SocketService: Connect Error: $err');
+    });
+
+    socket.on('connect_timeout', (data) {
+      debugPrint('⏰ SocketService: Connect Timeout: $data');
     });
 
     socket.onError((err) {
