@@ -26,16 +26,37 @@ class ChatDetailController extends GetxController {
   }
 
   void setupSocket() {
+    debugPrint(
+      '🔄 ChatDetailController: Setting up socket for chatId: ${chat.id}',
+    );
     socketService.joinRoom(chat.id);
 
     // Listen for new messages
     socketService.on('NEW_MESSAGE', (data) {
+      debugPrint('📥 ChatDetailController: Received NEW_MESSAGE event');
+      debugPrint('📦 ChatDetailController: Data: $data');
+
       if (data != null) {
-        final newMessage = ChatMessage.fromJson(data);
-        // Only add if it belongs to this chat and isn't already here
-        if (newMessage.chatId == chat.id &&
-            !messages.any((m) => m.id == newMessage.id)) {
-          messages.insert(0, newMessage);
+        try {
+          final newMessage = ChatMessage.fromJson(data);
+          debugPrint(
+            '✅ ChatDetailController: Parsed message ID: ${newMessage.id}',
+          );
+
+          // Only add if it belongs to this chat and isn't already here
+          if (newMessage.chatId == chat.id &&
+              !messages.any((m) => m.id == newMessage.id)) {
+            messages.insert(0, newMessage);
+            debugPrint('➕ ChatDetailController: Message added to UI list');
+          } else {
+            debugPrint(
+              'ℹ️ ChatDetailController: Message ignored (different chatId or already exists)',
+            );
+          }
+        } catch (e) {
+          debugPrint(
+            '❌ ChatDetailController: Error parsing NEW_MESSAGE data: $e',
+          );
         }
       }
     });

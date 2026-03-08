@@ -60,13 +60,29 @@ class SocketService extends GetxService {
   }
 
   void joinRoom(String roomId) {
-    socket.emit('join-room', roomId);
-    debugPrint('➡️ Joined room: $roomId');
+    if (socket.connected) {
+      socket.emit('join-room', roomId);
+      debugPrint('➡️ SocketService: Emitted join-room for roomId: $roomId');
+    } else {
+      debugPrint(
+        '⚠️ SocketService: Cannot join room, socket not connected. RoomId: $roomId',
+      );
+      // Reconnect if not connected
+      socket.connect();
+      socket.once('connect', (_) {
+        socket.emit('join-room', roomId);
+        debugPrint(
+          '➡️ SocketService: Connected and then emitted join-room for roomId: $roomId',
+        );
+      });
+    }
   }
 
   void leaveRoom(String roomId) {
-    socket.emit('leave-room', roomId);
-    debugPrint('⬅️ Left room: $roomId');
+    if (socket.connected) {
+      socket.emit('leave-room', roomId);
+      debugPrint('⬅️ SocketService: Emitted leave-room for roomId: $roomId');
+    }
   }
 
   void on(String event, Function(dynamic) handler) {
