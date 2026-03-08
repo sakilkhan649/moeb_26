@@ -21,40 +21,52 @@ class SocketService extends GetxService {
 
     // Extract socket URL from ApiConstants.baseUrl
     // baseUrl: 'http://10.10.7.33:5002/api/v1' -> socketUrl: 'http://10.10.7.33:5002'
-    String socketUrl = ApiConstants.baseUrl.replaceAll('/api/v1', '');
+    String baseUrl = ApiConstants.baseUrl;
+    String socketUrl = baseUrl.replaceAll('/api/v1', '');
+
+    debugPrint('🌐 SocketService: Initializing socket on: $socketUrl');
 
     socket = IO.io(socketUrl, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
-      'reconnection': true, // অটো রিকানেকশন অন রাখা
-      'reconnectionAttempts': 10, // রিকানেক্ট ট্রাই করার সংখ্যা বাড়ানো হলো
-      'reconnectionDelay':
-          1000, // রিকানেকশন শুরু করার সময় কমানো হলো (১ সেকেন্ড)
-      'reconnectionDelayMax': 5000, // সর্বোচ্চ ৫ সেকেন্ড গ্যাপ দিবে
-      'randomizationFactor':
-          0.5, // কানেকশন ট্রাইয়ের সময় রেন্ডমাইজ করবে যাতে সার্ভারে চাপ না পড়ে
-      'timeout':
-          20000, // ২০ সেকেন্ড টাইমআউট (ডিফল্ট ২০০০ থাকে অনেক সময় যা কম হতে পারে)
+      'reconnection': true,
+      'reconnectionAttempts': 10,
+      'reconnectionDelay': 1000,
+      'reconnectionDelayMax': 5000,
+      'randomizationFactor': 0.5,
+      'timeout': 20000,
       'extraHeaders': {'Authorization': 'Bearer $token'},
     });
 
     socket.onConnect((_) {
       isConnected.value = true;
-      debugPrint('✅ Socket Connected');
+      debugPrint('✅ SocketService: Connected to server');
     });
 
     socket.onDisconnect((_) {
       isConnected.value = false;
-      debugPrint('❌ Socket Disconnected');
+      debugPrint('❌ SocketService: Disconnected from server');
     });
 
     socket.onConnectError((err) {
-      debugPrint('⚠️ Socket Connect Error: $err');
+      debugPrint('⚠️ SocketService: Connect Error: $err');
     });
 
     socket.onError((err) {
-      debugPrint('🚨 Socket Error: $err');
+      debugPrint('🚨 SocketService: Error: $err');
     });
+
+    // Reconnection events for debugging
+    socket.onReconnect((_) => debugPrint('🔄 SocketService: Reconnected'));
+    socket.onReconnectAttempt(
+      (count) => debugPrint('🔄 SocketService: Reconnect attempt #$count'),
+    );
+    socket.onReconnectError(
+      (err) => debugPrint('⚠️ SocketService: Reconnect error: $err'),
+    );
+    socket.onReconnectFailed(
+      (_) => debugPrint('❌ SocketService: Reconnect failed'),
+    );
 
     socket.connect();
   }

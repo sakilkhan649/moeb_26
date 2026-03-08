@@ -91,9 +91,16 @@ class ChatDetailController extends GetxController {
       messages.insert(0, tempMessage);
       messageController.clear();
 
+      debugPrint(
+        '📤 ChatDetailController: Sending message to API for chatId: ${chat.id}',
+      );
+
       try {
         final sentMessage = await socketRepo.sendMessage(chat.id, text);
         if (sentMessage != null) {
+          debugPrint(
+            '✅ ChatDetailController: Message sent successfully, API ID: ${sentMessage.id}',
+          );
           // ২. টেম্পোরারি মেসেজটি সরিয়ে সার্ভার থেকে আসা আসল মেসেজটি যোগ করা
           int index = messages.indexWhere((m) => m.id == tempId);
           if (index != -1) {
@@ -103,6 +110,7 @@ class ChatDetailController extends GetxController {
           }
         }
       } catch (e) {
+        debugPrint('❌ ChatDetailController: Error sending message: $e');
         // এরর হলে টেম্পোরারি মেসেজটি রিমুভ করা
         messages.removeWhere((m) => m.id == tempId);
         Get.snackbar('Error', 'Failed to send message');
