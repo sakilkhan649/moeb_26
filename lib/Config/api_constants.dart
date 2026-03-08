@@ -46,6 +46,7 @@ class ApiConstants {
   static const String chats= '/chats';
   static const String chatsId= '/chats/{{chatId}}';
   static const String messages= '/messages/{{chatId}}';
+  static const String jobReview= '/jobs/{jobId}/review';
 
 
 }

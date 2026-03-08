@@ -114,13 +114,32 @@ class RideProgressWayLocation extends StatelessWidget {
 
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: CustomButton(
-                    text: "Cancel Ride",
-                    backgroundColor: AppColors.orange100,
-                    textColor: Colors.black,
-                    onPressed: () {
-                      if (job?.id != null) {
-                        _showDeleteDialog(job!.id!);
+                  child: Builder(
+                    builder: (context) {
+                      final status = job?.rideStatus?.toUpperCase() ?? "";
+                      
+                      if (status == "POB" || status == "FINISHED") {
+                        // Ride is either in final stage or finished, show Review button
+                        return CustomButton(
+                          text: "Review Driver",
+                          backgroundColor: AppColors.orange100,
+                          textColor: Colors.black,
+                          onPressed: () {
+                            Get.toNamed(Routes.rideCompletedPage, arguments: job);
+                          },
+                        );
+                      } else {
+                        // Ride can still be cancelled
+                        return CustomButton(
+                          text: "Cancel Ride",
+                          backgroundColor: AppColors.orange100,
+                          textColor: Colors.black,
+                          onPressed: () {
+                            if (job?.id != null) {
+                              _showDeleteDialog(job!.id!);
+                            }
+                          },
+                        );
                       }
                     },
                   ),

@@ -149,4 +149,18 @@ class JobRepo {
       {"rideStatus": rideStatus},
     );
   }
+
+  Future<Response> submitReview({
+    required String jobId,
+    required int rating,
+    String? comment,
+  }) async {
+    return await apiClient.postData(
+      ApiConstants.jobReview.replaceAll('{jobId}', jobId),
+      {
+        "rating": rating,
+        if (comment != null && comment.isNotEmpty) "comment": comment,
+      },
+    );
+  }
 }
