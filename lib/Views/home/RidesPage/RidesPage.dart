@@ -18,7 +18,7 @@ import 'Controller/Rides_controller.dart';
 class Ridespage extends StatelessWidget {
   Ridespage({super.key});
 
-  final RidesController controller = Get.put(RidesController());
+  final RidesController controller = Get.find<RidesController>();
   final List<String> _tabs = ["Upcoming", "Past", "Pending"];
 
   @override

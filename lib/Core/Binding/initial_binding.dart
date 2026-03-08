@@ -16,6 +16,11 @@ import '../../Services/ratings_feedback_service.dart';
 import '../../Services/user_service.dart';
 import '../../Views/auth/Splash_Screen/controller/splashcontroller.dart';
 
+import '../../Views/home/ChatPage/Controller/Chat_controller.dart';
+import '../../Views/home/Bottom_NabBar/Controller/bottom_nabbar_controller.dart';
+import '../../Views/home/RidesPage/Controller/Rides_controller.dart';
+import '../../Views/home/JobOfferPage/My_jobs/Controller/My_job_controller.dart';
+
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
@@ -43,5 +48,11 @@ class InitialBinding extends Bindings {
     );
 
     Get.lazyPut(() => SplashScreenController());
+
+    // Controllers
+    Get.lazyPut(() => NavigationController());
+    Get.lazyPut(() => BookingController());
+    Get.lazyPut(() => RidesController());
+    Get.lazyPut(() => ChatController());
   }
 }

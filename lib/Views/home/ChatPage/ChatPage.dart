@@ -11,7 +11,7 @@ import 'Model/Chat_model.dart';
 class Chatpage extends StatelessWidget {
   Chatpage({super.key});
 
-  final ChatController controller = Get.put(ChatController());
+  final ChatController controller = Get.find<ChatController>();
   final UserService userService = Get.find();
 
   @override
@@ -81,46 +81,56 @@ class Chatpage extends StatelessWidget {
 
               // ── Chat List ──
               Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (controller.filteredChats.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.chat_bubble_outline_rounded,
-                            color: Colors.grey.withOpacity(0.4),
-                            size: 48.sp,
+                child: RefreshIndicator(
+                  onRefresh: controller.fetchChats,
+                  color: const Color(0xffD4A843),
+                  backgroundColor: const Color(0xff1A1A1A),
+                  child: Obx(() {
+                    if (controller.isLoading.value && controller.chats.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (controller.filteredChats.isEmpty) {
+                      return SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Container(
+                          height: 0.6.sh,
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.chat_bubble_outline_rounded,
+                                color: Colors.grey.withOpacity(0.4),
+                                size: 48.sp,
+                              ),
+                              SizedBox(height: 12.h),
+                              Text(
+                                'No messages found',
+                                style: GoogleFonts.inter(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 12.h),
-                          Text(
-                            'No messages found',
-                            style: GoogleFonts.inter(
-                              color: Colors.grey,
-                              fontSize: 14.sp,
-                            ),
-                          ),
-                        ],
+                        ),
+                      );
+                    }
+                    return ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: controller.filteredChats.length,
+                      separatorBuilder: (context, index) => Divider(
+                        color: Colors.grey.withOpacity(0.15),
+                        height: 1.h,
+                        thickness: 0.5.h,
                       ),
+                      itemBuilder: (context, index) {
+                        final chat = controller.filteredChats[index];
+                        return _buildChatTile(chat);
+                      },
                     );
-                  }
-                  return ListView.separated(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: controller.filteredChats.length,
-                    separatorBuilder: (context, index) => Divider(
-                      color: Colors.grey.withOpacity(0.15),
-                      height: 1.h,
-                      thickness: 0.5.h,
-                    ),
-                    itemBuilder: (context, index) {
-                      final chat = controller.filteredChats[index];
-                      return _buildChatTile(chat);
-                    },
-                  );
-                }),
+                  }),
+                ),
               ),
             ],
           ),

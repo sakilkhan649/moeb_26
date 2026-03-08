@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../../RidesPage/Controller/Rides_controller.dart';
 import '../../JobOfferPage/My_jobs/Controller/My_job_controller.dart';
+import '../../ChatPage/Controller/Chat_controller.dart';
 
 class NavigationController extends GetxController {
   var currentIndex = 0.obs;
@@ -19,13 +20,17 @@ class NavigationController extends GetxController {
   void changeIndex(int index) {
     currentIndex.value = index;
     if (index == 0) { // Index 0 is JobOfferPage
-      if (Get.isRegistered<BookingController>()) {
+      try {
         Get.find<BookingController>().fetchJobOffers(isRefresh: true);
-      }
+      } catch (_) {}
     } else if (index == 1) { // Index 1 is RidesPage
-      if (Get.isRegistered<RidesController>()) {
+      try {
         Get.find<RidesController>().refreshCurrentTab();
-      }
+      } catch (_) {}
+    } else if (index == 2) { // Index 2 is ChatPage
+      try {
+        Get.find<ChatController>().fetchChats();
+      } catch (_) {}
     }
   }
 }
