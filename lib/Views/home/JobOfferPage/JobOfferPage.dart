@@ -27,9 +27,7 @@ class _JobofferpageState extends State<Jobofferpage> {
   final TextEditingController specialInstructionsController =
       TextEditingController();
 
-  final BookingController controller = Get.isRegistered<BookingController>()
-      ? Get.find<BookingController>()
-      : Get.put(BookingController());
+  final BookingController controller = Get.find<BookingController>();
   final ScrollController scrollController = ScrollController();
 
   @override

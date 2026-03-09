@@ -14,7 +14,7 @@ class Dealspage extends StatelessWidget {
   Dealspage({super.key});
 
   // Initialize the controller
-  final DealsController controller = Get.put(DealsController());
+  final DealsController controller = Get.find<DealsController>();
 
   @override
   Widget build(BuildContext context) {
