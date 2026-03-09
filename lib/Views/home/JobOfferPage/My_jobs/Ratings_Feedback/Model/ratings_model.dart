@@ -35,6 +35,7 @@ class Review {
   final String reviewerName;
   final String reviewerImage;
   final DateTime createdAt;
+  final String? jobId;
 
   Review({
     required this.id,
@@ -43,18 +44,20 @@ class Review {
     required this.reviewerName,
     required this.reviewerImage,
     required this.createdAt,
+    this.jobId,
   });
 
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
-      id: json['_id'] ?? '',
+      id: json['_id'] ?? json['jobId'] ?? '',
       rating: json['rating'] ?? 0,
       comment: json['comment'] ?? '',
-      reviewerName: json['user']?['name'] ?? 'User',
-      reviewerImage: json['user']?['profilePicture'] ?? '',
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
+      reviewerName: json['reviewer']?['name'] ?? 'User',
+      reviewerImage: json['reviewer']?['profilePicture'] ?? '',
+      createdAt: json['reviewedAt'] != null
+          ? DateTime.parse(json['reviewedAt'])
           : DateTime.now(),
+      jobId: json['jobId'],
     );
   }
 }
