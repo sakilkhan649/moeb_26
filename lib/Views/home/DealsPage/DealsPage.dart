@@ -24,56 +24,66 @@ class Dealspage extends StatelessWidget {
         subtitle: 'ELITE NETWORK EXCLUSIVE SAVINGS',
         notificationCount: 3,
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: Color(0xffF1A107)),
-          );
-        }
+      body: RefreshIndicator(
+        onRefresh: () => controller.fetchDeals(),
+        color: const Color(0xffF1A107),
+        child: Obx(() {
+          if (controller.isLoading.value && controller.dealsList.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xffF1A107)),
+            );
+          }
 
-        // Handle empty state
-        if (controller.dealsList.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Empty State Box Icon (Placeholder wrapper)
-                Container(
-                  padding: EdgeInsets.all(40.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xff1C1C1C),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.inventory_2_outlined,
-                    color: Colors.grey[700],
-                    size: 60.sp,
-                  ),
+          // Handle empty state
+          if (controller.dealsList.isEmpty) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Container(
+                height: 600.h, // Sufficient height for scroll
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Empty State Box Icon (Placeholder wrapper)
+                    Container(
+                      padding: EdgeInsets.all(40.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xff1C1C1C),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.inventory_2_outlined,
+                        color: Colors.grey[700],
+                        size: 60.sp,
+                      ),
+                    ),
+                    SizedBox(height: 24.h),
+                    Text(
+                      "No deals at this time",
+                      style: GoogleFonts.inter(
+                        color: Colors.grey[600],
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 24.h),
-                Text(
-                  "No deals at this time",
-                  style: GoogleFonts.inter(
-                    color: Colors.grey[600],
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
+              ),
+            );
+          }
 
-        // Handle list of deals
-        return ListView.builder(
-          padding: EdgeInsets.fromLTRB(20.w, 10.w, 20.w, 10.w),
-          itemCount: controller.dealsList.length,
-          itemBuilder: (context, index) {
-            final deal = controller.dealsList[index];
-            return DealsCard(deal: deal, controller: controller);
-          },
-        );
-      }),
+          // Handle list of deals
+          return ListView.builder(
+            padding: EdgeInsets.fromLTRB(20.w, 10.w, 20.w, 10.w),
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: controller.dealsList.length,
+            itemBuilder: (context, index) {
+              final deal = controller.dealsList[index];
+              return DealsCard(deal: deal, controller: controller);
+            },
+          );
+        }),
+      ),
     );
   }
 }

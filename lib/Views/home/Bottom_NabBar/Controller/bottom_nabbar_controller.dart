@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../../RidesPage/Controller/Rides_controller.dart';
 import '../../JobOfferPage/My_jobs/Controller/My_job_controller.dart';
 import '../../ChatPage/Controller/Chat_controller.dart';
+import '../../DealsPage/Controller/Deals_controller.dart';
 
 class NavigationController extends GetxController {
   var currentIndex = 0.obs;
@@ -30,6 +31,12 @@ class NavigationController extends GetxController {
     } else if (index == 2) { // Index 2 is ChatPage
       try {
         Get.find<ChatController>().fetchChats();
+      } catch (_) {}
+    } else if (index == 4) { // Index 4 is DealsPage
+      try {
+        if (Get.isRegistered<DealsController>()) {
+          Get.find<DealsController>().fetchDeals();
+        }
       } catch (_) {}
     }
   }
