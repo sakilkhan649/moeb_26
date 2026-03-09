@@ -591,7 +591,11 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                         if (status == 'ASSIGNED' || status == 'COMPLETED')
                           GestureDetector(
                             onTap: () {
-                              Get.to(RideProgressWayLocation(), arguments: job);
+                              controller.viewLoading[job.id ?? ""] = true;
+                              Get.to(RideProgressWayLocation(), arguments: job)
+                                  ?.then((_) {
+                                controller.viewLoading[job.id ?? ""] = false;
+                              });
                             },
                             child: Container(
                               width: double.infinity,
@@ -604,14 +608,28 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                 borderRadius: BorderRadius.circular(16.r),
                               ),
                               child: Center(
-                                child: Text(
-                                  "View",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                child: Obx(() {
+                                  final isLoading =
+                                      controller.viewLoading[job.id ?? ""] ==
+                                          true;
+                                  return isLoading
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Text(
+                                          "View",
+                                          style: GoogleFonts.inter(
+                                            color: Colors.white,
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        );
+                                }),
                               ),
                             ),
                           )
@@ -635,14 +653,29 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                       borderRadius: BorderRadius.circular(16.r),
                                     ),
                                     child: Center(
-                                      child: Text(
-                                        "Reject",
-                                        style: GoogleFonts.inter(
-                                          color: Colors.black,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                                      child: Obx(() {
+                                        final isLoading = controller
+                                                .rejectLoading[job.id ?? ""] ==
+                                            true;
+                                        return isLoading
+                                            ? const SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  color: Colors.black,
+                                                ),
+                                              )
+                                            : Text(
+                                                "Reject",
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.black,
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              );
+                                      }),
                                     ),
                                   ),
                                 ),
@@ -665,14 +698,29 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                       borderRadius: BorderRadius.circular(16.r),
                                     ),
                                     child: Center(
-                                      child: Text(
-                                        "Approve",
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                                      child: Obx(() {
+                                        final isLoading = controller
+                                                .approveLoading[job.id ?? ""] ==
+                                            true;
+                                        return isLoading
+                                            ? const SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  color: Colors.white,
+                                                ),
+                                              )
+                                            : Text(
+                                                "Approve",
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.white,
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              );
+                                      }),
                                     ),
                                   ),
                                 ),

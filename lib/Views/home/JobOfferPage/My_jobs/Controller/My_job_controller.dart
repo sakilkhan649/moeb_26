@@ -21,6 +21,11 @@ class BookingController extends GetxController {
 
   RxList<JobData> myJobsList = <JobData>[].obs;
   RxList<Job> jobOffersList = <Job>[].obs;
+  
+  // Per-button loading states
+  final approveLoading = <String, bool>{}.obs;
+  final rejectLoading = <String, bool>{}.obs;
+  final viewLoading = <String, bool>{}.obs;
 
   @override
   void onInit() {
@@ -159,6 +164,7 @@ class BookingController extends GetxController {
   Future<void> rejectApplicant({required String jobId}) async {
     try {
       isLoadingList.value = true;
+      rejectLoading[jobId] = true;
       final response = await _jobRepo.rejectApplicant(jobId: jobId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Refresh the list after rejection
@@ -182,12 +188,14 @@ class BookingController extends GetxController {
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
       isLoadingList.value = false;
+      rejectLoading[jobId] = false;
     }
   }
 
   Future<void> approveApplicant({required String jobId}) async {
     try {
       isLoadingList.value = true;
+      approveLoading[jobId] = true;
       final response = await _jobRepo.approveApplicant(jobId: jobId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Refresh the list after approval
@@ -211,6 +219,7 @@ class BookingController extends GetxController {
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
       isLoadingList.value = false;
+      approveLoading[jobId] = false;
     }
   }
 
