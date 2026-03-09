@@ -27,6 +27,7 @@ class MarketplaceController extends GetxController {
   final TextEditingController descriptionController = TextEditingController();
 
   final Rxn<File> selectedImage = Rxn<File>();
+  final RxString existingImagePath = "".obs;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -136,7 +137,7 @@ class MarketplaceController extends GetxController {
           backgroundColor: const Color(0xff1A1A1A),
           colorText: Colors.white,
         );
-        _clearFields();
+        clearFields();
         fetchItems(); // Refresh the general list
 
         // Also refresh My Items list if that controller is active
@@ -166,12 +167,13 @@ class MarketplaceController extends GetxController {
     }
   }
 
-  void _clearFields() {
+  void clearFields() {
     titleController.clear();
     priceController.clear();
     locationController.clear();
     descriptionController.clear();
     selectedImage.value = null;
+    existingImagePath.value = "";
     selectedCondition.value = "New";
   }
 
@@ -181,18 +183,19 @@ class MarketplaceController extends GetxController {
     String location,
     String condition,
     String description,
+    String? imagePath,
   ) {
     titleController.text = title;
     priceController.text = price;
     locationController.text = location;
     descriptionController.text = description;
+    existingImagePath.value = imagePath ?? "";
     if (condition.isNotEmpty && conditions.contains(condition)) {
       selectedCondition.value = condition;
     } else {
       selectedCondition.value = "Used";
     }
-    selectedImage.value =
-        null; // Can't easily prefill remote file into File system without download
+    selectedImage.value = null;
   }
 
   @override

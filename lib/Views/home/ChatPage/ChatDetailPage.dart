@@ -127,7 +127,7 @@ class ChatDetailPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: BoxDecoration(
                   color: isMe
-                      ? const Color(0xffD4A843)
+                      ? const Color(0xff1A1A1A)
                       : const Color(0xff1A1A1A),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16.r),
@@ -135,14 +135,12 @@ class ChatDetailPage extends StatelessWidget {
                     bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
                     bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
                   ),
-                  border: isMe
-                      ? null
-                      : Border.all(color: const Color(0xff333333)),
+                  border:Border.all(color: const Color(0xff333333)),
                 ),
                 child: Text(
                   message.text,
                   style: GoogleFonts.inter(
-                    color: isMe ? Colors.black : Colors.white,
+                    color:Colors.white,
                     fontSize: 14.sp,
                     height: 1.4,
                     fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
