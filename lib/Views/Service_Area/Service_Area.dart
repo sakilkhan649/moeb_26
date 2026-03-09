@@ -6,17 +6,14 @@ import 'Controller/serviceController.dart';
 
 
 class ServiceArea extends StatelessWidget {
-  const ServiceArea({super.key});
+  ServiceArea({super.key});
+
+  final ServiceAreaController controller = Get.put(ServiceAreaController());
 
   @override
   Widget build(BuildContext context) {
-    // Inject Controller
-    Get.put(ServiceAreaController());
-///main
     return Scaffold(
-      backgroundColor: const Color(
-        0xFF424242,
-      ), // Dark grey background similar to screenshot
+      backgroundColor: const Color(0xFF424242),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
@@ -29,8 +26,7 @@ class ServiceArea extends StatelessWidget {
                   Text(
                     "Service Area",
                     style: GoogleFonts.inter(
-                      color:
-                          Colors.grey, // Light grey for header "Service Area"
+                      color: Colors.grey,
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
                     ),
@@ -38,7 +34,7 @@ class ServiceArea extends StatelessWidget {
                   GestureDetector(
                     onTap: () => Get.back(),
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: Colors.grey.withOpacity(0.2),
                         shape: BoxShape.circle,
@@ -54,103 +50,104 @@ class ServiceArea extends StatelessWidget {
               ),
               SizedBox(height: 10.h),
               Expanded(
-                child: GetBuilder<ServiceAreaController>(
-                  builder: (ctrl) {
-                    return ListView.separated(
-                      itemCount: ctrl.serviceAreas.length,
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 1.h),
-                      itemBuilder: (context, index) {
-                        final item = ctrl.serviceAreas[index];
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // The Header (e.g., Florida, Texas)
-                            GestureDetector(
-                              onTap: () {
-                                // Allow toggling even if locked, as per screenshot showing locked items expanded
-                                ctrl.toggleExpansion(index);
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 15.w,
-                                  vertical: 15.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors
-                                      .black, // darker background for the item
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  border: Border.all(color: Color(0xFF364153)),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          item.title,
-                                          style: GoogleFonts.inter(
-                                            color: Colors.grey, // Text color
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        if (item.isLocked) ...[
-                                          SizedBox(width: 10.w),
-                                          Icon(
-                                            Icons.lock_outline,
-                                            color: Colors.grey,
-                                            size: 18.sp,
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                    Icon(
-                                      item.isExpanded
-                                          ? Icons.keyboard_arrow_down
-                                          : Icons.keyboard_arrow_up,
-                                      color: Colors.white,
-                                    ),
-                                  ],
-                                ),
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: Color(0xFFF1A107)),
+                    );
+                  }
+                  if (controller.serviceAreas.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "No service areas found",
+                        style: GoogleFonts.inter(color: Colors.white),
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                    itemCount: controller.serviceAreas.length,
+                    separatorBuilder: (context, index) => SizedBox(height: 1.h),
+                    itemBuilder: (context, index) {
+                      final item = controller.serviceAreas[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () => controller.toggleExpansion(index),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 15.w,
+                                vertical: 15.h,
                               ),
-                            ),
-                            // The Body (Cities) - Only shown if expanded
-                            if (item.isExpanded)
-                              Container(
-                                margin: EdgeInsets.only(top: 10.h),
-                                padding: EdgeInsets.all(15.w),
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  // No border for the body as per screenshot
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: item.cities.map((city) {
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 6.h,
-                                      ),
-                                      child: Text(
-                                        city,
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(8.r),
+                                border: Border.all(color: const Color(0xFF364153)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        item.areaName,
                                         style: GoogleFonts.inter(
                                           color: Colors.grey,
-                                          fontSize: 15.sp,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                    );
-                                  }).toList(),
-                                ),
+                                      if (item.status != 'ACTIVE') ...[
+                                        SizedBox(width: 10.w),
+                                        Icon(
+                                          Icons.lock_outline,
+                                          color: Colors.grey,
+                                          size: 18.sp,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                  Icon(
+                                    item.isExpanded
+                                        ? Icons.keyboard_arrow_down
+                                        : Icons.keyboard_arrow_up,
+                                    color: Colors.white,
+                                  ),
+                                ],
                               ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
+                            ),
+                          ),
+                          if (item.isExpanded)
+                            Container(
+                              margin: EdgeInsets.only(top: 10.h),
+                              padding: EdgeInsets.all(15.w),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 6.h),
+                                    child: Text(
+                                      item.city,
+                                      style: GoogleFonts.inter(
+                                        color: Colors.grey,
+                                        fontSize: 15.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  );
+                }),
               ),
             ],
           ),

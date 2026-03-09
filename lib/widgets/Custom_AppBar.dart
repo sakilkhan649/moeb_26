@@ -50,10 +50,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 4.w,
       title: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           if (logoPath != null && logoPath!.isNotEmpty) ...[
-            Image.asset(logoPath!, height: 70.h, width: 150.w),
+            Image.asset(logoPath!, height: 70.h, width: 130.w),
             SizedBox(width: 12.w),
           ],
           Expanded(
@@ -94,216 +93,210 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        Row(
-          children: [
-            Obx(
-              () => GestureDetector(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Icon(
-                      Icons.notifications_outlined,
-                      size: 30.sp,
-                      color: Colors.white,
+        Obx(
+          () => GestureDetector(
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  Icons.notifications_outlined,
+                  size: 30.sp,
+                  color: Colors.white,
+                ),
+                if (_notificationController.unreadCount > 0)
+                  Positioned(
+                    top: -2.w,
+                    right: -1.w,
+                    child: Container(
+                      width: 15.w,
+                      height: 15.w,
+                      decoration: const BoxDecoration(
+                        color: Colors.orange,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          _notificationController.unreadCount > 99
+                              ? '99+'
+                              : '${_notificationController.unreadCount}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                    if (_notificationController.unreadCount > 0)
-                      Positioned(
-                        top: -2.w,
-                        right: -1.w,
-                        child: Container(
-                          width: 15.w,
-                          height: 15.w,
-                          decoration: const BoxDecoration(
-                            color: Colors.orange,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              _notificationController.unreadCount > 99
-                                  ? '99+'
-                                  : '${_notificationController.unreadCount}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                onTap:
-                    onNotificationTap ??
-                    () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CustomNotificationPopup();
-                        },
-                      );
-                    },
-              ),
-            ),
-            SizedBox(width: 10.w),
-            PopupMenuButton<int>(
-              icon: Icon(
-                Icons.person_outline,
-                size: 30.sp,
-                color: Colors.white,
-              ),
-              color: Color(0xFF1E1E1E), // Dark background
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                side: BorderSide(color: Color(0xFF364153)),
-              ),
-              onSelected: (item) => handleMenuItemSelection(item),
-              itemBuilder: (context) => [
-                PopupMenuItem<int>(
-                  value: 0,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.person_outline,
-                        color: Colors.white,
-                        size: 24.sp,
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        'Account',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Spacer(),
-                      Icon(
-                        CupertinoIcons.chevron_forward,
-                        size: 20.sp,
-                        color: Colors.white,
-                      ),
-                    ],
                   ),
-                ),
-                PopupMenuItem<int>(
-                  value: 1,
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        AppIcons.job_offer_icon,
-                        width: 24.sp,
-                        height: 24.sp,
-                        colorFilter: ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        'My Jobs',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Spacer(),
-                      Icon(
-                        CupertinoIcons.chevron_forward,
-                        size: 20.sp,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-                PopupMenuItem<int>(
-                  value: 2,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        color: Colors.white,
-                        size: 24.sp,
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        'Service Area',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Spacer(),
-                      Icon(
-                        CupertinoIcons.chevron_forward,
-                        size: 20.sp,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-                PopupMenuItem<int>(
-                  value: 4,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.shopping_bag_outlined,
-                        color: Colors.white,
-                        size: 24.sp,
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        'My Items',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Spacer(),
-                      Icon(
-                        CupertinoIcons.chevron_forward,
-                        size: 20.sp,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-                PopupMenuItem<int>(
-                  value: 3,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.logout_outlined,
-                        color: Colors.white,
-                        size: 24.sp,
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        'Logout',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Spacer(),
-                      Icon(
-                        CupertinoIcons.chevron_forward,
-                        size: 20.sp,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
               ],
-              offset: const Offset(0, 50),
             ),
-            SizedBox(width: 16.w),
-          ],
+            onTap:
+                onNotificationTap ??
+                () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomNotificationPopup();
+                    },
+                  );
+                },
+          ),
         ),
+        SizedBox(width: 10.w),
+        PopupMenuButton<int>(
+          icon: Icon(Icons.person_outline, size: 30.sp, color: Colors.white),
+          color: const Color(0xFF1E1E1E), // Dark background
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            side: const BorderSide(color: Color(0xFF364153)),
+          ),
+          onSelected: (item) => handleMenuItemSelection(item),
+          itemBuilder: (context) => [
+            PopupMenuItem<int>(
+              value: 0,
+              child: Row(
+                children: [
+                  Icon(Icons.person_outline, color: Colors.white, size: 24.sp),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      'Account',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.chevron_forward,
+                    size: 20.sp,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<int>(
+              value: 1,
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    AppIcons.job_offer_icon,
+                    width: 24.sp,
+                    height: 24.sp,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      'My Jobs',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.chevron_forward,
+                    size: 20.sp,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<int>(
+              value: 2,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.location_on_outlined,
+                    color: Colors.white,
+                    size: 24.sp,
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      'Service Area',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.chevron_forward,
+                    size: 20.sp,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<int>(
+              value: 4,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.shopping_bag_outlined,
+                    color: Colors.white,
+                    size: 24.sp,
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      'My Items',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.chevron_forward,
+                    size: 20.sp,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<int>(
+              value: 3,
+              child: Row(
+                children: [
+                  Icon(Icons.logout_outlined, color: Colors.white, size: 24.sp),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      'Logout',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.chevron_forward,
+                    size: 20.sp,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+          ],
+          offset: const Offset(0, 50),
+        ),
+       // SizedBox(width: 16.w),
       ],
     );
   }
