@@ -52,8 +52,24 @@ class RideProgressWayLocation extends StatelessWidget {
         logoPath: AppImages.app_logo,
         notificationCount: 3,
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: RefreshIndicator(
+        color: AppColors.orange100,
+        onRefresh: () async {
+          await controller.fetchJobs();
+          if (job?.id != null) {
+            JobData? updated;
+            try {
+              updated = controller.myJobsList
+                  .firstWhere((e) => e.id == job!.id);
+            } catch (_) {
+              updated = job;
+            }
+            Get.offNamed(Routes.rideProgressWayLocation, arguments: updated);
+          }
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -138,7 +154,7 @@ class RideProgressWayLocation extends StatelessWidget {
                     builder: (context) {
                       final status = job?.rideStatus?.toUpperCase() ?? "";
                       
-                      if (status == "POB" || status == "FINISHED") {
+                      if (status == "FINISHED") {
                         // Ride is either in final stage or finished, show Review button
                         return CustomButton(
                           text: "Review Driver",
@@ -169,7 +185,7 @@ class RideProgressWayLocation extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ),)
     );
   }
 
