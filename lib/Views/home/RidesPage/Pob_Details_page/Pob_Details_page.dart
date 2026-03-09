@@ -31,7 +31,7 @@ class PobDetailsPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         logoPath: AppImages.app_logo,
         notificationCount: 3,
       ),

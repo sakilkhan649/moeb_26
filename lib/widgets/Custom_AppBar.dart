@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/Views/auth/Profile/widgets/LogoutBottomSheet.dart';
+import 'package:moeb_26/Views/home/JobOfferPage/Notifications/Controller/Notifications_Controller.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 import '../Views/home/JobOfferPage/Notifications/Notifications_popup.dart';
@@ -23,8 +24,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final String? subtitle;
 
-  const CustomAppBar({
-    Key? key,
+  CustomAppBar({
+    super.key,
     this.onNotificationTap,
     this.onAccountTap,
     this.onMyJobsTap,
@@ -35,7 +36,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.logoPath,
     this.title,
     this.subtitle,
-  }) : super(key: key);
+  });
+
+  final NotificationController _notificationController = Get.put(
+    NotificationController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -91,52 +96,54 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         Row(
           children: [
-            GestureDetector(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(
-                    Icons.notifications_outlined,
-                    size: 30.sp,
-                    color: Colors.white,
-                  ),
-                  if (notificationCount > 0)
-                    Positioned(
-                      top: -2.w,
-                      right: -1.w,
-                      child: Container(
-                        width: 15.w,
-                        height: 15.w,
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Text(
-                            notificationCount > 99
-                                ? '99+'
-                                : '$notificationCount',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
+            Obx(
+              () => GestureDetector(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(
+                      Icons.notifications_outlined,
+                      size: 30.sp,
+                      color: Colors.white,
+                    ),
+                    if (_notificationController.unreadCount > 0)
+                      Positioned(
+                        top: -2.w,
+                        right: -1.w,
+                        child: Container(
+                          width: 15.w,
+                          height: 15.w,
+                          decoration: const BoxDecoration(
+                            color: Colors.orange,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              _notificationController.unreadCount > 99
+                                  ? '99+'
+                                  : '${_notificationController.unreadCount}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
+                onTap:
+                    onNotificationTap ??
+                    () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CustomNotificationPopup();
+                        },
+                      );
+                    },
               ),
-              onTap:
-                  onNotificationTap ??
-                  () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CustomNotificationPopup();
-                      },
-                    );
-                  },
             ),
             SizedBox(width: 10.w),
             PopupMenuButton<int>(

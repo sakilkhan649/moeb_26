@@ -19,7 +19,7 @@ class Dealspage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: 'Deals',
         subtitle: 'ELITE NETWORK EXCLUSIVE SAVINGS',
         notificationCount: 3,

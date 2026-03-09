@@ -48,7 +48,7 @@ class RideProgressWayLocation extends StatelessWidget {
         : job?.vehicleType ?? "N/A";
 
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         logoPath: AppImages.app_logo,
         notificationCount: 3,
       ),

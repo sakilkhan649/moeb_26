@@ -16,7 +16,7 @@ class Marketplacepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: 'Marketplace',
         subtitle: 'WHERE THE NETWORK MEETS OPPORTUNITY',
         notificationCount: 3,

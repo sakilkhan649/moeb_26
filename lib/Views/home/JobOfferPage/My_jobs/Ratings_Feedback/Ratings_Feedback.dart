@@ -17,10 +17,7 @@ class RatingsFeedback extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: const CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-      ),
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(

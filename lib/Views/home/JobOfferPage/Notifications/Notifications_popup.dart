@@ -78,9 +78,9 @@ class CustomNotificationPopup extends StatelessWidget {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => controller.clearAll(),
+                          onTap: () => controller.markAllAsRead(),
                           child: Text(
-                            "Clear All",
+                            "Read All",
                             style: GoogleFonts.inter(
                               fontSize: 14.sp,
                               color: const Color(0xFFD08700),
@@ -139,30 +139,40 @@ class CustomNotificationPopup extends StatelessWidget {
     Color iconBgColor = Colors.white.withOpacity(0.05);
     Color iconColor = Colors.white;
 
-    // Logic for icon colors based on title/type
-    if (notification.title.contains("Job")) {
+    // Logic for icon colors based on type
+    if (notification.type == "GENERAL") {
       iconColor = const Color(0xFFD08700);
       iconBgColor = const Color(0xFFD08700).withOpacity(0.1);
-    } else if (notification.title.contains("Message")) {
+    } else if (notification.type == "TASK") {
       iconColor = const Color(0xFF3498DB);
       iconBgColor = const Color(0xFF3498DB).withOpacity(0.1);
-    } else if (notification.title.contains("Item")) {
+    } else if (notification.type == "REMINDER") {
       iconColor = const Color(0xFF2ECC71);
       iconBgColor = const Color(0xFF2ECC71).withOpacity(0.1);
     }
 
     return GestureDetector(
       onTap: () {
+        // Mark as read when clicked
+        if (!notification.isRead) {
+          controller.markAsRead(notification.id);
+        }
+
+        // Logic for navigation if needed based on subtitle/title
         if (notification.title == "Job Acceptance") {
-          final BookingController bookingController = Get.put(
-            BookingController(),
-          );
-          bookingController.setJobAcceptanceView(true);
+          final BookingController bookingController =
+              Get.isRegistered<BookingController>()
+              ? Get.find<BookingController>()
+              : Get.put(BookingController());
+          bookingController.isJobAcceptanceView.value = true;
           Get.back(); // Close the popup
           Get.toNamed(Routes.myJobsScreen);
         }
       },
-      child: Padding(
+      child: Container(
+        color: notification.isRead
+            ? Colors.transparent
+            : Colors.white.withOpacity(0.02),
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,22 +206,36 @@ class CustomNotificationPopup extends StatelessWidget {
                           notification.title,
                           style: GoogleFonts.inter(
                             fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            fontWeight: notification.isRead
+                                ? FontWeight.w500
+                                : FontWeight.w700,
+                            color: notification.isRead
+                                ? Colors.white.withOpacity(0.8)
+                                : Colors.white,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Icon(
-                        Icons.check,
-                        size: 16.sp,
-                        color: const Color(0xFFD08700),
-                      ),
+                      if (!notification.isRead)
+                        Container(
+                          width: 8.w,
+                          height: 8.w,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFD08700),
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      else
+                        Icon(
+                          Icons.check,
+                          size: 16.sp,
+                          color: Colors.white.withOpacity(0.2),
+                        ),
                     ],
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    notification.message,
+                    notification.subtitle,
                     style: GoogleFonts.inter(
                       fontSize: 14.sp,
                       color: Colors.white.withOpacity(0.6),
@@ -222,14 +246,14 @@ class CustomNotificationPopup extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        Icons.calendar_today_outlined,
+                        Icons.access_time,
                         size: 12.sp,
                         color: Colors.white.withOpacity(0.4),
                       ),
                       SizedBox(width: 4.w),
                       Expanded(
                         child: Text(
-                          notification.time,
+                          notification.timeAgo,
                           style: GoogleFonts.inter(
                             fontSize: 12.sp,
                             color: Colors.white.withOpacity(0.4),
