@@ -33,7 +33,7 @@ class RideDetailsPage extends StatelessWidget {
 
     if (ride == null) {
       return Scaffold(
-        appBar: const CustomAppBar(
+        appBar: CustomAppBar(
           logoPath: AppImages.app_logo,
           notificationCount: 0,
         ),
@@ -154,10 +154,7 @@ class RideDetailsPage extends StatelessWidget {
         : formattedTime;
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-      ),
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -184,10 +181,8 @@ class RideDetailsPage extends StatelessWidget {
                     buttonIcon: Icons.chat_bubble_outline,
                     onButtonPressed: () async {
                       if (participantId.isNotEmpty && id.isNotEmpty) {
-                        final chat = await Get.find<SocketRepository>().createChat(
-                          participantId,
-                          id,
-                        );
+                        final chat = await Get.find<SocketRepository>()
+                            .createChat(participantId, id);
                         if (chat != null) {
                           Get.toNamed(Routes.chatDetailPage, arguments: chat);
                         }
@@ -232,7 +227,7 @@ class RideDetailsPage extends StatelessWidget {
                 // Dynamic Action Button based on rideStatus
                 Obx(() {
                   String status = controller.currentRideStatus.value;
-                  
+
                   if (status == "POB") {
                     // --- FINISH RIDE DRAGGABLE SECTION ---
                     return Padding(
@@ -267,7 +262,11 @@ class RideDetailsPage extends StatelessWidget {
                             ),
                             child: GestureDetector(
                               onTap: () {
-                                controller.updateStatus(id, "FINISHED", rideData: ride);
+                                controller.updateStatus(
+                                  id,
+                                  "FINISHED",
+                                  rideData: ride,
+                                );
                               },
                               child: Container(
                                 width: 60.w,
@@ -309,14 +308,22 @@ class RideDetailsPage extends StatelessWidget {
                             child: DragTarget<String>(
                               onAcceptWithDetails: (details) {
                                 if (details.data == 'finish') {
-                                  controller.updateStatus(id, "FINISHED", rideData: ride);
+                                  controller.updateStatus(
+                                    id,
+                                    "FINISHED",
+                                    rideData: ride,
+                                  );
                                 }
                               },
                               builder: (context, candidateData, rejectedData) {
                                 bool isOver = candidateData.isNotEmpty;
                                 return GestureDetector(
                                   onTap: () {
-                                    controller.updateStatus(id, "FINISHED", rideData: ride);
+                                    controller.updateStatus(
+                                      id,
+                                      "FINISHED",
+                                      rideData: ride,
+                                    );
                                   },
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),

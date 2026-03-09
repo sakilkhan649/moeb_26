@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
+import 'package:moeb_26/Views/home/JobOfferPage/Notifications/Controller/Notifications_Controller.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/Notifications/Notifications_popup.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
@@ -18,6 +19,9 @@ class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
   final ProfileController controller = Get.put(ProfileController());
+  final NotificationController _notificationController = Get.put(
+    NotificationController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -104,46 +108,53 @@ class ProfileScreen extends StatelessWidget {
                         // Header Icons
                         Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomNotificationPopup();
-                                  },
-                                );
-                              },
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Icon(
-                                    Icons.notifications_none,
-                                    color: Colors.white,
-                                    size: 30.sp,
-                                  ),
-                                  Positioned(
-                                    top: -2.w,
-                                    right: -1.w,
-                                    child: Container(
-                                      width: 15.w,
-                                      height: 15.w,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.orange100,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "3",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 10.sp,
-                                            fontWeight: FontWeight.bold,
+                            Obx(
+                              () => GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomNotificationPopup();
+                                    },
+                                  );
+                                },
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Icon(
+                                      Icons.notifications_none,
+                                      color: Colors.white,
+                                      size: 30.sp,
+                                    ),
+                                    if (_notificationController.unreadCount > 0)
+                                      Positioned(
+                                        top: -2.w,
+                                        right: -1.w,
+                                        child: Container(
+                                          width: 15.w,
+                                          height: 15.w,
+                                          decoration: const BoxDecoration(
+                                            color: AppColors.orange100,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              _notificationController
+                                                          .unreadCount >
+                                                      99
+                                                  ? '99+'
+                                                  : "${_notificationController.unreadCount}",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 10.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                             SizedBox(width: 10.w),

@@ -17,7 +17,7 @@ class Chatpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: 'Messages',
         subtitle: 'Elite Chauffeur Network',
         notificationCount: 3,
@@ -86,7 +86,8 @@ class Chatpage extends StatelessWidget {
                   color: const Color(0xffD4A843),
                   backgroundColor: const Color(0xff1A1A1A),
                   child: Obx(() {
-                    if (controller.isLoading.value && controller.chats.isEmpty) {
+                    if (controller.isLoading.value &&
+                        controller.chats.isEmpty) {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (controller.filteredChats.isEmpty) {
@@ -244,7 +245,9 @@ class Chatpage extends StatelessWidget {
     try {
       final date = DateTime.parse(dateStr).toLocal();
       final now = DateTime.now();
-      if (date.year == now.year && date.month == now.month && date.day == now.day) {
+      if (date.year == now.year &&
+          date.month == now.month &&
+          date.day == now.day) {
         final hour = date.hour > 12 ? date.hour - 12 : date.hour;
         final minute = date.minute.toString().padLeft(2, '0');
         final period = date.hour >= 12 ? 'PM' : 'AM';
@@ -256,4 +259,3 @@ class Chatpage extends StatelessWidget {
     }
   }
 }
-

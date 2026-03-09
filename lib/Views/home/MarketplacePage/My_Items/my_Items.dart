@@ -14,7 +14,7 @@ class MyItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: 'My Items',
         subtitle: 'MANAGE YOUR LISTINGS',
         notificationCount: 3,
