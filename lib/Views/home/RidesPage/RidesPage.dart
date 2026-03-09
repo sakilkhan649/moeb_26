@@ -24,10 +24,7 @@ class Ridespage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-      ),
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: RefreshIndicator(
@@ -38,9 +35,7 @@ class Ridespage extends StatelessWidget {
               return SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: Column(
                     children: [
                       Row(
@@ -113,7 +108,9 @@ class Ridespage extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 8.h),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.orange100 : Colors.transparent,
+                    color: isSelected
+                        ? AppColors.orange100
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(15.r),
                   ),
                   child: Center(
@@ -122,7 +119,9 @@ class Ridespage extends StatelessWidget {
                       style: GoogleFonts.inter(
                         color: isSelected ? Colors.white : Colors.grey,
                         fontSize: 14.sp,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                       ),
                     ),
                   ),
@@ -274,7 +273,8 @@ class Ridespage extends StatelessWidget {
         int minute = int.parse(parts[1].split(' ')[0]);
         final period = hour >= 12 ? "PM" : "AM";
         final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-        timeStr = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+        timeStr =
+            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
       } catch (_) {}
     }
     displayDateTime = dateStr.isNotEmpty ? "$dateStr · $timeStr" : timeStr;
@@ -293,8 +293,8 @@ class Ridespage extends StatelessWidget {
         vehicleTypeColor: (vehicle?.toLowerCase() == 'suv')
             ? VehicleTypeColors.suv
             : (vehicle?.toLowerCase() == 'van')
-                ? VehicleTypeColors.van
-                : VehicleTypeColors.sedan,
+            ? VehicleTypeColors.van
+            : VehicleTypeColors.sedan,
       ),
     );
   }

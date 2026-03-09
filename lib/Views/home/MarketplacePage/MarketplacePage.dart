@@ -11,7 +11,7 @@ import 'widgets/MarketplaceCard.dart';
 class Marketplacepage extends StatelessWidget {
   Marketplacepage({super.key});
 
-  final MarketplaceController controller = Get.put(MarketplaceController());
+  final MarketplaceController controller = Get.find<MarketplaceController>();
 
   @override
   Widget build(BuildContext context) {
