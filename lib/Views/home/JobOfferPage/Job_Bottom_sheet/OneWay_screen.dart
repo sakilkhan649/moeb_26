@@ -299,13 +299,8 @@ class OnewayScreen extends StatelessWidget {
               text: "New Job",
               onPressed: () {
                 final isFormValid = _formKey.currentState!.validate();
-                final isAsapConfirmed = onewayControllerInstance.isAsap.value;
-
-                if (!isAsapConfirmed) {
-                  onewayControllerInstance.showAsapError.value = true;
-                }
-
-                if (isFormValid && isAsapConfirmed) {
+                onewayControllerInstance.showAsapError.value = false;
+                if (isFormValid) {
                   postJobController.submitOneWayJob(
                     pickupLocation: pickupController.text,
                     dropoffLocation: dropoffController.text,
