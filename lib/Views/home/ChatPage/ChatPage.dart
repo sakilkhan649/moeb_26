@@ -19,7 +19,7 @@ class Chatpage extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Messages',
-        subtitle: 'Elite Chauffeur Network',
+        subtitle: 'Messaging',
         notificationCount: 3,
       ),
       body: SafeArea(

@@ -50,6 +50,8 @@ class ApiConstants {
   //Notifications
   static const String notifications= '/notifications';
   static const String notificationsReadAll= '/notifications/read-all';
+  //Service Areas
+  static const String serviceAreas= '/service-areas';
 
 
 }
