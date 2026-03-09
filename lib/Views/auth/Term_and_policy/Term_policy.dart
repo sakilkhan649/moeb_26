@@ -486,25 +486,26 @@ class TermPolicy extends StatelessWidget {
   Widget _item(int index, String text) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: AppColors.black200, width: 1),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Checkbox
-            _buildCheckbox(index),
-            SizedBox(width: 10.w),
-            // Text
-            Expanded(
-              child: CustomTextgray(text: text, fontSize: 12.sp),
-            ),
-          ],
+      child: GestureDetector(
+        onTap: () => controller.toggleCheck(index),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: AppColors.black200, width: 1),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildCheckbox(index),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: CustomTextgray(text: text, fontSize: 12.sp),
+              ),
+            ],
+          ),
         ),
       ),
     );
