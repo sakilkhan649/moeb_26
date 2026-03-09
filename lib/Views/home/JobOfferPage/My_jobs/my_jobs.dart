@@ -324,7 +324,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Text(
-                            vehicle!,
+                            vehicle!.toUpperCase(),
                             style: GoogleFonts.inter(
                               color: Colors.white,
                               fontSize: 10.sp,
