@@ -197,13 +197,4 @@ class MarketplaceController extends GetxController {
     }
     selectedImage.value = null;
   }
-
-  @override
-  void onClose() {
-    titleController.dispose();
-    priceController.dispose();
-    locationController.dispose();
-    descriptionController.dispose();
-    super.onClose();
-  }
 }
