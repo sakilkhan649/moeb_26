@@ -104,118 +104,92 @@ class MyItemsCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 20.w,
-                  height: 20.h,
-                  child: PopupMenuButton<String>(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    iconSize: 18.sp,
-                    icon: Icon(
-                      Icons.more_vert,
-                      color: Colors.white,
-                      size: 18.sp,
-                    ),
-                    color: const Color(0xFF2C2C2E),
-                    elevation: 8,
-                    offset: Offset(-30, -90),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                      side: BorderSide(
-                        color: Colors.white.withOpacity(0.1),
-                        width: 1,
-                      ),
-                    ),
-                    onSelected: (value) {
-                      if (value == 'edit') {
-                        final MarketplaceController mpc;
-                        if (Get.isRegistered<MarketplaceController>()) {
-                          mpc = Get.find<MarketplaceController>();
-                        } else {
-                          mpc = Get.put(MarketplaceController());
-                        }
-
-                        mpc.prefillForEdit(
-                          item.name,
-                          item.price.toString(),
-                          item.location,
-                          item.condition,
-                          item.description,
-                        );
-
-                        Get.bottomSheet(
-                          SellItemBottomSheet(editItemId: item.id),
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                        );
-                      } else if (value == 'delete') {
-                        _showDeleteDialog(context);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(6.w),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: Icon(
-                                Icons.edit_rounded,
-                                color: Colors.blueAccent,
-                                size: 16.sp,
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Text(
-                              "Edit",
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(6.w),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: Icon(
-                                Icons.delete_outline_rounded,
-                                color: Colors.redAccent,
-                                size: 16.sp,
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Text(
-                              "Delete",
-                              style: GoogleFonts.inter(
-                                color: Colors.redAccent,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                GestureDetector(
+                  onTap: () => _showOptionsDialog(context),
+                  child: Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                    size: 18.sp,
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showOptionsDialog(BuildContext context) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Edit Button
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () {
+                  Get.back();
+                  final MarketplaceController mpc;
+                  if (Get.isRegistered<MarketplaceController>()) {
+                    mpc = Get.find<MarketplaceController>();
+                  } else {
+                    mpc = Get.put(MarketplaceController());
+                  }
+                  mpc.prefillForEdit(
+                    item.name,
+                    item.price.toString(),
+                    item.location,
+                    item.condition,
+                    item.description,
+                    item.imagePath,
+                  );
+                  Get.bottomSheet(
+                    SellItemBottomSheet(editItemId: item.id),
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                  );
+                },
+                child: Text(
+                  "Edit",
+                  style: GoogleFonts.inter(
+                    color: Colors.blueAccent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.sp,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 4.h),
+            // Delete Button
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () {
+                  Get.back();
+                  _showDeleteDialog(context);
+                },
+                child: Text(
+                  "Delete",
+                  style: GoogleFonts.inter(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.sp,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        // Remove actions entirely — using content column instead
+        actionsPadding: EdgeInsets.zero,
       ),
     );
   }

@@ -31,6 +31,7 @@ class Marketplacepage extends StatelessWidget {
             CustomJobButton(
               text: "List Item for Sale",
               onPressed: () {
+                controller.clearFields();
                 Get.bottomSheet(
                   SellItemBottomSheet(),
                   isScrollControlled: true,

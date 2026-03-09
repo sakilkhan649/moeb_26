@@ -178,7 +178,12 @@ class SellItemBottomSheet extends StatelessWidget {
                           onTap: () => controller.pickImage(),
                           child: Container(
                             width: double.infinity,
-                            padding: controller.selectedImage.value != null
+                            padding:
+                                (controller.selectedImage.value != null ||
+                                    controller
+                                        .existingImagePath
+                                        .value
+                                        .isNotEmpty)
                                 ? EdgeInsets.zero
                                 : EdgeInsets.symmetric(vertical: 40.h),
                             decoration: BoxDecoration(
@@ -198,23 +203,35 @@ class SellItemBottomSheet extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     ),
                                   )
-                                : Column(
-                                    children: [
-                                      Icon(
-                                        Icons.file_upload_outlined,
-                                        color: Colors.grey,
-                                        size: 32.sp,
-                                      ),
-                                      SizedBox(height: 8.h),
-                                      Text(
-                                        "Upload or take Photos",
-                                        style: GoogleFonts.inter(
-                                          color: Colors.grey,
-                                          fontSize: 14.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                : (controller.existingImagePath.value.isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            16.r,
+                                          ),
+                                          child: Image.network(
+                                            controller.existingImagePath.value,
+                                            height: 150.h,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : Column(
+                                          children: [
+                                            Icon(
+                                              Icons.file_upload_outlined,
+                                              color: Colors.grey,
+                                              size: 32.sp,
+                                            ),
+                                            SizedBox(height: 8.h),
+                                            Text(
+                                              "Upload or take Photos",
+                                              style: GoogleFonts.inter(
+                                                color: Colors.grey,
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        )),
                           ),
                         ),
                       ),
