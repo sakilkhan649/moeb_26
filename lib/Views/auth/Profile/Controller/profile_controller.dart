@@ -4,6 +4,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/Utils/helpers.dart';
 import '../Model/user_profile_model.dart';
 import '../../../../Services/user_profile_service.dart';
 
@@ -129,30 +130,21 @@ class ProfileController extends GetxController {
 
         pickedImage.value = null; // Clear picked image after success
         Get.back(); // Close bottom sheet
-        Get.snackbar(
-          "Success",
+        Helpers.showCustomSnackBar(
           "Profile updated successfully",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
+          isError: false,
         );
       } else {
-        Get.snackbar(
-          "Error",
+        Helpers.showCustomSnackBar(
           response.data['message'] ?? "Failed to update profile",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+          isError: true,
         );
       }
     } catch (e) {
       debugPrint("Error updating profile: $e");
-      Get.snackbar(
-        "Error",
+      Helpers.showCustomSnackBar(
         "Something went wrong while updating profile",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        isError: true,
       );
     } finally {
       isUpdating.value = false;
