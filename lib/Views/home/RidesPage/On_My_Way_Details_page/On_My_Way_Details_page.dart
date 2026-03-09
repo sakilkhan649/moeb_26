@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
+import 'package:moeb_26/Data/models/finish_rides_model.dart';
+import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
@@ -21,14 +23,56 @@ class OnMyWayDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get the ride data passed from the previous screen
-    final Ride? ride = Get.arguments as Ride?;
+    final dynamic ride = Get.arguments;
 
     // Format date and time
     String displayDateTime = "N/A";
-    if (ride?.date != null) {
-      displayDateTime = "${DateFormat('MMM dd').format(ride!.date!)} · ${ride.time}";
-    } else if (ride != null) {
-      displayDateTime = ride.time;
+    String? rideId;
+    String? participantId;
+    String? driverName;
+    String? driverImage;
+    String? vehicleType;
+    String? pickupLocation;
+    String? dropoffLocation;
+    String? paymentType;
+    String? amount;
+
+    if (ride is Ride) {
+      rideId = ride.id;
+      participantId = ride.assignedTo?.id ?? ride.applicant?.driver?.id ?? ride.createdBy?.id;
+      driverName = ride.applicant?.driver?.name ?? "Unknown";
+      driverImage = ride.applicant?.driver?.profilePicture;
+      vehicleType = ride.vehicleType;
+      pickupLocation = ride.pickupLocation;
+      dropoffLocation = ride.dropoffLocation;
+      paymentType = ride.paymentType;
+      amount = "\$${ride.paymentAmount}";
+      if (ride.date != null) {
+        displayDateTime = "${DateFormat('MMM dd').format(ride.date!)} · ${ride.time}";
+      } else {
+        displayDateTime = ride.time;
+      }
+    } else if (ride is UpcomingRideData || ride is FinishRideData) {
+      final dynamic r = ride;
+      rideId = r.id;
+      participantId = r.createdBy?.id ?? r.assignedTo;
+      driverName = r.createdBy?.name ?? "Unknown";
+      driverImage = r.createdBy?.profilePicture;
+      vehicleType = r.vehicleType;
+      pickupLocation = r.pickupLocation;
+      dropoffLocation = r.dropoffLocation;
+      paymentType = r.paymentType;
+      amount = "\$${r.paymentAmount}";
+      if (r.date != null) {
+        try {
+          DateTime parsed = DateTime.parse(r.date!);
+          displayDateTime = "${DateFormat('MMM dd').format(parsed)} · ${r.time}";
+        } catch (_) {
+          displayDateTime = "${r.date} · ${r.time}";
+        }
+      } else {
+        displayDateTime = r.time ?? "N/A";
+      }
     }
 
     return Scaffold(
@@ -53,21 +97,31 @@ class OnMyWayDetailsPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomDriverCard(
-                    profileImage: ride?.applicant?.driver?.profilePicture ?? AppImages.profile_image,
-                    name: ride?.applicant?.driver?.name ?? "Unknown",
+                    profileImage: driverImage ?? AppImages.profile_image,
+                    name: driverName ?? "Unknown",
                     rating: "5.0",
                     vehicleNumber: "N/A",
-                    vehicleInfo: ride?.vehicleType ?? "N/A",
+                    vehicleInfo: vehicleType ?? "N/A",
                     buttonText: "Chat with Driver",
                     buttonIcon: Icons.chat_bubble_outline,
                     onButtonPressed: () async {
-                      if (ride?.applicant?.driver?.id != null && ride?.id != null) {
-                        final chat = await Get.find<SocketRepository>().createChat(
-                          ride!.applicant!.driver!.id,
-                          ride.id,
-                        );
-                        if (chat != null) {
-                          Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                      if (participantId != null && rideId != null) {
+                        try {
+                          final chat = await Get.find<SocketRepository>().createChat(
+                            participantId,
+                            rideId,
+                          );
+                          if (chat != null) {
+                            Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                          }
+                        } catch (e) {
+                          Get.snackbar(
+                            "Error",
+                            "Failed to open chat",
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
                         }
                       }
                     },
@@ -80,17 +134,17 @@ class OnMyWayDetailsPage extends StatelessWidget {
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: CustomJobDetailsCard(
                     // Location details
-                    pickupLocation: ride?.pickupLocation ?? "N/A",
-                    dropoffLocation: ride?.dropoffLocation ?? "N/A",
+                    pickupLocation: pickupLocation ?? "N/A",
+                    dropoffLocation: dropoffLocation ?? "N/A",
 
                     // Job information
                     flightNumber: "N/A",
                     dateTime: displayDateTime,
-                    vehicleType: ride?.vehicleType ?? "N/A",
-                    jobPoster: ride?.applicant?.driver?.name ?? "Unknown",
-                    company: ride?.applicant?.driver?.name ?? "Unknown",
-                    payment: ride?.paymentType ?? "N/A",
-                    amount: ride != null ? "\$${ride.paymentAmount}" : "N/A",
+                    vehicleType: vehicleType ?? "N/A",
+                    jobPoster: driverName ?? "Unknown",
+                    company: driverName ?? "Unknown",
+                    payment: paymentType ?? "N/A",
+                    amount: amount ?? "N/A",
 
                     // Optional: Custom colors
                     backgroundColor: const Color(0xFF1C1C1C),

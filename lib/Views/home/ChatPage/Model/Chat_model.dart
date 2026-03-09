@@ -66,6 +66,7 @@ class ChatPreview {
   final String id;
   final List<ChatParticipant> participants;
   final ChatItem? item;
+  final String? jobId;
   String? lastMessage;
   String? lastMessageAt;
   final String createdBy;
@@ -76,6 +77,7 @@ class ChatPreview {
     required this.id,
     required this.participants,
     this.item,
+    this.jobId,
     this.lastMessage,
     this.lastMessageAt,
     required this.createdBy,
@@ -94,6 +96,7 @@ class ChatPreview {
       item: json['itemId'] != null && json['itemId'] is Map
           ? ChatItem.fromJson(json['itemId'])
           : null,
+      jobId: json['jobId'] is String ? json['jobId'] : null,
       lastMessage: json['lastMessage'],
       lastMessageAt: json['lastMessageAt'],
       createdBy: json['createdBy'] ?? '',

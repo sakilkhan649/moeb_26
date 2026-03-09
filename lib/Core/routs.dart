@@ -21,9 +21,6 @@ import '../Views/auth/Vehicle/VehicleInformation.dart';
 import '../Views/home/Bottom_NabBar/Binding/Binging_Class.dart';
 import '../Views/home/JobOfferPage/My_jobs/Approve/approve_page.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ratings_Feedback/Ratings_Feedback.dart';
-import '../Views/home/JobOfferPage/My_jobs/Ride_Complete_Job/Ride_Complete_Job.dart';
-import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Board/Ride_Progress_Board.dart';
-import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way/Ride_Progress_Way.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progress_Way_Location.dart';
 import '../Views/home/JobOfferPage/My_jobs/Edit_screen/edit_screen.dart';
 import '../Views/home/JobOfferPage/My_jobs/my_jobs.dart';
@@ -220,25 +217,11 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: rideProgressWay,
-      page: () => RideProgressWay(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
       name: rideProgressWayLocation,
       page: () => RideProgressWayLocation(),
       transition: Transition.noTransition,
     ),
-    GetPage(
-      name: rideProgressBoard,
-      page: () => RideProgressBoard(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
-      name: rideCompleteJob,
-      page: () => RideCompleteJob(),
-      transition: Transition.noTransition,
-    ),
+
     GetPage(
       name: profileScreen,
       page: () => ProfileScreen(),

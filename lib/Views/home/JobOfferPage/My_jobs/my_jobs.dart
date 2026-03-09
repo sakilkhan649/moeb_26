@@ -539,13 +539,19 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                         /// Chat Button
                         GestureDetector(
                           onTap: () async {
-                            if (job.assignedTo?.id != null && job.id != null) {
-                              final chat = await Get.find<SocketRepository>().createChat(
-                                job.assignedTo!.id!,
-                                job.id!,
-                              );
-                              if (chat != null) {
-                                Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                            final String? participantId = job.assignedTo?.id ?? job.applicant?.driver?.id;
+                            if (participantId != null && job.id != null) {
+                              try {
+                                final chat = await Get.find<SocketRepository>().createChat(
+                                  participantId,
+                                  job.id!,
+                                );
+                                if (chat != null) {
+                                  Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                                }
+                              } catch (e) {
+                                Helpers.showCustomSnackBar('Failed to open chat.', isError: true);
+                                print("Error opening chat: $e");
                               }
                             }
                           },

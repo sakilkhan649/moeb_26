@@ -7,6 +7,7 @@ import 'package:moeb_26/Data/my_jobs_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import '../../../../../Core/routs.dart';
+import '../../../../../Ripositoryes/socket_repository.dart';
 import '../../../../../Utils/app_icons.dart';
 import '../../../../../Utils/app_images.dart';
 import '../../../../../widgets/Custom_AppBar.dart';
@@ -66,10 +67,29 @@ class RideProgressWayLocation extends StatelessWidget {
                     rating: "${driver?.averageRating ?? 0.0}",
                     vehicleNumber: vehicle?.licensePlate ?? "N/A",
                     vehicleInfo: vehicleInfo,
-                    buttonText: "Chat with Job Poster",
+                    buttonText: "Chat with Driver",
                     buttonIcon: Icons.chat_bubble_outline,
-                    onButtonPressed: () {
-                      Get.toNamed(Routes.chatPage, arguments: job);
+                    onButtonPressed: () async {
+                      final String? participantId = job?.assignedTo?.id ?? job?.applicant?.driver?.id;
+                      if (participantId != null && job?.id != null) {
+                        try {
+                          final chat = await Get.find<SocketRepository>().createChat(
+                            participantId,
+                            job!.id!,
+                          );
+                          if (chat != null) {
+                            Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                          }
+                        } catch (e) {
+                          Get.snackbar(
+                            "Error",
+                            "Failed to open chat",
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        }
+                      }
                     },
                   ),
                 ),

@@ -112,7 +112,7 @@ class RideDetailsPage extends StatelessWidget {
       paymentType = r.paymentType;
       amount = "\$${r.paymentAmount}";
 
-      final driver = r.applicant?.driver;
+      final driver = r.createdBy ?? r.assignedTo ?? r.applicant?.driver;
       posterName = driver?.name ?? "Unknown";
       participantId = driver?.id ?? "";
       posterImage =
@@ -184,12 +184,22 @@ class RideDetailsPage extends StatelessWidget {
                     buttonIcon: Icons.chat_bubble_outline,
                     onButtonPressed: () async {
                       if (participantId.isNotEmpty && id.isNotEmpty) {
-                        final chat = await Get.find<SocketRepository>().createChat(
-                          participantId,
-                          id,
-                        );
-                        if (chat != null) {
-                          Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                        try {
+                          final chat = await Get.find<SocketRepository>().createChat(
+                            participantId,
+                            id,
+                          );
+                          if (chat != null) {
+                            Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                          }
+                        } catch (e) {
+                          Get.snackbar(
+                            "Error",
+                            "Failed to open chat",
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
                         }
                       }
                     },

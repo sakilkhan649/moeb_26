@@ -47,6 +47,27 @@ class SocketRepository {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ChatPreview.fromJson(response.data['data']);
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 409) {
+        // Chat already exists, fetch the chat list to find it
+        final chats = await getChats();
+        try {
+          // Look for a chat that has this participantId and matches jobId
+          // If no specific jobId match found, fallback to just participantId
+          return chats.firstWhere(
+            (chat) => 
+              chat.participants.any((p) => p.id == participantId) && 
+              chat.jobId == jobId,
+            orElse: () => chats.firstWhere(
+              (chat) => chat.participants.any((p) => p.id == participantId)
+            ),
+          );
+        } catch (_) {
+          // If not found in the list, rethrow the original error
+          rethrow;
+        }
+      }
+      rethrow;
     } catch (e) {
       rethrow;
     }
@@ -63,6 +84,26 @@ class SocketRepository {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ChatPreview.fromJson(response.data['data']);
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 409) {
+        // Chat already exists, fetch the chat list to find it
+        final chats = await getChats();
+        try {
+          // Look for a chat that has this participantId and matches itemId
+          // Fallback to participantId only if itemId doesn't match
+          return chats.firstWhere(
+            (chat) => 
+              chat.participants.any((p) => p.id == participantId) && 
+              chat.item?.id == itemId,
+            orElse: () => chats.firstWhere(
+              (chat) => chat.participants.any((p) => p.id == participantId)
+            ),
+          );
+        } catch (_) {
+          rethrow;
+        }
+      }
+      rethrow;
     } catch (e) {
       rethrow;
     }
@@ -101,6 +142,4 @@ class SocketRepository {
     return null;
   }
 
-
-  
 }

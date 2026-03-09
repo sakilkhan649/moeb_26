@@ -72,6 +72,8 @@ class Ride {
   final String time;
   final String? rideStatus;
   final Applicant? applicant;
+  final Driver? assignedTo;
+  final Driver? createdBy;
 
   Ride({
     required this.id,
@@ -85,6 +87,8 @@ class Ride {
     required this.time,
     this.rideStatus,
     this.applicant,
+    this.assignedTo,
+    this.createdBy,
   });
 
   factory Ride.fromJson(Map<String, dynamic> json) {
@@ -105,6 +109,12 @@ class Ride {
       time: json['time'] ?? '',
       applicant: (json['applicant'] != null && json['applicant'] is Map)
           ? Applicant.fromJson(json['applicant'])
+          : null,
+      assignedTo: (json['assignedTo'] != null && json['assignedTo'] is Map)
+          ? Driver.fromJson(json['assignedTo'])
+          : null,
+      createdBy: (json['createdBy'] != null && json['createdBy'] is Map)
+          ? Driver.fromJson(json['createdBy'])
           : null,
     );
   }

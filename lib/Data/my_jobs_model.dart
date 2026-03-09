@@ -51,7 +51,7 @@ class JobData {
   String? paymentType;
   String? instruction;
   String? status;
-  String? createdBy;
+  Driver? createdBy;
   String? createdAt;
   String? updatedAt;
   String? rideStatus;
@@ -92,7 +92,9 @@ class JobData {
     paymentType = json['paymentType'];
     instruction = json['instruction'];
     status = json['status'];
-    createdBy = json['createdBy'];
+    createdBy = json['createdBy'] != null && json['createdBy'] is Map
+        ? Driver.fromJson(json['createdBy'])
+        : null;
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     rideStatus = json['rideStatus'];
