@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
+import 'package:moeb_26/Services/api_cheker.dart';
 import 'package:moeb_26/Services/auth_service.dart';
 import '../../../../Core/routs.dart';
 import '../../../../Utils/helpers.dart';
@@ -30,24 +32,29 @@ class LoginController extends GetxController {
         email: emailController.text,
         password: passwordController.text,
       );
-
+      ApiChecker.checkWriteApi(response);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar('Login successful', isError: false);
         Get.offAllNamed(Routes.homeScreens);
-      } else {
-        final String errorMsg = response.data is Map
-            ? (response.data['message'] ?? 'Invalid email or password')
-            : 'Invalid email or password';
-
-        if (errorMsg.toLowerCase().contains('pending approval')) {
-          Get.toNamed(Routes.homeScreens);
-        } else {
-          Helpers.showCustomSnackBar(errorMsg, isError: true);
-        }
       }
+
     } catch (e) {
+      if (e is DioException) {
+        final status = e.response?.statusCode ?? 0;
+        final data = e.response?.data;
+        final String errorMsg = (data is Map && data['message'] != null)
+            ? data['message'].toString()
+            : 'Invalid email or password';
+        if (status == 400) {
+          Helpers.showCustomSnackBar(errorMsg, isError: true);
+        } else {
+          Helpers.showCustomSnackBar('Something went wrong', isError: true);
+        }
+      } else {
+        Helpers.showCustomSnackBar('Something went wrong', isError: true);
+      }
       Helpers.showDebugLog("login error => $e");
-      Helpers.showCustomSnackBar('Something went wrong', isError: true);
+
     } finally {
       isLoading.value = false;
     }
