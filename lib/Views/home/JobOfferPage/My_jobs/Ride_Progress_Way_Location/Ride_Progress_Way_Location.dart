@@ -14,17 +14,55 @@ import '../../../../../widgets/Custom_AppBar.dart';
 import '../../../../../widgets/Custom_Card_Ditails.dart';
 import '../../../../../widgets/Custom_Driver_Card.dart';
 import '../../../../../widgets/RideProgressCard.dart';
+import '../../../../../Ripositoryes/job_repository.dart';
 import '../Controller/My_job_controller.dart';
 
-class RideProgressWayLocation extends StatelessWidget {
+class RideProgressWayLocation extends StatefulWidget {
   RideProgressWayLocation({super.key});
 
+  @override
+  State<RideProgressWayLocation> createState() => _RideProgressWayLocationState();
+}
+
+class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
   final BookingController controller = Get.find<BookingController>();
+  JobData? initialJob;
+  String? jobId;
+
+  @override
+  void initState() {
+    super.initState();
+    initialJob = Get.arguments as JobData?;
+    jobId = initialJob?.id;
+  }
+
+  Future<void> _refreshJob() async {
+    if (jobId == null) return;
+    try {
+      final response = await Get.find<JobRepo>().getJobById(jobId: jobId!);
+      if ((response.statusCode == 200 || response.statusCode == 201) && response.data != null) {
+        final data = response.data['data'];
+        final updated = JobData.fromJson(data);
+        setState(() {
+          initialJob = updated;
+        });
+        final idx = controller.myJobsList.indexWhere((e) => e.id == jobId);
+        if (idx != -1) {
+          controller.myJobsList[idx] = updated;
+        }
+      }
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Get the job data passed from the previous screen
-    final JobData? job = Get.arguments as JobData?;
+    // Resolve latest job from controller list if available
+    JobData? job;
+    try {
+      job = controller.myJobsList.firstWhere((e) => e.id == jobId);
+    } catch (_) {
+      job = initialJob;
+    }
 
     // Format date and time
     String displayDateTime = "N/A";
@@ -55,17 +93,7 @@ class RideProgressWayLocation extends StatelessWidget {
       body: RefreshIndicator(
         color: AppColors.orange100,
         onRefresh: () async {
-          await controller.fetchJobs();
-          if (job?.id != null) {
-            JobData? updated;
-            try {
-              updated = controller.myJobsList
-                  .firstWhere((e) => e.id == job!.id);
-            } catch (_) {
-              updated = job;
-            }
-            Get.offNamed(Routes.rideProgressWayLocation, arguments: updated);
-          }
+          await _refreshJob();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),

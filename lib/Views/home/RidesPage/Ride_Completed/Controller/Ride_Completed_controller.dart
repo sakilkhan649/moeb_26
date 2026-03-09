@@ -44,13 +44,7 @@ class RideCompletedController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar("Review submitted successfully", isError: false);
         // Navigate back to HomeScreens with arguments for tab selection
-        Get.offAllNamed(
-          Routes.homeScreens,
-          arguments: {
-            'bottomIndex': 1, // Rides Tab
-            'ridesTab': 1, // Past Tab
-          },
-        );
+        Get.back();
       } else {
         Helpers.showCustomSnackBar(
           response.data['message'] ?? "Failed to submit review",
