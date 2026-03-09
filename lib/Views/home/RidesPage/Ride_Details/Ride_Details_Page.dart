@@ -14,6 +14,7 @@ import 'package:moeb_26/widgets/CustomTextGary.dart';
 import 'package:moeb_26/widgets/Custom_Back_Button.dart';
 import 'package:moeb_26/widgets/Custom_InfoBox.dart';
 import '../../../../Core/routs.dart';
+import '../../../../Ripositoryes/socket_repository.dart';
 import '../../../../Utils/app_images.dart';
 import '../../../../widgets/Custom_AppBar.dart';
 import '../../../../widgets/Custom_Card_Ditails.dart';
@@ -67,6 +68,7 @@ class RideDetailsPage extends StatelessWidget {
     String amount = "N/A";
     String rating = "0.0";
     String posterName = "Unknown";
+    String participantId = "";
     String posterImage = AppImages.profile_image;
     String vehicleInfo = "N/A";
     String vehicleNumber = "N/A";
@@ -87,6 +89,7 @@ class RideDetailsPage extends StatelessWidget {
 
       final driver = r.createdBy;
       posterName = driver?.name ?? "Unknown";
+      participantId = driver?.id ?? "";
       posterImage = driver?.profilePicture ?? AppImages.profile_image;
       rating = driver?.averageRating?.toString() ?? "0.0";
 
@@ -111,6 +114,7 @@ class RideDetailsPage extends StatelessWidget {
 
       final driver = r.applicant?.driver;
       posterName = driver?.name ?? "Unknown";
+      participantId = driver?.id ?? "";
       posterImage =
           (driver?.profilePicture != null && driver!.profilePicture.isNotEmpty)
           ? driver.profilePicture
@@ -178,8 +182,16 @@ class RideDetailsPage extends StatelessWidget {
                     vehicleInfo: vehicleInfo,
                     buttonText: "Chat with Job Poster",
                     buttonIcon: Icons.chat_bubble_outline,
-                    onButtonPressed: () {
-                      Get.toNamed(Routes.chatPage, arguments: ride);
+                    onButtonPressed: () async {
+                      if (participantId.isNotEmpty && id.isNotEmpty) {
+                        final chat = await Get.find<SocketRepository>().createChat(
+                          participantId,
+                          id,
+                        );
+                        if (chat != null) {
+                          Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                        }
+                      }
                     },
                   ),
                 ),

@@ -37,6 +37,22 @@ class SocketRepository {
     return null;
   }
 
+  /// Create chat with a participant for a job
+  Future<ChatPreview?> createChat(String participantId, String jobId) async {
+    try {
+      final response = await apiClient.postData(ApiConstants.chats, {
+        'participantId': participantId,
+        'jobId': jobId,
+      });
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ChatPreview.fromJson(response.data['data']);
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return null;
+  }
+
   /// Create or get chat with a participant for an item
   Future<ChatPreview?> contactSeller(String participantId, String itemId) async {
     try {
@@ -84,4 +100,7 @@ class SocketRepository {
     }
     return null;
   }
+
+
+  
 }

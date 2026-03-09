@@ -10,6 +10,7 @@ import 'package:moeb_26/widgets/Custom_Back_Button.dart';
 import 'package:moeb_26/widgets/Custom_InfoBox.dart';
 import '../../../../Core/routs.dart';
 import '../../../../Utils/app_images.dart';
+import '../../../../Ripositoryes/socket_repository.dart';
 import '../../../../widgets/Custom_AppBar.dart';
 import '../../../../widgets/Custom_Card_Ditails.dart';
 import '../../../../widgets/Custom_Driver_Card.dart';
@@ -57,10 +58,18 @@ class OnMyWayDetailsPage extends StatelessWidget {
                     rating: "5.0",
                     vehicleNumber: "N/A",
                     vehicleInfo: ride?.vehicleType ?? "N/A",
-                    buttonText: "Chat with Job Poster",
+                    buttonText: "Chat with Driver",
                     buttonIcon: Icons.chat_bubble_outline,
-                    onButtonPressed: () {
-                      Get.toNamed(Routes.chatPage, arguments: ride);
+                    onButtonPressed: () async {
+                      if (ride?.applicant?.driver?.id != null && ride?.id != null) {
+                        final chat = await Get.find<SocketRepository>().createChat(
+                          ride!.applicant!.driver!.id,
+                          ride.id,
+                        );
+                        if (chat != null) {
+                          Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                        }
+                      }
                     },
                   ),
                 ),

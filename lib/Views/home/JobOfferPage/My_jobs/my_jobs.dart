@@ -9,6 +9,7 @@ import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Locati
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 import '../../../../Core/routs.dart';
+import '../../../../Ripositoryes/socket_repository.dart';
 import '../../../../Utils/app_colors.dart';
 import '../../../../Utils/app_icons.dart';
 import '../../../../Utils/app_images.dart';
@@ -537,8 +538,16 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
 
                         /// Chat Button
                         GestureDetector(
-                          onTap: () {
-                            Get.toNamed(Routes.chatPage, arguments: job);
+                          onTap: () async {
+                            if (job.assignedTo?.id != null && job.id != null) {
+                              final chat = await Get.find<SocketRepository>().createChat(
+                                job.assignedTo!.id!,
+                                job.id!,
+                              );
+                              if (chat != null) {
+                                Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                              }
+                            }
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
