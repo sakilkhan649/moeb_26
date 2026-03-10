@@ -160,7 +160,7 @@ class MyItemsCard extends StatelessWidget {
                 child: Text(
                   "Edit",
                   style: GoogleFonts.inter(
-                    color: Colors.blueAccent,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 15.sp,
                   ),
@@ -179,7 +179,7 @@ class MyItemsCard extends StatelessWidget {
                 child: Text(
                   "Delete",
                   style: GoogleFonts.inter(
-                    color: Colors.redAccent,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 15.sp,
                   ),
