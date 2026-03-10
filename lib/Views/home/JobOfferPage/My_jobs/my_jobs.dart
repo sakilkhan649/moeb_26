@@ -23,10 +23,7 @@ class VehicleTypeColors {
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 
   static const LinearGradient sedanSuvGradient = LinearGradient(
-    colors: [
-      Color(0xffAB1226),
-      Color(0xff0B1E40),
-    ],
+    colors: [Color(0xffAB1226), Color(0xff0B1E40)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -347,7 +344,10 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
-                            color: vehicleStyle is Color ? vehicleStyle : null,                           gradient: vehicleStyle is Gradient ? vehicleStyle : null,
+                            color: vehicleStyle is Color ? vehicleStyle : null,
+                            gradient: vehicleStyle is Gradient
+                                ? vehicleStyle
+                                : null,
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Text(
