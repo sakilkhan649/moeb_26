@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../../../Core/routs.dart';
@@ -19,14 +21,10 @@ class ByTheHour extends StatelessWidget {
   final durationController = TextEditingController();
   final dateController = TextEditingController();
   final pickupTimeController = TextEditingController();
-
   final payController = TextEditingController();
   final specialController = TextEditingController();
 
-  final OnewayController onewayControllerInstance = Get.put(
-    OnewayController(),
-  ); // Rename to avoid confusion
-
+  final OnewayController onewayControllerInstance = Get.put(OnewayController());
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -44,48 +42,60 @@ class ByTheHour extends StatelessWidget {
               "From",
               fromController,
               "e.g., JFK Airport, Terminal 4",
-              Icons.location_on_outlined,
+              SvgPicture.asset(
+                AppIcons.fromlocation_icon,
+                height: 20.sp,
+                width: 20.sp,
+              ),
               validator: (val) =>
-                  (val == null || val.isEmpty) ? "Address is required" : null,
+              (val == null || val.isEmpty) ? "Address is required" : null,
             ),
             _buildFieldWithLabel(
               "Drop-off Location",
               dropoffController,
               "e.g., Manhattan, Times Square",
-              Icons.location_on_outlined,
+              SvgPicture.asset(
+                AppIcons.fromlocation_icon,
+                height: 20.sp,
+                width: 20.sp,
+              ),
               validator: (val) =>
-                  (val == null || val.isEmpty) ? "Drop-off is required" : null,
+              (val == null || val.isEmpty) ? "Drop-off is required" : null,
             ),
             _buildFieldWithLabel(
               "Duration",
               durationController,
               "e.g., 2 hours",
-              Icons.timelapse_outlined,
+              SvgPicture.asset(
+                AppIcons.duration_icon,
+                height: 20.sp,
+                width: 20.sp,
+              ),
               validator: (val) =>
-                  (val == null || val.isEmpty) ? "Duration is required" : null,
+              (val == null || val.isEmpty) ? "Duration is required" : null,
             ),
             _buildDateTimeField(
               "Date",
-              Icons.date_range,
+              SvgPicture.asset(AppIcons.date_icon, height: 20.sp, width: 20.sp),
               dateController,
               "Select Date",
-              () async {
+                  () async {
                 await onewayControllerInstance.chooseDate(context);
                 final date = onewayControllerInstance.selectedDate.value;
                 if (date != null) {
                   dateController.text =
-                      "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                  "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
                 }
               },
               validator: (val) =>
-                  (val == null || val.isEmpty) ? "Date is required" : null,
+              (val == null || val.isEmpty) ? "Date is required" : null,
             ),
             _buildDateTimeField(
               "Pickup Time",
-              Icons.access_time,
+              SvgPicture.asset(AppIcons.time_myjob_icon, height: 20.sp, width: 20.sp),
               pickupTimeController,
               "Select Time",
-              () async {
+                  () async {
                 await onewayControllerInstance.chooseTime(context);
                 final time = onewayControllerInstance.selectedTime.value;
                 if (time != null) {
@@ -94,7 +104,7 @@ class ByTheHour extends StatelessWidget {
                 }
               },
               validator: (val) =>
-                  (val == null || val.isEmpty) ? "Time is required" : null,
+              (val == null || val.isEmpty) ? "Time is required" : null,
             ),
             FormField<String>(
               initialValue: controller.selectedVehicle.value,
@@ -126,14 +136,17 @@ class ByTheHour extends StatelessWidget {
               "Pay Amount",
               payController,
               "\$",
-              Icons.attach_money,
+              SvgPicture.asset(
+                AppIcons.payAmount_icon,
+                height: 20.sp,
+                width: 20.sp,
+              ),
               validator: (val) =>
-                  (val == null || val.isEmpty) ? "Amount is required" : null,
+              (val == null || val.isEmpty) ? "Amount is required" : null,
             ),
             CustomText(text: "Payment *", fontSize: 13.sp),
             SizedBox(height: 8.h),
             FormField<String>(
-            
               initialValue: onewayControllerInstance.selectedRole.value,
               validator: (value) {
                 if (onewayControllerInstance.selectedRole.value.isEmpty) {
@@ -146,10 +159,8 @@ class ByTheHour extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Obx(
-                      () => DropdownButtonHideUnderline(
-                      
+                          () => DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
-                          
                           isExpanded: true,
                           hint: Text(
                             'Select payment',
@@ -159,28 +170,24 @@ class ByTheHour extends StatelessWidget {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          value:
-                              onewayControllerInstance
-                                  .selectedRole
-                                  .value
-                                  .isEmpty
+                          value: onewayControllerInstance
+                              .selectedRole.value.isEmpty
                               ? null
                               : onewayControllerInstance.selectedRole.value,
                           items: onewayControllerInstance.roles
                               .map(
                                 (role) => DropdownMenuItem(
-                                
-                                  value: role,
-                                  child: Text(
-                                    role,
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
+                              value: role,
+                              child: Text(
+                                role,
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                              )
+                              ),
+                            ),
+                          )
                               .toList(),
                           onChanged: (value) {
                             if (value != null) {
@@ -211,7 +218,6 @@ class ByTheHour extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.r),
                               color: Colors.black,
-                              border: Border.all(color: AppColors.black200),
                             ),
                             offset: Offset(0, -5.h),
                             scrollbarTheme: ScrollbarThemeData(
@@ -225,9 +231,8 @@ class ByTheHour extends StatelessWidget {
                             padding: EdgeInsets.only(left: 14.w, right: 14.w),
                           ),
                           selectedItemBuilder: (context) {
-                            return onewayControllerInstance.roles.map((
-                              String value,
-                            ) {
+                            return onewayControllerInstance.roles
+                                .map((String value) {
                               return Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
@@ -261,7 +266,7 @@ class ByTheHour extends StatelessWidget {
               "Special Instructions (Optional)",
               specialController,
               "e.g., VIP client, suit required, name sign needed",
-              Icons.notes,
+              null,
               isRequired: false,
             ),
             SizedBox(height: 24.h),
@@ -291,21 +296,20 @@ class ByTheHour extends StatelessWidget {
     );
   }
 
-  ///pic date and time
   Widget _buildFieldWithLabel(
-    String label,
-    TextEditingController ctrl,
-    String hint,
-    IconData icon, {
-    bool isRequired = true,
-    String? Function(String?)? validator,
-  }) {
+      String label,
+      TextEditingController ctrl,
+      String hint,
+      Widget? icon, {
+        bool isRequired = true,
+        String? Function(String?)? validator,
+      }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
+            if (icon != null) icon,
             SizedBox(width: 8.w),
             Text(
               label + (isRequired ? ' *' : ''),
@@ -325,24 +329,25 @@ class ByTheHour extends StatelessWidget {
           textInputType: TextInputType.text,
           validator: validator,
         ),
+        SizedBox(height: 16.h),
       ],
     );
   }
 
   Widget _buildDateTimeField(
-    String label,
-    IconData icon,
-    TextEditingController ctrl,
-    String hint,
-    VoidCallback onPressed, {
-    String? Function(String?)? validator,
-  }) {
+      String label,
+      Widget? icon,
+      TextEditingController ctrl,
+      String hint,
+      VoidCallback onPressed, {
+        String? Function(String?)? validator,
+      }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
+            if (icon != null) icon,
             SizedBox(width: 8.w),
             Text(
               '$label *',
@@ -367,14 +372,15 @@ class ByTheHour extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(height: 16.h),
       ],
     );
   }
 
   Widget _buildVehicleSelection(
-    PostJobController controller,
-    FormFieldState<String> state,
-  ) {
+      PostJobController controller,
+      FormFieldState<String> state,
+      ) {
     final vehicles = [
       'SEDAN',
       'SUV',
@@ -389,7 +395,11 @@ class ByTheHour extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.directions_car, color: Colors.white, size: 18.sp),
+            SvgPicture.asset(
+              AppIcons.vechile_car_icon,
+              height: 20.sp,
+              width: 20.sp,
+            ),
             SizedBox(width: 8.w),
             Text(
               'Vehicle Type Required *',
@@ -403,7 +413,7 @@ class ByTheHour extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
         Obx(
-          () => Wrap(
+              () => Wrap(
             spacing: 12.w,
             runSpacing: 12.h,
             children: vehicles.map((vehicle) {
@@ -419,10 +429,14 @@ class ByTheHour extends StatelessWidget {
                     vertical: 10.h,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected ? Color(0xFF2A2A2A) : Colors.transparent,
+                    color: isSelected
+                        ? const Color(0xFF2A2A2A)
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
-                      color: isSelected ? Color(0xFF404040) : Color(0xFF2A2A2A),
+                      color: isSelected
+                          ? const Color(0xFF404040)
+                          : const Color(0xFF2A2A2A),
                     ),
                   ),
                   child: Text(
@@ -438,6 +452,7 @@ class ByTheHour extends StatelessWidget {
             }).toList(),
           ),
         ),
+        SizedBox(height: 16.h),
       ],
     );
   }
