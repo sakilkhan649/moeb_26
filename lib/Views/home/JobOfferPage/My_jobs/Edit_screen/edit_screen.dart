@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomTextField.dart';
 import 'package:moeb_26/widgets/CustomText_Field_Hight.dart';
@@ -54,20 +56,27 @@ class _EditScreenState extends State<EditScreen> {
               label: "Pickup Location",
               ctrl: pickupController,
               hint: "e.g., JFK Airport, Terminal 4",
-              icon: Icons.location_on_outlined,
+              icon: SvgPicture.asset(
+                AppIcons.fromlocation_icon,
+                width: 20.sp,
+                height: 20.sp,
+              ),
             ),
             _buildFieldWithLabel(
               label: "Drop-off Location",
               ctrl: dropoffController,
               hint: "e.g., Manhattan, Times Square",
-              icon: Icons.location_on_outlined,
+              icon: SvgPicture.asset(
+                AppIcons.duration_icon,
+                width: 20.sp,
+                height: 20.sp,
+              ),
             ),
             _buildFieldWithLabel(
               readOnly: true,
               label: "Flight Number (Optional)",
               ctrl: flightController,
               hint: "",
-              icon: Icons.flight,
               isRequired: false,
             ),
             _buildDateTimeRow(),
@@ -78,7 +87,11 @@ class _EditScreenState extends State<EditScreen> {
               label: "Pay Amount",
               ctrl: payController,
               hint: '\$120',
-              icon: Icons.attach_money,
+              icon: SvgPicture.asset(
+                AppIcons.payAmount_icon,
+                width: 20.sp,
+                height: 20.sp,
+              ),
               isRequired: false,
             ),
             _buildPaymentMethodDropdown(editController),
@@ -88,7 +101,6 @@ class _EditScreenState extends State<EditScreen> {
               label: "Special Instructions (Optional)",
               ctrl: specialController,
               hint: "e.g., VIP client, suit required, name sign needed",
-              icon: Icons.notes,
             ),
             SizedBox(height: 24.h),
             Obx(
@@ -141,7 +153,7 @@ class _EditScreenState extends State<EditScreen> {
     required String label,
     required TextEditingController ctrl,
     required String hint,
-    required IconData icon,
+    Widget? icon,
     bool isRequired = true,
   }) {
     return Column(
@@ -149,7 +161,7 @@ class _EditScreenState extends State<EditScreen> {
       children: [
         Row(
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
+            if (icon != null) icon,
             SizedBox(width: 8.w),
             Text(
               label + (isRequired ? ' *' : ''),
@@ -184,7 +196,7 @@ class _EditScreenState extends State<EditScreen> {
                 : "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
             return _buildDateTimeField(
               "Date",
-              Icons.date_range,
+              SvgPicture.asset(AppIcons.date_icon, width: 20.sp, height: 20.sp),
               dateController,
               "Select Date",
               (context) => editController.chooseDate(context),
@@ -198,7 +210,11 @@ class _EditScreenState extends State<EditScreen> {
               timeController.text = editController.formattedTime.value;
               return _buildDateTimeField(
                 "Time",
-                Icons.access_time,
+                SvgPicture.asset(
+                  AppIcons.time_myjob_icon,
+                  width: 20.sp,
+                  height: 20.sp,
+                ),
                 timeController,
                 "Select Time",
                 (context) => editController.chooseTime(context),
@@ -212,7 +228,7 @@ class _EditScreenState extends State<EditScreen> {
 
   Widget _buildDateTimeField(
     String label,
-    IconData icon,
+    Widget? icon,
     TextEditingController ctrl,
     String hint,
     Function(BuildContext) onPressed,
@@ -222,7 +238,7 @@ class _EditScreenState extends State<EditScreen> {
       children: [
         Row(
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
+            if (icon != null) icon,
             SizedBox(width: 8.w),
             Text(
               '$label *',
@@ -254,11 +270,11 @@ class _EditScreenState extends State<EditScreen> {
 
   Widget _buildVehicleSelection(EditController controller) {
     final vehicles = [
-      'Sedan',
+      'SEDAN',
       'SUV',
-      'Sprinter',
-      'Bus',
-      'LimoStretch',
+      'SPRINTER',
+      'BUS',
+      'LIMOSTRETCH',
       'SEDAN/SUV',
     ];
 
@@ -267,7 +283,11 @@ class _EditScreenState extends State<EditScreen> {
       children: [
         Row(
           children: [
-            Icon(Icons.directions_car, color: Colors.white, size: 18.sp),
+            SvgPicture.asset(
+              AppIcons.vechile_car_icon,
+              width: 20.sp,
+              height: 20.sp,
+            ),
             SizedBox(width: 8.w),
             Text(
               'Vehicle Type Required *',
