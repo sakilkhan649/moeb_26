@@ -278,23 +278,21 @@ class Ridespage extends StatelessWidget {
       } catch (_) {}
     }
     displayDateTime = dateStr.isNotEmpty ? "$dateStr · $timeStr" : timeStr;
+    
+    final vehicleType = vehicle ?? 'N/A';
 
     return GestureDetector(
       onTap: onTap,
       child: CustomJobCard(
         pickupPaymentType: payment ?? 'N/A',
         dateTime: displayDateTime,
-        vehicleType: vehicle ?? 'N/A',
+        vehicleType: vehicleType.toUpperCase(),
         pickupLocation: pickup ?? 'N/A',
         dropoffLocation: dropoff ?? 'N/A',
         pickupAmount: amount ?? '0',
         driverName: name ?? 'Unknown',
         companyName: email ?? 'N/A',
-        vehicleTypeColor: (vehicle?.toLowerCase() == 'suv')
-            ? VehicleTypeColors.suv
-            : (vehicle?.toLowerCase() == 'van')
-            ? VehicleTypeColors.van
-            : VehicleTypeColors.sedan,
+        vehicleStyle: VehicleTypeColors.getVehicleStyle(vehicleType),
       ),
     );
   }
@@ -302,18 +300,36 @@ class Ridespage extends StatelessWidget {
 
 /// ================= VEHICLE TYPE COLORS =================
 class VehicleTypeColors {
-  static const Color sedan = Colors.red;
-  static const Color suv = Colors.blue;
-  static const Color van = Colors.green;
-  static const Color luxury = Color(0xFFD4AF37); // Gold
-  static const Color truck = Colors.orange;
-  static const Color mini = Colors.purple;
+  static const Color sedan = Color(0xFFDC2626);
+  static const Color suv = Color(0xFF0A1F44);
+  static const Color bus = Color(0xFF3B2F2F);
+  static const Color gray = Color.fromARGB(255, 65, 63, 63);
+
+  static const LinearGradient sedanSuvGradient = LinearGradient(
+    colors: [
+      Color(0xffAB1226), 
+      Color(0xff0B1E40),
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static dynamic getVehicleStyle(String? type) {
+    if (type == null) return gray;
+    final t = type.toUpperCase();
+    if (t == 'SUV') return suv;
+    if (t == 'SEDAN') return sedan;
+    if (t == 'BUS') return bus;
+    if (t == 'SEDAN/SUV') return sedanSuvGradient;
+    return gray;
+  }
 }
 
 /// ================= CUSTOM VEHICLE TYPE BADGE =================
 class VehicleTypeBadge extends StatelessWidget {
   final String vehicleType;
-  final Color backgroundColor;
+  final Color? backgroundColor;
+  final Gradient? gradient;
   final Color textColor;
   final double? fontSize;
   final FontWeight? fontWeight;
@@ -321,7 +337,8 @@ class VehicleTypeBadge extends StatelessWidget {
   const VehicleTypeBadge({
     Key? key,
     required this.vehicleType,
-    this.backgroundColor = Colors.red,
+    this.backgroundColor,
+    this.gradient,
     this.textColor = Colors.white,
     this.fontSize,
     this.fontWeight,
@@ -332,7 +349,8 @@ class VehicleTypeBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: gradient == null ? (backgroundColor ?? Colors.red) : null,
+        gradient: gradient,
         borderRadius: BorderRadius.circular(4.r),
       ),
       child: Text(
@@ -358,11 +376,7 @@ class CustomJobCard extends StatelessWidget {
   final String driverName;
   final String companyName;
   final String pickupPaymentType;
-  // final String flightNumberHint;
-  // final String paymentMethodHint;
-  // final String specialInstructionsHint;
-  // final String price;
-  final Color vehicleTypeColor;
+  final dynamic vehicleStyle;
 
   const CustomJobCard({
     required this.pickupPaymentType,
@@ -371,16 +385,10 @@ class CustomJobCard extends StatelessWidget {
     required this.vehicleType,
     required this.pickupLocation,
     required this.dropoffLocation,
-    // required this.pickupPayment,
     required this.pickupAmount,
     required this.driverName,
     required this.companyName,
-
-    // required this.flightNumberHint,
-    // required this.paymentMethodHint,
-    // required this.specialInstructionsHint,
-    // required this.price,
-    this.vehicleTypeColor = Colors.red,
+    required this.vehicleStyle,
   }) : super(key: key);
 
   @override
@@ -425,7 +433,8 @@ class CustomJobCard extends StatelessWidget {
               SizedBox(width: 10.w),
               VehicleTypeBadge(
                 vehicleType: vehicleType,
-                backgroundColor: vehicleTypeColor,
+                backgroundColor: vehicleStyle is Color ? vehicleStyle : null,
+                gradient: vehicleStyle is Gradient ? vehicleStyle : null,
               ),
             ],
           ),

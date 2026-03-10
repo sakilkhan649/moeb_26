@@ -175,7 +175,10 @@ class _JobofferpageState extends State<Jobofferpage> {
                                         paymentMethodController,
                                     specialInstructionsController:
                                         specialInstructionsController,
-                                    vehicleTypeColor: VehicleTypeColors.sedan,
+                                    vehicleStyle:
+                                        VehicleTypeColors.getVehicleStyle(
+                                          job.vehicleType,
+                                        ),
                                     onArrowTap: () {
                                       // Handle arrow tap
                                       controller.applyToJob(jobId: job.id);
@@ -217,18 +220,36 @@ class _JobofferpageState extends State<Jobofferpage> {
 
 /// ================= VEHICLE TYPE COLORS =================
 class VehicleTypeColors {
-  static const Color sedan = Colors.red;
-  static const Color suv = Colors.blue;
-  static const Color van = Colors.green;
-  static const Color luxury = Color(0xFFD4AF37); // Gold
-  static const Color truck = Colors.orange;
-  static const Color mini = Colors.purple;
+  static const Color sedan = Color(0xFFDC2626);
+  static const Color suv = Color(0xFF0A1F44);
+  static const Color bus = Color(0xFF3B2F2F);
+  static const Color gray = Color.fromARGB(255, 65, 63, 63);
+
+  static const LinearGradient sedanSuvGradient = LinearGradient(
+    colors: [
+      Color(0xffAB1226), // 95% opacity approximated by B1
+      Color(0xff0B1E40), // 92.5% opacity approximated by EC
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static dynamic getVehicleStyle(String? type) {
+    if (type == null) return gray;
+    final t = type.toUpperCase();
+    if (t == 'SUV') return suv;
+    if (t == 'SEDAN') return sedan;
+    if (t == 'BUS') return bus;
+    if (t == 'SEDAN/SUV') return sedanSuvGradient;
+    return gray;
+  }
 }
 
 /// ================= CUSTOM VEHICLE TYPE BADGE =================
 class VehicleTypeBadge extends StatelessWidget {
   final String vehicleType;
-  final Color backgroundColor;
+  final Color? backgroundColor;
+  final Gradient? gradient;
   final Color textColor;
   final double? fontSize;
   final FontWeight? fontWeight;
@@ -236,7 +257,8 @@ class VehicleTypeBadge extends StatelessWidget {
   const VehicleTypeBadge({
     Key? key,
     required this.vehicleType,
-    this.backgroundColor = Colors.red,
+    this.backgroundColor,
+    this.gradient,
     this.textColor = Colors.white,
     this.fontSize,
     this.fontWeight,
@@ -247,7 +269,8 @@ class VehicleTypeBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: gradient == null ? (backgroundColor ?? Colors.red) : null,
+        gradient: gradient,
         borderRadius: BorderRadius.circular(6.r),
       ),
       child: Text(
@@ -262,8 +285,6 @@ class VehicleTypeBadge extends StatelessWidget {
   }
 }
 
-/// ================= CUSTOM JOB CARD WIDGET =================
-/// ================= CUSTOM JOB CARD WIDGET =================
 class CustomJobCard extends StatefulWidget {
   final String dateTime;
   final String vehicleType;
@@ -280,7 +301,7 @@ class CustomJobCard extends StatefulWidget {
   final TextEditingController specialInstructionsController;
   final VoidCallback? onArrowTap;
   final VoidCallback? onPriceTap;
-  final Color vehicleTypeColor;
+  final dynamic vehicleStyle;
 
   const CustomJobCard({
     Key? key,
@@ -299,7 +320,7 @@ class CustomJobCard extends StatefulWidget {
     required this.specialInstructionsController,
     this.onArrowTap,
     this.onPriceTap,
-    this.vehicleTypeColor = Colors.red,
+    required this.vehicleStyle,
   }) : super(key: key);
 
   @override
@@ -343,7 +364,12 @@ class _CustomJobCardState extends State<CustomJobCard> {
               ),
               VehicleTypeBadge(
                 vehicleType: widget.vehicleType.toUpperCase(),
-                backgroundColor: widget.vehicleTypeColor,
+                backgroundColor: widget.vehicleStyle is Color
+                    ? widget.vehicleStyle
+                    : null,
+                gradient: widget.vehicleStyle is Gradient
+                    ? widget.vehicleStyle
+                    : null,
               ),
             ],
           ),

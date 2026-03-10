@@ -16,6 +16,32 @@ import '../../../../widgets/Custom_AppBar.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 import 'Controller/My_job_controller.dart';
 
+class VehicleTypeColors {
+  static const Color sedan = Color(0xFFDC2626);
+  static const Color suv = Color(0xFF0A1F44);
+  static const Color bus = Color(0xFF3B2F2F);
+  static const Color gray = Color.fromARGB(255, 65, 63, 63);
+
+  static const LinearGradient sedanSuvGradient = LinearGradient(
+    colors: [
+      Color(0xffAB1226),
+      Color(0xff0B1E40),
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static dynamic getVehicleStyle(String? type) {
+    if (type == null) return gray;
+    final t = type.toUpperCase();
+    if (t == 'SUV') return suv;
+    if (t == 'SEDAN') return sedan;
+    if (t == 'BUS') return bus;
+    if (t == 'SEDAN/SUV') return sedanSuvGradient;
+    return gray;
+  }
+}
+
 class MyJobsScreen extends StatefulWidget {
   const MyJobsScreen({super.key});
 
@@ -169,6 +195,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final puLocation = job.pickupLocation;
     final doLocation = job.dropoffLocation ?? 'N/A';
     final vehicle = job.vehicleType;
+    final vehicleStyle = VehicleTypeColors.getVehicleStyle(vehicle);
     final flight = job.flightNumber ?? 'N/A';
     final paymentType = job.paymentType;
     final instruction = job.instruction ?? 'N/A';
@@ -320,7 +347,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.red,
+                            color: vehicleStyle is Color ? vehicleStyle : null,                           gradient: vehicleStyle is Gradient ? vehicleStyle : null,
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Text(
