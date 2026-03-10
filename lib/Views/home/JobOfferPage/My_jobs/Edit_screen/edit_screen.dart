@@ -195,8 +195,7 @@ class _EditScreenState extends State<EditScreen> {
         Expanded(
           child: Builder(
             builder: (context) => Obx(() {
-              final time = editController.selectedTime.value;
-              timeController.text = time == null ? "" : time.format(context);
+              timeController.text = editController.formattedTime.value;
               return _buildDateTimeField(
                 "Time",
                 Icons.access_time,
@@ -359,7 +358,7 @@ class _EditScreenState extends State<EditScreen> {
                       child: Text(
                         role,
                         style: GoogleFonts.inter(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                         ),
@@ -391,7 +390,8 @@ class _EditScreenState extends State<EditScreen> {
               dropdownStyleData: DropdownStyleData(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.r),
-                  color: Colors.white,
+                  color: Colors.black,
+                  border: Border.all(color: AppColors.black200),
                 ),
                 offset: Offset(0, -5.h),
                 scrollbarTheme: ScrollbarThemeData(

@@ -67,9 +67,7 @@ class _JobofferpageState extends State<Jobofferpage> {
                 controller: scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: Column(
                     children: [
                       SizedBox(height: 2.w),
@@ -119,49 +117,62 @@ class _JobofferpageState extends State<Jobofferpage> {
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: controller.jobOffersList.length,
                               itemBuilder: (context, index) {
-                          final job = controller.jobOffersList[index];
+                                final job = controller.jobOffersList[index];
 
-                          // Format Date and Time
-                          String formattedDateTime = "";
-                          if (job.date != null) {
-                            String dateStr = DateFormat('EEE, MMM dd').format(job.date!);
-                            
-                            String timeStr = job.time;
-                            try {
-                              if (timeStr.contains(':')) {
-                                final parts = timeStr.split(':');
-                                int hour = int.parse(parts[0]);
-                                int minute = int.parse(parts[1].split(' ')[0]);
-                                
-                                final period = hour >= 12 ? "PM" : "AM";
-                                final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-                                String formattedTime = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
-                                formattedDateTime = "$dateStr · $formattedTime";
-                              } else {
-                                formattedDateTime = "$dateStr · $timeStr";
-                              }
-                            } catch (_) {
-                              formattedDateTime = "$dateStr · $timeStr";
-                            }
-                          } else {
-                            formattedDateTime = job.time;
-                          }
+                                // Format Date and Time
+                                String formattedDateTime = "";
+                                if (job.date != null) {
+                                  String dateStr = DateFormat(
+                                    'EEE, MMM dd',
+                                  ).format(job.date!);
 
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 16.h),
-                            child: CustomJobCard(
-                              dateTime: formattedDateTime,
-                              vehicleType: job.vehicleType,
+                                  String timeStr = job.time;
+                                  try {
+                                    if (timeStr.contains(':')) {
+                                      final parts = timeStr.split(':');
+                                      int hour = int.parse(parts[0]);
+                                      int minute = int.parse(
+                                        parts[1].split(' ')[0],
+                                      );
+
+                                      final period = hour >= 12 ? "PM" : "AM";
+                                      final hour12 = hour == 0
+                                          ? 12
+                                          : (hour > 12 ? hour - 12 : hour);
+                                      String formattedTime =
+                                          "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+                                      formattedDateTime =
+                                          "$dateStr · $formattedTime";
+                                    } else {
+                                      formattedDateTime = "$dateStr · $timeStr";
+                                    }
+                                  } catch (_) {
+                                    formattedDateTime = "$dateStr · $timeStr";
+                                  }
+                                } else {
+                                  formattedDateTime = job.time;
+                                }
+
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  child: CustomJobCard(
+                                    dateTime: formattedDateTime,
+                                    vehicleType: job.vehicleType,
                                     pickupLocation: job.pickupLocation,
                                     dropoffLocation: job.dropoffLocation ?? '',
-                                    driverName: job.createdBy?.name ?? 'Unknown',
-                                    companyName: job.createdBy?.name ?? 'Unknown',
+                                    driverName:
+                                        job.createdBy?.name ?? 'Unknown',
+                                    companyName:
+                                        job.createdBy?.name ?? 'Unknown',
                                     flightNumberHint: job.flightNumber ?? '',
                                     paymentMethodHint: job.paymentType,
-                                    specialInstructionsHint: job.instruction ?? '',
+                                    specialInstructionsHint:
+                                        job.instruction ?? '',
                                     price: job.paymentAmount.toString(),
-                                    flightNumberController: flightNumberController,
-                                    paymentMethodController: paymentMethodController,
+                                    flightNumberController:
+                                        flightNumberController,
+                                    paymentMethodController:
+                                        paymentMethodController,
                                     specialInstructionsController:
                                         specialInstructionsController,
                                     vehicleTypeColor: VehicleTypeColors.sedan,
@@ -331,7 +342,7 @@ class _CustomJobCardState extends State<CustomJobCard> {
                 ],
               ),
               VehicleTypeBadge(
-                vehicleType: widget.vehicleType,
+                vehicleType: widget.vehicleType.toUpperCase(),
                 backgroundColor: widget.vehicleTypeColor,
               ),
             ],
@@ -434,7 +445,6 @@ class _CustomJobCardState extends State<CustomJobCard> {
 
           /// SPECIAL INSTRUCTIONS
           CustomTextgray(
-            
             text: "Special Instructions",
             color: const Color(0xFF737373),
             fontWeight: FontWeight.w500,

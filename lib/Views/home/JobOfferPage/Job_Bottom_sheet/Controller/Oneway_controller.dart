@@ -38,6 +38,12 @@ class OnewayController extends GetxController {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedTime.value ?? TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != selectedTime.value) {
       selectedTime.value = picked;

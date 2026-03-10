@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.moeb_26"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -24,7 +24,7 @@ android {
         applicationId = "com.example.moeb_26"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -42,3 +42,8 @@ android {
 flutter {
     source = "../.."
 }
+
+
+
+// Add this at the BOTTOM of the file
+apply plugin: 'com.google.gms.google-services'
