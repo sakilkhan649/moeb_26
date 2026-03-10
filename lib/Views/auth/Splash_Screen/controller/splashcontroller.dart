@@ -2,8 +2,6 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Views/auth/Create_Account_and_signIn/createscreens.dart';
-import 'package:uuid/uuid.dart';
-
 import '../../../../Config/app_constants.dart';
 import '../../../../Config/storage_constants.dart';
 import '../../../../Services/storege_service.dart';
@@ -14,8 +12,7 @@ class SplashScreenController extends GetxController {
   void onInit() async {
     // TODO: implement onInit
     super.onInit();
-    await getOrCreateDeviceToken();
-    // Login check is now handled after 3 seconds in startTimer
+    AppConstants.fcmToken = await StorageService.getString(StorageConstants.fcmToken);
   }
 
   // Start the timer and change the dot index over time
@@ -34,17 +31,6 @@ class SplashScreenController extends GetxController {
     });
   }
 
-  Future<String> getOrCreateDeviceToken() async {
-    String token = await StorageService.getString(StorageConstants.deviceToken);
-    AppConstants.deviceToken = token;
-
-    if (token.isEmpty) {
-      token = const Uuid().v4(); // unique device token
-      await StorageService.setString(StorageConstants.deviceToken, token);
-    }
-
-    return token;
-  }
 
   Future<void> checkLogin() async {
     final accessToken = await StorageService.getString(

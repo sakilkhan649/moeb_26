@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
@@ -120,12 +121,21 @@ class AuthService extends GetxService {
     required String password,
   }) async {
     try {
-      // final deviceTocken = await _authRepo.getDeviceId();
-      final deviceTocken = AppConstants.deviceToken;
+      String? fcmToken;
+      try {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+        debugPrint("FCM Token dynamically fetched for login: $fcmToken");
+      } catch (e) {
+        debugPrint("Error fetching FCM token: $e");
+      }
+      
+      AppConstants.fcmToken = fcmToken ?? AppConstants.fcmToken;
+      await StorageService.setString(StorageConstants.fcmToken, AppConstants.fcmToken);
+      
       final response = await _authRepo.login(
         email: email,
         password: password,
-        deviceToken: deviceTocken,
+        deviceToken: AppConstants.fcmToken,
       );
       await handleAuthResponse(response);
       return response;
@@ -137,8 +147,15 @@ class AuthService extends GetxService {
   /// ===================== LOGOUT =====================
   Future<Response> logout() async {
     try {
-      final deviceToken = AppConstants.deviceToken;
-      final response = await _authRepo.logout(deviceToken: deviceToken);
+      String? fcmToken;
+      try {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+        debugPrint("FCM Token dynamically fetched for logout: $fcmToken");
+      } catch (e) {
+        debugPrint("Error fetching FCM token: $e");
+      }
+      
+      final response = await _authRepo.logout(deviceToken: AppConstants.fcmToken);
       if (response.statusCode == 200 || response.statusCode == 201) {
         await _clearLocalAuth();
         Get.offAllNamed(Routes.signscreen);

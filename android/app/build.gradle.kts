@@ -6,11 +6,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.moeb_26"
-    compileSdk = 34
+    namespace = "com.moeb26.app"
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -21,10 +22,10 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.moeb_26"
+        applicationId = "com.moeb26.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -46,4 +47,8 @@ flutter {
 
 
 // Add this at the BOTTOM of the file
-apply plugin: 'com.google.gms.google-services'
+apply(plugin = "com.google.gms.google-services")
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+}
