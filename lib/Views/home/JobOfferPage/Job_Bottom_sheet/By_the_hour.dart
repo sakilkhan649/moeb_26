@@ -49,7 +49,7 @@ class ByTheHour extends StatelessWidget {
                   (val == null || val.isEmpty) ? "Address is required" : null,
             ),
             _buildFieldWithLabel(
-              "To (Drop-off Location)",
+              "Drop-off Location",
               dropoffController,
               "e.g., Manhattan, Times Square",
               Icons.location_on_outlined,
@@ -89,7 +89,8 @@ class ByTheHour extends StatelessWidget {
                 await onewayControllerInstance.chooseTime(context);
                 final time = onewayControllerInstance.selectedTime.value;
                 if (time != null) {
-                  pickupTimeController.text = time.format(context);
+                  pickupTimeController.text =
+                      onewayControllerInstance.formattedTime.value;
                 }
               },
               validator: (val) =>
@@ -132,6 +133,7 @@ class ByTheHour extends StatelessWidget {
             CustomText(text: "Payment *", fontSize: 13.sp),
             SizedBox(height: 8.h),
             FormField<String>(
+            
               initialValue: onewayControllerInstance.selectedRole.value,
               validator: (value) {
                 if (onewayControllerInstance.selectedRole.value.isEmpty) {
@@ -145,7 +147,9 @@ class ByTheHour extends StatelessWidget {
                   children: [
                     Obx(
                       () => DropdownButtonHideUnderline(
+                      
                         child: DropdownButton2<String>(
+                          
                           isExpanded: true,
                           hint: Text(
                             'Select payment',
@@ -165,11 +169,12 @@ class ByTheHour extends StatelessWidget {
                           items: onewayControllerInstance.roles
                               .map(
                                 (role) => DropdownMenuItem(
+                                
                                   value: role,
                                   child: Text(
                                     role,
                                     style: GoogleFonts.inter(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -205,7 +210,8 @@ class ByTheHour extends StatelessWidget {
                           dropdownStyleData: DropdownStyleData(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.r),
-                              color: Colors.white,
+                              color: Colors.black,
+                              border: Border.all(color: AppColors.black200),
                             ),
                             offset: Offset(0, -5.h),
                             scrollbarTheme: ScrollbarThemeData(
@@ -370,11 +376,11 @@ class ByTheHour extends StatelessWidget {
     FormFieldState<String> state,
   ) {
     final vehicles = [
-      'Sedan',
+      'SEDAN',
       'SUV',
-      'Sprinter',
-      'Bus',
-      'LimoStretch',
+      'SPRINTER',
+      'BUS',
+      'LIMO STRETCH',
       'SEDAN/SUV',
     ];
 

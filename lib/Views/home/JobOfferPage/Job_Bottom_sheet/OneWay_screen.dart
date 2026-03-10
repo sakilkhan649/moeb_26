@@ -203,7 +203,7 @@ class OnewayScreen extends StatelessWidget {
                                   child: Text(
                                     role,
                                     style: GoogleFonts.inter(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -239,7 +239,8 @@ class OnewayScreen extends StatelessWidget {
                           dropdownStyleData: DropdownStyleData(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.r),
-                              color: Colors.white,
+                              color: Colors.black,
+                              border: Border.all(color: AppColors.black200),
                             ),
                             offset: Offset(0, -5.h),
                             scrollbarTheme: ScrollbarThemeData(
@@ -460,11 +461,11 @@ class OnewayScreen extends StatelessWidget {
     FormFieldState<String> state,
   ) {
     final vehicles = [
-      'Sedan',
+      'SEDAN',
       'SUV',
-      'Sprinter',
-      'Bus',
-      'LimoStretch',
+      'SPRINTER',
+      'BUS',
+      'LIMOSTRETCH',
       'SEDAN/SUV',
     ];
 

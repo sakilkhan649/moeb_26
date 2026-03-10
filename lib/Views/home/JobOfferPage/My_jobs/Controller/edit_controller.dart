@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../../../../Data/my_jobs_model.dart';
 import '../../../../../Ripositoryes/job_repository.dart';
 import '../../../../../widgets/Custom_snacbar.dart' as Helpers;
@@ -13,6 +14,7 @@ class EditController extends GetxController {
 
   var selectedDate = Rxn<DateTime>();
   var selectedTime = Rxn<TimeOfDay>();
+  var formattedTime = "".obs;
 
   var selectedVehicle = ''.obs;
   var paymentMethod = 'No Collect'.obs;
@@ -73,6 +75,10 @@ class EditController extends GetxController {
           if (job!.time!.toLowerCase().contains('pm') && hour < 12) hour += 12;
           if (job!.time!.toLowerCase().contains('am') && hour == 12) hour = 0;
           selectedTime.value = TimeOfDay(hour: hour, minute: minute);
+          
+          final now = DateTime.now();
+          final dateTime = DateTime(now.year, now.month, now.day, hour, minute);
+          formattedTime.value = DateFormat('hh:mm a').format(dateTime);
         }
       } catch (_) {}
     }
@@ -113,9 +119,25 @@ class EditController extends GetxController {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedTime.value ?? TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != selectedTime.value) {
       selectedTime.value = picked;
+      
+      final now = DateTime.now();
+      final dateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        picked.hour,
+        picked.minute,
+      );
+      formattedTime.value = DateFormat('hh:mm a').format(dateTime);
     }
   }
 
