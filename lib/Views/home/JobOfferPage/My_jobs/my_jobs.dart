@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,10 +38,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-      ),
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: RefreshIndicator(
         color: AppColors.orange100,
         onRefresh: () async {
@@ -85,7 +81,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
 
                       /// ================= JOB CARD =================
                       Obx(() {
-                        if (controller.isLoadingList.value && controller.myJobsList.isEmpty) {
+                        if (controller.isLoadingList.value &&
+                            controller.myJobsList.isEmpty) {
                           return Center(
                             child: Padding(
                               padding: EdgeInsets.only(top: 40.h),
@@ -147,16 +144,19 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
         int hour = int.parse(parts[0]);
         int minute = int.parse(parts[1].split(' ')[0]);
         final timeOfDay = TimeOfDay(hour: hour, minute: minute);
-        
+
         // Manual conversion to 12h format
         final period = hour >= 12 ? "PM" : "AM";
         final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-        formattedTime = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+        formattedTime =
+            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
       }
     } catch (_) {}
 
     // Parse date if possible
-    String displayDate = formattedTime.isNotEmpty ? "${dateRaw} · $formattedTime" : dateRaw;
+    String displayDate = formattedTime.isNotEmpty
+        ? "${dateRaw} · $formattedTime"
+        : dateRaw;
     try {
       if (dateRaw.isNotEmpty) {
         DateTime parsed = DateTime.parse(dateRaw);
@@ -230,7 +230,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             color: Colors.white,
                             size: 24.sp,
                           ),
-                          color: Colors.white,
+                          color: Color(0xFF1E1E1E),
                           onSelected: (value) {
                             if (value == 'edit') {
                               Get.toNamed(Routes.editScreen, arguments: job);
@@ -243,16 +243,16 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                               value: 'edit',
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.edit_outlined,
-                                    color: Colors.black,
-                                    size: 20.sp,
+                                  SvgPicture.asset(
+                                    AppIcons.edit_icon_myjob,
+                                    width: 20.sp,
+                                    height: 20.sp,
                                   ),
-                                  SizedBox(width: 5.w),
+                                  SizedBox(width: 10.w),
                                   Text(
                                     "Edit",
                                     style: GoogleFonts.inter(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 13.sp,
                                     ),
                                   ),
@@ -263,16 +263,16 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                               value: 'delete',
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.delete_outlined,
-                                    color: Colors.black,
-                                    size: 20.sp,
+                                  SvgPicture.asset(
+                                    AppIcons.deletemyjob_icon,
+                                    width: 20.sp,
+                                    height: 20.sp,
                                   ),
-                                  SizedBox(width: 5.w),
+                                  SizedBox(width: 10.w),
                                   Text(
                                     "Delete",
                                     style: GoogleFonts.inter(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 13.sp,
                                     ),
                                   ),
@@ -447,290 +447,317 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
               if ((status == 'PENDING' && job.applicant?.driver != null) ||
                   (status == 'ASSIGNED' && job.assignedTo != null) ||
                   (status == 'COMPLETED' && job.assignedTo != null))
-                Builder(builder: (context) {
-                  final driver = status == 'PENDING'
-                      ? job.applicant?.driver
-                      : job.assignedTo;
-                  final vehicle = (driver?.vehicles != null && driver!.vehicles!.isNotEmpty)
-                      ? driver.vehicles!.first
-                      : null;
-                  final vehicleInfo = vehicle != null
-                      ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
-                      : job.vehicleType ?? "N/A";
+                Builder(
+                  builder: (context) {
+                    final driver = status == 'PENDING'
+                        ? job.applicant?.driver
+                        : job.assignedTo;
+                    final vehicle =
+                        (driver?.vehicles != null &&
+                            driver!.vehicles!.isNotEmpty)
+                        ? driver.vehicles!.first
+                        : null;
+                    final vehicleInfo = vehicle != null
+                        ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
+                        : job.vehicleType ?? "N/A";
 
-                  return Container(
-                    padding: EdgeInsets.all(16.w),
-                    margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF191111),
-                      borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(color: const Color(0xFF2A2A2A)),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 30.r,
-                              backgroundImage: (driver?.profilePicture != null && driver!.profilePicture!.isNotEmpty)
-                                  ? NetworkImage(driver.profilePicture!)
-                                  : const AssetImage(AppImages.profile_image) as ImageProvider,
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        driver?.name ?? "",
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Icon(
-                                        Icons.directions_car,
-                                        color: Colors.white,
-                                        size: 20.sp,
-                                      ),
-                                      SizedBox(width: 4.w),
-                                      Expanded(
-                                        child: Text(
-                                          vehicleInfo,
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white.withOpacity(0.4),
-                                            fontSize: 12.sp,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 4.h),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.star_border_outlined,
-                                        color: const Color(0xFFD08700),
-                                        size: 20.sp,
-                                      ),
-                                      SizedBox(width: 4.w),
-                                      Text(
-                                        "${driver?.averageRating ?? 0.0}/5",
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white.withOpacity(0.4),
-                                          fontSize: 12.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                    return Container(
+                      padding: EdgeInsets.all(16.w),
+                      margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF191111),
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(color: const Color(0xFF2A2A2A)),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 30.r,
+                                backgroundImage:
+                                    (driver?.profilePicture != null &&
+                                        driver!.profilePicture!.isNotEmpty)
+                                    ? NetworkImage(driver.profilePicture!)
+                                    : const AssetImage(AppImages.profile_image)
+                                          as ImageProvider,
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16.h),
-
-                        /// Chat Button
-                        GestureDetector(
-                          onTap: () async {
-                            final String? participantId = job.assignedTo?.id ?? job.applicant?.driver?.id;
-                            if (participantId != null && job.id != null) {
-                              try {
-                                final chat = await Get.find<SocketRepository>().createChat(
-                                  participantId,
-                                  job.id!,
-                                );
-                                if (chat != null) {
-                                  Get.toNamed(Routes.chatDetailPage, arguments: chat);
-                                }
-                              } catch (e) {
-                                Helpers.showCustomSnackBar('Failed to open chat.', isError: true);
-                                print("Error opening chat: $e");
-                              }
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 15.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.chat_bubble_outline,
-                                  color: Colors.black.withOpacity(0.6),
-                                  size: 24.sp,
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Chat with Driver",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.black.withOpacity(0.6),
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 24.h),
-
-                        /// Reject/Approve or View Button
-                        if (status == 'ASSIGNED' || status == 'COMPLETED')
-                          GestureDetector(
-                            onTap: () {
-                              controller.viewLoading[job.id ?? ""] = true;
-                              Get.to(RideProgressWayLocation(), arguments: job)
-                                  ?.then((_) {
-                                controller.viewLoading[job.id ?? ""] = false;
-                              });
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 15.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.orange100,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Center(
-                                child: Obx(() {
-                                  final isLoading =
-                                      controller.viewLoading[job.id ?? ""] ==
-                                          true;
-                                  return isLoading
-                                      ? const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                      : Text(
-                                          "View",
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          driver?.name ?? "",
                                           style: GoogleFonts.inter(
                                             color: Colors.white,
                                             fontSize: 16.sp,
                                             fontWeight: FontWeight.w600,
                                           ),
-                                        );
-                                }),
-                              ),
-                            ),
-                          )
-                        else if (status == 'PENDING')
-                          Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    await controller.rejectApplicant(
-                                      jobId: job.id.toString(),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12.w,
-                                      vertical: 15.h,
+                                        ),
+                                        const Spacer(),
+                                        Icon(
+                                          Icons.directions_car,
+                                          color: Colors.white,
+                                          size: 20.sp,
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Expanded(
+                                          child: Text(
+                                            vehicleInfo,
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white.withOpacity(
+                                                0.4,
+                                              ),
+                                              fontSize: 12.sp,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16.r),
+                                    SizedBox(height: 4.h),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.star_border_outlined,
+                                          color: const Color(0xFFD08700),
+                                          size: 20.sp,
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          "${driver?.averageRating ?? 0.0}/5",
+                                          style: GoogleFonts.inter(
+                                            color: Colors.white.withOpacity(
+                                              0.4,
+                                            ),
+                                            fontSize: 12.sp,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    child: Center(
-                                      child: Obx(() {
-                                        final isLoading = controller
-                                                .rejectLoading[job.id ?? ""] ==
-                                            true;
-                                        return isLoading
-                                            ? const SizedBox(
-                                                height: 20,
-                                                width: 20,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  color: Colors.black,
-                                                ),
-                                              )
-                                            : Text(
-                                                "Reject",
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.black,
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              );
-                                      }),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 20.w),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    await controller.approveApplicant(
-                                      jobId: job.id.toString(),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12.w,
-                                      vertical: 15.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.orange100,
-                                      borderRadius: BorderRadius.circular(16.r),
-                                    ),
-                                    child: Center(
-                                      child: Obx(() {
-                                        final isLoading = controller
-                                                .approveLoading[job.id ?? ""] ==
-                                            true;
-                                        return isLoading
-                                            ? const SizedBox(
-                                                height: 20,
-                                                width: 20,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                            : Text(
-                                                "Approve",
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.white,
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              );
-                                      }),
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                      ],
-                    ),
-                  );
-                }),
+                          SizedBox(height: 16.h),
+
+                          /// Chat Button
+                          GestureDetector(
+                            onTap: () async {
+                              final String? participantId =
+                                  job.assignedTo?.id ??
+                                  job.applicant?.driver?.id;
+                              if (participantId != null && job.id != null) {
+                                try {
+                                  final chat =
+                                      await Get.find<SocketRepository>()
+                                          .createChat(participantId, job.id!);
+                                  if (chat != null) {
+                                    Get.toNamed(
+                                      Routes.chatDetailPage,
+                                      arguments: chat,
+                                    );
+                                  }
+                                } catch (e) {
+                                  Helpers.showCustomSnackBar(
+                                    'Failed to open chat.',
+                                    isError: true,
+                                  );
+                                  print("Error opening chat: $e");
+                                }
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 15.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.r),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.chat_bubble_outline,
+                                    color: Colors.black.withOpacity(0.6),
+                                    size: 24.sp,
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    "Chat with Driver",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.black.withOpacity(0.6),
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 24.h),
+
+                          /// Reject/Approve or View Button
+                          if (status == 'ASSIGNED' || status == 'COMPLETED')
+                            GestureDetector(
+                              onTap: () {
+                                controller.viewLoading[job.id ?? ""] = true;
+                                Get.to(
+                                  RideProgressWayLocation(),
+                                  arguments: job,
+                                )?.then((_) {
+                                  controller.viewLoading[job.id ?? ""] = false;
+                                });
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 15.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.orange100,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                                child: Center(
+                                  child: Obx(() {
+                                    final isLoading =
+                                        controller.viewLoading[job.id ?? ""] ==
+                                        true;
+                                    return isLoading
+                                        ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            "View",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          );
+                                  }),
+                                ),
+                              ),
+                            )
+                          else if (status == 'PENDING')
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await controller.rejectApplicant(
+                                        jobId: job.id.toString(),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 15.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          16.r,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Obx(() {
+                                          final isLoading =
+                                              controller.rejectLoading[job.id ??
+                                                  ""] ==
+                                              true;
+                                          return isLoading
+                                              ? const SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                        color: Colors.black,
+                                                      ),
+                                                )
+                                              : Text(
+                                                  "Reject",
+                                                  style: GoogleFonts.inter(
+                                                    color: Colors.black,
+                                                    fontSize: 16.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                );
+                                        }),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 20.w),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await controller.approveApplicant(
+                                        jobId: job.id.toString(),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 15.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.orange100,
+                                        borderRadius: BorderRadius.circular(
+                                          16.r,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Obx(() {
+                                          final isLoading =
+                                              controller.approveLoading[job
+                                                      .id ??
+                                                  ""] ==
+                                              true;
+                                          return isLoading
+                                              ? const SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                        color: Colors.white,
+                                                      ),
+                                                )
+                                              : Text(
+                                                  "Approve",
+                                                  style: GoogleFonts.inter(
+                                                    color: Colors.white,
+                                                    fontSize: 16.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                );
+                                        }),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
             ],
           ),
         ],
