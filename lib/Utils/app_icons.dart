@@ -32,6 +32,7 @@ class AppIcons {
   static const String date_icon="$iconurl/date_icon.svg";
   static const String vechile_car_icon="$iconurl/vechile_car_icon.svg";
   static const String payAmount_icon="$iconurl/pay_amount_icon.svg";
+  static const String edit_icon_myjob="$iconurl/edit_icon_myjob.svg";
 
 
 }
