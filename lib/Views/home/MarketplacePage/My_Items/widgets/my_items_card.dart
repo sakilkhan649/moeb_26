@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import '../Model/my_items_model.dart';
 import '../Controller/my_items_controller.dart';
 import '../../widgets/ImagePreviewPopup.dart';
@@ -157,13 +159,24 @@ class MyItemsCard extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                   );
                 },
-                child: Text(
-                  "Edit",
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15.sp,
-                  ),
+                child: Row(
+                  mainAxisAlignment: .center,
+                  children: [
+                    SvgPicture.asset(
+                      AppIcons.edit_icon_myjob,
+                      height: 20.sp,
+                      width: 20.sp,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Edit",
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -176,13 +189,24 @@ class MyItemsCard extends StatelessWidget {
                   Get.back();
                   _showDeleteDialog(context);
                 },
-                child: Text(
-                  "Delete",
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15.sp,
-                  ),
+                child: Row(
+                  mainAxisAlignment: .center,
+                  children: [
+                    SvgPicture.asset(
+                      AppIcons.deletemyjob_icon,
+                      height: 20.sp,
+                      width: 20.sp,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Delete",
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
