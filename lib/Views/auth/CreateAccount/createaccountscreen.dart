@@ -12,15 +12,38 @@ import '../../../widgets/CustomTextField.dart';
 import '../../../widgets/CustomTextGary.dart';
 import 'CreateAccountController/CreateAccountController.dart';
 
-class Createaccountscreen extends StatelessWidget {
+class Createaccountscreen extends StatefulWidget {
   Createaccountscreen({super.key});
 
+  @override
+  State<Createaccountscreen> createState() => _CreateaccountscreenState();
+}
+
+class _CreateaccountscreenState extends State<Createaccountscreen> {
   // Reactive error messages for dropdowns (not covered by Form validation)
   final RxString areaError = ''.obs;
   final RxString roleError = ''.obs;
 
   final controller = Get.put(CreateAccountController());
   final _formKey = GlobalKey<FormState>();
+  final ScrollController dropdownScrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    dropdownScrollController.addListener(() {
+      if (dropdownScrollController.position.pixels >=
+          dropdownScrollController.position.maxScrollExtent - 50) {
+        controller.loadMoreCities();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    dropdownScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,19 +203,31 @@ class Createaccountscreen extends StatelessWidget {
                   () => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomDropdown(
-                        hintText: 'Select Service Area',
-                        value: controller.selectedArea.value.isEmpty
-                            ? null
-                            : controller.selectedArea.value,
-                        items: controller.cities,
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.pickArea(value);
-                            areaError.value = '';
-                          }
-                        },
-                      ),
+                      controller.isCitiesLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.orange100,
+                              ),
+                            )
+                          : CustomDropdown(
+                              hintText: 'Select Service Area',
+                              value: controller.selectedArea.value.isEmpty
+                                  ? null
+                                  : controller.selectedArea.value,
+                              items: controller.cities,
+                              scrollController: dropdownScrollController,
+                              isLoadingMore: controller.isMoreCitiesLoading,
+                              hasNextPage: controller.hasNextCitiesPage,
+                              onLoadMore: () => controller.loadMoreCities(),
+                              onChanged: (value) {
+                                if (value != null &&
+                                    value != 'loading' &&
+                                    value != 'loadMore') {
+                                  controller.pickArea(value);
+                                  areaError.value = '';
+                                }
+                              },
+                            ),
                       if (areaError.value.isNotEmpty)
                         Padding(
                           padding: EdgeInsets.only(left: 12.w, top: 6.h),

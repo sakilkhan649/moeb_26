@@ -7,7 +7,10 @@ class ServiceAreasRepo {
 
   ServiceAreasRepo({required this.apiClient});
 
-  Future<Response> getAllServiceAreas() async {
-    return await apiClient.getData(ApiConstants.serviceAreas);
+  Future<Response> getAllServiceAreas({int page = 1, int limit = 10}) async {
+    return await apiClient.getData(
+      ApiConstants.serviceAreas,
+      query: {'page': page, 'limit': limit},
+    );
   }
 }

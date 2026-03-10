@@ -6,6 +6,7 @@ import '../../MarketplacePage/Controller/Marketplace_controller.dart';
 import '../../RidesPage/Controller/Rides_controller.dart';
 import '../Controller/bottom_nabbar_controller.dart';
 
+
 class BottomNabbarBinding extends Bindings {
   @override
   void dependencies() {

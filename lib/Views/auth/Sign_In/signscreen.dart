@@ -138,7 +138,7 @@ class Signscreen extends StatelessWidget {
                   },
                   child: Center(
                     child: CustomTextgray(
-                      text: "Don't have an account?",
+                      text: "Create Account?",
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
                     ),

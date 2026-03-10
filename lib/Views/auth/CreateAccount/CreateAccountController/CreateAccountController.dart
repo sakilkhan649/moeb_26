@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Views/auth/Signup_Flow/SignupController.dart';
+import 'package:moeb_26/Views/Service_Area/Controller/serviceController.dart';
 
 class CreateAccountController extends GetxController {
+  final ServiceAreaController _serviceAreaController =
+      Get.isRegistered<ServiceAreaController>()
+      ? Get.find<ServiceAreaController>()
+      : Get.put(ServiceAreaController());
+
   // Text Controllers
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
@@ -25,14 +31,26 @@ class CreateAccountController extends GetxController {
   var selectedArea = ''.obs;
 
   final roles = ['Company manager', 'Owner operator', 'Driver'];
-  final cities = [
-    'Miami, FL',
-    'Orlando, FL',
-    'Palm Beach, FL',
-    'Fort Lauderdale, FL',
-    'Naples, FL',
-    'Tampa, FL',
-  ];
+
+  // Derived cities from ServiceAreaController
+  List<String> get cities =>
+      _serviceAreaController.serviceAreas.map((e) => e.areaName).toList();
+  bool get isCitiesLoading => _serviceAreaController.isLoading.value;
+  bool get isMoreCitiesLoading => _serviceAreaController.isMoreLoading.value;
+  bool get hasNextCitiesPage =>
+      _serviceAreaController.currentPage.value <
+      _serviceAreaController.totalPages.value;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Fetch service areas when controller is initialized
+    _serviceAreaController.fetchServiceAreas();
+  }
+
+  void loadMoreCities() {
+    _serviceAreaController.loadMoreServiceAreas();
+  }
 
   void togglePassword() => showPassword.value = !showPassword.value;
   void toggleConfirmPassword() =>
@@ -92,4 +110,3 @@ class CreateAccountController extends GetxController {
     super.onClose();
   }
 }
-
