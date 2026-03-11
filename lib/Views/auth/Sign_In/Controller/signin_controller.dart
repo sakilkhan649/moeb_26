@@ -32,25 +32,17 @@ class LoginController extends GetxController {
         email: emailController.text,
         password: passwordController.text,
       );
-      ApiChecker.checkWriteApi(response);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Helpers.showCustomSnackBar('Login successful', isError: false);
-        Get.offAllNamed(Routes.homeScreens);
-      }
-
-    } catch (e) {
-      if (e is DioException) {
-        final status = e.response?.statusCode ?? 0;
-        final data = e.response?.data;
-        final String errorMsg = (data is Map && data['message'] != null)
-            ? data['message'].toString()
-            : 'Invalid email or password';
-
-        if (errorMsg == "Your account has been restricted. Contact support.") {
-          final blockReason = (data is Map && data['data'] != null && data['data']['blockReason'] != null)
-              ? data['data']['blockReason'].toString()
-              : "Incomplete documents or vehicle not meeting standards";
-              
+        final data = response.data;
+        final authData = data['data'] ?? {};
+        
+        // Check if user is restricted
+        if (authData['isRestricted'] == true) {
+          final blockReason = authData['blockReason']?.toString() ?? "Incomplete documents or vehicle not meeting standards";
+          
+          Helpers.showCustomSnackBar('Account Restricted', isError: true);
+          
           Get.toNamed(
             Routes.applicationNotApproved,
             arguments: {
@@ -62,6 +54,17 @@ class LoginController extends GetxController {
           return;
         }
 
+        Helpers.showCustomSnackBar('Login successful', isError: false);
+        Get.offAllNamed(Routes.homeScreens);
+      }
+    } catch (e) {
+      if (e is DioException) {
+        final status = e.response?.statusCode ?? 0;
+        final data = e.response?.data;
+        final String errorMsg = (data is Map && data['message'] != null)
+            ? data['message'].toString()
+            : 'Invalid email or password';
+
         if (status == 400) {
           Helpers.showCustomSnackBar(errorMsg, isError: true);
         } else {
@@ -71,7 +74,6 @@ class LoginController extends GetxController {
         Helpers.showCustomSnackBar('Something went wrong', isError: true);
       }
       Helpers.showDebugLog("login error => $e");
-
     } finally {
       isLoading.value = false;
     }

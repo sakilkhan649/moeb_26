@@ -9,6 +9,7 @@ import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextField.dart';
 import 'package:moeb_26/widgets/Custom_ButtonIcon.dart';
 import '../Utils/app_icons.dart';
+import '../Views/auth/Application_Not_Approved/Controller/support_controller.dart';
 
 // ============================================
 // FUNCTION: Bottom Sheet Show Korar Jonno
@@ -29,19 +30,12 @@ class ContactSupportBottomSheet extends StatelessWidget {
   ContactSupportBottomSheet({Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
+  final SupportController controller = Get.put(SupportController());
 
   @override
   Widget build(BuildContext context) {
-    // Controllers
-    final subjectController = TextEditingController();
-    final messageController = TextEditingController();
-
-    // State management
-    final isSubmitting = false.obs;
-    final submitted = false.obs;
-
     return Container(
-      height: 600.h,
+      height: 700.h,
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.only(
@@ -57,19 +51,105 @@ class ContactSupportBottomSheet extends StatelessWidget {
 
           // Form Content Section
           Expanded(
-            child: Form(
-              key: _formKey,
-              child: _buildFormContent(
-                subjectController,
-                messageController,
-                isSubmitting,
-                submitted,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Tickets List (If any)
+                  Obx(() {
+                    if (controller.isLoading.value) {
+                      return Center(child: Padding(
+                        padding: EdgeInsets.all(20.w),
+                        child: CircularProgressIndicator(color: Colors.white),
+                      ));
+                    }
+                    if (controller.tickets.isEmpty) return SizedBox.shrink();
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                          child: CustomText(text: "My Support Tickets", fontSize: 16.sp),
+                        ),
+                        SizedBox(
+                          height: 150.h,
+                          child: ListView.builder(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.tickets.length,
+                            itemBuilder: (context, index) {
+                              final ticket = controller.tickets[index];
+                              return _buildTicketCard(ticket);
+                            },
+                          ),
+                        ),
+                        Divider(color: Colors.grey[900]),
+                      ],
+                    );
+                  }),
+
+                  Form(
+                    key: _formKey,
+                    child: _buildFormContent(),
+                  ),
+                ],
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildTicketCard(dynamic ticket) {
+    return Container(
+      width: 250.w,
+      margin: EdgeInsets.only(right: 12.w),
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Color(0xFF111827),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Color(0xFF374151)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            ticket['subject'] ?? 'No Subject',
+            style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.sp),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            ticket['messages'] != null && ticket['messages'].isNotEmpty 
+                ? ticket['messages'].last['message'] 
+                : 'No messages',
+            style: GoogleFonts.inter(color: Colors.grey[400], fontSize: 12.sp),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Spacer(),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+              _formatDate(ticket['createdAt']),
+              style: GoogleFonts.inter(color: Colors.grey[600], fontSize: 10.sp),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null) return "";
+    try {
+      final date = DateTime.parse(dateStr).toLocal();
+      return "${date.day}/${date.month}/${date.year}";
+    } catch (_) {
+      return "";
+    }
   }
 
   // ============================================
@@ -80,8 +160,17 @@ class ContactSupportBottomSheet extends StatelessWidget {
       children: [
         SizedBox(height: 24.h),
         Padding(
-          padding: EdgeInsets.only(left: 20.w),
-          child: CustomText(text: "Contact Support", fontSize: 20.sp),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomText(text: "Contact Support", fontSize: 20.sp),
+              IconButton(
+                icon: Icon(Icons.close, color: Colors.white),
+                onPressed: () => Get.back(),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -90,23 +179,18 @@ class ContactSupportBottomSheet extends StatelessWidget {
   // ============================================
   // FORM CONTENT SECTION
   // ============================================
-  Widget _buildFormContent(
-    TextEditingController subjectController,
-    TextEditingController messageController,
-    RxBool isSubmitting,
-    RxBool submitted,
-  ) {
-    return SingleChildScrollView(
+  Widget _buildFormContent() {
+    return Padding(
       padding: EdgeInsets.all(20.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Subject Field
-          _buildSubjectField(subjectController),
+          _buildSubjectField(controller.subjectController),
           SizedBox(height: 24.h),
 
           // Message Field
-          _buildMessageField(messageController),
+          _buildMessageField(controller.messageController),
           SizedBox(height: 24.h),
 
           // Info Box
@@ -142,7 +226,7 @@ class ContactSupportBottomSheet extends StatelessWidget {
         // Input Field
         Customtextfield(
           controller: controller,
-          hintText: "problem",
+          hintText: "Enter subject",
           obscureText: false,
           textInputType: TextInputType.text,
           validator: (value) {
@@ -299,26 +383,29 @@ class ContactSupportBottomSheet extends StatelessWidget {
 
         // Send Message Button
         Expanded(
-          child: CustomButtonIcon(
-            text: "Send Message",
+          child: Obx(() => CustomButtonIcon(
+            text: controller.isSubmitting.value ? "Sending..." : "Send Message",
             backgroundColor: Colors.transparent,
             borderColor: Colors.white,
             textColor: Colors.white,
-            iconWidget: SvgPicture.asset(
-              AppIcons.send_icon,
-              width: 24.w,
-              height: 24.w,
-            ),
+            iconWidget: controller.isSubmitting.value 
+              ? SizedBox(width: 20.w, height: 20.w, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              : SvgPicture.asset(
+                  AppIcons.send_icon,
+                  width: 24.w,
+                  height: 24.w,
+                ),
             iconColor: Colors.white,
             iconOnRight: false,
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                Get.toNamed(Routes.chatPage);
+                controller.createSupportTicket();
               }
             },
-          ),
+          )),
         ),
       ],
     );
   }
 }
+
