@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
 import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/Utils/app_images.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
 import '../../../Core/routs.dart';
@@ -453,7 +455,7 @@ class CustomJobCard extends StatelessWidget {
           SizedBox(height: 8.h),
 
           /// AMOUNT
-          _buildRichInfo("Amount: ", pickupAmount),
+          _buildRichInfo("Amount: \$ ", pickupAmount),
           SizedBox(height: 15.h),
 
           /// DRIVER NAME

@@ -27,16 +27,12 @@ class JobRepo {
       "vehicleType": vehicleType,
       "paymentAmount": paymentAmount,
       "paymentType": paymentType,
+      "dropoffLocation": dropoffLocation ?? "N/A",
+      "duration": duration ?? "N/A",
     };
 
-    if (dropoffLocation != null && dropoffLocation.isNotEmpty) {
-      body["dropoffLocation"] = dropoffLocation;
-    }
     if (flightNumber != null && flightNumber.isNotEmpty) {
       body["flightNumber"] = flightNumber;
-    }
-    if (duration != null && duration.isNotEmpty) {
-      body["duration"] = duration;
     }
     if (instruction != null && instruction.isNotEmpty) {
       body["instruction"] = instruction;
@@ -139,7 +135,7 @@ class JobRepo {
       ApiConstants.updateJob.replaceAll('{jobId}', jobId),
     );
   }
-  
+
   Future<Response> getJobById({required String jobId}) async {
     return await apiClient.getData(
       ApiConstants.updateJob.replaceAll('{jobId}', jobId),
