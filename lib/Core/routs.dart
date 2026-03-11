@@ -37,6 +37,8 @@ import '../Views/home/RidesPage/Ride_Details/Ride_Details_Page.dart';
 import '../Views/home/Bottom_NabBar/bottom_nabbar_screens.dart';
 import '../widgets/No_internet_screen.dart';
 
+import '../Views/home/ChatPage/Community_chat_detail_page.dart';
+
 class Routes {
   static const String splashScreen = "/SplashScreen";
   static const String createscreens = "/Createscreens";
@@ -59,6 +61,7 @@ class Routes {
   static const String requestUnderReview = "/RequestUnderReview";
   static const String chatPage = "/Chatpage";
   static const String chatDetailPage = "/ChatDetailPage";
+  static const String communityChatDetailPage = "/CommunityChatDetailPage";
   static const String rideDetailsPage = "/RideDetailsPage";
   static const String onMyWayDetailsPage = "/OnMyWayDetailsPage";
   static const String pobDetailsPage = "/PobDetailsPage";
@@ -184,6 +187,11 @@ class Routes {
     GetPage(
       name: chatDetailPage,
       page: () => ChatDetailPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: communityChatDetailPage,
+      page: () => CommunityChatDetailPage(),
       transition: Transition.noTransition,
     ),
     GetPage(

@@ -34,8 +34,12 @@ class ChatDetailController extends GetxController {
     fetchMessages();
   }
   void setupSocket() {
-    socketService.joinRoom(chat.id);
+    debugPrint(
+      '🔄 ChatDetailController: Setting up socket for room: chat::${chat.id}',
+    );
+    socketService.joinRoom('chat::${chat.id}');
 
+    // Listen for global message updates
     _messageWorker = ever(socketService.lastReceivedMessage, (newMessage) {
       if (newMessage != null && newMessage.text.trim().isNotEmpty) {
         if (newMessage.chatId == chat.id) {
@@ -107,7 +111,7 @@ class ChatDetailController extends GetxController {
 
   @override
   void onClose() {
-    socketService.leaveRoom(chat.id);
+    socketService.leaveRoom('chat::${chat.id}');
     _messageWorker?.dispose();
     messageController.dispose();
     super.onClose();
