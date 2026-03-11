@@ -233,11 +233,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                       children: [
                         Row(
                           children: [
-                            Icon(
-                              Icons.calendar_today_outlined,
-                              color: Colors.grey,
-                              size: 18.sp,
-                            ),
+                           SvgPicture.asset(AppIcons.date_icon,height: 20.sp,width: 20.sp,),
                             SizedBox(width: 5.w),
                             Text(
                               displayDate,
@@ -487,12 +483,12 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     final vehicleInfo = vehicle != null
                         ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
                         : job.vehicleType ?? "N/A";
-
+///=========================================================================================================================================
                     return Container(
                       padding: EdgeInsets.all(16.w),
                       margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF191111),
+                        color: const Color(0xFF1C1C1C),
                         borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(color: const Color(0xFF2A2A2A)),
                       ),
@@ -525,11 +521,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                           ),
                                         ),
                                         const Spacer(),
-                                        Icon(
-                                          Icons.directions_car,
-                                          color: Colors.white,
-                                          size: 20.sp,
-                                        ),
+                                       SvgPicture.asset(AppIcons.bmw_car_icon,height: 20.sp,width: 20.sp,),
                                         SizedBox(width: 4.w),
                                         Expanded(
                                           child: Text(
@@ -951,7 +943,7 @@ class CustomTextFieldGold extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: textInputType,
       validator: validator,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Color(0xFFD08700)),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: Color(0xFFD08700)),

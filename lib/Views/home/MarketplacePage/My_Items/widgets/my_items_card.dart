@@ -129,9 +129,11 @@ class MyItemsCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
+        contentPadding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 60.w),
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Edit Button
             SizedBox(
@@ -159,22 +161,27 @@ class MyItemsCard extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                   );
                 },
-                child: Row(
-                  mainAxisAlignment: .center,
+                child: Column(
                   children: [
-                    SvgPicture.asset(
-                      AppIcons.edit_icon_myjob,
-                      height: 20.sp,
-                      width: 20.sp,
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      "Edit",
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15.sp,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(width: 30.w),
+                        SvgPicture.asset(
+                          AppIcons.edit_icon_myjob,
+                          height: 20.sp,
+                          width: 20.sp,
+                        ),
+                        SizedBox(width: 12.w),
+                        Text(
+                          "Edit",
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.sp,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -190,14 +197,15 @@ class MyItemsCard extends StatelessWidget {
                   _showDeleteDialog(context);
                 },
                 child: Row(
-                  mainAxisAlignment: .center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    SizedBox(width: 30.w),
                     SvgPicture.asset(
                       AppIcons.deletemyjob_icon,
                       height: 20.sp,
                       width: 20.sp,
                     ),
-                    SizedBox(width: 8.w),
+                    SizedBox(width: 12.w),
                     Text(
                       "Delete",
                       style: GoogleFonts.inter(
