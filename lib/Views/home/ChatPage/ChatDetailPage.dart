@@ -102,68 +102,85 @@ class ChatDetailPage extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildMessageBubble(ChatMessage message) {
-    // যদি মেসেজের টেক্সট খালি থাকে, তবে কিছুই দেখাবে না
-    if (message.text.trim().isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (message.text.trim().isEmpty) return const SizedBox.shrink();
 
+    // Obx এর বাইরে না রেখে ভেতরে userId নাও
     return Obx(() {
-      final String currentUserId = controller.userService.userId;
+      final String currentUserId = controller.userService.userId; // reactive
       final bool isMe = message.isSentBy(currentUserId);
 
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 4.h),
         child: Align(
           alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-          child: Column(
-            crossAxisAlignment: isMe
-                ? CrossAxisAlignment.end
-                : CrossAxisAlignment.start,
-            children: [
-              Container(
-                constraints: BoxConstraints(maxWidth: 0.75.sw),
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: isMe
-                      ? const Color(0xff1A1A1A)
-                      : const Color(0xff1A1A1A),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.r),
-                    topRight: Radius.circular(16.r),
-                    bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
-                    bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
-                  ),
-                  border:Border.all(color: const Color(0xff333333)),
-                ),
-                child: Text(
-                  message.text,
-                  style: GoogleFonts.inter(
-                    color:Colors.white,
-                    fontSize: 14.sp,
-                    height: 1.4,
-                    fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
-                  ),
-                ),
-              ),
-              SizedBox(height: 4.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: Text(
-                  message.time,
-                  style: GoogleFonts.inter(
-                    color: Colors.grey[600],
-                    fontSize: 10.sp,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // বাকি সব same...
         ),
       );
     });
   }
+
+  // Widget _buildMessageBubble(ChatMessage message) {
+  //   // যদি মেসেজের টেক্সট খালি থাকে, তবে কিছুই দেখাবে না
+  //   if (message.text.trim().isEmpty) {
+  //     return const SizedBox.shrink();
+  //   }
+  //
+  //   return Obx(() {
+  //     final String currentUserId = controller.userService.userId;
+  //     final bool isMe = message.isSentBy(currentUserId);
+  //
+  //     return Padding(
+  //       padding: EdgeInsets.symmetric(vertical: 4.h),
+  //       child: Align(
+  //         alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+  //         child: Column(
+  //           crossAxisAlignment: isMe
+  //               ? CrossAxisAlignment.end
+  //               : CrossAxisAlignment.start,
+  //           children: [
+  //             Container(
+  //               constraints: BoxConstraints(maxWidth: 0.75.sw),
+  //               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+  //               decoration: BoxDecoration(
+  //                 color: isMe
+  //                     ? const Color(0xff1A1A1A)
+  //                     : const Color(0xff1A1A1A),
+  //                 borderRadius: BorderRadius.only(
+  //                   topLeft: Radius.circular(16.r),
+  //                   topRight: Radius.circular(16.r),
+  //                   bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
+  //                   bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
+  //                 ),
+  //                 border:Border.all(color: const Color(0xff333333)),
+  //               ),
+  //               child: Text(
+  //                 message.text,
+  //                 style: GoogleFonts.inter(
+  //                   color:Colors.white,
+  //                   fontSize: 14.sp,
+  //                   height: 1.4,
+  //                   fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
+  //                 ),
+  //               ),
+  //             ),
+  //             SizedBox(height: 4.h),
+  //             Padding(
+  //               padding: EdgeInsets.symmetric(horizontal: 4.w),
+  //               child: Text(
+  //                 message.time,
+  //                 style: GoogleFonts.inter(
+  //                   color: Colors.grey[600],
+  //                   fontSize: 10.sp,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     );
+  //   });
+  // }
 
   Widget _buildMessageInput() {
     return Container(

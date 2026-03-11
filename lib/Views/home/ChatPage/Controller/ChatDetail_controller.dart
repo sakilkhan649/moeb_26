@@ -22,9 +22,25 @@ class ChatDetailController extends GetxController {
   void onInit() {
     super.onInit();
     chat = Get.arguments;
-    fetchMessages();
+    _initWithUserId();
     setupSocket();
   }
+
+  Future<void> _initWithUserId() async {
+    // userId না থাকলে fetch হওয়া পর্যন্ত wait করো
+    if (userService.userId.isEmpty) {
+      await userService.fetchUserId();
+    }
+    fetchMessages();
+  }
+
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   chat = Get.arguments;
+  //   fetchMessages();
+  //   setupSocket();
+  // }
 
   // void setupSocket() {
   //   debugPrint(
