@@ -9,7 +9,7 @@ class AppString {
 
   static RegExp usernameRegexp = RegExp(r'^[a-zA-Z][a-zA-Z0-9_ ]{2,15}$');
 
-  static RegExp phoneRegexp =  RegExp(r'^(\+?[1-9]\d{7,14}|01[3-9]\d{8})$');
+  static RegExp phoneRegexp = RegExp(r'^\+?\d{7,15}$');
 
   static RegExp otpRegexp = RegExp(r'^[0-9]+$');
 

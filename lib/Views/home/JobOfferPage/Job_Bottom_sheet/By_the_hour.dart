@@ -131,6 +131,7 @@ class ByTheHour extends StatelessWidget {
                 height: 20.sp,
                 width: 20.sp,
               ),
+              textInputType: TextInputType.number,
               validator: (val) =>
                   (val == null || val.isEmpty) ? "Amount is required" : null,
             ),
@@ -299,6 +300,7 @@ class ByTheHour extends StatelessWidget {
     Widget? icon, {
     bool isRequired = true,
     String? Function(String?)? validator,
+    TextInputType textInputType = TextInputType.text,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,7 +324,7 @@ class ByTheHour extends StatelessWidget {
           controller: ctrl,
           hintText: hint,
           obscureText: false,
-          textInputType: TextInputType.text,
+          textInputType: textInputType,
           validator: validator,
         ),
         SizedBox(height: 16.h),

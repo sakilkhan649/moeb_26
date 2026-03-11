@@ -26,24 +26,53 @@ class ChatDetailController extends GetxController {
     setupSocket();
   }
 
+  // void setupSocket() {
+  //   debugPrint(
+  //     '🔄 ChatDetailController: Setting up socket for chatId: ${chat.id}',
+  //   );
+  //   socketService.joinRoom(chat.id);
+  //
+  //   // Listen for global message updates
+  //   _messageWorker = ever(socketService.lastReceivedMessage, (newMessage) {
+  //     if (newMessage != null && newMessage.text.trim().isNotEmpty) {
+  //       debugPrint(
+  //         '📥 ChatDetailController: Received message from global stream',
+  //       );
+  //
+  //       // Only add if it belongs to this chat and isn't already here
+  //       if (newMessage.chatId == chat.id &&
+  //           !messages.any((m) => m.id == newMessage.id)) {
+  //         messages.insert(0, newMessage);
+  //         debugPrint('➕ ChatDetailController: Message added to UI list');
+  //       }
+  //     }
+  //   });
+  // }
   void setupSocket() {
-    debugPrint(
-      '🔄 ChatDetailController: Setting up socket for chatId: ${chat.id}',
-    );
     socketService.joinRoom(chat.id);
 
-    // Listen for global message updates
     _messageWorker = ever(socketService.lastReceivedMessage, (newMessage) {
       if (newMessage != null && newMessage.text.trim().isNotEmpty) {
-        debugPrint(
-          '📥 ChatDetailController: Received message from global stream',
-        );
+        if (newMessage.chatId == chat.id) {
 
-        // Only add if it belongs to this chat and isn't already here
-        if (newMessage.chatId == chat.id &&
-            !messages.any((m) => m.id == newMessage.id)) {
-          messages.insert(0, newMessage);
-          debugPrint('➕ ChatDetailController: Message added to UI list');
+          // যদি এটা আমার পাঠানো message হয় (senderId match করে)
+          if (newMessage.senderId == userService.userId) {
+            // duplicate check - tempMessage আগেই আছে, শুধু id update করো
+            int index = messages.indexWhere(
+                    (m) => m.senderId == userService.userId &&
+                    m.text == newMessage.text &&
+                    m.id != newMessage.id
+            );
+            if (index != -1) {
+              messages[index] = newMessage; // temp → real replace
+              return;
+            }
+          }
+
+          // অন্যের message হলে বা নতুন হলে add করো
+          if (!messages.any((m) => m.id == newMessage.id)) {
+            messages.insert(0, newMessage);
+          }
         }
       }
     });
