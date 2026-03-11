@@ -54,9 +54,25 @@ class MyItems extends StatelessWidget {
                   }
 
                   return ListView.builder(
+                    controller: controller.scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: (controller.myItems.length / 2).ceil(),
+                    itemCount: (controller.myItems.length / 2).ceil() + 1,
                     itemBuilder: (context, index) {
+                      if (index == (controller.myItems.length / 2).ceil()) {
+                        return Obx(
+                          () => controller.isLoadMore.value
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      color: Color(0xFFF1A107),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                        );
+                      }
+
                       final int leftIndex = index * 2;
                       final int rightIndex = leftIndex + 1;
                       final bool hasRight =

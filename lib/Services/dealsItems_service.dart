@@ -12,9 +12,9 @@ class DealsService extends GetxService {
     _dealsRepo = DealsRepo(apiClient: Get.find<ApiClient>());
   }
 
-  Future<Response> getActiveDeals() async {
+  Future<Response> getActiveDeals({int page = 1, int limit = 10}) async {
     try {
-      return await _dealsRepo.getActiveDeals();
+      return await _dealsRepo.getActiveDeals(page: page, limit: limit);
     } catch (e) {
       rethrow;
     }

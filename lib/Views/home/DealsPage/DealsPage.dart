@@ -34,53 +34,77 @@ class Dealspage extends StatelessWidget {
             );
           }
 
-          // Handle empty state
-          if (controller.dealsList.isEmpty) {
-            return SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Container(
-                height: 600.h, // Sufficient height for scroll
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Empty State Box Icon (Placeholder wrapper)
-                    Container(
-                      padding: EdgeInsets.all(40.w),
-                      decoration: BoxDecoration(
-                        color: const Color(0xff1C1C1C),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.inventory_2_outlined,
-                        color: Colors.grey[700],
-                        size: 60.sp,
-                      ),
+          return Stack(
+            children: [
+              // Handle empty state
+              if (controller.dealsList.isEmpty)
+                SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    height: 600.h, // Sufficient height for scroll
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Empty State Box Icon (Placeholder wrapper)
+                        Container(
+                          padding: EdgeInsets.all(40.w),
+                          decoration: BoxDecoration(
+                            color: const Color(0xff1C1C1C),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.inventory_2_outlined,
+                            color: Colors.grey[700],
+                            size: 60.sp,
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+                        Text(
+                          "No deals at this time",
+                          style: GoogleFonts.inter(
+                            color: Colors.grey[600],
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 24.h),
-                    Text(
-                      "No deals at this time",
-                      style: GoogleFonts.inter(
-                        color: Colors.grey[600],
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                  ),
+                )
+              else
+                // Handle list of deals
+                ListView.builder(
+                  controller: controller.scrollController,
+                  padding: EdgeInsets.fromLTRB(20.w, 10.w, 20.w, 10.w),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: controller.dealsList.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == controller.dealsList.length) {
+                      return Obx(
+                        () => controller.isLoadMore.value
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20.h),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xFFF1A107),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(),
+                      );
+                    }
+                    final deal = controller.dealsList[index];
+                    return DealsCard(deal: deal, controller: controller);
+                  },
                 ),
-              ),
-            );
-          }
 
-          // Handle list of deals
-          return ListView.builder(
-            padding: EdgeInsets.fromLTRB(20.w, 10.w, 20.w, 10.w),
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: controller.dealsList.length,
-            itemBuilder: (context, index) {
-              final deal = controller.dealsList[index];
-              return DealsCard(deal: deal, controller: controller);
-            },
+              // Overlay loader when fetching fresh data but not the first time
+              if (controller.isLoading.value && controller.dealsList.isNotEmpty)
+                const Center(
+                  child: CircularProgressIndicator(color: Color(0xffF1A107)),
+                ),
+            ],
           );
         }),
       ),

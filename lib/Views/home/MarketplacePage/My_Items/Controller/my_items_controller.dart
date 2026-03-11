@@ -8,21 +8,46 @@ class MyItemsController extends GetxController {
 
   var myItems = <MyItemsModel>[].obs;
   var isLoading = false.obs;
+  var isLoadMore = false.obs;
+  var currentPage = 1;
+  var totalPage = 1;
+
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
     fetchMyItems();
+    scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !isLoading.value &&
+        !isLoadMore.value &&
+        currentPage < totalPage) {
+      loadMoreMyItems();
+    }
   }
 
   Future<void> fetchMyItems() async {
     try {
       isLoading.value = true;
-      final response = await _marketplaceService.getMyItems();
+      currentPage = 1;
+      final response = await _marketplaceService.getMyItems(page: currentPage);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final List<dynamic> data = response.data['data'];
-        final items = data.map((json) => MyItemsModel.fromJson(json)).toList();
+        final myItemsResponse = MyItemsResponse.fromJson(response.data);
+        final items = myItemsResponse.data ?? [];
+        totalPage = myItemsResponse.pagination?.totalPage ?? 1;
+
         myItems.assignAll(items);
       }
     } catch (e) {
@@ -34,6 +59,26 @@ class MyItemsController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMoreMyItems() async {
+    try {
+      isLoadMore.value = true;
+      currentPage++;
+      final response = await _marketplaceService.getMyItems(page: currentPage);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final myItemsResponse = MyItemsResponse.fromJson(response.data);
+        final items = myItemsResponse.data ?? [];
+
+        myItems.addAll(items);
+      }
+    } catch (e) {
+      print("Error loading more items: $e");
+      currentPage--; // Reset page on error
+    } finally {
+      isLoadMore.value = false;
     }
   }
 

@@ -6,7 +6,10 @@ class DealsRepo {
   final ApiClient apiClient;
   DealsRepo({required this.apiClient});
 
-  Future<Response> getActiveDeals() async {
-    return await apiClient.getData(ApiConstants.dealsItems);
+  Future<Response> getActiveDeals({int page = 1, int limit = 10}) async {
+    return await apiClient.getData(
+      ApiConstants.dealsItems,
+      query: {'page': page, 'limit': limit},
+    );
   }
 }

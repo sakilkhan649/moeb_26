@@ -1,3 +1,44 @@
+class MyItemsResponse {
+  bool? success;
+  String? message;
+  Pagination? pagination;
+  List<MyItemsModel>? data;
+
+  MyItemsResponse({this.success, this.message, this.pagination, this.data});
+
+  MyItemsResponse.fromJson(Map<String, dynamic> json) {
+    success = json['success'];
+    message = json['message'];
+
+    pagination = json['pagination'] != null
+        ? Pagination.fromJson(json['pagination'])
+        : null;
+
+    if (json['data'] != null) {
+      data = <MyItemsModel>[];
+      json['data'].forEach((v) {
+        data!.add(MyItemsModel.fromJson(v));
+      });
+    }
+  }
+}
+
+class Pagination {
+  int? total;
+  int? limit;
+  int? page;
+  int? totalPage;
+
+  Pagination({this.total, this.limit, this.page, this.totalPage});
+
+  Pagination.fromJson(Map<String, dynamic> json) {
+    total = json['total'];
+    limit = json['limit'];
+    page = json['page'];
+    totalPage = json['totalPage'];
+  }
+}
+
 class MyItemsModel {
   final String id;
   final String name;

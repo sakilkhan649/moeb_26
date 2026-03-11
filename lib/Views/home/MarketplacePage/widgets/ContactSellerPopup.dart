@@ -8,7 +8,7 @@ import '../../../../widgets/CustomButton.dart';
 import '../Model/Marketplace_model.dart';
 
 class ContactSellerPopup extends StatefulWidget {
-  final MarketplaceItem item;
+  final ItemData item;
 
   const ContactSellerPopup({super.key, required this.item});
 
@@ -88,39 +88,18 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12.r),
-                      child: widget.item.imagePath.isEmpty
-                          ? Container(
-                              height: 60.w,
-                              width: 60.w,
-                              color: Colors.grey[900],
-                              child: const Icon(
-                                Icons.image_not_supported,
-                                color: Colors.grey,
-                              ),
-                            )
-                          : widget.item.imagePath.startsWith('http')
+                      child:
+                          (widget.item.photos != null &&
+                              widget.item.photos!.isNotEmpty)
                           ? Image.network(
-                              widget.item.imagePath,
+                              widget.item.photos!.first,
                               height: 60.w,
                               width: 60.w,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                    height: 60.w,
-                                    width: 60.w,
-                                    color: Colors.grey[900],
-                                    child: const Icon(
-                                      Icons.image_not_supported,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
+                                  _buildNoImagePlaceholder(),
                             )
-                          : Image.asset(
-                              widget.item.imagePath,
-                              height: 60.w,
-                              width: 60.w,
-                              fit: BoxFit.cover,
-                            ),
+                          : _buildNoImagePlaceholder(),
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
@@ -128,7 +107,7 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.item.name,
+                            widget.item.title ?? '',
                             style: GoogleFonts.inter(
                               color: Colors.white,
                               fontSize: 14.sp,
@@ -194,7 +173,11 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
               SizedBox(height: 24.h),
               // Buttons
               _isSending
-                  ? const Center(child: CircularProgressIndicator(color: Color(0xFFF1A107)))
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFF1A107),
+                      ),
+                    )
                   : CustomButton(
                       text: "Send Message",
                       backgroundColor: const Color(0xFFF1A107),
@@ -209,8 +192,8 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                         setState(() => _isSending = true);
                         try {
                           final chat = await _socketRepo.contactSeller(
-                            widget.item.createdBy.id,
-                            widget.item.id,
+                            widget.item.createdBy?.id ?? '',
+                            widget.item.id ?? '',
                           );
                           if (chat != null) {
                             await _socketRepo.sendMessage(chat.id, text);
@@ -236,6 +219,15 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildNoImagePlaceholder() {
+    return Container(
+      height: 60.w,
+      width: 60.w,
+      color: Colors.grey[900],
+      child: Icon(Icons.image_not_supported, color: Colors.grey, size: 24.sp),
     );
   }
 }

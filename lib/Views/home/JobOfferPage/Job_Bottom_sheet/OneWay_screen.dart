@@ -132,7 +132,11 @@ class OnewayScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.h),
-            _buildDateTimeRow(context),
+            Obx(
+              () => onewayControllerInstance.isAsap.value
+                  ? const SizedBox.shrink()
+                  : _buildDateTimeRow(context),
+            ),
             FormField<String>(
               initialValue: postJobController.selectedVehicle.value,
               validator: (value) {
@@ -313,12 +317,13 @@ class OnewayScreen extends StatelessWidget {
                     pickupLocation: pickupController.text,
                     dropoffLocation: dropoffController.text,
                     flightNumber: flightController.text,
-                    date:
-                        onewayControllerInstance.selectedDate.value ??
-                        DateTime.now(),
-                    time:
-                        onewayControllerInstance.selectedTime.value ??
-                        TimeOfDay.now(),
+                    date: onewayControllerInstance.isAsap.value
+                        ? null
+                        : onewayControllerInstance.selectedDate.value,
+                    time: onewayControllerInstance.isAsap.value
+                        ? null
+                        : onewayControllerInstance.selectedTime.value,
+                    asap: onewayControllerInstance.isAsap.value,
                     paymentAmount: payController.text,
                     paymentType: onewayControllerInstance.selectedRole.value,
                     instruction: specialController.text.isEmpty
@@ -522,7 +527,7 @@ class OnewayScreen extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                    ///select color========================================================
+                        ///select color========================================================
                         ? const Color(0xFF364153)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(20.r),

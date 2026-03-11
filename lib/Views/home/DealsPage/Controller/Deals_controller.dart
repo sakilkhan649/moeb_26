@@ -10,21 +10,45 @@ class DealsController extends GetxController {
   // Reactive list of deals
   final RxList<DealsItem> dealsList = <DealsItem>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool isLoadMore = false.obs;
+  int currentPage = 1;
+  int totalPage = 1;
+
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
     fetchDeals();
+    scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !isLoading.value &&
+        !isLoadMore.value &&
+        currentPage < totalPage) {
+      loadMoreDeals();
+    }
   }
 
   Future<void> fetchDeals() async {
     try {
       isLoading.value = true;
-      final response = await _dealsService.getActiveDeals();
+      currentPage = 1;
+      final response = await _dealsService.getActiveDeals(page: currentPage);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final List<dynamic> data = response.data['data'];
-        final items = data.map((json) => DealsItem.fromJson(json)).toList();
+        final dealsResponse = DealsResponse.fromJson(response.data);
+        final items = dealsResponse.data ?? [];
+        totalPage = dealsResponse.pagination?.totalPage ?? 1;
         dealsList.assignAll(items);
       }
     } catch (e) {
@@ -38,6 +62,25 @@ class DealsController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMoreDeals() async {
+    try {
+      isLoadMore.value = true;
+      currentPage++;
+      final response = await _dealsService.getActiveDeals(page: currentPage);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final dealsResponse = DealsResponse.fromJson(response.data);
+        final items = dealsResponse.data ?? [];
+        dealsList.addAll(items);
+      }
+    } catch (e) {
+      print("Error loading more deals: $e");
+      currentPage--; // Reset page on error
+    } finally {
+      isLoadMore.value = false;
     }
   }
 

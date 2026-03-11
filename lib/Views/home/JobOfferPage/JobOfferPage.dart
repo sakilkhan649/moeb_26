@@ -447,7 +447,11 @@ class _CustomJobCardState extends State<CustomJobCard> {
           CustomTextFieldGold(
             readOnly: true,
             controller: widget.flightNumberController,
-            hintText: widget.flightNumberHint,
+            hintText:
+                widget.flightNumberHint.isEmpty ||
+                    widget.flightNumberHint == "N/A"
+                ? "N/A"
+                : widget.flightNumberHint,
             obscureText: false,
             textInputType: TextInputType.text,
           ),
@@ -479,7 +483,11 @@ class _CustomJobCardState extends State<CustomJobCard> {
           CustomTextFieldGold(
             readOnly: true,
             controller: widget.specialInstructionsController,
-            hintText: widget.specialInstructionsHint,
+            hintText:
+                widget.specialInstructionsHint.isEmpty ||
+                    widget.specialInstructionsHint == "N/A"
+                ? "N/A"
+                : widget.specialInstructionsHint,
             obscureText: false,
             textInputType: TextInputType.text,
           ),

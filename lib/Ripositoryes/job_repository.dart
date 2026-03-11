@@ -12,8 +12,9 @@ class JobRepo {
     String? dropoffLocation,
     String? flightNumber,
     String? duration,
-    required String date,
-    required String time,
+    String? date,
+    String? time,
+    bool? asap,
     required String vehicleType,
     required double paymentAmount,
     required String paymentType,
@@ -22,14 +23,16 @@ class JobRepo {
     final Map<String, dynamic> body = {
       "jobType": jobType,
       "pickupLocation": pickupLocation,
-      "date": date,
-      "time": time,
       "vehicleType": vehicleType,
       "paymentAmount": paymentAmount,
       "paymentType": paymentType,
       "dropoffLocation": dropoffLocation ?? "N/A",
       "duration": duration ?? "N/A",
     };
+
+    if (date != null) body["date"] = date;
+    if (time != null) body["time"] = time;
+    if (asap != null) body["asap"] = asap;
 
     if (flightNumber != null && flightNumber.isNotEmpty) {
       body["flightNumber"] = flightNumber;

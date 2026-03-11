@@ -13,27 +13,6 @@ class ServiceArea extends StatefulWidget {
 
 class _ServiceAreaState extends State<ServiceArea> {
   final ServiceAreaController controller = Get.put(ServiceAreaController());
-  final ScrollController scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    // No need to fetch here if controller already does it in onInit
-    // but we can trigger it if needed to ensure fresh data
-
-    scrollController.addListener(() {
-      if (scrollController.position.pixels >=
-          scrollController.position.maxScrollExtent - 200) {
-        controller.loadMoreServiceAreas();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +81,7 @@ class _ServiceAreaState extends State<ServiceArea> {
                       );
                     }
                     return ListView.separated(
-                      controller: scrollController,
+                      controller: controller.scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemCount:
                           controller.serviceAreas.length +
