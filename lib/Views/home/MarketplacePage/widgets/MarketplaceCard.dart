@@ -9,12 +9,17 @@ import 'ContactSellerPopup.dart';
 import 'ImagePreviewPopup.dart';
 
 class MarketplaceCard extends StatelessWidget {
-  final MarketplaceItem item;
+  final ItemData item;
 
   const MarketplaceCard({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
+    final String imagePath = (item.photos != null && item.photos!.isNotEmpty)
+        ? item.photos!.first
+        : "";
+    final String title = item.title ?? "No Title";
+
     return Container(
       height: 270.h, // Updated height
       decoration: BoxDecoration(color: const Color(0xFF1A1A1A)),
@@ -24,11 +29,9 @@ class MarketplaceCard extends StatelessWidget {
           // Item Image with rounded top corners
           GestureDetector(
             onTap: () {
-              Get.dialog(
-                ImagePreviewPopup(imagePath: item.imagePath, title: item.name),
-              );
+              Get.dialog(ImagePreviewPopup(imagePath: imagePath, title: title));
             },
-            child: ClipRRect(child: _buildImage()),
+            child: ClipRRect(child: _buildImage(imagePath)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
@@ -39,7 +42,7 @@ class MarketplaceCard extends StatelessWidget {
                 SizedBox(
                   height: 38.h,
                   child: Text(
-                    item.name,
+                    title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.inter(
@@ -55,30 +58,13 @@ class MarketplaceCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "\$${item.price}",
+                      "\$${item.price ?? 0}",
                       style: GoogleFonts.inter(
                         color: const Color(0xFFF1A107),
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // Row(
-                    //   children: [
-                    //     Icon(
-                    //       Icons.star,
-                    //       color: const Color(0xFFF1A107),
-                    //       size: 14.sp,
-                    //     ),
-                    //     SizedBox(width: 4.w),
-                    //     Text(
-                    //       item.rating.toString(),
-                    //       style: GoogleFonts.inter(
-                    //         color: const Color(0xff949494),
-                    //         fontSize: 12.sp,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   ],
                 ),
               ],
@@ -91,7 +77,7 @@ class MarketplaceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  item.condition,
+                  item.condition ?? "",
                   style: GoogleFonts.inter(
                     color: const Color(0xff949494),
                     fontSize: 12.sp,
@@ -143,14 +129,14 @@ class MarketplaceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildImage() {
-    if (item.imagePath.isEmpty) {
+  Widget _buildImage(String imagePath) {
+    if (imagePath.isEmpty) {
       return _buildNoImagePlaceholder();
     }
 
-    if (item.imagePath.startsWith('http')) {
+    if (imagePath.startsWith('http')) {
       return Image.network(
-        item.imagePath,
+        imagePath,
         height: 130.h,
         width: double.infinity,
         fit: BoxFit.cover,
@@ -173,7 +159,7 @@ class MarketplaceCard extends StatelessWidget {
       );
     } else {
       return Image.asset(
-        item.imagePath,
+        imagePath,
         height: 130.h,
         width: double.infinity,
         fit: BoxFit.cover,
@@ -205,4 +191,5 @@ class MarketplaceCard extends StatelessWidget {
       ),
     );
   }
+
 }

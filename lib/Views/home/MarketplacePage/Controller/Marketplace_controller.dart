@@ -9,9 +9,15 @@ import '../My_Items/Controller/my_items_controller.dart' as my_items;
 class MarketplaceController extends GetxController {
   final MarketplaceService _marketplaceService = Get.put(MarketplaceService());
 
-  var allItems = <MarketplaceItem>[].obs;
-  var filteredItems = <MarketplaceItem>[].obs;
+  var allItems = <ItemData>[].obs;
+  var filteredItems = <ItemData>[].obs;
   var isLoading = false.obs;
+  var isLoadMore = false.obs;
+  var currentPage = 1;
+  var totalPage = 1;
+  String currentQuery = "";
+
+  final ScrollController scrollController = ScrollController();
 
   // Sell Item Form States
   final RxString selectedCondition = "New".obs;
@@ -34,18 +40,40 @@ class MarketplaceController extends GetxController {
   void onInit() {
     super.onInit();
     fetchItems();
+    scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !isLoading.value &&
+        !isLoadMore.value &&
+        currentPage < totalPage) {
+      loadMoreItems();
+    }
   }
 
   Future<void> fetchItems({String? query}) async {
     try {
       isLoading.value = true;
-      final response = await _marketplaceService.getAllItems(searchTerm: query);
+      currentPage = 1;
+      currentQuery = query ?? "";
+      final response = await _marketplaceService.getAllItems(
+        searchTerm: currentQuery.isNotEmpty ? currentQuery : null,
+        page: currentPage,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final List<dynamic> data = response.data['data'];
-        final items = data
-            .map((json) => MarketplaceItem.fromJson(json))
-            .toList();
+        final marketplaceModel = MarketplaceModel.fromJson(response.data);
+        final items = marketplaceModel.data ?? [];
+        totalPage = marketplaceModel.pagination?.totalPage ?? 1;
+
         allItems.assignAll(items);
         filteredItems.assignAll(items);
       }
@@ -58,6 +86,30 @@ class MarketplaceController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMoreItems() async {
+    try {
+      isLoadMore.value = true;
+      currentPage++;
+      final response = await _marketplaceService.getAllItems(
+        searchTerm: currentQuery.isNotEmpty ? currentQuery : null,
+        page: currentPage,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final marketplaceModel = MarketplaceModel.fromJson(response.data);
+        final items = marketplaceModel.data ?? [];
+
+        allItems.addAll(items);
+        filteredItems.assignAll(allItems);
+      }
+    } catch (e) {
+      print("Error loading more items: $e");
+      currentPage--; // Reset page on error
+    } finally {
+      isLoadMore.value = false;
     }
   }
 

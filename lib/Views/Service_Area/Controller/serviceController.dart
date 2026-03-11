@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../../../../Services/serviceAreas_service.dart';
 import '../Model/ServiceAreaModel.dart';
@@ -12,13 +13,32 @@ class ServiceAreaController extends GetxController {
   var isMoreLoading = false.obs;
   var currentPage = 1.obs;
   var totalPages = 1.obs;
-  var limit = 20;
+  var limit = 10;
+
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
     // Default load (initial fetch)
     fetchServiceAreas();
+    scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !isLoading.value &&
+        !isMoreLoading.value &&
+        currentPage.value < totalPages.value) {
+      loadMoreServiceAreas();
+    }
   }
 
   Future<void> fetchServiceAreas({bool isRefresh = false}) async {
