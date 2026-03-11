@@ -75,8 +75,8 @@ class PostJobController extends GetxController {
   // ========== By The Hour Job Submit ==========
   Future<void> submitByTheHourJob({
     required String pickupLocation,
-    required String dropoffLocation,
-    required String duration,
+    String? dropoffLocation,
+    String? duration,
     required DateTime date,
     required TimeOfDay time,
     required String paymentAmount,

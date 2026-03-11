@@ -522,7 +522,8 @@ class OnewayScreen extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF2A2A2A)
+                    ///select color========================================================
+                        ? const Color(0xFF364153)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(

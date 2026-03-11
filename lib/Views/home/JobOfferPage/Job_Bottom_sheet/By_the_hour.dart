@@ -17,7 +17,6 @@ class ByTheHour extends StatelessWidget {
   ByTheHour({super.key});
 
   final fromController = TextEditingController();
-  final dropoffController = TextEditingController();
   final durationController = TextEditingController();
   final dateController = TextEditingController();
   final pickupTimeController = TextEditingController();
@@ -48,19 +47,7 @@ class ByTheHour extends StatelessWidget {
                 width: 20.sp,
               ),
               validator: (val) =>
-              (val == null || val.isEmpty) ? "Address is required" : null,
-            ),
-            _buildFieldWithLabel(
-              "Drop-off Location",
-              dropoffController,
-              "e.g., Manhattan, Times Square",
-              SvgPicture.asset(
-                AppIcons.fromlocation_icon,
-                height: 20.sp,
-                width: 20.sp,
-              ),
-              validator: (val) =>
-              (val == null || val.isEmpty) ? "Drop-off is required" : null,
+                  (val == null || val.isEmpty) ? "Address is required" : null,
             ),
             _buildFieldWithLabel(
               "Duration",
@@ -71,31 +58,34 @@ class ByTheHour extends StatelessWidget {
                 height: 20.sp,
                 width: 20.sp,
               ),
-              validator: (val) =>
-              (val == null || val.isEmpty) ? "Duration is required" : null,
+              isRequired: false,
             ),
             _buildDateTimeField(
               "Date",
               SvgPicture.asset(AppIcons.date_icon, height: 20.sp, width: 20.sp),
               dateController,
               "Select Date",
-                  () async {
+              () async {
                 await onewayControllerInstance.chooseDate(context);
                 final date = onewayControllerInstance.selectedDate.value;
                 if (date != null) {
                   dateController.text =
-                  "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                      "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
                 }
               },
               validator: (val) =>
-              (val == null || val.isEmpty) ? "Date is required" : null,
+                  (val == null || val.isEmpty) ? "Date is required" : null,
             ),
             _buildDateTimeField(
               "Pickup Time",
-              SvgPicture.asset(AppIcons.time_myjob_icon, height: 20.sp, width: 20.sp),
+              SvgPicture.asset(
+                AppIcons.time_myjob_icon,
+                height: 20.sp,
+                width: 20.sp,
+              ),
               pickupTimeController,
               "Select Time",
-                  () async {
+              () async {
                 await onewayControllerInstance.chooseTime(context);
                 final time = onewayControllerInstance.selectedTime.value;
                 if (time != null) {
@@ -104,7 +94,7 @@ class ByTheHour extends StatelessWidget {
                 }
               },
               validator: (val) =>
-              (val == null || val.isEmpty) ? "Time is required" : null,
+                  (val == null || val.isEmpty) ? "Time is required" : null,
             ),
             FormField<String>(
               initialValue: controller.selectedVehicle.value,
@@ -142,7 +132,7 @@ class ByTheHour extends StatelessWidget {
                 width: 20.sp,
               ),
               validator: (val) =>
-              (val == null || val.isEmpty) ? "Amount is required" : null,
+                  (val == null || val.isEmpty) ? "Amount is required" : null,
             ),
             CustomText(text: "Payment *", fontSize: 13.sp),
             SizedBox(height: 8.h),
@@ -159,7 +149,7 @@ class ByTheHour extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Obx(
-                          () => DropdownButtonHideUnderline(
+                      () => DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
                           isExpanded: true,
                           hint: Text(
@@ -170,24 +160,27 @@ class ByTheHour extends StatelessWidget {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          value: onewayControllerInstance
-                              .selectedRole.value.isEmpty
+                          value:
+                              onewayControllerInstance
+                                  .selectedRole
+                                  .value
+                                  .isEmpty
                               ? null
                               : onewayControllerInstance.selectedRole.value,
                           items: onewayControllerInstance.roles
                               .map(
                                 (role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(
-                                role,
-                                style: GoogleFonts.inter(
-                                  color: Colors.white,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
+                                  value: role,
+                                  child: Text(
+                                    role,
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )
+                              )
                               .toList(),
                           onChanged: (value) {
                             if (value != null) {
@@ -231,8 +224,9 @@ class ByTheHour extends StatelessWidget {
                             padding: EdgeInsets.only(left: 14.w, right: 14.w),
                           ),
                           selectedItemBuilder: (context) {
-                            return onewayControllerInstance.roles
-                                .map((String value) {
+                            return onewayControllerInstance.roles.map((
+                              String value,
+                            ) {
                               return Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
@@ -276,8 +270,10 @@ class ByTheHour extends StatelessWidget {
                 if (_formKey.currentState!.validate()) {
                   controller.submitByTheHourJob(
                     pickupLocation: fromController.text,
-                    dropoffLocation: dropoffController.text,
-                    duration: durationController.text,
+                    dropoffLocation: "By the hour",
+                    duration: durationController.text.isEmpty
+                        ? "Not specified"
+                        : durationController.text,
                     date: onewayControllerInstance.selectedDate.value!,
                     time: onewayControllerInstance.selectedTime.value!,
                     paymentAmount: payController.text,
@@ -297,13 +293,13 @@ class ByTheHour extends StatelessWidget {
   }
 
   Widget _buildFieldWithLabel(
-      String label,
-      TextEditingController ctrl,
-      String hint,
-      Widget? icon, {
-        bool isRequired = true,
-        String? Function(String?)? validator,
-      }) {
+    String label,
+    TextEditingController ctrl,
+    String hint,
+    Widget? icon, {
+    bool isRequired = true,
+    String? Function(String?)? validator,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -335,13 +331,13 @@ class ByTheHour extends StatelessWidget {
   }
 
   Widget _buildDateTimeField(
-      String label,
-      Widget? icon,
-      TextEditingController ctrl,
-      String hint,
-      VoidCallback onPressed, {
-        String? Function(String?)? validator,
-      }) {
+    String label,
+    Widget? icon,
+    TextEditingController ctrl,
+    String hint,
+    VoidCallback onPressed, {
+    String? Function(String?)? validator,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -378,9 +374,9 @@ class ByTheHour extends StatelessWidget {
   }
 
   Widget _buildVehicleSelection(
-      PostJobController controller,
-      FormFieldState<String> state,
-      ) {
+    PostJobController controller,
+    FormFieldState<String> state,
+  ) {
     final vehicles = [
       'SEDAN',
       'SUV',
@@ -413,7 +409,7 @@ class ByTheHour extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
         Obx(
-              () => Wrap(
+          () => Wrap(
             spacing: 12.w,
             runSpacing: 12.h,
             children: vehicles.map((vehicle) {
@@ -430,7 +426,8 @@ class ByTheHour extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF2A2A2A)
+                        ///select color========================================================
+                        ? const Color(0xFF364153)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
