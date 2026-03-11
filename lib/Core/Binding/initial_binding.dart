@@ -14,6 +14,8 @@ import '../../Services/socket_service.dart';
 import '../../Services/user_profile_service.dart';
 import '../../Services/ratings_feedback_service.dart';
 import '../../Services/user_service.dart';
+import '../../Ripositoryes/support_repository.dart';
+import '../../Services/support_service.dart';
 import '../../Views/auth/Splash_Screen/controller/splashcontroller.dart';
 
 import '../../Views/home/ChatPage/Controller/Chat_controller.dart';
@@ -35,11 +37,13 @@ class InitialBinding extends Bindings {
     Get.put(JobRepo(apiClient: Get.find()), permanent: true);
     Get.put(RatingsFeedbackRepo(apiClient: Get.find()), permanent: true);
     Get.put(SocketRepository(apiClient: Get.find()), permanent: true);
+    Get.put(SupportRepo(apiClient: Get.find()), permanent: true);
 
     // Services পরে
     Get.put(UserService(), permanent: true); // 👈 AuthService এর আগে দাও
     Get.put(SocketService(), permanent: true);
     Get.put(AuthService(), permanent: true);
+    Get.put(SupportService(), permanent: true);
     Get.put(UserProfileService(userProfileRepo: Get.find()), permanent: true);
     Get.put(JobService(), permanent: true);
     Get.put(
