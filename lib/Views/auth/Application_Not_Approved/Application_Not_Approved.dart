@@ -16,6 +16,12 @@ class ApplicationNotApproved extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get arguments if any
+    final dynamic args = Get.arguments;
+    final String title = (args is Map && args['title'] != null) ? args['title'] : "Application Not Approved";
+    final String description = (args is Map && args['description'] != null) ? args['description'] : "Unfortunately, we couldn't approve your application at this time.";
+    final String reason = (args is Map && args['reason'] != null) ? args['reason'] : "Incomplete documents or vehicle not meeting standards";
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -33,7 +39,7 @@ class ApplicationNotApproved extends StatelessWidget {
 
                 // Title
                 CustomText(
-                  text: "Application Not Approved",
+                  text: title,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -44,8 +50,7 @@ class ApplicationNotApproved extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: CustomTextgray(
-                    text:
-                        "Unfortunately, we couldn't approve your application at this time.",
+                    text: description,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     textAlign: TextAlign.center,
@@ -59,8 +64,7 @@ class ApplicationNotApproved extends StatelessWidget {
                   subtitle: "Reason:",
                   subtitleColor: Color(0xFFBDA3A3),
 
-                  title:
-                      "Incomplete documents or vehicle not meeting standards",
+                  title: reason,
                   titleColor: Color(0xFFB2BD61),
                 ),
 

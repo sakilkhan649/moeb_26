@@ -281,7 +281,10 @@ class AuthService extends GetxService {
               StorageConstants.userData,
               jsonEncode(user),
             );
-            Get.find<UserService>().userId = id.toString();
+            final userService = Get.find<UserService>();
+            userService.userId = id.toString();
+            // Fetch latest profile data after successful login
+            userService.fetchUserId();
           }
         }
       }

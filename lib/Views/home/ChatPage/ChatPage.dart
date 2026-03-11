@@ -31,6 +31,7 @@ class Chatpage extends StatelessWidget {
               SizedBox(height: 4.h),
 
               // ── Search Bar ──
+              
               TextFormField(
                 onChanged: (value) => controller.filterChats(value),
                 style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),

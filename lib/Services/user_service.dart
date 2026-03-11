@@ -19,7 +19,18 @@ class UserService extends GetxService {
   void onInit() {
     super.onInit();
     _userRepo = UserRepo(apiClient: Get.find());
-    fetchUserId(); // Initial attempt to get the ID
+    // Only fetch if token exists to avoid unauthorized API calls
+    checkTokenAndFetch();
+  }
+
+  /// Check for token before fetching user data
+  Future<void> checkTokenAndFetch() async {
+    final token = await StorageService.getString(StorageConstants.bearerToken);
+    if (token.isNotEmpty) {
+      await fetchUserId();
+    } else {
+      debugPrint("ℹ️ UserService: No token found, skipping profile API call.");
+    }
   }
 
   /// Fetch user profile and store the ID if not already set
@@ -38,6 +49,10 @@ class UserService extends GetxService {
           // Continue to fetch from API anyway to keep it fresh
         }
       }
+
+      // Check token again before API call just to be safe
+      final token = await StorageService.getString(StorageConstants.bearerToken);
+      if (token.isEmpty) return;
 
       // 2. Fetch from API
       final profileService = Get.find<UserProfileService>();

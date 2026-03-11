@@ -45,6 +45,23 @@ class LoginController extends GetxController {
         final String errorMsg = (data is Map && data['message'] != null)
             ? data['message'].toString()
             : 'Invalid email or password';
+
+        if (errorMsg == "Your account has been restricted. Contact support.") {
+          final blockReason = (data is Map && data['data'] != null && data['data']['blockReason'] != null)
+              ? data['data']['blockReason'].toString()
+              : "Incomplete documents or vehicle not meeting standards";
+              
+          Get.toNamed(
+            Routes.applicationNotApproved,
+            arguments: {
+              "title": "Account Restricted",
+              "description": "Unfortunately, your account access has been restricted.",
+              "reason": blockReason,
+            },
+          );
+          return;
+        }
+
         if (status == 400) {
           Helpers.showCustomSnackBar(errorMsg, isError: true);
         } else {
