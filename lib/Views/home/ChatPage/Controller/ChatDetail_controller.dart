@@ -33,37 +33,6 @@ class ChatDetailController extends GetxController {
     }
     fetchMessages();
   }
-
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   chat = Get.arguments;
-  //   fetchMessages();
-  //   setupSocket();
-  // }
-
-  // void setupSocket() {
-  //   debugPrint(
-  //     '🔄 ChatDetailController: Setting up socket for chatId: ${chat.id}',
-  //   );
-  //   socketService.joinRoom(chat.id);
-  //
-  //   // Listen for global message updates
-  //   _messageWorker = ever(socketService.lastReceivedMessage, (newMessage) {
-  //     if (newMessage != null && newMessage.text.trim().isNotEmpty) {
-  //       debugPrint(
-  //         '📥 ChatDetailController: Received message from global stream',
-  //       );
-  //
-  //       // Only add if it belongs to this chat and isn't already here
-  //       if (newMessage.chatId == chat.id &&
-  //           !messages.any((m) => m.id == newMessage.id)) {
-  //         messages.insert(0, newMessage);
-  //         debugPrint('➕ ChatDetailController: Message added to UI list');
-  //       }
-  //     }
-  //   });
-  // }
   void setupSocket() {
     socketService.joinRoom(chat.id);
 
@@ -135,50 +104,6 @@ class ChatDetailController extends GetxController {
       }
     }
   }
-
-  // Future<void> sendMessage() async {
-  //   final text = messageController.text.trim();
-  //   if (text.isNotEmpty) {
-  //     // ১. টেম্পোরারি মেসেজ তৈরি করে লিস্টে যোগ করা (Instant UI update)
-  //     final tempId = DateTime.now().millisecondsSinceEpoch.toString();
-  //     final tempMessage = ChatMessage(
-  //       id: tempId,
-  //       chatId: chat.id,
-  //       text: text,
-  //       senderId: userService.userId,
-  //       createdAt: DateTime.now().toIso8601String(),
-  //       updatedAt: DateTime.now().toIso8601String(),
-  //     );
-  //
-  //     messages.insert(0, tempMessage);
-  //     messageController.clear();
-  //
-  //     debugPrint(
-  //       '📤 ChatDetailController: Sending message to API for chatId: ${chat.id}',
-  //     );
-  //
-  //     try {
-  //       final sentMessage = await socketRepo.sendMessage(chat.id, text);
-  //       if (sentMessage != null) {
-  //         debugPrint(
-  //           '✅ ChatDetailController: Message sent successfully, API ID: ${sentMessage.id}',
-  //         );
-  //         // ২. টেম্পোরারি মেসেজটি সরিয়ে সার্ভার থেকে আসা আসল মেসেজটি যোগ করা
-  //         int index = messages.indexWhere((m) => m.id == tempId);
-  //         if (index != -1) {
-  //           messages[index] = sentMessage;
-  //         } else if (!messages.any((m) => m.id == sentMessage.id)) {
-  //           messages.insert(0, sentMessage);
-  //         }
-  //       }
-  //     } catch (e) {
-  //       debugPrint('❌ ChatDetailController: Error sending message: $e');
-  //       // এরর হলে টেম্পোরারি মেসেজটি রিমুভ করা
-  //       messages.removeWhere((m) => m.id == tempId);
-  //       Get.snackbar('Error', 'Failed to send message');
-  //     }
-  //   }
-  // }
 
   @override
   void onClose() {
