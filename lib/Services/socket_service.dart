@@ -13,6 +13,8 @@ class SocketService extends GetxService with WidgetsBindingObserver {
 
   // Stream for global message updates
   final Rxn<ChatMessage> lastReceivedMessage = Rxn<ChatMessage>();
+  // Stream for community message updates
+  final Rxn<dynamic> lastReceivedCommunityMessage = Rxn<dynamic>();
 
   @override
   void onInit() {
@@ -109,6 +111,12 @@ class SocketService extends GetxService with WidgetsBindingObserver {
     for (var event in messageEvents) {
       socket.on(event, (data) => _handleIncomingMessage(data, event));
     }
+
+    // Community message event
+    socket.on('COMMUNITY_NEW_MESSAGE', (data) {
+      debugPrint('📥 SocketService: Received COMMUNITY_NEW_MESSAGE');
+      lastReceivedCommunityMessage.value = data;
+    });
 
     // Reconnection events for debugging
     socket.onReconnect((_) => debugPrint('🔄 SocketService: Reconnected'));

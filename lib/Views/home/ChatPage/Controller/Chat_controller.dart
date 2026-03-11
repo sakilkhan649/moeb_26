@@ -2,14 +2,18 @@ import 'package:get/get.dart';
 import '../../../../Ripositoryes/socket_repository.dart';
 import '../../../../Services/socket_service.dart';
 import '../../../../Services/user_service.dart';
+import '../../../../Services/community_service.dart';
 import '../Model/Chat_model.dart';
+import '../Model/Community_chat_model.dart';
 
 class ChatController extends GetxController {
   final SocketRepository socketRepo = Get.find();
   final SocketService socketService = Get.find();
+  final CommunityService communityService = Get.find();
   
   var chats = <ChatPreview>[].obs;
   var filteredChats = <ChatPreview>[].obs;
+  var communityRoom = Rxn<CommunityRoom>();
   var searchController = "".obs;
   var isLoading = false.obs;
 
@@ -17,7 +21,19 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
     fetchChats();
+    fetchCommunityRoom();
     setupRealtimeUpdates();
+  }
+
+  Future<void> fetchCommunityRoom() async {
+    try {
+      final response = await communityService.getCommunityRoom();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        communityRoom.value = CommunityRoom.fromJson(response.data['data'] ?? {});
+      }
+    } catch (e) {
+      print("Error fetching community room: $e");
+    }
   }
 
   void setupRealtimeUpdates() {

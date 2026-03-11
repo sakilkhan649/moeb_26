@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Services/user_service.dart';
+import 'package:moeb_26/Views/home/ChatPage/Model/Community_chat_model.dart';
 import '../../../Core/routs.dart';
 import '../../../widgets/Custom_AppBar.dart';
 import 'Controller/Chat_controller.dart';
@@ -83,7 +84,10 @@ class Chatpage extends StatelessWidget {
               // ── Chat List ──
               Expanded(
                 child: RefreshIndicator(
-                  onRefresh: controller.fetchChats,
+                  onRefresh: () async {
+                    await controller.fetchChats();
+                    await controller.fetchCommunityRoom();
+                  },
                   color: const Color(0xffD4A843),
                   backgroundColor: const Color(0xff1A1A1A),
                   child: Obx(() {
@@ -91,43 +95,24 @@ class Chatpage extends StatelessWidget {
                         controller.chats.isEmpty) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    if (controller.filteredChats.isEmpty) {
-                      return SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Container(
-                          height: 0.6.sh,
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.chat_bubble_outline_rounded,
-                                color: Colors.grey.withOpacity(0.4),
-                                size: 48.sp,
-                              ),
-                              SizedBox(height: 12.h),
-                              Text(
-                                'No messages found',
-                                style: GoogleFonts.inter(
-                                  color: Colors.grey,
-                                  fontSize: 14.sp,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
+                    
+                    final communityRoom = controller.communityRoom.value;
+                    
                     return ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: controller.filteredChats.length,
+                      itemCount: controller.filteredChats.length + (communityRoom != null ? 1 : 0),
                       separatorBuilder: (context, index) => Divider(
                         color: Colors.grey.withOpacity(0.15),
                         height: 1.h,
                         thickness: 0.5.h,
                       ),
                       itemBuilder: (context, index) {
-                        final chat = controller.filteredChats[index];
+                        if (communityRoom != null && index == 0) {
+                          return _buildCommunityChatTile(communityRoom);
+                        }
+                        
+                        final chatIndex = communityRoom != null ? index - 1 : index;
+                        final chat = controller.filteredChats[chatIndex];
                         return _buildChatTile(chat);
                       },
                     );
@@ -136,6 +121,73 @@ class Chatpage extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// ── Community Chat Tile ──
+  Widget _buildCommunityChatTile(CommunityRoom room) {
+    return InkWell(
+      onTap: () {
+        Get.toNamed(Routes.communityChatDetailPage, arguments: room);
+      },
+      borderRadius: BorderRadius.circular(12.r),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12.h),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 28.r,
+              backgroundColor: const Color(0xffD4A843),
+              child: Icon(Icons.group, color: Colors.black, size: 28.sp),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          room.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      if (room.lastMessageAt != null)
+                        Text(
+                          _formatTime(room.lastMessageAt!),
+                          style: GoogleFonts.inter(
+                            color: Colors.grey,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    room.lastMessage ?? 'No messages yet',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xffD4A843),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

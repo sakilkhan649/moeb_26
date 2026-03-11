@@ -53,7 +53,11 @@ class ApiConstants {
   //Service Areas
   static const String serviceAreas= '/service-areas';
 
-  // Support Endpoints
+  //Support Endpoints
   static const String myTickets = '/supports/my-tickets';
   static const String createSupport = '/supports';
+
+  // Community Chat Endpoints
+  static const String communityRoom = '/community-chats/room';
+  static const String communityMessages = '/community-chats/messages';
 }
