@@ -105,6 +105,7 @@ class Driver {
   String? email;
   String? phone;
   String? profilePicture;
+  String? company;
   double? averageRating;
   int? totalReviews;
   List<Vehicle>? vehicles;
@@ -115,6 +116,7 @@ class Driver {
     this.email,
     this.phone,
     this.profilePicture,
+    this.company,
     this.averageRating,
     this.totalReviews,
     this.vehicles,
@@ -126,6 +128,7 @@ class Driver {
     email = json['email'];
     phone = json['phone'];
     profilePicture = json['profilePicture'];
+    company = json['company'];
     averageRating = (json['averageRating'] ?? 0).toDouble();
     totalReviews = json['totalReviews'];
 

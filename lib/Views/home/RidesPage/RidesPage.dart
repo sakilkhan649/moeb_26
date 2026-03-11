@@ -162,11 +162,26 @@ class Ridespage extends StatelessWidget {
     if (controller.upcomingRides.isEmpty) return _buildEmptyState();
 
     return ListView.builder(
+      controller: controller.scrollController,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: controller.upcomingRides.length,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: controller.upcomingRides.length + 1,
       padding: EdgeInsets.only(bottom: 20.h),
       itemBuilder: (context, index) {
+        if (index == controller.upcomingRides.length) {
+          return Obx(
+            () => controller.isLoadMore.value
+                ? Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.h),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          );
+        }
         final UpcomingRideData ride = controller.upcomingRides[index];
         return _buildRideCard(
           ride: ride,
@@ -179,7 +194,7 @@ class Ridespage extends StatelessWidget {
           payment: ride.paymentType,
           amount: ride.paymentAmount?.toString(),
           name: ride.createdBy?.name,
-          email: ride.createdBy?.email,
+          company: ride.createdBy?.company,
         );
       },
     );
@@ -190,11 +205,26 @@ class Ridespage extends StatelessWidget {
     if (controller.pastRides.isEmpty) return _buildEmptyState();
 
     return ListView.builder(
+      controller: controller.scrollController,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: controller.pastRides.length,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: controller.pastRides.length + 1,
       padding: EdgeInsets.only(bottom: 20.h),
       itemBuilder: (context, index) {
+        if (index == controller.pastRides.length) {
+          return Obx(
+            () => controller.isLoadMore.value
+                ? Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.h),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          );
+        }
         final FinishRideData ride = controller.pastRides[index];
         return _buildRideCard(
           ride: ride,
@@ -207,7 +237,7 @@ class Ridespage extends StatelessWidget {
           payment: ride.paymentType,
           amount: ride.paymentAmount?.toString(),
           name: ride.createdBy?.name,
-          email: ride.createdBy?.email,
+          company: ride.createdBy?.company,
         );
       },
     );
@@ -218,11 +248,26 @@ class Ridespage extends StatelessWidget {
     if (controller.pendingRides.isEmpty) return _buildEmptyState();
 
     return ListView.builder(
+      controller: controller.scrollController,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: controller.pendingRides.length,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: controller.pendingRides.length + 1,
       padding: EdgeInsets.only(bottom: 20.h),
       itemBuilder: (context, index) {
+        if (index == controller.pendingRides.length) {
+          return Obx(
+            () => controller.isLoadMore.value
+                ? Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.h),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          );
+        }
         final Ride ride = controller.pendingRides[index];
         return _buildRideCard(
           ride: ride,
@@ -235,7 +280,7 @@ class Ridespage extends StatelessWidget {
           payment: ride.paymentType,
           amount: ride.paymentAmount.toString(),
           name: ride.applicant?.driver?.name,
-          email: ride.applicant?.driver?.email,
+          company: ride.applicant?.driver?.company,
         );
       },
     );
@@ -253,7 +298,7 @@ class Ridespage extends StatelessWidget {
     String? payment,
     String? amount,
     String? name,
-    String? email,
+    String? company,
   }) {
     // Format Date and Time
     String displayDateTime = "";
@@ -280,7 +325,7 @@ class Ridespage extends StatelessWidget {
       } catch (_) {}
     }
     displayDateTime = dateStr.isNotEmpty ? "$dateStr · $timeStr" : timeStr;
-    
+
     final vehicleType = vehicle ?? 'N/A';
 
     return GestureDetector(
@@ -293,7 +338,7 @@ class Ridespage extends StatelessWidget {
         dropoffLocation: dropoff ?? 'N/A',
         pickupAmount: amount ?? '0',
         driverName: name ?? 'Unknown',
-        companyName: email ?? 'N/A',
+        companyName: company ?? 'N/A',
         vehicleStyle: VehicleTypeColors.getVehicleStyle(vehicleType),
       ),
     );
@@ -307,22 +352,13 @@ class VehicleTypeColors {
   static const Color bus = Color(0xFF3B2F2F);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 
-  static const LinearGradient sedanSuvGradient = LinearGradient(
-    colors: [
-      Color(0xffAB1226), 
-      Color(0xff0B1E40),
-    ],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
   static dynamic getVehicleStyle(String? type) {
     if (type == null) return gray;
     final t = type.toUpperCase();
     if (t == 'SUV') return suv;
     if (t == 'SEDAN') return sedan;
     if (t == 'BUS') return bus;
-    if (t == 'SEDAN/SUV') return sedanSuvGradient;
+    if (t == 'SEDAN/SUV') return sedan; // Using sedan color as requested
     return gray;
   }
 }
