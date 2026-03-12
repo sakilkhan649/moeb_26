@@ -80,6 +80,7 @@ class Routes {
   static const String forgetotpVerificationScreen = "/OtpVerificationScreen";
   static const String changePasswordScreen = "/ChangePasswordScreen";
   static const String myPropucts = "/MyPropucts";
+    static const String supportChatDetailPage = "/SupportChatDetailPage";
 
   static List<GetPage> routes = [
     GetPage(
@@ -268,6 +269,13 @@ class Routes {
     GetPage(
       name: myPropucts,
       page: () => MyItems(),
+      transition: Transition.noTransition,
+    ),
+
+
+        GetPage(
+      name: supportChatDetailPage,
+      page: () => CommunityChatDetailPage(),
       transition: Transition.noTransition,
     ),
   ];
