@@ -66,13 +66,13 @@ class ChatDetailPage extends StatelessWidget {
                 : null,
             child: other?.profilePicture == null
                 ? Text(
-                    other?.initials ?? '?',
-                    style: GoogleFonts.inter(
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
-                    ),
-                  )
+              other?.initials ?? '?',
+              style: GoogleFonts.inter(
+                color: Colors.grey[700],
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+              ),
+            )
                 : null,
           ),
           SizedBox(width: 12.w),
@@ -87,7 +87,7 @@ class ChatDetailPage extends StatelessWidget {
           SizedBox(width: 8.w),
           // সকেট স্ট্যাটাস ইন্ডিকেটর
           Obx(
-            () => Container(
+                () => Container(
               width: 8.w,
               height: 8.w,
               decoration: BoxDecoration(

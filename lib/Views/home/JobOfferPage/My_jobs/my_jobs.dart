@@ -22,8 +22,13 @@ class VehicleTypeColors {
   static const Color bus = Color(0xFF3B2F2F);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 
-  static const LinearGradient sedanSuvGradient = LinearGradient(
-    colors: [Color(0xffAB1226), Color(0xff0B1E40)],
+  static LinearGradient sedanSuvGradient = LinearGradient(
+    colors: [
+      Color(0xFFB11226),
+      Color(0xFFB11226).withOpacity(0.90),
+      Color(0xFF0A1F44).withOpacity(0.95),
+      Color(0xFF0A1F44).withOpacity(0.9),
+    ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -194,7 +199,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final vehicle = job.vehicleType;
     final vehicleStyle = VehicleTypeColors.getVehicleStyle(vehicle);
     final flight = job.flightNumber ?? 'N/A';
-    final paymentType = job.paymentType;
+    final paymentType = job.paymentType?.replaceAll('_', ' ');
     final instruction = job.instruction ?? 'N/A';
     final jobType = job.jobType == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
     final amount = job.paymentAmount;
@@ -233,7 +238,11 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                       children: [
                         Row(
                           children: [
-                           SvgPicture.asset(AppIcons.date_icon,height: 20.sp,width: 20.sp,),
+                            SvgPicture.asset(
+                              AppIcons.date_icon,
+                              height: 20.sp,
+                              width: 20.sp,
+                            ),
                             SizedBox(width: 5.w),
                             Text(
                               displayDate,
@@ -483,7 +492,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     final vehicleInfo = vehicle != null
                         ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
                         : job.vehicleType ?? "N/A";
-///=========================================================================================================================================
+
+                    ///=========================================================================================================================================
                     return Container(
                       padding: EdgeInsets.all(16.w),
                       margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
@@ -521,7 +531,11 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                           ),
                                         ),
                                         const Spacer(),
-                                       SvgPicture.asset(AppIcons.bmw_car_icon,height: 20.sp,width: 20.sp,),
+                                        SvgPicture.asset(
+                                          AppIcons.bmw_car_icon,
+                                          height: 20.sp,
+                                          width: 20.sp,
+                                        ),
                                         SizedBox(width: 4.w),
                                         Expanded(
                                           child: Text(
