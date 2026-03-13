@@ -34,8 +34,9 @@ class _JobofferpageState extends State<Jobofferpage> {
   void initState() {
     super.initState();
     scrollController.addListener(() {
-      if (scrollController.position.pixels >=
-          scrollController.position.maxScrollExtent - 200) {
+      if (scrollController.hasClients &&
+          scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 200) {
         controller.loadMoreJobOffers();
       }
     });
