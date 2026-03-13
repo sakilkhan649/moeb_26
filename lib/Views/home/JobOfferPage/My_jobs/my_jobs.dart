@@ -185,8 +185,18 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     String displayDate = formattedTime.isNotEmpty
         ? "${dateRaw} · $formattedTime"
         : dateRaw;
+
+    if (dateRaw == "null" &&
+        (formattedTime == "null" || formattedTime.isEmpty)) {
+      displayDate = "ASAP";
+    } else if (dateRaw == "null") {
+      displayDate = formattedTime;
+    } else if (formattedTime == "null" || formattedTime.isEmpty) {
+      displayDate = dateRaw;
+    }
+
     try {
-      if (dateRaw.isNotEmpty) {
+      if (dateRaw.isNotEmpty && dateRaw != "null") {
         DateTime parsed = DateTime.parse(dateRaw);
         // Basic format to keep it simple, e.g., "Tue, Jan 20"
         displayDate =
@@ -316,9 +326,11 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "PU: ",
@@ -328,7 +340,6 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(width: 4.w),
                               Expanded(
                                 child: Text(
                                   puLocation!,
@@ -336,13 +347,12 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                     color: Colors.white,
                                     fontSize: 14.sp,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
                           ),
                         ),
+                        SizedBox(width: 8.w),
                         Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 10.w,
@@ -369,23 +379,22 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     SizedBox(height: 6.h),
 
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(
+                          "DO: ",
+                          style: GoogleFonts.inter(
+                            color: Colors.grey,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Expanded(
-                          child: RichText(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                              style: GoogleFonts.inter(fontSize: 13.sp),
-                              children: [
-                                const TextSpan(
-                                  text: "DO: ",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                TextSpan(
-                                  text: doLocation,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
+                          child: Text(
+                            doLocation,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 13.sp,
                             ),
                           ),
                         ),
@@ -952,6 +961,7 @@ class CustomTextFieldGold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: null,
       controller: controller,
       readOnly: readOnly,
       obscureText: obscureText,
