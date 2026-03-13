@@ -575,7 +575,7 @@ class _CustomJobCardState extends State<CustomJobCard> {
                         color: isOver ? Color(0xFFE1C16E) : AppColors.orange100,
                         borderRadius: BorderRadius.circular(16.r),
                       ),
-                      child: CustomText(text: widget.price, fontSize: 18.sp),
+                      child:CustomText(text: '\$${widget.price}', fontSize: 18.sp),
                     ),
                   );
                 },
