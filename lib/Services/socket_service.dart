@@ -5,10 +5,12 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../Config/api_constants.dart';
 import '../Services/storege_service.dart';
 import '../Config/storage_constants.dart';
+import 'api_client.dart';
 
 class SocketService extends GetxService with WidgetsBindingObserver {
   late IO.Socket socket;
   final isConnected = false.obs;
+  bool isSocketInitialized = false;
   String? _currentRoomId;
 
   // Stream for global message updates
@@ -27,7 +29,7 @@ class SocketService extends GetxService with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       debugPrint('📱 SocketService: App resumed, checking connection...');
-      if (!socket.connected) {
+      if (isSocketInitialized && !socket.connected) {
         socket.connect();
       }
     }
@@ -35,17 +37,24 @@ class SocketService extends GetxService with WidgetsBindingObserver {
 
   Future<void> initSocket() async {
     // If socket already exists and is connected, don't re-init
-    if (Get.isRegistered<IO.Socket>() && socket.connected) {
+    if (isSocketInitialized && socket.connected) {
       debugPrint('ℹ️ SocketService: Socket already connected, skipping init');
       return;
     }
 
     // If exists but not connected, dispose and re-create
-    if (Get.isRegistered<IO.Socket>()) {
+    if (isSocketInitialized) {
       socket.dispose();
+      isSocketInitialized = false;
     }
 
-    final token = await StorageService.getString(StorageConstants.bearerToken);
+    String token = await StorageService.getString(StorageConstants.bearerToken);
+    
+    // Check temporary token if bearer token is missing (Restricted mode support)
+    if (token.isEmpty && Get.isRegistered<ApiClient>()) {
+      token = ApiClient.temporaryToken ?? "";
+    }
+
     if (token.isEmpty) {
       debugPrint('⚠️ SocketService: No token found, skipping connection');
       return;
@@ -71,6 +80,8 @@ class SocketService extends GetxService with WidgetsBindingObserver {
       // socket.io v3/v4 এর জন্য 'auth' অপশনটি অনেক সময় প্রয়োজন হয়
       'auth': {'token': token},
     });
+
+    isSocketInitialized = true;
 
     socket.onConnect((_) {
       isConnected.value = true;
@@ -169,6 +180,12 @@ class SocketService extends GetxService with WidgetsBindingObserver {
 
   void joinRoom(String roomId) {
     _currentRoomId = roomId;
+    if (!isSocketInitialized) {
+      debugPrint('⚠️ SocketService: joinRoom called but socket not initialized. Init now...');
+      initSocket();
+      return;
+    }
+
     if (socket.connected) {
       socket.emit('join-room', roomId);
       debugPrint('➡️ SocketService: Emitted join-room for roomId: $roomId');
@@ -184,27 +201,35 @@ class SocketService extends GetxService with WidgetsBindingObserver {
 
   void leaveRoom(String roomId) {
     _currentRoomId = null;
-    if (socket.connected) {
+    if (isSocketInitialized && socket.connected) {
       socket.emit('leave-room', roomId);
       debugPrint('⬅️ SocketService: Emitted leave-room for roomId: $roomId');
     }
   }
 
   void on(String event, Function(dynamic) handler) {
-    socket.on(event, handler);
+    if (isSocketInitialized) {
+      socket.on(event, handler);
+    }
   }
 
   void off(String event) {
-    socket.off(event);
+    if (isSocketInitialized) {
+      socket.off(event);
+    }
   }
 
   void emit(String event, dynamic data) {
-    socket.emit(event, data);
+    if (isSocketInitialized) {
+      socket.emit(event, data);
+    }
   }
 
   @override
   void onClose() {
-    socket.dispose();
+    if (isSocketInitialized) {
+      socket.dispose();
+    }
     super.onClose();
   }
 }

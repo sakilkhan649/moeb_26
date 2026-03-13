@@ -32,4 +32,20 @@ class SupportService extends GetxService {
       rethrow;
     }
   }
+
+  Future<Response> getMessages(String chatId) async {
+    try {
+      return await _supportRepo.getMessages(chatId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> sendMessage(String chatId, String message) async {
+    try {
+      return await _supportRepo.sendMessage(chatId, message);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

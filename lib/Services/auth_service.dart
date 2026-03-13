@@ -137,7 +137,12 @@ class AuthService extends GetxService {
         password: password,
         deviceToken: AppConstants.fcmToken,
       );
-      await handleAuthResponse(response);
+
+      final data = response.data;
+      final authData = data['data'] ?? data;
+      bool isRestricted = authData['isRestricted'] == true;
+
+      await handleAuthResponse(response, isTemporary: isRestricted);
       return response;
     } catch (e) {
       rethrow;
@@ -241,7 +246,7 @@ class AuthService extends GetxService {
   /// ===================== HELPER METHODS =====================
 
   /// Handles successful auth response (Login/Signup/Verify)
-  Future<void> handleAuthResponse(Response response) async {
+  Future<void> handleAuthResponse(Response response, {bool isTemporary = false}) async {
     try {
       final data = response.data;
       if (data == null) return;
@@ -255,10 +260,16 @@ class AuthService extends GetxService {
         final String? refreshToken = authData['refreshToken'];
 
         if (accessToken != null) {
-          await StorageService.setString(
-            StorageConstants.bearerToken,
-            accessToken,
-          );
+          if (isTemporary) {
+            ApiClient.temporaryToken = accessToken;
+            debugPrint("⚠️ Token saved temporarily (Restricted mode)");
+          } else {
+            ApiClient.temporaryToken = null; // Clear if previously restricted
+            await StorageService.setString(
+              StorageConstants.bearerToken,
+              accessToken,
+            );
+          }
           isLoggedIn.value = true;
           // Refresh socket with new token
           try {
@@ -266,7 +277,7 @@ class AuthService extends GetxService {
           } catch (_) {}
         }
 
-        if (refreshToken != null) {
+        if (refreshToken != null && !isTemporary) {
           await StorageService.setString(
             StorageConstants.refreshToken,
             refreshToken,
@@ -277,14 +288,18 @@ class AuthService extends GetxService {
         if (user is Map<String, dynamic>) {
           final id = user['_id'] ?? user['id'];
           if (id != null) {
-            await StorageService.setString(
-              StorageConstants.userData,
-              jsonEncode(user),
-            );
+            if (!isTemporary) {
+              await StorageService.setString(
+                StorageConstants.userData,
+                jsonEncode(user),
+              );
+            }
             final userService = Get.find<UserService>();
             userService.userId = id.toString();
             // Fetch latest profile data after successful login
-            userService.fetchUserId();
+            if (!isTemporary) {
+              userService.fetchUserId();
+            }
           }
         }
       }
@@ -298,6 +313,7 @@ class AuthService extends GetxService {
     await StorageService.remove(StorageConstants.bearerToken);
     await StorageService.remove(StorageConstants.refreshToken);
     await StorageService.remove(StorageConstants.userData);
+    ApiClient.temporaryToken = null;
     isLoggedIn.value = false;
   }
 

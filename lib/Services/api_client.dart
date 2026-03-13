@@ -16,6 +16,7 @@ import '../widgets/Custom_snacbar.dart' as Helpers;
 class ApiClient extends GetxService {
   static late Dio dio;
   static String bearerToken = "";
+  static String? temporaryToken;
 
   static const String noInternetMessage =
       "Sorry! Something went wrong, please try again";
@@ -47,6 +48,8 @@ class ApiClient extends GetxService {
   //   Get.offAllNamed(AppRoutes.LOGIN);
   // }
 
+
+
   @override
   void onInit() {
     super.onInit();
@@ -62,11 +65,18 @@ class ApiClient extends GetxService {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          bearerToken = await StorageService.getString(
-            StorageConstants.bearerToken,
-          );
-          if (bearerToken.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $bearerToken';
+          String? tokenToUse;
+
+          if (temporaryToken != null && temporaryToken!.isNotEmpty) {
+            tokenToUse = temporaryToken;
+          } else {
+            tokenToUse = await StorageService.getString(
+              StorageConstants.bearerToken,
+            );
+          }
+
+          if (tokenToUse != null && tokenToUse.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $tokenToUse';
           }
           debugPrint("➡️ ====> API REQUEST==========================");
           debugPrint("➡️ ====> API Request: ${options.method} ${options.uri}");

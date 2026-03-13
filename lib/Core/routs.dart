@@ -81,7 +81,7 @@ class Routes {
   static const String forgetotpVerificationScreen = "/OtpVerificationScreen";
   static const String changePasswordScreen = "/ChangePasswordScreen";
   static const String myPropucts = "/MyPropucts";
-  static const String supportChatDetailPage = "SupportChatDetailPage";
+  static const String supportChatDetailPage = "/SupportChatDetailPage";
 
   static List<GetPage> routes = [
     GetPage(

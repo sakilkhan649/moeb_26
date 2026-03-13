@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
-import 'package:moeb_26/Services/api_cheker.dart';
 import 'package:moeb_26/Services/auth_service.dart';
 import '../../../../Core/routs.dart';
 import '../../../../Utils/helpers.dart';
@@ -43,7 +42,7 @@ class LoginController extends GetxController {
           
           Helpers.showCustomSnackBar('Account Restricted', isError: true);
           
-          Get.toNamed(
+          Get.offAllNamed(
             Routes.applicationNotApproved,
             arguments: {
               "title": "Account Restricted",
@@ -78,6 +77,7 @@ class LoginController extends GetxController {
       isLoading.value = false;
     }
   }
+
 
   // ─── Dispose ─────────────────────────────────────────────────
   @override

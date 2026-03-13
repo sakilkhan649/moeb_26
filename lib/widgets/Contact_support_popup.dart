@@ -51,48 +51,56 @@ class ContactSupportBottomSheet extends StatelessWidget {
 
           // Form Content Section
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Tickets List (If any)
-                  Obx(() {
-                    if (controller.isLoading.value) {
-                      return Center(child: Padding(
-                        padding: EdgeInsets.all(20.w),
-                        child: CircularProgressIndicator(color: Colors.white),
-                      ));
-                    }
-                    if (controller.tickets.isEmpty) return SizedBox.shrink();
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await controller.fetchMyTickets();
+              },
+              color: Colors.white,
+              backgroundColor: const Color(0xFF111827),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    // Tickets List (If any)
+                    Obx(() {
+                      if (controller.isLoading.value) {
+                        return Center(child: Padding(
+                          padding: EdgeInsets.all(20.w),
+                          child: CircularProgressIndicator(color: Colors.white),
+                        ));
+                      }
+                      if (controller.tickets.isEmpty) return SizedBox.shrink();
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                          child: CustomText(text: "My Support Tickets", fontSize: 16.sp),
-                        ),
-                        SizedBox(
-                          height: 190.h,
-                          child: ListView.builder(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 20.w),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.tickets.length,
-                            itemBuilder: (context, index) {
-                              final ticket = controller.tickets[index];
-                              return _buildTicketCard(ticket);
-                            },
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                            child: CustomText(text: "My Support Tickets", fontSize: 16.sp),
                           ),
-                        ),
-                        Divider(color: Colors.grey[900]),
-                      ],
-                    );
-                  }),
+                          SizedBox(
+                            height: 190.h,
+                            child: ListView.builder(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 20.w),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: controller.tickets.length,
+                              itemBuilder: (context, index) {
+                                final ticket = controller.tickets[index];
+                                return _buildTicketCard(ticket);
+                              },
+                            ),
+                          ),
+                          Divider(color: Colors.grey[900]),
+                        ],
+                      );
+                    }),
 
-                  Form(
-                    key: _formKey,
-                    child: _buildFormContent(),
-                  ),
-                ],
+                    Form(
+                      key: _formKey,
+                      child: _buildFormContent(),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -102,42 +110,45 @@ class ContactSupportBottomSheet extends StatelessWidget {
   }
 
   Widget _buildTicketCard(dynamic ticket) {
-    return Container(
-      width: 250.w,
-      margin: EdgeInsets.only(right: 12.w),
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: Color(0xFF111827),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Color(0xFF374151)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            ticket['subject'] ?? 'No Subject',
-            style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.sp),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            ticket['messages'] != null && ticket['messages'].isNotEmpty 
-                ? ticket['messages'].last['message'] 
-                : 'No messages',
-            style: GoogleFonts.inter(color: Colors.grey[400], fontSize: 12.sp),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          Spacer(),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Text(
-              _formatDate(ticket['createdAt']),
-              style: GoogleFonts.inter(color: Colors.grey[600], fontSize: 10.sp),
+    return GestureDetector(
+      onTap: () => controller.handleTicketTap(ticket),
+      child: Container(
+        width: 250.w,
+        margin: EdgeInsets.only(right: 12.w),
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: Color(0xFF111827),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: Color(0xFF374151)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              ticket['subject'] ?? 'No Subject',
+              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.sp),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ],
+            SizedBox(height: 4.h),
+            Text(
+              ticket['messages'] != null && ticket['messages'].isNotEmpty 
+                  ? ticket['messages'].last['message'] 
+                  : 'No messages',
+              style: GoogleFonts.inter(color: Colors.grey[400], fontSize: 12.sp),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Spacer(),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                _formatDate(ticket['createdAt']),
+                style: GoogleFonts.inter(color: Colors.grey[600], fontSize: 10.sp),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

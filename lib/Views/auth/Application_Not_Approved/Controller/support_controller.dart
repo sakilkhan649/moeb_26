@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../Services/support_service.dart';
+import '../../../../Core/routs.dart';
 import '../../../../Utils/helpers.dart';
 
 class SupportController extends GetxController {
@@ -56,6 +57,25 @@ class SupportController extends GetxController {
       Helpers.showCustomSnackBar("Failed to send support request", isError: true);
     } finally {
       isSubmitting.value = false;
+    }
+  }
+
+  void handleTicketTap(dynamic ticket) {
+    if (ticket['chat'] == null) {
+      Helpers.showCustomSnackBar(
+        "Admin has not created a chat yet, please wait.",
+        isError: true,
+      );
+    } else {
+      final String chatId = ticket['chat']['_id'] ?? ticket['chat']['id'];
+      final String userId = ticket['user']?.toString() ?? '';
+      Get.toNamed(
+        Routes.supportChatDetailPage,
+        arguments: {
+          'chatId': chatId, 
+          'userId': userId
+        },
+      );
     }
   }
 
