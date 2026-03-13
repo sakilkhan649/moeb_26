@@ -11,8 +11,7 @@ import 'widgets/MarketplaceCard.dart';
 class Marketplacepage extends StatelessWidget {
   Marketplacepage({super.key});
 
-  final MarketplaceController controller =
-      Get.put(MarketplaceController(), permanent: true);
+  final MarketplaceController controller = Get.put(MarketplaceController());
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +109,6 @@ class Marketplacepage extends StatelessWidget {
                   return ListView.builder(
                     controller: controller.scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
-                    shrinkWrap: true,
                     itemCount: (controller.filteredItems.length / 2).ceil() + 1,
                     itemBuilder: (context, index) {
                       if (index ==

@@ -43,6 +43,9 @@ class RidesController extends GetxController {
   }
 
   void _onScroll() {
+    if (!scrollController.hasClients || scrollController.positions.length != 1) {
+      return;
+    }
     if (scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 200 &&
         !isLoadingList.value &&
