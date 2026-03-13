@@ -126,6 +126,7 @@ class Driver {
   final String email;
   final String phone;
   final String profilePicture;
+  final String? company;
 
   Driver({
     required this.id,
@@ -133,6 +134,7 @@ class Driver {
     required this.email,
     required this.phone,
     required this.profilePicture,
+    this.company,
   });
 
   factory Driver.fromJson(Map<String, dynamic> json) {
@@ -142,6 +144,7 @@ class Driver {
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       profilePicture: json['profilePicture'] ?? '',
+      company: json['company'],
     );
   }
 }

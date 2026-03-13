@@ -161,27 +161,46 @@ class Ridespage extends StatelessWidget {
   Widget _buildUpcomingList() {
     if (controller.upcomingRides.isEmpty) return _buildEmptyState();
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: controller.upcomingRides.length,
-      padding: EdgeInsets.only(bottom: 20.h),
-      itemBuilder: (context, index) {
-        final UpcomingRideData ride = controller.upcomingRides[index];
-        return _buildRideCard(
-          ride: ride,
-          onTap: () => Get.toNamed(Routes.rideDetailsPage, arguments: ride),
-          date: ride.date,
-          time: ride.time,
-          pickup: ride.pickupLocation,
-          dropoff: ride.dropoffLocation,
-          vehicle: ride.vehicleType,
-          payment: ride.paymentType,
-          amount: ride.paymentAmount?.toString(),
-          name: ride.createdBy?.name,
-          email: ride.createdBy?.email,
-        );
-      },
+    return RefreshIndicator(
+      color: AppColors.orange100,
+      onRefresh: controller.fetchUpcomingJobs,
+      child: ListView.builder(
+        controller: controller.scrollController,
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: controller.upcomingRides.length + 1,
+        padding: EdgeInsets.only(bottom: 20.h),
+        itemBuilder: (context, index) {
+          if (index == controller.upcomingRides.length) {
+            return Obx(
+              () => controller.isLoadMore.value
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.orange100,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            );
+          }
+          final UpcomingRideData ride = controller.upcomingRides[index];
+          return _buildRideCard(
+            ride: ride,
+            onTap: () => Get.toNamed(Routes.rideDetailsPage, arguments: ride),
+            date: ride.date,
+            time: ride.time,
+            pickup: ride.pickupLocation,
+            dropoff: ride.dropoffLocation,
+            vehicle: ride.vehicleType,
+            payment: ride.paymentType,
+            amount: ride.paymentAmount?.toString(),
+            name: ride.createdBy?.name,
+            company: ride.createdBy?.company,
+          );
+        },
+      ),
     );
   }
 
@@ -189,27 +208,46 @@ class Ridespage extends StatelessWidget {
   Widget _buildPastList() {
     if (controller.pastRides.isEmpty) return _buildEmptyState();
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: controller.pastRides.length,
-      padding: EdgeInsets.only(bottom: 20.h),
-      itemBuilder: (context, index) {
-        final FinishRideData ride = controller.pastRides[index];
-        return _buildRideCard(
-          ride: ride,
-          onTap: null, // No action for past rides
-          date: ride.date,
-          time: ride.time,
-          pickup: ride.pickupLocation,
-          dropoff: ride.dropoffLocation,
-          vehicle: ride.vehicleType,
-          payment: ride.paymentType,
-          amount: ride.paymentAmount?.toString(),
-          name: ride.createdBy?.name,
-          email: ride.createdBy?.email,
-        );
-      },
+    return RefreshIndicator(
+      color: AppColors.orange100,
+      onRefresh: controller.fetchPastJobs,
+      child: ListView.builder(
+        controller: controller.scrollController,
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: controller.pastRides.length + 1,
+        padding: EdgeInsets.only(bottom: 20.h),
+        itemBuilder: (context, index) {
+          if (index == controller.pastRides.length) {
+            return Obx(
+              () => controller.isLoadMore.value
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.orange100,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            );
+          }
+          final FinishRideData ride = controller.pastRides[index];
+          return _buildRideCard(
+            ride: ride,
+            onTap: null, // No action for past rides
+            date: ride.date,
+            time: ride.time,
+            pickup: ride.pickupLocation,
+            dropoff: ride.dropoffLocation,
+            vehicle: ride.vehicleType,
+            payment: ride.paymentType,
+            amount: ride.paymentAmount?.toString(),
+            name: ride.createdBy?.name,
+            company: ride.createdBy?.company,
+          );
+        },
+      ),
     );
   }
 
@@ -217,27 +255,47 @@ class Ridespage extends StatelessWidget {
   Widget _buildPendingList() {
     if (controller.pendingRides.isEmpty) return _buildEmptyState();
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: controller.pendingRides.length,
-      padding: EdgeInsets.only(bottom: 20.h),
-      itemBuilder: (context, index) {
-        final Ride ride = controller.pendingRides[index];
-        return _buildRideCard(
-          ride: ride,
-          onTap: () => Get.toNamed(Routes.requestUnderReview, arguments: ride),
-          date: ride.date?.toString(),
-          time: ride.time,
-          pickup: ride.pickupLocation,
-          dropoff: ride.dropoffLocation,
-          vehicle: ride.vehicleType,
-          payment: ride.paymentType,
-          amount: ride.paymentAmount.toString(),
-          name: ride.applicant?.driver?.name,
-          email: ride.applicant?.driver?.email,
-        );
-      },
+    return RefreshIndicator(
+      color: AppColors.orange100,
+      onRefresh: controller.fetchPendingJobs,
+      child: ListView.builder(
+        controller: controller.scrollController,
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: controller.pendingRides.length + 1,
+        padding: EdgeInsets.only(bottom: 20.h),
+        itemBuilder: (context, index) {
+          if (index == controller.pendingRides.length) {
+            return Obx(
+              () => controller.isLoadMore.value
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.orange100,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            );
+          }
+          final Ride ride = controller.pendingRides[index];
+          return _buildRideCard(
+            ride: ride,
+            onTap: () =>
+                Get.toNamed(Routes.requestUnderReview, arguments: ride),
+            date: ride.date?.toString(),
+            time: ride.time,
+            pickup: ride.pickupLocation,
+            dropoff: ride.dropoffLocation,
+            vehicle: ride.vehicleType,
+            payment: ride.paymentType,
+            amount: ride.paymentAmount.toString(),
+            name: ride.applicant?.driver?.name,
+            company: ride.applicant?.driver?.company,
+          );
+        },
+      ),
     );
   }
 
@@ -253,7 +311,7 @@ class Ridespage extends StatelessWidget {
     String? payment,
     String? amount,
     String? name,
-    String? email,
+    String? company,
   }) {
     // Format Date and Time
     String displayDateTime = "";
@@ -280,20 +338,20 @@ class Ridespage extends StatelessWidget {
       } catch (_) {}
     }
     displayDateTime = dateStr.isNotEmpty ? "$dateStr · $timeStr" : timeStr;
-    
+
     final vehicleType = vehicle ?? 'N/A';
 
     return GestureDetector(
       onTap: onTap,
       child: CustomJobCard(
-        pickupPaymentType: payment ?? 'N/A',
+        pickupPaymentType: payment?.replaceAll('_', ' ') ?? 'N/A',
         dateTime: displayDateTime,
         vehicleType: vehicleType.toUpperCase(),
         pickupLocation: pickup ?? 'N/A',
         dropoffLocation: dropoff ?? 'N/A',
         pickupAmount: amount ?? '0',
         driverName: name ?? 'Unknown',
-        companyName: email ?? 'N/A',
+        companyName: company ?? 'N/A',
         vehicleStyle: VehicleTypeColors.getVehicleStyle(vehicleType),
       ),
     );
@@ -307,13 +365,16 @@ class VehicleTypeColors {
   static const Color bus = Color(0xFF3B2F2F);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 
-  static const LinearGradient sedanSuvGradient = LinearGradient(
+  static final LinearGradient sedanSuvGradient = LinearGradient(
     colors: [
-      Color(0xffAB1226), 
-      Color(0xff0B1E40),
+      const Color(0xFFB11226),
+      const Color(0xFFB11226).withOpacity(0.90),
+      const Color(0xFF0A1F44).withOpacity(0.95),
+      const Color(0xFF0A1F44).withOpacity(0.9),
     ],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
   );
 
   static dynamic getVehicleStyle(String? type) {

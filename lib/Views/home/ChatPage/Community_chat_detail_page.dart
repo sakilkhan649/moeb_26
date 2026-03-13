@@ -5,22 +5,24 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moeb_26/Utils/app_images.dart';
 import 'package:moeb_26/Views/home/ChatPage/Controller/Community_chat_detail_controller.dart';
 import 'package:moeb_26/Views/home/ChatPage/Model/Community_chat_model.dart';
 
 class CommunityChatDetailPage extends StatelessWidget {
   CommunityChatDetailPage({super.key});
 
-  final CommunityChatDetailController controller = Get.put(CommunityChatDetailController());
+  final CommunityChatDetailController controller = Get.put(
+    CommunityChatDetailController(),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: _buildAppBar(),
       body: Column(
         children: [
-          const Divider(color: Color(0xff333333), height: 1),
+          const Divider(color: Colors.white, height: 1),
           // Messages List
           Expanded(
             child: Obx(() {
@@ -39,11 +41,13 @@ class CommunityChatDetailPage extends StatelessWidget {
               );
             }),
           ),
-          
+
           // Image Previews (Before sending)
-          Obx(() => controller.selectedImages.isEmpty 
-              ? const SizedBox.shrink()
-              : _buildImagePreviews()),
+          Obx(
+            () => controller.selectedImages.isEmpty
+                ? const SizedBox.shrink()
+                : _buildImagePreviews(),
+          ),
 
           // Bottom Input Field
           _buildMessageInput(),
@@ -65,8 +69,8 @@ class CommunityChatDetailPage extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 20.r,
-            backgroundColor: const Color(0xffD4A843),
-            child: Icon(Icons.group, color: Colors.black, size: 24.sp),
+            backgroundColor: const Color(0xff363636),
+            backgroundImage: AssetImage(AppImages.app_logo),
           ),
           SizedBox(width: 12.w),
           Expanded(
@@ -86,7 +90,7 @@ class CommunityChatDetailPage extends StatelessWidget {
                 Text(
                   'Community Group',
                   style: GoogleFonts.inter(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 12.sp,
                   ),
                 ),
@@ -106,7 +110,9 @@ class CommunityChatDetailPage extends StatelessWidget {
       child: Align(
         alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Column(
-          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             if (!isMe)
               Padding(
@@ -114,7 +120,7 @@ class CommunityChatDetailPage extends StatelessWidget {
                 child: Text(
                   message.sender.name,
                   style: GoogleFonts.inter(
-                    color: const Color(0xffD4A843),
+                    color: Colors.white,
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -124,27 +130,35 @@ class CommunityChatDetailPage extends StatelessWidget {
               constraints: BoxConstraints(maxWidth: 0.75.sw),
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               decoration: BoxDecoration(
-                color: isMe ? const Color(0xffD4A843).withOpacity(0.1) : const Color(0xff1A1A1A),
+                color: isMe ? Color(0xff1A1A1A) : const Color(0xff1A1A1A),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16.r),
                   topRight: Radius.circular(16.r),
                   bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
                   bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
                 ),
-                border: Border.all(color: isMe ? const Color(0xffD4A843) : const Color(0xff333333)),
+                border: Border.all(
+                  color: isMe
+                      ? const Color(0xff333333)
+                      : const Color(0xff333333),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (message.attachments.isNotEmpty)
                     Column(
-                      children: message.attachments.map((url) => Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.r),
-                          child: Image.network(url, fit: BoxFit.cover),
-                        ),
-                      )).toList(),
+                      children: message.attachments
+                          .map(
+                            (url) => Padding(
+                              padding: EdgeInsets.only(bottom: 8.h),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.r),
+                                child: Image.network(url, fit: BoxFit.cover),
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                   if (message.text.isNotEmpty)
                     Text(
@@ -225,7 +239,7 @@ class CommunityChatDetailPage extends StatelessWidget {
       ),
       decoration: const BoxDecoration(
         color: Colors.black,
-        border: Border(top: BorderSide(color: Color(0xff333333))),
+        border: Border(top: BorderSide(color: Colors.white)),
       ),
       child: Row(
         children: [
@@ -238,7 +252,7 @@ class CommunityChatDetailPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xff1A1A1A),
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: const Color(0xff333333)),
+                border: Border.all(color: Colors.white),
               ),
               child: TextField(
                 controller: controller.messageController,
@@ -260,19 +274,21 @@ class CommunityChatDetailPage extends StatelessWidget {
             ),
           ),
           SizedBox(width: 12.w),
-          Obx(() => controller.isSending.value 
-              ? const CircularProgressIndicator(color: Color(0xffD4A843))
-              : GestureDetector(
-                  onTap: () => controller.sendMessage(),
-                  child: SvgPicture.asset(
-                    AppIcons.send_message_icon,
-                    height: 24.sp,
-                    colorFilter: const ColorFilter.mode(
-                      Color(0xffD4A843),
-                      BlendMode.srcIn,
+          Obx(
+            () => controller.isSending.value
+                ? const CircularProgressIndicator(color: Color(0xffD4A843))
+                : GestureDetector(
+                    onTap: () => controller.sendMessage(),
+                    child: SvgPicture.asset(
+                      AppIcons.send_message_icon,
+                      height: 24.sp,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
-                )),
+          ),
         ],
       ),
     );

@@ -165,7 +165,8 @@ class _JobofferpageState extends State<Jobofferpage> {
                                     companyName:
                                         job.createdBy?.name ?? 'Unknown',
                                     flightNumberHint: job.flightNumber ?? '',
-                                    paymentMethodHint: job.paymentType,
+                                    paymentMethodHint: job.paymentType
+                                        .replaceAll('_', ' '),
                                     specialInstructionsHint:
                                         job.instruction ?? '',
                                     price: job.paymentAmount.toString(),
@@ -225,13 +226,16 @@ class VehicleTypeColors {
   static const Color bus = Color(0xFF3B2F2F);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 
-  static const LinearGradient sedanSuvGradient = LinearGradient(
+  static final LinearGradient sedanSuvGradient = LinearGradient(
     colors: [
-      Color(0xffAB1226), // 95% opacity approximated by B1
-      Color(0xff0B1E40), // 92.5% opacity approximated by EC
+      const Color(0xFFB11226),
+      const Color(0xFFB11226).withOpacity(0.90),
+      const Color(0xFF0A1F44).withOpacity(0.95),
+      const Color(0xFF0A1F44).withOpacity(0.9),
     ],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
   );
 
   static dynamic getVehicleStyle(String? type) {
@@ -571,7 +575,7 @@ class _CustomJobCardState extends State<CustomJobCard> {
                         color: isOver ? Color(0xFFE1C16E) : AppColors.orange100,
                         borderRadius: BorderRadius.circular(16.r),
                       ),
-                      child: CustomText(text: widget.price, fontSize: 18.sp),
+                      child:CustomText(text: '\$${widget.price}', fontSize: 18.sp),
                     ),
                   );
                 },

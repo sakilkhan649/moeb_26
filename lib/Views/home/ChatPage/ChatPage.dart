@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Services/user_service.dart';
 import 'package:moeb_26/Views/home/ChatPage/Model/Community_chat_model.dart';
 import '../../../Core/routs.dart';
+import '../../../Utils/app_images.dart';
 import '../../../widgets/Custom_AppBar.dart';
 import 'Controller/Chat_controller.dart';
 import 'Model/Chat_model.dart';
@@ -32,7 +33,6 @@ class Chatpage extends StatelessWidget {
               SizedBox(height: 4.h),
 
               // ── Search Bar ──
-              
               TextFormField(
                 onChanged: (value) => controller.filterChats(value),
                 style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),
@@ -66,7 +66,7 @@ class Chatpage extends StatelessWidget {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
                     borderSide: BorderSide(
-                      color: const Color(0xffD4A843),
+                      color: Colors.grey,
                       width: 1.w,
                     ),
                   ),
@@ -88,19 +88,21 @@ class Chatpage extends StatelessWidget {
                     await controller.fetchChats();
                     await controller.fetchCommunityRoom();
                   },
-                  color: const Color(0xffD4A843),
+                  color: Colors.grey,
                   backgroundColor: const Color(0xff1A1A1A),
                   child: Obx(() {
                     if (controller.isLoading.value &&
                         controller.chats.isEmpty) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    
+
                     final communityRoom = controller.communityRoom.value;
-                    
+
                     return ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: controller.filteredChats.length + (communityRoom != null ? 1 : 0),
+                      itemCount:
+                          controller.filteredChats.length +
+                          (communityRoom != null ? 1 : 0),
                       separatorBuilder: (context, index) => Divider(
                         color: Colors.grey.withOpacity(0.15),
                         height: 1.h,
@@ -110,8 +112,10 @@ class Chatpage extends StatelessWidget {
                         if (communityRoom != null && index == 0) {
                           return _buildCommunityChatTile(communityRoom);
                         }
-                        
-                        final chatIndex = communityRoom != null ? index - 1 : index;
+
+                        final chatIndex = communityRoom != null
+                            ? index - 1
+                            : index;
                         final chat = controller.filteredChats[chatIndex];
                         return _buildChatTile(chat);
                       },
@@ -137,10 +141,19 @@ class Chatpage extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 12.h),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 28.r,
-              backgroundColor: const Color(0xffD4A843),
-              child: Icon(Icons.group, color: Colors.black, size: 28.sp),
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.grey[800]!, // border color
+                  width: 3,
+                ),
+              ),
+              child: CircleAvatar(
+                radius: 25.r,
+                backgroundColor: Colors.grey[800],
+                backgroundImage: AssetImage(AppImages.app_logo),
+              ),
             ),
             SizedBox(width: 12.w),
             Expanded(
@@ -153,7 +166,7 @@ class Chatpage extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          room.name,
+                          "Live Chat: ${room.name}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
@@ -179,7 +192,7 @@ class Chatpage extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.inter(
-                      color: const Color(0xffD4A843),
+                      color: Colors.grey,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
                     ),

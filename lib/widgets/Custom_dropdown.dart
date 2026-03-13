@@ -152,7 +152,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               )
             : null,
         selectedItemBuilder: (context) {
-          return widget.items.map((String item) {
+          List<Widget> builders = widget.items.map((String item) {
             return Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -165,6 +165,15 @@ class _CustomDropdownState extends State<CustomDropdown> {
               ),
             );
           }).toList();
+
+          if (widget.isLoadingMore) {
+            builders.add(const SizedBox.shrink());
+          }
+          if (widget.hasNextPage && !widget.isLoadingMore) {
+            builders.add(const SizedBox.shrink());
+          }
+
+          return builders;
         },
         onMenuStateChange: (isOpen) {
           setState(() {

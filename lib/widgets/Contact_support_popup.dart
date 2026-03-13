@@ -72,9 +72,9 @@ class ContactSupportBottomSheet extends StatelessWidget {
                           child: CustomText(text: "My Support Tickets", fontSize: 16.sp),
                         ),
                         SizedBox(
-                          height: 150.h,
+                          height: 190.h,
                           child: ListView.builder(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 20.w),
                             scrollDirection: Axis.horizontal,
                             itemCount: controller.tickets.length,
                             itemBuilder: (context, index) {

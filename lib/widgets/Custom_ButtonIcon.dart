@@ -82,7 +82,7 @@ class CustomButtonIcon extends StatelessWidget {
                           style:
                               style ??
                               GoogleFonts.inter(
-                                fontSize: fontSize ?? 16.sp,
+                                fontSize: fontSize ?? 10.sp,
                                 fontWeight: fontWeight ?? FontWeight.bold,
                                 color: textColor ?? Colors.black,
                               ),
@@ -99,7 +99,7 @@ class CustomButtonIcon extends StatelessWidget {
                           style:
                               style ??
                               GoogleFonts.inter(
-                                fontSize: fontSize ?? 16.sp,
+                                fontSize: fontSize ?? 12.sp,
                                 fontWeight: fontWeight ?? FontWeight.bold,
                                 color: textColor ?? Colors.black,
                               ),
@@ -111,7 +111,7 @@ class CustomButtonIcon extends StatelessWidget {
                 style:
                     style ??
                     GoogleFonts.inter(
-                      fontSize: fontSize ?? 16.sp,
+                      fontSize: fontSize ?? 12.sp,
                       fontWeight: fontWeight ?? FontWeight.bold,
                       color: textColor ?? Colors.black,
                     ),

@@ -34,7 +34,7 @@ class CreateAccountController extends GetxController {
 
   // Derived cities from ServiceAreaController
   List<String> get cities =>
-      _serviceAreaController.serviceAreas.map((e) => e.areaName).toList();
+      _serviceAreaController.serviceAreas.map((e) => e.areaName).toSet().toList();
   bool get isCitiesLoading => _serviceAreaController.isLoading.value;
   bool get isMoreCitiesLoading => _serviceAreaController.isMoreLoading.value;
   bool get hasNextCitiesPage =>
