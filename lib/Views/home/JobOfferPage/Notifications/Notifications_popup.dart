@@ -99,34 +99,45 @@ class CustomNotificationPopup extends StatelessWidget {
 
             // Notifications List
             Flexible(
-              child: Obx(() {
-                if (controller.notifications.isEmpty) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    child: Center(
-                      child: Text(
-                        "No notifications",
-                        style: GoogleFonts.inter(
-                          color: Colors.white.withOpacity(0.4),
-                          fontSize: 14.sp,
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await controller.fetchNotifications();
+                },
+                color: const Color(0xFFD08700),
+                backgroundColor: const Color(0xFF1A1A1A),
+                child: Obx(() {
+                  if (controller.notifications.isEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 100.h),
+                          child: Center(
+                            child: Text(
+                              "No notifications",
+                              style: GoogleFonts.inter(
+                                color: Colors.white.withOpacity(0.4),
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }
+                      ],
+                    );
+                  }
 
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: controller.notifications.length,
-                  separatorBuilder: (context, index) =>
-                      const Divider(color: Colors.white10, height: 1),
-                  itemBuilder: (context, index) {
-                    final notification = controller.notifications[index];
-                    return _buildNotificationItem(notification);
-                  },
-                );
-              }),
+                  return ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: controller.notifications.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(color: Colors.white10, height: 1),
+                    itemBuilder: (context, index) {
+                      final notification = controller.notifications[index];
+                      return _buildNotificationItem(notification);
+                    },
+                  );
+                }),
+              ),
             ),
             SizedBox(height: 10.h),
           ],

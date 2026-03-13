@@ -99,10 +99,12 @@ class JobData {
     updatedAt = json['updatedAt'];
     rideStatus = json['rideStatus'];
 
-    applicant =
-        json['applicant'] != null ? Applicant.fromJson(json['applicant']) : null;
-    assignedTo =
-        json['assignedTo'] != null ? Driver.fromJson(json['assignedTo']) : null;
+    applicant = json['applicant'] != null
+        ? Applicant.fromJson(json['applicant'])
+        : null;
+    assignedTo = json['assignedTo'] != null
+        ? Driver.fromJson(json['assignedTo'])
+        : null;
   }
 }
 
@@ -113,8 +115,7 @@ class Applicant {
   Applicant({this.driver, this.appliedAt});
 
   Applicant.fromJson(Map<String, dynamic> json) {
-    driver =
-        json['driver'] != null ? Driver.fromJson(json['driver']) : null;
+    driver = json['driver'] != null ? Driver.fromJson(json['driver']) : null;
     appliedAt = json['appliedAt'];
   }
 }

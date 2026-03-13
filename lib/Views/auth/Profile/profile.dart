@@ -27,14 +27,21 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Obx(() {
-          if (controller.isLoading.value) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.orange100),
-            );
-          }
-          return SingleChildScrollView(
-            child: Column(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await controller.fetchUserProfile();
+          },
+          color: AppColors.orange100,
+          backgroundColor: const Color(0xFF1A1A1A),
+          child: Obx(() {
+            if (controller.isLoading.value && controller.userProfile.value == null) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.orange100),
+              );
+            }
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header Segment
@@ -562,8 +569,9 @@ class ProfileScreen extends StatelessWidget {
           );
         }),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildHeaderButton(String label, VoidCallback onTap) {
     return GestureDetector(

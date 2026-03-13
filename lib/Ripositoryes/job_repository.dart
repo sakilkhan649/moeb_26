@@ -26,14 +26,23 @@ class JobRepo {
       "vehicleType": vehicleType,
       "paymentAmount": paymentAmount,
       "paymentType": paymentType,
-      "dropoffLocation": dropoffLocation ?? "N/A",
-      "duration": duration ?? "N/A",
     };
 
-    if (date != null) body["date"] = date;
-    if (time != null) body["time"] = time;
-    if (asap != null) body["asap"] = asap;
-
+    if (dropoffLocation != null && dropoffLocation.isNotEmpty) {
+      body["dropoffLocation"] = dropoffLocation;
+    }
+    if (duration != null && duration.isNotEmpty) {
+      body["duration"] = duration;
+    }
+    if (date != null && date.isNotEmpty) {
+      body["date"] = date;
+    }
+    if (time != null && time.isNotEmpty) {
+      body["time"] = time;
+    }
+    if (asap != null) {
+      body["asap"] = asap;
+    }
     if (flightNumber != null && flightNumber.isNotEmpty) {
       body["flightNumber"] = flightNumber;
     }

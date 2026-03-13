@@ -224,7 +224,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final TextEditingController cardInstructionController =
         TextEditingController(text: instruction);
     final TextEditingController cardAmountController = TextEditingController(
-      text: amount.toString(),
+      text: "\$${amount}",
     );
     return Container(
       width: double.infinity,

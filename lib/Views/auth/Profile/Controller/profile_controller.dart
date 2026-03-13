@@ -60,6 +60,7 @@ class ProfileController extends GetxController {
         serviceArea.value = userProfile.value?.serviceArea ?? "";
         nickName.value = userProfile.value?.name ?? "";
         profilePicture.value = userProfile.value?.profilePicture ?? "";
+        rating.value = userProfile.value?.averageRating ?? 0.0;
 
         // Update controllers for the edit form
         nameController.text = fullName.value;
@@ -127,6 +128,7 @@ class ProfileController extends GetxController {
         serviceArea.value = userProfile.value?.serviceArea ?? "";
         nickName.value = userProfile.value?.name ?? ""; // Local fallback
         profilePicture.value = userProfile.value?.profilePicture ?? "";
+        rating.value = userProfile.value?.averageRating ?? 0.0;
 
         pickedImage.value = null; // Clear picked image after success
         Get.back(); // Close bottom sheet

@@ -16,6 +16,7 @@ class UserProfileModel {
   final List<Vehicle> vehicles;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final double averageRating;
 
   UserProfileModel({
     required this.id,
@@ -35,6 +36,7 @@ class UserProfileModel {
     required this.vehicles,
     required this.createdAt,
     required this.updatedAt,
+    this.averageRating = 0.0,
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -66,6 +68,7 @@ class UserProfileModel {
       updatedAt: json['updatedAt'] != null
           ? DateTime.parse(json['updatedAt'])
           : DateTime.now(),
+      averageRating: (json['averageRating'] ?? 0.0).toDouble(),
     );
   }
 
@@ -88,6 +91,7 @@ class UserProfileModel {
       'vehicles': vehicles.map((e) => e.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'averageRating': averageRating,
     };
   }
 }
