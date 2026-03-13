@@ -19,6 +19,7 @@ import '../Views/auth/Splash_Screen/splashScreen.dart';
 import '../Views/auth/Term_and_policy/Term_policy.dart';
 import '../Views/auth/Vehicle/VehicleInformation.dart';
 import '../Views/home/Bottom_NabBar/Binding/Binging_Class.dart';
+import '../Views/home/ChatPage/Support_chat_detail_page.dart';
 import '../Views/home/JobOfferPage/My_jobs/Approve/approve_page.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ratings_Feedback/Ratings_Feedback.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progress_Way_Location.dart';
@@ -80,7 +81,7 @@ class Routes {
   static const String forgetotpVerificationScreen = "/OtpVerificationScreen";
   static const String changePasswordScreen = "/ChangePasswordScreen";
   static const String myPropucts = "/MyPropucts";
-    static const String supportChatDetailPage = "/SupportChatDetailPage";
+  static const String supportChatDetailPage = "SupportChatDetailPage";
 
   static List<GetPage> routes = [
     GetPage(
@@ -272,10 +273,9 @@ class Routes {
       transition: Transition.noTransition,
     ),
 
-
-        GetPage(
+    GetPage(
       name: supportChatDetailPage,
-      page: () => CommunityChatDetailPage(),
+      page: () => SupportChatDetailPage(),
       transition: Transition.noTransition,
     ),
   ];
