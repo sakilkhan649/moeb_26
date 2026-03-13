@@ -516,7 +516,7 @@ class CustomJobCard extends StatelessWidget {
           SizedBox(height: 8.h),
 
           /// AMOUNT
-          _buildRichInfo("Amount: \$ ", pickupAmount),
+          _buildRichInfo("Amount: ", "\$$pickupAmount"),
           SizedBox(height: 15.h),
 
           /// DRIVER NAME

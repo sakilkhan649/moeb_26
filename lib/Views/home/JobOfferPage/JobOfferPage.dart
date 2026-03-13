@@ -34,8 +34,9 @@ class _JobofferpageState extends State<Jobofferpage> {
   void initState() {
     super.initState();
     scrollController.addListener(() {
-      if (scrollController.position.pixels >=
-          scrollController.position.maxScrollExtent - 200) {
+      if (scrollController.hasClients &&
+          scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 200) {
         controller.loadMoreJobOffers();
       }
     });
@@ -150,7 +151,12 @@ class _JobofferpageState extends State<Jobofferpage> {
                                     formattedDateTime = "$dateStr · $timeStr";
                                   }
                                 } else {
-                                  formattedDateTime = job.time;
+                                  formattedDateTime =
+                                      (job.time == null ||
+                                          job.time == "null" ||
+                                          job.time.isEmpty)
+                                      ? "ASAP"
+                                      : job.time;
                                 }
 
                                 return Padding(
@@ -380,38 +386,52 @@ class _CustomJobCardState extends State<CustomJobCard> {
           SizedBox(height: 10.h),
 
           /// PICKUP LOCATION
-          RichText(
-            text: TextSpan(
-              style: GoogleFonts.inter(fontSize: 14.sp),
-              children: [
-                TextSpan(
-                  text: "PU: ",
-                  style: const TextStyle(color: Colors.grey),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "PU: ",
+                style: GoogleFonts.inter(
+                  color: Colors.grey,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
                 ),
-                TextSpan(
-                  text: widget.pickupLocation,
-                  style: const TextStyle(color: Colors.white),
+              ),
+              Expanded(
+                child: Text(
+                  widget.pickupLocation,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           SizedBox(height: 6.h),
 
           /// DROPOFF LOCATION
-          RichText(
-            text: TextSpan(
-              style: GoogleFonts.inter(fontSize: 14.sp),
-              children: [
-                TextSpan(
-                  text: "DO: ",
-                  style: const TextStyle(color: Colors.grey),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "DO: ",
+                style: GoogleFonts.inter(
+                  color: Colors.grey,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
                 ),
-                TextSpan(
-                  text: widget.dropoffLocation,
-                  style: const TextStyle(color: Colors.white),
+              ),
+              Expanded(
+                child: Text(
+                  widget.dropoffLocation,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           SizedBox(height: 10.h),
 
@@ -555,30 +575,42 @@ class _CustomJobCardState extends State<CustomJobCard> {
                   ),
                 ],
               ),
-              DragTarget<String>(
-                onAcceptWithDetails: (details) {
-                  if (details.data == 'confirm') {
-                    widget.onArrowTap?.call();
-                  }
-                },
-                builder: (context, candidateData, rejectedData) {
-                  bool isOver = candidateData.isNotEmpty;
-                  return GestureDetector(
-                    onTap: widget.onPriceTap,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: EdgeInsets.symmetric(
-                        vertical: 15.h,
-                        horizontal: 70.w,
+              Expanded(
+                child: DragTarget<String>(
+                  onAcceptWithDetails: (details) {
+                    if (details.data == 'confirm') {
+                      widget.onArrowTap?.call();
+                    }
+                  },
+                  builder: (context, candidateData, rejectedData) {
+                    bool isOver = candidateData.isNotEmpty;
+                    return GestureDetector(
+                      onTap: widget.onPriceTap,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        height: 55.h,
+                        decoration: BoxDecoration(
+                          color: isOver
+                              ? const Color(0xFFE1C16E)
+                              : AppColors.orange100,
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10.w),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: CustomText(
+                                text: '\$${widget.price}',
+                                fontSize: 18.sp,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: isOver ? Color(0xFFE1C16E) : AppColors.orange100,
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child:CustomText(text: '\$${widget.price}', fontSize: 18.sp),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -614,6 +646,7 @@ class CustomTextFieldGold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: null,
       readOnly: readOnly,
       controller: controller,
       obscureText: obscureText,

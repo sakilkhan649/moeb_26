@@ -11,19 +11,19 @@ import 'package:moeb_26/Views/home/RidesPage/RidesPage.dart';
 import 'Controller/bottom_nabbar_controller.dart';
 
 class HomeScreens extends StatelessWidget {
-  const HomeScreens({Key? key}) : super(key: key);
+  HomeScreens({Key? key}) : super(key: key);
+
+  final List<Widget> pages = [
+    Jobofferpage(),
+    Ridespage(),
+    Chatpage(),
+    Marketplacepage(),
+    Dealspage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final NavigationController navController = Get.find<NavigationController>();
-
-    final List<Widget> pages = [
-      Jobofferpage(),
-      Ridespage(),
-      Chatpage(),
-      Marketplacepage(),
-      Dealspage(),
-    ];
 
     return SafeArea(
       child: Scaffold(
