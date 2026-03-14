@@ -161,48 +161,38 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   }
 
   Widget _buildJobAcceptanceDetailCard(JobData job) {
-    final dateRaw = job.date.toString();
-    final timeRaw = job.time;
+    String displayDate = (job.asap == true) ? "ASAP" : "";
 
-    // Parse time to 12h format with AM/PM
-    String formattedTime = timeRaw ?? "";
-    try {
-      if (timeRaw != null && timeRaw.contains(':')) {
-        final parts = timeRaw.split(':');
-        int hour = int.parse(parts[0]);
-        int minute = int.parse(parts[1].split(' ')[0]);
-        final timeOfDay = TimeOfDay(hour: hour, minute: minute);
-
-        // Manual conversion to 12h format
-        final period = hour >= 12 ? "PM" : "AM";
-        final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-        formattedTime =
-            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+    if (displayDate != "ASAP") {
+      String formattedTime = "";
+      if (job.time != null && job.time!.contains(':')) {
+        try {
+          final parts = job.time!.split(':');
+          int hour = int.parse(parts[0]);
+          int minute = int.parse(parts[1].split(' ')[0]);
+          final period = hour >= 12 ? "PM" : "AM";
+          final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+          formattedTime =
+              "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+        } catch (_) {
+          formattedTime = job.time!;
+        }
       }
-    } catch (_) {}
 
-    // Parse date if possible
-    String displayDate = formattedTime.isNotEmpty
-        ? "${dateRaw} · $formattedTime"
-        : dateRaw;
-
-    if (dateRaw == "null" &&
-        (formattedTime == "null" || formattedTime.isEmpty)) {
-      displayDate = "ASAP";
-    } else if (dateRaw == "null") {
-      displayDate = formattedTime;
-    } else if (formattedTime == "null" || formattedTime.isEmpty) {
-      displayDate = dateRaw;
+      if (job.date != null && job.date != "null" && job.date!.isNotEmpty) {
+        try {
+          DateTime parsed = DateTime.parse(job.date!);
+          displayDate =
+              "${_getWeekday(parsed.weekday)}, ${_getMonth(parsed.month)} ${parsed.day}";
+          if (formattedTime.isNotEmpty) displayDate += " · $formattedTime";
+        } catch (_) {
+          displayDate = job.date!;
+          if (formattedTime.isNotEmpty) displayDate += " · $formattedTime";
+        }
+      } else {
+        displayDate = formattedTime.isNotEmpty ? formattedTime : "ASAP";
+      }
     }
-
-    try {
-      if (dateRaw.isNotEmpty && dateRaw != "null") {
-        DateTime parsed = DateTime.parse(dateRaw);
-        // Basic format to keep it simple, e.g., "Tue, Jan 20"
-        displayDate =
-            "${_getWeekday(parsed.weekday)}, ${_getMonth(parsed.month)} ${parsed.day} · $formattedTime";
-      }
-    } catch (_) {}
 
     final puLocation = job.pickupLocation;
     final doLocation = job.dropoffLocation ?? 'N/A';
@@ -233,575 +223,565 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
         borderRadius: BorderRadius.circular(24.r),
         border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
-      child: Stack(
+      child: Column(
         children: [
-          Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(10.w, 12.w, 10.w, 10.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: EdgeInsets.fromLTRB(10.w, 12.w, 10.w, 10.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    /// Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              AppIcons.date_icon,
-                              height: 20.sp,
-                              width: 20.sp,
-                            ),
-                            SizedBox(width: 5.w),
-                            Text(
-                              displayDate,
-                              style: GoogleFonts.inter(
-                                color: Colors.grey,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                        PopupMenuButton<String>(
-                          icon: Icon(
-                            Icons.more_vert,
-                            color: Colors.white,
-                            size: 24.sp,
-                          ),
-                          color: Color(0xFF1E1E1E),
-                          onSelected: (value) {
-                            if (value == 'edit') {
-                              Get.toNamed(Routes.editScreen, arguments: job);
-                            } else {
-                              _showDeleteDialog(jobId: job.id.toString());
-                            }
-                          },
-                          itemBuilder: (_) => [
-                            PopupMenuItem(
-                              value: 'edit',
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    AppIcons.edit_icon_myjob,
-                                    width: 20.sp,
-                                    height: 20.sp,
-                                  ),
-                                  SizedBox(width: 10.w),
-                                  Text(
-                                    "Edit",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 13.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 'delete',
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    AppIcons.deletemyjob_icon,
-                                    width: 20.sp,
-                                    height: 20.sp,
-                                  ),
-                                  SizedBox(width: 10.w),
-                                  Text(
-                                    "Delete",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 13.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "PU: ",
-                                style: GoogleFonts.inter(
-                                  color: Colors.grey,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  puLocation!,
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 6.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: vehicleStyle is Color ? vehicleStyle : null,
-                            gradient: vehicleStyle is Gradient
-                                ? vehicleStyle
-                                : null,
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
-                          child: Text(
-                            vehicle!.toUpperCase(),
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6.h),
-
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "DO: ",
-                          style: GoogleFonts.inter(
-                            color: Colors.grey,
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            doLocation,
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10.h),
-
-                    ///DATE AND TIME
                     Row(
                       children: [
-                        SvgPicture.asset(AppIcons.sadax_icon),
+                        SvgPicture.asset(
+                          AppIcons.date_icon,
+                          height: 20.sp,
+                          width: 20.sp,
+                        ),
                         SizedBox(width: 5.w),
                         Text(
-                          jobType,
+                          displayDate,
                           style: GoogleFonts.inter(
-                            color: Colors.white,
+                            color: Colors.grey,
                             fontSize: 12.sp,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.h),
-
-                    ///Fligt Number
-                    const CustomTextgray(
-                      text: "Flight Number",
-                      color: Color(0xFF737373),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextFieldGold(
-                      readOnly: true,
-                      controller: cardFlightController,
-                      hintText: "Flight AA 1234",
-                      obscureText: false,
-                      textInputType: TextInputType.text,
-                    ),
-                    SizedBox(height: 10.h),
-
-                    ///Payment Method
-                    const CustomTextgray(
-                      text: "Payment Method",
-                      color: Color(0xFF737373),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextFieldGold(
-                      readOnly: true,
-                      controller: cardPaymentTypeController,
-                      hintText: "Collect",
-                      obscureText: false,
-                      textInputType: TextInputType.text,
-                    ),
-                    SizedBox(height: 10.h),
-
-                    ///Special Instructions
-                    const CustomTextgray(
-                      text: "Special Instructions",
-                      color: Color(0xFF737373),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextFieldGold(
-                      readOnly: true,
-                      controller: cardInstructionController,
-                      hintText: "Airport Expert, Vip Client",
-                      obscureText: false,
-                      textInputType: TextInputType.text,
-                    ),
-                    SizedBox(height: 10.h),
-
-                    ///Amount
-                    const CustomTextgray(
-                      text: "Amount",
-                      color: Color(0xFF737373),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextFieldGold(
-                      readOnly: true,
-                      controller: cardAmountController,
-                      hintText: "\$",
-                      obscureText: false,
-                      textInputType: TextInputType.text,
-                    ),
-                  ],
-                ),
-              ),
-
-              /// Driver Section
-              if ((status == 'PENDING' && job.applicant?.driver != null) ||
-                  (status == 'ASSIGNED' && job.assignedTo != null) ||
-                  (status == 'COMPLETED' && job.assignedTo != null))
-                Builder(
-                  builder: (context) {
-                    final driver = status == 'PENDING'
-                        ? job.applicant?.driver
-                        : job.assignedTo;
-                    final vehicle =
-                        (driver?.vehicles != null &&
-                            driver!.vehicles!.isNotEmpty)
-                        ? driver.vehicles!.first
-                        : null;
-                    final vehicleInfo = vehicle != null
-                        ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
-                        : job.vehicleType ?? "N/A";
-
-                    ///=========================================================================================================================================
-                    return Container(
-                      padding: EdgeInsets.all(16.w),
-                      margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1C1C1C),
-                        borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(color: const Color(0xFF2A2A2A)),
+                    PopupMenuButton<String>(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: Colors.white,
+                        size: 24.sp,
                       ),
-                      child: Column(
-                        children: [
-                          Row(
+                      color: const Color(0xFF1E1E1E),
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          Get.toNamed(Routes.editScreen, arguments: job);
+                        } else {
+                          _showDeleteDialog(jobId: job.id.toString());
+                        }
+                      },
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
                             children: [
-                              CircleAvatar(
-                                radius: 30.r,
-                                backgroundImage:
-                                    (driver?.profilePicture != null &&
-                                        driver!.profilePicture!.isNotEmpty)
-                                    ? NetworkImage(driver.profilePicture!)
-                                    : const AssetImage(AppImages.profile_image)
-                                          as ImageProvider,
+                              SvgPicture.asset(
+                                AppIcons.edit_icon_myjob,
+                                width: 20.sp,
+                                height: 20.sp,
                               ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          driver?.name ?? "",
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white,
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        SvgPicture.asset(
-                                          AppIcons.bmw_car_icon,
-                                          height: 20.sp,
-                                          width: 20.sp,
-                                        ),
-                                        SizedBox(width: 4.w),
-                                        Expanded(
-                                          child: Text(
-                                            vehicleInfo,
-                                            style: GoogleFonts.inter(
-                                              color: Colors.white.withOpacity(
-                                                0.4,
-                                              ),
-                                              fontSize: 12.sp,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 4.h),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.star_border_outlined,
-                                          color: const Color(0xFFD08700),
-                                          size: 20.sp,
-                                        ),
-                                        SizedBox(width: 4.w),
-                                        Text(
-                                          "${driver?.averageRating ?? 0.0}/5",
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white.withOpacity(
-                                              0.4,
-                                            ),
-                                            fontSize: 12.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                              SizedBox(width: 10.w),
+                              Text(
+                                "Edit",
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 13.sp,
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(height: 16.h),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                AppIcons.deletemyjob_icon,
+                                width: 20.sp,
+                                height: 20.sp,
+                              ),
+                              SizedBox(width: 10.w),
+                              Text(
+                                "Delete",
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 13.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 0.h),
 
-                          /// Chat Button
-                          GestureDetector(
-                            onTap: () async {
-                              final String? participantId =
-                                  job.assignedTo?.id ??
-                                  job.applicant?.driver?.id;
-                              if (participantId != null && job.id != null) {
-                                try {
-                                  final chat =
-                                      await Get.find<SocketRepository>()
-                                          .createChat(participantId, job.id!);
-                                  if (chat != null) {
-                                    Get.toNamed(
-                                      Routes.chatDetailPage,
-                                      arguments: chat,
-                                    );
-                                  }
-                                } catch (e) {
-                                  Helpers.showCustomSnackBar(
-                                    'Failed to open chat.',
-                                    isError: true,
-                                  );
-                                  print("Error opening chat: $e");
-                                }
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 15.h,
-                              ),
-                              decoration: BoxDecoration(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "PU: ",
+                            style: GoogleFonts.inter(
+                              color: Colors.grey,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              puLocation!,
+                              style: GoogleFonts.inter(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.chat_bubble_outline,
-                                    color: Colors.black.withOpacity(0.6),
-                                    size: 24.sp,
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    "Chat with Driver",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.black.withOpacity(0.6),
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
+                                fontSize: 14.sp,
                               ),
                             ),
                           ),
-                          SizedBox(height: 24.h),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: vehicleStyle is Color ? vehicleStyle : null,
+                        gradient: vehicleStyle is Gradient
+                            ? vehicleStyle
+                            : null,
+                        borderRadius: BorderRadius.circular(6.r),
+                      ),
+                      child: Text(
+                        vehicle!.toUpperCase(),
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6.h),
 
-                          /// Reject/Approve or View Button
-                          if (status == 'ASSIGNED' || status == 'COMPLETED')
-                            GestureDetector(
-                              onTap: () {
-                                controller.viewLoading[job.id ?? ""] = true;
-                                Get.to(
-                                  RideProgressWayLocation(),
-                                  arguments: job,
-                                )?.then((_) {
-                                  controller.viewLoading[job.id ?? ""] = false;
-                                });
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 15.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.orange100,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: Center(
-                                  child: Obx(() {
-                                    final isLoading =
-                                        controller.viewLoading[job.id ?? ""] ==
-                                        true;
-                                    return isLoading
-                                        ? const SizedBox(
-                                            height: 20,
-                                            width: 20,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : Text(
-                                            "View",
-                                            style: GoogleFonts.inter(
-                                              color: Colors.white,
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          );
-                                  }),
-                                ),
-                              ),
-                            )
-                          else if (status == 'PENDING')
-                            Row(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "DO: ",
+                      style: GoogleFonts.inter(
+                        color: Colors.grey,
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        doLocation,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10.h),
+
+                ///DATE AND TIME
+                Row(
+                  children: [
+                    SvgPicture.asset(AppIcons.sadax_icon),
+                    SizedBox(width: 5.w),
+                    Text(
+                      jobType,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+
+                ///Fligt Number
+                const CustomTextgray(
+                  text: "Flight Number",
+                  color: Color(0xFF737373),
+                  fontWeight: FontWeight.w500,
+                ),
+                SizedBox(height: 8.h),
+                CustomTextFieldGold(
+                  readOnly: true,
+                  controller: cardFlightController,
+                  hintText: "Flight AA 1234",
+                  obscureText: false,
+                  textInputType: TextInputType.text,
+                ),
+                SizedBox(height: 10.h),
+
+                ///Payment Method
+                const CustomTextgray(
+                  text: "Payment Method",
+                  color: Color(0xFF737373),
+                  fontWeight: FontWeight.w500,
+                ),
+                SizedBox(height: 8.h),
+                CustomTextFieldGold(
+                  readOnly: true,
+                  controller: cardPaymentTypeController,
+                  hintText: "Collect",
+                  obscureText: false,
+                  textInputType: TextInputType.text,
+                ),
+                SizedBox(height: 10.h),
+
+                ///Special Instructions
+                const CustomTextgray(
+                  text: "Special Instructions",
+                  color: Color(0xFF737373),
+                  fontWeight: FontWeight.w500,
+                ),
+                SizedBox(height: 8.h),
+                CustomTextFieldGold(
+                  readOnly: true,
+                  controller: cardInstructionController,
+                  hintText: "Airport Expert, Vip Client",
+                  obscureText: false,
+                  textInputType: TextInputType.text,
+                ),
+                SizedBox(height: 10.h),
+
+                ///Amount
+                const CustomTextgray(
+                  text: "Amount",
+                  color: Color(0xFF737373),
+                  fontWeight: FontWeight.w500,
+                ),
+                SizedBox(height: 8.h),
+                CustomTextFieldGold(
+                  readOnly: true,
+                  controller: cardAmountController,
+                  hintText: "\$",
+                  obscureText: false,
+                  textInputType: TextInputType.text,
+                ),
+              ],
+            ),
+          ),
+
+          /// Driver Section
+          if ((status == 'PENDING' && job.applicant?.driver != null) ||
+              (status == 'ASSIGNED' && job.assignedTo != null) ||
+              (status == 'COMPLETED' && job.assignedTo != null))
+            Builder(
+              builder: (context) {
+                final driver = status == 'PENDING'
+                    ? job.applicant?.driver
+                    : job.assignedTo;
+                final vehicle =
+                    (driver?.vehicles != null && driver!.vehicles!.isNotEmpty)
+                    ? driver.vehicles!.first
+                    : null;
+                final vehicleInfo = vehicle != null
+                    ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
+                    : job.vehicleType ?? "N/A";
+
+                ///=========================================================================================================================================
+                return Container(
+                  padding: EdgeInsets.all(16.w),
+                  margin: EdgeInsets.fromLTRB(10.w, 4.w, 10.w, 10.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1C1C1C),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: const Color(0xFF2A2A2A)),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30.r,
+                            backgroundImage:
+                                (driver?.profilePicture != null &&
+                                    driver!.profilePicture!.isNotEmpty)
+                                ? NetworkImage(driver.profilePicture!)
+                                : null,
+                            child:
+                                (driver?.profilePicture == null ||
+                                    driver!.profilePicture!.isEmpty)
+                                ? Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                    size: 30.sp,
+                                  )
+                                : null,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      await controller.rejectApplicant(
-                                        jobId: job.id.toString(),
-                                      );
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 12.w,
-                                        vertical: 15.h,
-                                      ),
-                                      decoration: BoxDecoration(
+                                Row(
+                                  children: [
+                                    Text(
+                                      driver?.name?.split(' ').first ?? "",
+                                      style: GoogleFonts.inter(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(
-                                          16.r,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Obx(() {
-                                          final isLoading =
-                                              controller.rejectLoading[job.id ??
-                                                  ""] ==
-                                              true;
-                                          return isLoading
-                                              ? const SizedBox(
-                                                  height: 20,
-                                                  width: 20,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        color: Colors.black,
-                                                      ),
-                                                )
-                                              : Text(
-                                                  "Reject",
-                                                  style: GoogleFonts.inter(
-                                                    color: Colors.black,
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                );
-                                        }),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                  ),
+                                    SizedBox(width: 12.w),
+                                    SvgPicture.asset(
+                                      AppIcons.bmw_car_icon,
+                                      height: 20.sp,
+                                      width: 20.sp,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Expanded(
+                                      child: Text(
+                                        vehicleInfo,
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white.withOpacity(0.4),
+                                          fontSize: 12.sp,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(width: 20.w),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      await controller.approveApplicant(
-                                        jobId: job.id.toString(),
-                                      );
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 12.w,
-                                        vertical: 15.h,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.orange100,
-                                        borderRadius: BorderRadius.circular(
-                                          16.r,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Obx(() {
-                                          final isLoading =
-                                              controller.approveLoading[job
-                                                      .id ??
-                                                  ""] ==
-                                              true;
-                                          return isLoading
-                                              ? const SizedBox(
-                                                  height: 20,
-                                                  width: 20,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        color: Colors.white,
-                                                      ),
-                                                )
-                                              : Text(
-                                                  "Approve",
-                                                  style: GoogleFonts.inter(
-                                                    color: Colors.white,
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                );
-                                        }),
+                                SizedBox(height: 4.h),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star_border_outlined,
+                                      color: const Color(0xFFD08700),
+                                      size: 20.sp,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      "${driver?.averageRating ?? 0.0}/5",
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white.withOpacity(0.4),
+                                        fontSize: 12.sp,
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
+                          ),
                         ],
                       ),
-                    );
-                  },
-                ),
-            ],
-          ),
+                      SizedBox(height: 16.h),
+
+                      /// Chat Button
+                      GestureDetector(
+                        onTap: () async {
+                          final String? participantId =
+                              job.assignedTo?.id ?? job.applicant?.driver?.id;
+                          if (participantId != null && job.id != null) {
+                            try {
+                              final chat = await Get.find<SocketRepository>()
+                                  .createChat(participantId, job.id!);
+                              if (chat != null) {
+                                Get.toNamed(
+                                  Routes.chatDetailPage,
+                                  arguments: chat,
+                                );
+                              }
+                            } catch (e) {
+                              Helpers.showCustomSnackBar(
+                                'Failed to open chat.',
+                                isError: true,
+                              );
+                              print("Error opening chat: $e");
+                            }
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 15.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.chat_bubble_outline,
+                                color: Colors.black.withOpacity(0.6),
+                                size: 24.sp,
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                "Chat with Driver",
+                                style: GoogleFonts.inter(
+                                  color: Colors.black.withOpacity(0.6),
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+
+                      /// Reject/Approve or View Button
+                      if (status == 'ASSIGNED' || status == 'COMPLETED')
+                        GestureDetector(
+                          onTap: () {
+                            controller.myJobView.value = null;
+                            Get.to(
+                              const RideProgressWayLocation(),
+                              arguments: job,
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 15.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.orange100,
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            child: Center(
+                              child: Obx(() {
+                                final isLoading =
+                                    controller.viewLoading[job.id ?? ""] ==
+                                    true;
+                                return isLoading
+                                    ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(
+                                        "View",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      );
+                              }),
+                            ),
+                          ),
+                        )
+                      else if (status == 'PENDING')
+                        Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await controller.rejectApplicant(
+                                    jobId: job.id.toString(),
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 15.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                  child: Center(
+                                    child: Obx(() {
+                                      final isLoading =
+                                          controller.rejectLoading[job.id ??
+                                              ""] ==
+                                          true;
+                                      return isLoading
+                                          ? const SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.black,
+                                              ),
+                                            )
+                                          : Text(
+                                              "Reject",
+                                              style: GoogleFonts.inter(
+                                                color: Colors.black,
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            );
+                                    }),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 20.w),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await controller.approveApplicant(
+                                    jobId: job.id.toString(),
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 15.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.orange100,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                  child: Center(
+                                    child: Obx(() {
+                                      final isLoading =
+                                          controller.approveLoading[job.id ??
+                                              ""] ==
+                                          true;
+                                      return isLoading
+                                          ? const SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : Text(
+                                              "Approve",
+                                              style: GoogleFonts.inter(
+                                                color: Colors.white,
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            );
+                                    }),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );

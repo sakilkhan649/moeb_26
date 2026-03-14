@@ -64,11 +64,17 @@ class MyItemsCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      item.condition,
-                      style: GoogleFonts.inter(
-                        color: const Color(0xff949494),
-                        fontSize: 12.sp,
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Text(
+                        item.condition,
+                        textAlign: TextAlign.end,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xff949494),
+                          fontSize: 12.sp,
+                        ),
                       ),
                     ),
                   ],

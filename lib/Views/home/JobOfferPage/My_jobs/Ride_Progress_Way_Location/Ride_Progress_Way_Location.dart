@@ -14,14 +14,14 @@ import '../../../../../widgets/Custom_AppBar.dart';
 import '../../../../../widgets/Custom_Card_Ditails.dart';
 import '../../../../../widgets/Custom_Driver_Card.dart';
 import '../../../../../widgets/RideProgressCard.dart';
-import '../../../../../Ripositoryes/job_repository.dart';
 import '../Controller/My_job_controller.dart';
 
 class RideProgressWayLocation extends StatefulWidget {
-  RideProgressWayLocation({super.key});
+  const RideProgressWayLocation({super.key});
 
   @override
-  State<RideProgressWayLocation> createState() => _RideProgressWayLocationState();
+  State<RideProgressWayLocation> createState() =>
+      _RideProgressWayLocationState();
 }
 
 class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
@@ -34,186 +34,196 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
     super.initState();
     initialJob = Get.arguments as JobData?;
     jobId = initialJob?.id;
+    // Initialize with the job data we already have
+    controller.myJobView.value = initialJob;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshJob();
+    });
   }
 
   Future<void> _refreshJob() async {
-    if (jobId == null) return;
+    if (jobId == null) {
+      debugPrint("⚠️ RideProgressWayLocation: jobId is null, cannot refresh");
+      return;
+    }
+    debugPrint("🔄 RideProgressWayLocation: Refreshing job details for jobId: $jobId");
     try {
-      final response = await Get.find<JobRepo>().getJobById(jobId: jobId!);
-      if ((response.statusCode == 200 || response.statusCode == 201) && response.data != null) {
-        final data = response.data['data'];
-        final updated = JobData.fromJson(data);
-        setState(() {
-          initialJob = updated;
-        });
-        final idx = controller.myJobsList.indexWhere((e) => e.id == jobId);
-        if (idx != -1) {
-          controller.myJobsList[idx] = updated;
-        }
-      }
-    } catch (_) {}
+      await controller.fetchJobDetails(jobId: jobId!);
+      debugPrint("✨ RideProgressWayLocation: Refresh completed");
+    } catch (e) {
+      debugPrint("❌ RideProgressWayLocation: Refresh failed: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Resolve latest job from controller list if available
-    JobData? job;
-    try {
-      job = controller.myJobsList.firstWhere((e) => e.id == jobId);
-    } catch (_) {
-      job = initialJob;
-    }
-
-    // Format date and time
-    String displayDateTime = "N/A";
-    if (job?.date != null) {
-      try {
-        DateTime parsedDate = DateTime.parse(job!.date!);
-        displayDateTime = "${DateFormat('MMM dd').format(parsedDate)} · ${job.time}";
-      } catch (_) {
-        displayDateTime = "${job!.date} · ${job.time}";
-      }
-    } else if (job != null) {
-      displayDateTime = job.time ?? "N/A";
-    }
-
-    final driver = job?.assignedTo;
-    final vehicle = (driver?.vehicles != null && driver!.vehicles!.isNotEmpty)
-        ? driver.vehicles!.first
-        : null;
-    final vehicleInfo = vehicle != null
-        ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
-        : job?.vehicleType ?? "N/A";
-
     return Scaffold(
-      appBar: CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-      ),
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: RefreshIndicator(
         color: AppColors.orange100,
         onRefresh: () async {
           await _refreshJob();
         },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: Obx(() {
+          final job = controller.myJobView.value;
+
+          if (job == null && (controller.viewLoading[jobId ?? ""] ?? false)) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Format date and time
+          String displayDateTime = "N/A";
+          if (job?.date != null && job?.date != "null") {
+            try {
+              DateTime parsedDate = DateTime.parse(job!.date!);
+              displayDateTime =
+                  "${DateFormat('MMM dd').format(parsedDate)} · ${job.time}";
+            } catch (_) {
+              displayDateTime = "${job!.date} · ${job.time}";
+            }
+          } else if (job != null) {
+            displayDateTime = job.time ?? "N/A";
+          }
+
+          final driver = job?.assignedTo;
+          final vehicle =
+              (driver?.vehicles != null && driver!.vehicles!.isNotEmpty)
+              ? driver.vehicles!.first
+              : null;
+          final vehicleInfo = vehicle != null
+              ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
+              : job?.vehicleType ?? "N/A";
+
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: CustomDriverCard(
-                    profileImage: driver?.profilePicture ?? AppImages.profile_image,
-                    name: driver?.name ?? "No Driver",
-                    rating: "${driver?.averageRating ?? 0.0}",
-                    vehicleNumber: vehicle?.licensePlate ?? "N/A",
-                    vehicleInfo: vehicleInfo,
-                    buttonText: "Chat with Driver",
-                    buttonIcon: Icons.chat_bubble_outline,
-                    onButtonPressed: () async {
-                      final String? participantId = job?.assignedTo?.id ?? job?.applicant?.driver?.id;
-                      if (participantId != null && job?.id != null) {
-                        try {
-                          final chat = await Get.find<SocketRepository>().createChat(
-                            participantId,
-                            job!.id!,
-                          );
-                          if (chat != null) {
-                            Get.toNamed(Routes.chatDetailPage, arguments: chat);
-                          }
-                        } catch (e) {
-                          Get.snackbar(
-                            "Error",
-                            "Failed to open chat",
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.red,
-                            colorText: Colors.white,
-                          );
-                        }
-                      }
-                    },
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                Padding(
-                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: RideProgressCard(
-                    title: "Ride Progress",
-                    statusLabel: "Current Status : ",
-                    statusValue: job?.rideStatus ?? "N/A",
-                    iconPath: AppIcons.current_icon,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-
-                // Status Steps Container
-                Padding(
-                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: CustomJobDetailsCard(
-                    // Location details
-                    pickupLocation: job?.pickupLocation ?? "N/A",
-                    dropoffLocation: job?.dropoffLocation ?? "N/A",
-
-                    // Job information
-                    flightNumber: job?.flightNumber ?? "N/A",
-                    dateTime: displayDateTime,
-                    vehicleType: job?.vehicleType ?? "N/A",
-                    jobPoster: job?.assignedTo?.name ?? "Unknown",
-                    company: "N/A",
-                    payment: job?.paymentType ?? "N/A",
-                    amount: job != null ? "\$${job.paymentAmount}" : "N/A",
-
-                    // Optional: Custom colors
-                    backgroundColor: const Color(0xFF1C1C1C),
-                    borderColor: const Color(0xFF2A2A2A),
-                    labelColor: Colors.grey,
-                    valueColor: Colors.white,
-                    iconColor: Colors.grey,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-
-                Padding(
-                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                  child: Builder(
-                    builder: (context) {
-                      final status = job?.rideStatus?.toUpperCase() ?? "";
-                      
-                      if (status == "FINISHED") {
-                        // Ride is either in final stage or finished, show Review button
-                        return CustomButton(
-                          text: "Review Driver",
-                          backgroundColor: AppColors.orange100,
-                          textColor: Colors.black,
-                          onPressed: () {
-                            Get.toNamed(Routes.rideCompletedPage, arguments: job);
-                          },
-                        );
-                      } else {
-                        // Ride can still be cancelled
-                        return CustomButton(
-                          text: "Cancel Ride",
-                          backgroundColor: AppColors.orange100,
-                          textColor: Colors.black,
-                          onPressed: () {
-                            if (job?.id != null) {
-                              _showDeleteDialog(job!.id!);
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: CustomDriverCard(
+                        profileImage:
+                            driver?.profilePicture ?? AppImages.profile_image,
+                        name: driver?.name ?? "No Driver",
+                        rating: "${driver?.averageRating ?? 0.0}",
+                        vehicleNumber: vehicle?.licensePlate ?? "N/A",
+                        vehicleInfo: vehicleInfo,
+                        buttonText: "Chat with Driver",
+                        buttonIcon: Icons.chat_bubble_outline,
+                        onButtonPressed: () async {
+                          final String? participantId =
+                              job?.assignedTo?.id ?? job?.applicant?.driver?.id;
+                          if (participantId != null && job?.id != null) {
+                            try {
+                              final chat = await Get.find<SocketRepository>()
+                                  .createChat(participantId, job!.id!);
+                              if (chat != null) {
+                                Get.toNamed(
+                                  Routes.chatDetailPage,
+                                  arguments: chat,
+                                );
+                              }
+                            } catch (e) {
+                              Get.snackbar(
+                                "Error",
+                                "Failed to open chat",
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
                             }
-                          },
-                        );
-                      }
-                    },
-                  ),
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: RideProgressCard(
+                        title: "Ride Progress",
+                        statusLabel: "Current Status : ",
+                        statusValue: (job?.rideStatus ?? "N/A").toUpperCase(),
+                        iconPath: AppIcons.current_icon,
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+
+                    // Status Steps Container
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: CustomJobDetailsCard(
+                        // Location details
+                        pickupLocation: job?.pickupLocation ?? "N/A",
+                        dropoffLocation: job?.dropoffLocation ?? "N/A",
+
+                        // Job information
+                        flightNumber: job?.flightNumber ?? "N/A",
+                        dateTime: displayDateTime,
+                        vehicleType: job?.vehicleType ?? "N/A",
+                        jobPoster: job?.assignedTo?.name ?? "Unknown",
+                        company: "N/A",
+                        payment: job?.paymentType ?? "N/A",
+                        amount: job != null ? "\$${job.paymentAmount}" : "N/A",
+
+                        // Optional: Custom colors
+                        backgroundColor: const Color(0xFF1C1C1C),
+                        borderColor: const Color(0xFF2A2A2A),
+                        labelColor: Colors.grey,
+                        valueColor: Colors.white,
+                        iconColor: Colors.grey,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Builder(
+                        builder: (context) {
+                          final status = job?.status?.toUpperCase() ?? "";
+                          final rideStatus =
+                              job?.rideStatus?.toUpperCase() ?? "";
+
+                          if (rideStatus == "FINISHED" ||
+                              status == "COMPLETED") {
+                            // Ride is either in final stage or finished, show Review button
+                            return CustomButton(
+                              text: "Review Driver",
+                              backgroundColor: AppColors.orange100,
+                              textColor: Colors.black,
+                              onPressed: () {
+                                Get.toNamed(
+                                  Routes.rideCompletedPage,
+                                  arguments: job,
+                                );
+                              },
+                            );
+                          } else {
+                            // Ride can still be cancelled
+                            return CustomButton(
+                              text: "Cancel Ride",
+                              backgroundColor: AppColors.orange100,
+                              textColor: Colors.black,
+                              onPressed: () {
+                                if (job?.id != null) {
+                                  _showDeleteDialog(job!.id!);
+                                }
+                              },
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 30.h),
+                  ],
                 ),
-                SizedBox(height: 30.h),
               ],
             ),
-          ],
-        ),
-      ),)
+          );
+        }),
+      ),
     );
   }
 

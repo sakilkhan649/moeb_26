@@ -9,9 +9,8 @@ class MyJobsModel {
   MyJobsModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    pagination = json['pagination'] != null
-        ? Pagination.fromJson(json['pagination'])
-        : null;
+    pagination =
+        json['pagination'] != null ? Pagination.fromJson(json['pagination']) : null;
 
     if (json['data'] != null) {
       data = <JobData>[];
@@ -44,6 +43,7 @@ class JobData {
   String? pickupLocation;
   String? dropoffLocation;
   String? flightNumber;
+  bool? asap;
   String? date;
   String? time;
   String? vehicleType;
@@ -51,12 +51,15 @@ class JobData {
   String? paymentType;
   String? instruction;
   String? status;
-  Driver? createdBy;
+  String? rideStatus;
+  dynamic createdBy;
   String? createdAt;
   String? updatedAt;
-  String? rideStatus;
-  Applicant? applicant;
+
+  Review? reviewByDriver;
+  Review? reviewByCreator;
   Driver? assignedTo;
+  Applicant? applicant;
 
   JobData({
     this.id,
@@ -64,6 +67,7 @@ class JobData {
     this.pickupLocation,
     this.dropoffLocation,
     this.flightNumber,
+    this.asap,
     this.date,
     this.time,
     this.vehicleType,
@@ -71,12 +75,14 @@ class JobData {
     this.paymentType,
     this.instruction,
     this.status,
+    this.rideStatus,
     this.createdBy,
     this.createdAt,
     this.updatedAt,
-    this.rideStatus,
-    this.applicant,
+    this.reviewByDriver,
+    this.reviewByCreator,
     this.assignedTo,
+    this.applicant,
   });
 
   JobData.fromJson(Map<String, dynamic> json) {
@@ -85,6 +91,7 @@ class JobData {
     pickupLocation = json['pickupLocation'];
     dropoffLocation = json['dropoffLocation'];
     flightNumber = json['flightNumber'];
+    asap = json['asap'];
     date = json['date'];
     time = json['time'];
     vehicleType = json['vehicleType'];
@@ -92,19 +99,47 @@ class JobData {
     paymentType = json['paymentType'];
     instruction = json['instruction'];
     status = json['status'];
-    createdBy = json['createdBy'] != null && json['createdBy'] is Map
-        ? Driver.fromJson(json['createdBy'])
-        : null;
+    rideStatus = json['rideStatus'];
+    
+    // Handle createdBy as either String or Driver Object
+    if (json['createdBy'] is Map<String, dynamic>) {
+      createdBy = Driver.fromJson(json['createdBy']);
+    } else {
+      createdBy = json['createdBy']?.toString();
+    }
+
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    rideStatus = json['rideStatus'];
+
+    reviewByDriver = json['reviewByDriver'] != null
+        ? Review.fromJson(json['reviewByDriver'])
+        : null;
+
+    reviewByCreator = json['reviewByCreator'] != null
+        ? Review.fromJson(json['reviewByCreator'])
+        : null;
+
+    assignedTo = json['assignedTo'] != null
+        ? Driver.fromJson(json['assignedTo'])
+        : null;
 
     applicant = json['applicant'] != null
         ? Applicant.fromJson(json['applicant'])
         : null;
-    assignedTo = json['assignedTo'] != null
-        ? Driver.fromJson(json['assignedTo'])
-        : null;
+  }
+}
+
+class Review {
+  int? rating;
+  String? comment;
+  String? reviewedAt;
+
+  Review({this.rating, this.comment, this.reviewedAt});
+
+  Review.fromJson(Map<String, dynamic> json) {
+    rating = json['rating'];
+    comment = json['comment'];
+    reviewedAt = json['reviewedAt'];
   }
 }
 
@@ -115,7 +150,8 @@ class Applicant {
   Applicant({this.driver, this.appliedAt});
 
   Applicant.fromJson(Map<String, dynamic> json) {
-    driver = json['driver'] != null ? Driver.fromJson(json['driver']) : null;
+    driver =
+        json['driver'] != null ? Driver.fromJson(json['driver']) : null;
     appliedAt = json['appliedAt'];
   }
 }
@@ -125,20 +161,24 @@ class Driver {
   String? name;
   String? email;
   String? phone;
+  String? company;
+  String? companyRole;
   String? profilePicture;
+  List<Vehicle>? vehicles;
   double? averageRating;
   int? totalReviews;
-  List<Vehicle>? vehicles;
 
   Driver({
     this.id,
     this.name,
     this.email,
     this.phone,
+    this.company,
+    this.companyRole,
     this.profilePicture,
+    this.vehicles,
     this.averageRating,
     this.totalReviews,
-    this.vehicles,
   });
 
   Driver.fromJson(Map<String, dynamic> json) {
@@ -146,9 +186,12 @@ class Driver {
     name = json['name'];
     email = json['email'];
     phone = json['phone'];
+    company = json['company'];
+    companyRole = json['companyRole'];
     profilePicture = json['profilePicture'];
     averageRating = (json['averageRating'] as num?)?.toDouble();
     totalReviews = json['totalReviews'];
+
     if (json['vehicles'] != null) {
       vehicles = <Vehicle>[];
       json['vehicles'].forEach((v) {

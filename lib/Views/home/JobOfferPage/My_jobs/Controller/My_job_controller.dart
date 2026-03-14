@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Data/models/job_model.dart';
@@ -7,7 +8,7 @@ import 'package:moeb_26/Ripositoryes/job_repository.dart';
 import 'package:moeb_26/Services/job_service.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
-class BookingController extends GetxController {
+class BookingController extends GetxController {  
   final JobService _jobService = Get.find<JobService>();
   final JobRepo _jobRepo = Get.find<JobRepo>();
 
@@ -20,6 +21,7 @@ class BookingController extends GetxController {
   var hasNextPage = true.obs;
 
   RxList<JobData> myJobsList = <JobData>[].obs;
+  Rx<JobData?> myJobView = Rx<JobData?>(null);
   RxList<Job> jobOffersList = <Job>[].obs;
   
   // Per-button loading states
@@ -321,5 +323,51 @@ Future<void> cancelJobOffer({required String jobId}) async {
     } finally {
       isLoadingList.value = false;
     }
-}
+  }
+
+  Future<void> fetchJobDetails({required String jobId}) async {
+    try {
+      debugPrint("🔍 BookingController: Fetching details for jobId: $jobId");
+      viewLoading[jobId] = true;
+      // Only set to null if we don't already have data for this specific job
+      if (myJobView.value?.id != jobId) {
+        myJobView.value = null;
+      }
+      
+      final response = await _jobService.getJobById(jobId: jobId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data != null && response.data['data'] != null) {
+          final updatedJob = JobData.fromJson(response.data['data']);
+          debugPrint("✅ BookingController: Job details fetched. Status: ${updatedJob.status}, RideStatus: ${updatedJob.rideStatus}");
+          myJobView.value = updatedJob;
+          myJobView.refresh(); // Force refresh for reactive object
+
+          // Also update the job in the main list so both screens are in sync
+          final index = myJobsList.indexWhere((job) => job.id == jobId);
+          if (index != -1) {
+            myJobsList[index] = updatedJob;
+            myJobsList.refresh(); // Ensure the list observer is notified
+          }
+        }
+      } else {
+        final message = response.data is Map
+            ? (response.data['message'] ?? 'Failed to fetch job details.')
+            : 'Failed to fetch job details.';
+        debugPrint("❌ BookingController: API Error: $message");
+        Helpers.showCustomSnackBar(message, isError: true);
+      }
+    } on DioException catch (e) {
+      final message =
+          e.response?.data['message'] ?? 'Failed to fetch job details.';
+      debugPrint("❌ BookingController: Dio Error: $message");
+      Helpers.showCustomSnackBar(message, isError: true);
+    } catch (e) {
+      debugPrint("❌ BookingController: General Error: $e");
+      print("Error fetching job details: $e");
+    } finally {
+      viewLoading[jobId] = false;
+    }
+  }
+
+  
 }

@@ -29,65 +29,57 @@ class Ridespage extends StatelessWidget {
       appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: RefreshIndicator(
-          color: AppColors.orange100,
-          onRefresh: controller.refreshCurrentTab,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomText(text: "MY Jobs", fontSize: 22.sp),
-                          ),
-                          Expanded(
-                            child: CustomJobButton(
-                              text: "New Job",
-                              onPressed: () {
-                                Get.bottomSheet(
-                                  PostJobBottomSheet(),
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 15.h),
-
-                      /// CUSTOM TAB BAR
-                      _buildTabBar(),
-                      SizedBox(height: 15.h),
-
-                      /// RIDES LIST (Based on selected tab)
-                      Obx(() {
-                        if (controller.isLoadingList.value) {
-                          return _buildLoading();
-                        }
-
-                        switch (controller.selectedTab.value) {
-                          case 0:
-                            return _buildUpcomingList();
-                          case 1:
-                            return _buildPastList();
-                          case 2:
-                            return _buildPendingList();
-                          default:
-                            return const SizedBox.shrink();
-                        }
-                      }),
-                    ],
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: CustomText(text: "MY Jobs", fontSize: 22.sp),
+                ),
+                Expanded(
+                  child: CustomJobButton(
+                    text: "New Job",
+                    onPressed: () {
+                      Get.bottomSheet(
+                        PostJobBottomSheet(),
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                      );
+                    },
                   ),
                 ),
-              );
-            },
-          ),
+              ],
+            ),
+            SizedBox(height: 15.h),
+
+            /// CUSTOM TAB BAR
+            _buildTabBar(),
+            SizedBox(height: 15.h),
+
+            /// RIDES LIST (Based on selected tab)
+            Expanded(
+              child: RefreshIndicator(
+                color: AppColors.orange100,
+                onRefresh: controller.refreshCurrentTab,
+                child: Obx(() {
+                  if (controller.isLoadingList.value) {
+                    return _buildLoading();
+                  }
+
+                  switch (controller.selectedTab.value) {
+                    case 0:
+                      return _buildUpcomingList();
+                    case 1:
+                      return _buildPastList();
+                    case 2:
+                      return _buildPendingList();
+                    default:
+                      return const SizedBox.shrink();
+                  }
+                }),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -161,16 +153,12 @@ class Ridespage extends StatelessWidget {
   Widget _buildUpcomingList() {
     if (controller.upcomingRides.isEmpty) return _buildEmptyState();
 
-    return RefreshIndicator(
-      color: AppColors.orange100,
-      onRefresh: controller.fetchUpcomingJobs,
-      child: ListView.builder(
-        controller: controller.scrollController,
-        shrinkWrap: true,
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: controller.upcomingRides.length + 1,
-        padding: EdgeInsets.only(bottom: 20.h),
-        itemBuilder: (context, index) {
+    return ListView.builder(
+      controller: controller.scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: controller.upcomingRides.length + 1,
+      padding: EdgeInsets.only(bottom: 20.h),
+      itemBuilder: (context, index) {
           if (index == controller.upcomingRides.length) {
             return Obx(
               () => controller.isLoadMore.value
@@ -200,24 +188,19 @@ class Ridespage extends StatelessWidget {
             company: ride.createdBy?.company,
           );
         },
-      ),
-    );
+      );
   }
 
   // --- PAST LIST ---
   Widget _buildPastList() {
     if (controller.pastRides.isEmpty) return _buildEmptyState();
 
-    return RefreshIndicator(
-      color: AppColors.orange100,
-      onRefresh: controller.fetchPastJobs,
-      child: ListView.builder(
-        controller: controller.scrollController,
-        shrinkWrap: true,
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: controller.pastRides.length + 1,
-        padding: EdgeInsets.only(bottom: 20.h),
-        itemBuilder: (context, index) {
+    return ListView.builder(
+      controller: controller.scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: controller.pastRides.length + 1,
+      padding: EdgeInsets.only(bottom: 20.h),
+      itemBuilder: (context, index) {
           if (index == controller.pastRides.length) {
             return Obx(
               () => controller.isLoadMore.value
@@ -247,7 +230,7 @@ class Ridespage extends StatelessWidget {
             company: ride.createdBy?.company,
           );
         },
-      ),
+      
     );
   }
 
@@ -255,16 +238,12 @@ class Ridespage extends StatelessWidget {
   Widget _buildPendingList() {
     if (controller.pendingRides.isEmpty) return _buildEmptyState();
 
-    return RefreshIndicator(
-      color: AppColors.orange100,
-      onRefresh: controller.fetchPendingJobs,
-      child: ListView.builder(
-        controller: controller.scrollController,
-        shrinkWrap: true,
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: controller.pendingRides.length + 1,
-        padding: EdgeInsets.only(bottom: 20.h),
-        itemBuilder: (context, index) {
+    return ListView.builder(
+      controller: controller.scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: controller.pendingRides.length + 1,
+      padding: EdgeInsets.only(bottom: 20.h),
+      itemBuilder: (context, index) {
           if (index == controller.pendingRides.length) {
             return Obx(
               () => controller.isLoadMore.value
@@ -295,7 +274,6 @@ class Ridespage extends StatelessWidget {
             company: ride.applicant?.driver?.company,
           );
         },
-      ),
     );
   }
 

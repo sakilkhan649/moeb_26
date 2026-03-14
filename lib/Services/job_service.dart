@@ -72,4 +72,12 @@ class JobService extends GetxService {
       rethrow;
     }
   }
+
+  Future<Response> getJobById({required String jobId}) async {
+    try {
+      return await _jobRepo.getJobById(jobId: jobId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

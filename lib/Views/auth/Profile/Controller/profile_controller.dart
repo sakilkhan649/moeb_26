@@ -27,6 +27,10 @@ class ProfileController extends GetxController {
   var isUpdating = false.obs;
   var userProfile = Rxn<UserProfileModel>();
 
+  // Service Areas
+  var serviceAreas = <String>[].obs;
+  var isServiceAreasLoading = false.obs;
+
   // Controllers for Edit Profile Form
   late TextEditingController nameController;
   late TextEditingController emailController;
@@ -43,6 +47,24 @@ class ProfileController extends GetxController {
     serviceAreaController = TextEditingController();
     nickNameController = TextEditingController();
     fetchUserProfile();
+    fetchServiceAreas();
+  }
+
+  Future<void> fetchServiceAreas() async {
+    isServiceAreasLoading.value = true;
+    try {
+      var response = await _profileService.getServiceAreas();
+      if (response.statusCode == 200) {
+        var dataList = response.data['data'] as List;
+        serviceAreas.value = dataList
+            .map((item) => item['areaName'].toString())
+            .toList();
+      }
+    } catch (e) {
+      debugPrint("Error fetching service areas: $e");
+    } finally {
+      isServiceAreasLoading.value = false;
+    }
   }
 
   Future<void> fetchUserProfile() async {

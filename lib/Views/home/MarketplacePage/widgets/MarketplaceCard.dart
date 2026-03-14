@@ -21,7 +21,7 @@ class MarketplaceCard extends StatelessWidget {
     final String title = item.title ?? "No Title";
 
     return Container(
-      height: 270.h, // Updated height
+      height: 255.h, // Adjusted height for a more compact look
       decoration: BoxDecoration(color: const Color(0xFF1A1A1A)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +40,7 @@ class MarketplaceCard extends StatelessWidget {
               children: [
                 // Item Name
                 SizedBox(
-                  height: 38.h,
+                  height: 38.h, // Fixed height for 2 lines consistency
                   child: Text(
                     title,
                     maxLines: 2,
@@ -49,6 +49,7 @@ class MarketplaceCard extends StatelessWidget {
                       color: Colors.white,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
+                      height: 1.2,
                     ),
                   ),
                 ),
@@ -70,19 +71,24 @@ class MarketplaceCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 4.h), // Reduced gap instead of Spacer
+          // const Spacer(), // Removed Spacer to reduce gap
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  item.condition ?? "",
-                  style: GoogleFonts.inter(
-                    color: const Color(0xff949494),
-                    fontSize: 12.sp,
+                Expanded(
+                  child: Text(
+                    item.condition ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xff949494),
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ),
+                SizedBox(width: 8.w),
                 GestureDetector(
                   onTap: () {
                     Get.dialog(ContactSellerPopup(item: item));
@@ -124,6 +130,7 @@ class MarketplaceCard extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 8.h), // Small padding at the bottom
         ],
       ),
     );

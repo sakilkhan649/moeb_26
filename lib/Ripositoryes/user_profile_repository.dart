@@ -14,4 +14,8 @@ class UserProfileRepo {
   Future<Response> patchProfile(dynamic body) {
     return apiClient.patchData(ApiConstants.userProfile, body);
   }
+
+  Future<Response> getServiceAreas() {
+    return apiClient.getData(ApiConstants.serviceAreas);
+  }
 }

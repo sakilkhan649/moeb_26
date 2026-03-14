@@ -13,4 +13,8 @@ class UserProfileService {
   Future<Response> patchProfile(dynamic body) {
     return userProfileRepo.patchProfile(body);
   }
+
+  Future<Response> getServiceAreas() {
+    return userProfileRepo.getServiceAreas();
+  }
 }
