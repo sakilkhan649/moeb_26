@@ -40,7 +40,7 @@ class PostJobController extends GetxController {
       isLoading.value = true;
 
       final response = await _jobService.createJob(
-        jobType: "ONE_WAY",
+        jobType: "ONE WAY",
         pickupLocation: pickupLocation,
         dropoffLocation: dropoffLocation,
         flightNumber: flightNumber,
@@ -49,7 +49,7 @@ class PostJobController extends GetxController {
         asap: asap,
         vehicleType: selectedVehicle.value,
         paymentAmount: double.tryParse(paymentAmount) ?? 0,
-        paymentType: paymentType == 'No Collect' ? 'NO_COLLECT' : 'COLLECT',
+        paymentType: paymentType == 'No Collect' ? 'NO COLLECT' : 'COLLECT',
         instruction: instruction,
       );
 
@@ -89,7 +89,7 @@ class PostJobController extends GetxController {
       isLoading.value = true;
 
       final response = await _jobService.createJob(
-        jobType: "BY_THE_HOUR",
+        jobType: "BY THE HOUR",
         pickupLocation: pickupLocation,
         dropoffLocation: dropoffLocation,
         duration: duration,
@@ -97,7 +97,7 @@ class PostJobController extends GetxController {
         time: time.format(Get.context!),
         vehicleType: selectedVehicle.value,
         paymentAmount: double.tryParse(paymentAmount) ?? 0,
-        paymentType: paymentType == 'No Collect' ? 'NO_COLLECT' : 'COLLECT',
+        paymentType: paymentType == 'No Collect' ? 'NO COLLECT' : 'COLLECT',
         instruction: instruction,
       );
 

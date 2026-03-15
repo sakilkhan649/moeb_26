@@ -364,13 +364,13 @@ class RideDetailsPage extends StatelessWidget {
 
                   // --- STEP BUTTONS (On My Way, At Location, POB) ---
                   String buttonText = "On My Way";
-                  String nextStatus = "ON_THE_WAY";
+                  String nextStatus = "ON THE WAY";
                   bool isVisible = true;
 
-                  if (status == "ON_THE_WAY") {
+                  if (status == "ON THE WAY") {
                     buttonText = "At the Location";
-                    nextStatus = "AT_THE_LOCATION";
-                  } else if (status == "AT_THE_LOCATION") {
+                    nextStatus = "AT THE LOCATION";
+                  } else if (status == "AT THE LOCATION") {
                     buttonText = "POB";
                     nextStatus = "POB";
                   } else if (status != "PENDING" && status != "") {

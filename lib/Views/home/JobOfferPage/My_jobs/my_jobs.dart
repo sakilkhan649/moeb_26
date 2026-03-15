@@ -19,8 +19,10 @@ import 'Controller/My_job_controller.dart';
 class VehicleTypeColors {
   static const Color sedan = Color(0xFFDC2626);
   static const Color suv = Color(0xFF0A1F44);
-  static const Color bus = Color(0xFF3B2F2F);
+  static const Color bus = Color(0xFF1A1515);
+  static const Color sprinter = Color(0xFF000000);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
+
 
   static LinearGradient sedanSuvGradient = LinearGradient(
     colors: [
@@ -40,6 +42,7 @@ class VehicleTypeColors {
     if (t == 'SEDAN') return sedan;
     if (t == 'BUS') return bus;
     if (t == 'SEDAN/SUV') return sedanSuvGradient;
+    if (t == 'SPRINTER') return sprinter;
     return gray;
   }
 }

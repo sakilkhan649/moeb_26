@@ -482,7 +482,7 @@ class OnewayScreen extends StatelessWidget {
       'SEDAN',
       'SUV',
       'SPRINTER',
-      'Bus',
+      'BUS',
       'LIMO STRETCH',
       'SEDAN/SUV',
     ];

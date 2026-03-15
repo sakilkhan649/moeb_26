@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +7,6 @@ import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
 import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
-import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/Utils/app_images.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
 import '../../../Core/routs.dart';
@@ -340,7 +338,8 @@ class Ridespage extends StatelessWidget {
 class VehicleTypeColors {
   static const Color sedan = Color(0xFFDC2626);
   static const Color suv = Color(0xFF0A1F44);
-  static const Color bus = Color(0xFF3B2F2F);
+   static const Color bus = Color(0xFF1A1515);
+  static const Color sprinter = Color(0xFF000000);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 
   static final LinearGradient sedanSuvGradient = LinearGradient(
@@ -362,6 +361,7 @@ class VehicleTypeColors {
     if (t == 'SEDAN') return sedan;
     if (t == 'BUS') return bus;
     if (t == 'SEDAN/SUV') return sedanSuvGradient;
+    if (t == 'SPRINTER') return sprinter;
     return gray;
   }
 }
