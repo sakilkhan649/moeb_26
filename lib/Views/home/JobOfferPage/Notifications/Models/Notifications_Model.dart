@@ -23,7 +23,7 @@ class NotificationItem {
     String type = json['type']?.toString() ?? 'GENERAL';
     String iconPath = AppIcons.job_icon; // Default
 
-    if (type == 'GENERAL') {
+    if (type == 'GENERAL' || type == 'MESSAGE') {
       iconPath = AppIcons.job_icon;
     } else if (type == 'REMINDER') {
       iconPath = AppIcons.item_icon;
@@ -34,9 +34,9 @@ class NotificationItem {
     return NotificationItem(
       id: json['_id']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
-      subtitle: json['subtitle']?.toString() ?? '',
+      subtitle: json['text']?.toString() ?? '',
       type: type,
-      isRead: json['read'] ?? false,
+      isRead: json['isRead'] ?? json['read'] ?? false,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),

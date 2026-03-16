@@ -31,6 +31,10 @@ class ProfileController extends GetxController {
   var serviceAreas = <String>[].obs;
   var isServiceAreasLoading = false.obs;
 
+  // Legal Pages
+  var legalPages = <Map<String, dynamic>>[].obs;
+  var isLegalsLoading = false.obs;
+
   // Controllers for Edit Profile Form
   late TextEditingController nameController;
   late TextEditingController emailController;
@@ -48,6 +52,25 @@ class ProfileController extends GetxController {
     nickNameController = TextEditingController();
     fetchUserProfile();
     fetchServiceAreas();
+    fetchLegalPages();
+  }
+
+  Future<void> fetchLegalPages() async {
+    isLegalsLoading.value = true;
+    try {
+      var response = await _profileService.getLegals();
+      if (response.statusCode == 200) {
+        var dataList = response.data['data'] as List;
+        legalPages.value = dataList.map((item) => {
+          'slug': item['slug'].toString(),
+          'title': item['title'].toString(),
+        }).toList();
+      }
+    } catch (e) {
+      debugPrint("Error fetching legal pages: $e");
+    } finally {
+      isLegalsLoading.value = false;
+    }
   }
 
   Future<void> fetchServiceAreas() async {

@@ -53,6 +53,13 @@ class LoginController extends GetxController {
           return;
         }
 
+        // Check if application is pending
+        if (authData['isPending'] == true) {
+          Helpers.showCustomSnackBar('Application is pending review', isError: false);
+          Get.offAllNamed(Routes.applicationSubmited);
+          return;
+        }
+
         Helpers.showCustomSnackBar('Login successful', isError: false);
         Get.offAllNamed(Routes.homeScreens);
       }

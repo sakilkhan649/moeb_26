@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 import '../../../Core/routs.dart';
-import '../../../Utils/app_colors.dart';
 
 /// Review Status Screen
 /// Shows application submission status with animated steps

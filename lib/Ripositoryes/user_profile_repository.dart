@@ -18,4 +18,12 @@ class UserProfileRepo {
   Future<Response> getServiceAreas() {
     return apiClient.getData(ApiConstants.serviceAreas);
   }
+
+  Future<Response> getLegals() {
+    return apiClient.getData(ApiConstants.legals);
+  }
+
+  Future<Response> getLegalBySlug(String slug) {
+    return apiClient.getData(ApiConstants.legalsBySlug.replaceFirst('{{slug}}', slug));
+  }
 }

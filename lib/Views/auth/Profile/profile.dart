@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
+import 'package:moeb_26/Views/home/JobOfferPage/JobOfferPage.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/Notifications/Controller/Notifications_Controller.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/Notifications/Notifications_popup.dart';
 import 'package:moeb_26/Core/routs.dart';
@@ -399,86 +400,97 @@ class ProfileScreen extends StatelessWidget {
                 _buildSectionTitle("My Vehicles"),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Column(
-                    children: (controller.userProfile.value?.vehicles ?? [])
-                        .where(
-                          (vehicle) => vehicle.carType.toUpperCase() != "SUV",
-                        )
-                        .map((vehicle) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: Container(
-                              padding: EdgeInsets.all(16.w),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF1A1A1A),
-                                borderRadius: BorderRadius.circular(16.r),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.1),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(8.w),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(8.r),
-                                    ),
-                                    child: Icon(
-                                      Icons.directions_car,
-                                      color: Colors.grey,
-                                      size: 24.sp,
-                                    ),
-                                  ),
-                                  SizedBox(width: 16.w),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "${vehicle.year} ${vehicle.make} ${vehicle.model}",
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white,
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          "${vehicle.carType} • ${vehicle.licensePlate}",
-                                          style: GoogleFonts.inter(
-                                            color: Colors.grey,
-                                            fontSize: 12.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12.w,
-                                      vertical: 6.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red.withOpacity(0.8),
-                                      borderRadius: BorderRadius.circular(4.r),
-                                    ),
-                                    child: Text(
-                                      vehicle.carType.toUpperCase(),
-                                      style: GoogleFonts.inter(
-                                        color: Colors.white,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                  child: Obx(() {
+                    final vehicles = controller.userProfile.value?.vehicles ?? [];
+                    if (vehicles.isEmpty) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.h),
+                        child: Center(
+                          child: Text(
+                            "No vehicles added",
+                            style: GoogleFonts.inter(color: Colors.grey),
+                          ),
+                        ),
+                      );
+                    }
+                    return Column(
+                      children: vehicles.map((vehicle) {
+                        final vehicleStyle = VehicleTypeColors.getVehicleStyle(vehicle.carType);
+                        
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: Container(
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1A1A1A),
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.1),
                               ),
                             ),
-                          );
-                        })
-                        .toList(),
-                  ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(8.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                  child: Icon(
+                                    Icons.directions_car,
+                                    color: Colors.grey,
+                                    size: 24.sp,
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${vehicle.year} ${vehicle.make} ${vehicle.model}",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${vehicle.carType} • ${vehicle.licensePlate}",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.grey,
+                                          fontSize: 12.sp,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 6.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: vehicleStyle is Color ? vehicleStyle : null,
+                                    gradient: vehicleStyle is Gradient ? vehicleStyle : null,
+                                    borderRadius: BorderRadius.circular(4.r),
+                                  ),
+                                  child: Text(
+                                    vehicle.carType.toUpperCase(),
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }),
                 ),
                 SizedBox(height: 16.h),
                 Divider(color: Colors.grey.withOpacity(0.2), thickness: 1.h),
@@ -497,15 +509,24 @@ class ProfileScreen extends StatelessWidget {
                         "Ratings & Feedback",
                         onTap: () => Get.toNamed(Routes.ratingsFeedback),
                       ),
-                      _buildSettingItem(
-                        SvgPicture.asset(
-                          AppIcons.settings_icon,
-                          height: 24.sp,
-                          width: 24.sp,
-                        ),
-                        "Terms & Condition",
-                        onTap: () => Get.toNamed(Routes.termPolicy),
-                      ),
+
+                      Obx(() => Column(
+                        children: controller.legalPages.map((legal) {
+                          return _buildSettingItem(
+                            SvgPicture.asset(
+                              AppIcons.settings_icon,
+                              height: 24.sp,
+                              width: 24.sp,
+                            ),
+                            legal['title'] ?? "",
+                            onTap: () => Get.toNamed(
+                              Routes.termPolicy,
+                              arguments: {"slug": legal['slug']},
+                            ),
+                          );
+                        }).toList(),
+                      )),
+
                       _buildSettingItem(
                         SvgPicture.asset(
                           AppIcons.support_icon,

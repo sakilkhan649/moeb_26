@@ -16,6 +16,6 @@ class NotificationsRepo {
   }
 
   Future<Response> markAsRead(String notificationId) async {
-    return await apiClient.patchData('${ApiConstants.notifications}/$notificationId', {});
+    return await apiClient.patchData('${ApiConstants.notifications}/$notificationId/read', {});
   }
 }

@@ -180,106 +180,114 @@ class CustomNotificationPopup extends StatelessWidget {
           Get.toNamed(Routes.myJobsScreen);
         }
       },
-      child: Container(
-        color: notification.isRead
-            ? Colors.transparent
-            : Colors.white.withOpacity(0.02),
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Icon Container
-            Container(
-              height: 48.w,
-              width: 48.w,
-              decoration: BoxDecoration(
-                color: iconBgColor,
-                shape: BoxShape.circle,
+      child: Obx(() {
+        // Find the latest state of this notification from the controller
+        final currentNoti = controller.notifications.firstWhere(
+          (n) => n.id == notification.id,
+          orElse: () => notification,
+        );
+        
+        return Container(
+          color: currentNoti.isRead
+              ? Colors.transparent
+              : Colors.white.withOpacity(0.02),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Icon Container
+              Container(
+                height: 48.w,
+                width: 48.w,
+                decoration: BoxDecoration(
+                  color: iconBgColor,
+                  shape: BoxShape.circle,
+                ),
+                padding: EdgeInsets.all(12.w),
+                child: SvgPicture.asset(
+                  notification.icon,
+                  colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                ),
               ),
-              padding: EdgeInsets.all(12.w),
-              child: SvgPicture.asset(
-                notification.icon,
-                colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-              ),
-            ),
-            SizedBox(width: 16.w),
+              SizedBox(width: 16.w),
 
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          notification.title,
-                          style: GoogleFonts.inter(
-                            fontSize: 16.sp,
-                            fontWeight: notification.isRead
-                                ? FontWeight.w500
-                                : FontWeight.w700,
-                            color: notification.isRead
-                                ? Colors.white.withOpacity(0.8)
-                                : Colors.white,
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            currentNoti.title,
+                            style: GoogleFonts.inter(
+                              fontSize: 16.sp,
+                              fontWeight: currentNoti.isRead
+                                  ? FontWeight.w500
+                                  : FontWeight.w700,
+                              color: currentNoti.isRead
+                                  ? Colors.white.withOpacity(0.8)
+                                  : Colors.white,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      if (!notification.isRead)
-                        Container(
-                          width: 8.w,
-                          height: 8.w,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFD08700),
-                            shape: BoxShape.circle,
+                        if (!currentNoti.isRead)
+                          Container(
+                            width: 8.w,
+                            height: 8.w,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFD08700),
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        else
+                          Icon(
+                            Icons.check,
+                            size: 16.sp,
+                            color: Colors.white.withOpacity(0.2),
                           ),
-                        )
-                      else
-                        Icon(
-                          Icons.check,
-                          size: 16.sp,
-                          color: Colors.white.withOpacity(0.2),
-                        ),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    notification.subtitle,
-                    style: GoogleFonts.inter(
-                      fontSize: 14.sp,
-                      color: Colors.white.withOpacity(0.6),
-                      height: 1.4,
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 12.sp,
-                        color: Colors.white.withOpacity(0.4),
+                    SizedBox(height: 4.h),
+                    Text(
+                      currentNoti.subtitle,
+                      style: GoogleFonts.inter(
+                        fontSize: 14.sp,
+                        color: Colors.white.withOpacity(0.6),
+                        height: 1.4,
                       ),
-                      SizedBox(width: 4.w),
-                      Expanded(
-                        child: Text(
-                          notification.timeAgo,
-                          style: GoogleFonts.inter(
-                            fontSize: 12.sp,
-                            color: Colors.white.withOpacity(0.4),
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 12.sp,
+                          color: Colors.white.withOpacity(0.4),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        SizedBox(width: 4.w),
+                        Expanded(
+                          child: Text(
+                            currentNoti.timeAgo,
+                            style: GoogleFonts.inter(
+                              fontSize: 12.sp,
+                              color: Colors.white.withOpacity(0.4),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

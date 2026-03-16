@@ -45,8 +45,19 @@ class NotificationController extends GetxController {
     try {
       final response = await _notificationsService.markAllAsRead();
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Refresh local list
-        fetchNotifications();
+        // Update local list directly for instant UI feedback
+        for (var i = 0; i < notifications.length; i++) {
+          notifications[i] = NotificationItem(
+            id: notifications[i].id,
+            title: notifications[i].title,
+            subtitle: notifications[i].subtitle,
+            type: notifications[i].type,
+            isRead: true,
+            createdAt: notifications[i].createdAt,
+            icon: notifications[i].icon,
+          );
+        }
+        notifications.refresh();
       }
     } catch (e) {
       print("Error marking all as read: $e");
@@ -58,11 +69,19 @@ class NotificationController extends GetxController {
     try {
       final response = await _notificationsService.markAsRead(notificationId);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Find and update locally or just refetch
+        // Find and update locally
         int index = notifications.indexWhere((n) => n.id == notificationId);
         if (index != -1) {
-          // You might need a copyWith or just update the list
-          fetchNotifications();
+          notifications[index] = NotificationItem(
+            id: notifications[index].id,
+            title: notifications[index].title,
+            subtitle: notifications[index].subtitle,
+            type: notifications[index].type,
+            isRead: true,
+            createdAt: notifications[index].createdAt,
+            icon: notifications[index].icon,
+          );
+          notifications.refresh();
         }
       }
     } catch (e) {

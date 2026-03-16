@@ -17,4 +17,12 @@ class UserProfileService {
   Future<Response> getServiceAreas() {
     return userProfileRepo.getServiceAreas();
   }
+
+  Future<Response> getLegals() {
+    return userProfileRepo.getLegals();
+  }
+
+  Future<Response> getLegalBySlug(String slug) {
+    return userProfileRepo.getLegalBySlug(slug);
+  }
 }

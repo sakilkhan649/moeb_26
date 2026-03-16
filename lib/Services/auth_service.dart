@@ -141,8 +141,9 @@ class AuthService extends GetxService {
       final data = response.data;
       final authData = data['data'] ?? data;
       bool isRestricted = authData['isRestricted'] == true;
+      bool isPending = authData['isPending'] == true;
 
-      await handleAuthResponse(response, isTemporary: isRestricted);
+      await handleAuthResponse(response, isTemporary: isRestricted || isPending);
       return response;
     } catch (e) {
       rethrow;

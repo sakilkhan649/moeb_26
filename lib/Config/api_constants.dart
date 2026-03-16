@@ -1,6 +1,6 @@
 class ApiConstants {
   // Base URL
-  static const String baseUrl = 'http://10.10.7.33:5001/api/v1';
+  static const String baseUrl = 'https://nayem5001.binarybards.online/api/v1';
 
   // Auth Endpoints
   static const String login = '/auth/login';
@@ -52,6 +52,10 @@ class ApiConstants {
   static const String notificationsReadAll= '/notifications/read-all';
   //Service Areas
   static const String serviceAreas= '/service-areas';
+
+  // Legal Endpoints
+  static const String legals = '/legals';
+  static const String legalsBySlug = '/legals/{{slug}}';
 
   //Support Endpoints
   static const String myTickets = '/supports/my-tickets';
