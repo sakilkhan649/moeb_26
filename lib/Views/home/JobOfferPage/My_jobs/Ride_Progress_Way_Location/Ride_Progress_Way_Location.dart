@@ -73,16 +73,32 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
 
           // Format date and time
           String displayDateTime = "N/A";
-          if (job?.date != null && job?.date != "null") {
-            try {
-              DateTime parsedDate = DateTime.parse(job!.date!);
-              displayDateTime =
-                  "${DateFormat('MMM dd').format(parsedDate)} · ${job.time}";
-            } catch (_) {
-              displayDateTime = "${job!.date} · ${job.time}";
+          if (job?.asap == true) {
+            displayDateTime = "ASAP";
+          } else {
+            String dateStr = "";
+            if (job?.date != null && job?.date != "null" && job!.date!.isNotEmpty) {
+              try {
+                DateTime parsedDate = DateTime.parse(job!.date!);
+                dateStr = DateFormat('EEE MMM dd').format(parsedDate);
+              } catch (_) {
+                dateStr = job!.date!;
+              }
             }
-          } else if (job != null) {
-            displayDateTime = job.time ?? "N/A";
+
+            String timeStr = job?.time ?? "";
+            if (timeStr.contains(':')) {
+              try {
+                final parts = timeStr.split(':');
+                int hour = int.parse(parts[0]);
+                int minute = int.parse(parts[1].split(' ')[0]);
+                final period = hour >= 12 ? "PM" : "AM";
+                final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+                timeStr =
+                    "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+              } catch (_) {}
+            }
+            displayDateTime = dateStr.isNotEmpty ? "$dateStr . $timeStr" : timeStr;
           }
 
           final driver = job?.assignedTo;

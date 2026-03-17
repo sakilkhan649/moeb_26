@@ -128,8 +128,8 @@ class DocumentsUploadController extends GetxController {
         interior: interiorViewFile.value!,
       );
 
-      // Navigate to TermPolicy (no API call here)
-      Get.toNamed(Routes.termPolicy);
+      // Navigate to PrivacyPolicySignUp (no API call here)
+      Get.toNamed(Routes.privacyPolicySignUp);
     } catch (e) {
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {

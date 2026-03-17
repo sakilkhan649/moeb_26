@@ -45,6 +45,7 @@ class UpcomingRideData {
   String? pickupLocation;
   String? dropoffLocation;
   String? flightNumber;
+  bool? asap;
   String? date;
   String? time;
   String? vehicleType;
@@ -82,6 +83,7 @@ class UpcomingRideData {
     pickupLocation = json['pickupLocation'];
     dropoffLocation = json['dropoffLocation'];
     flightNumber = json['flightNumber'];
+    asap = json['asap'];
     date = json['date'];
     time = json['time'];
     vehicleType = json['vehicleType'];

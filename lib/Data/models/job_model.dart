@@ -66,6 +66,7 @@ class Job {
   final String pickupLocation;
   final String? dropoffLocation;
   final String? flightNumber;
+  final bool? asap;
   final DateTime? date;
   final String time;
   final String vehicleType;
@@ -83,6 +84,7 @@ class Job {
     required this.pickupLocation,
     this.dropoffLocation,
     this.flightNumber,
+    this.asap,
     this.date,
     required this.time,
     required this.vehicleType,
@@ -102,6 +104,7 @@ class Job {
       pickupLocation: json['pickupLocation'] ?? '',
       dropoffLocation: json['dropoffLocation'],
       flightNumber: json['flightNumber'],
+      asap: json['asap'],
       date: json['date'] != null
           ? DateTime.tryParse(json['date'].toString())
           : null,

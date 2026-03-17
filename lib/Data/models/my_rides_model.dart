@@ -65,6 +65,7 @@ class Ride {
   final String pickupLocation;
   final String dropoffLocation;
   final String vehicleType;
+  final bool? asap;
   final num paymentAmount;
   final String paymentType;
   final String status;
@@ -80,6 +81,7 @@ class Ride {
     required this.pickupLocation,
     required this.dropoffLocation,
     required this.vehicleType,
+    this.asap,
     required this.paymentAmount,
     required this.paymentType,
     required this.status,
@@ -97,6 +99,7 @@ class Ride {
       pickupLocation: json['pickupLocation'] ?? '',
       dropoffLocation: json['dropoffLocation'] ?? '',
       vehicleType: json['vehicleType'] ?? '',
+      asap: json['asap'],
       paymentAmount: json['paymentAmount'] != null
           ? num.tryParse(json['paymentAmount'].toString()) ?? 0
           : 0,

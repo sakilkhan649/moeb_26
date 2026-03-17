@@ -97,26 +97,46 @@ class RequestUnderReview extends StatelessWidget {
                     // Handle tap on the card
                     Get.toNamed(Routes.rideDetailsPage, arguments: ride);
                   },
-                  child: CustomJobDetailsCard(
-                    // Location details
-                    pickupLocation: ride.pickupLocation,
-                    dropoffLocation: ride.dropoffLocation,
+                  child: Builder(
+                    builder: (context) {
+                      String displayDateTime = "";
+                      if (ride.asap == true) {
+                        displayDateTime = "ASAP";
+                      } else {
+                        if (ride.date != null) {
+                          try {
+                            displayDateTime =
+                                "${DateFormat('EEE, MMM dd').format(ride.date!)} · ${ride.time}";
+                          } catch (_) {
+                            displayDateTime = ride.time;
+                          }
+                        } else {
+                          displayDateTime = ride.time;
+                        }
+                      }
 
-                    // Job information
-                    flightNumber: "N/A", // Not available in Ride model
-                    dateTime: displayDateTime,
-                    vehicleType: ride.vehicleType,
-                    jobPoster: ride.applicant?.driver?.name ?? "Unknown",
-                    company: ride.applicant?.driver?.name ?? "Unknown", // Assuming company name is driver name for now
-                    payment: ride.paymentType,
-                    amount: "\$${ride.paymentAmount}",
+                      return CustomJobDetailsCard(
+                        // Location details
+                        pickupLocation: ride.pickupLocation,
+                        dropoffLocation: ride.dropoffLocation,
 
-                    // Optional: Custom colors
-                    backgroundColor: const Color(0xFF1C1C1C),
-                    borderColor: const Color(0xFF2A2A2A),
-                    labelColor: Colors.grey,
-                    valueColor: Colors.white,
-                    iconColor: Colors.grey,
+                        // Job information
+                        flightNumber: "N/A", // Not available in Ride model
+                        dateTime: displayDateTime,
+                        vehicleType: ride.vehicleType,
+                        jobPoster: ride.applicant?.driver?.name ?? "Unknown",
+                        company: ride.applicant?.driver?.name ?? "Unknown",
+                        payment: ride.paymentType,
+                        amount: "\$${ride.paymentAmount}",
+
+                        // Optional: Custom colors
+                        backgroundColor: const Color(0xFF1C1C1C),
+                        borderColor: const Color(0xFF2A2A2A),
+                        labelColor: Colors.grey,
+                        valueColor: Colors.white,
+                        iconColor: Colors.grey,
+                      );
+                    },
                   ),
                 ),
             ],

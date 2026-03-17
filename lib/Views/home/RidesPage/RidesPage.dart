@@ -184,6 +184,7 @@ class Ridespage extends StatelessWidget {
             amount: ride.paymentAmount?.toString(),
             name: ride.createdBy?.name,
             company: ride.createdBy?.company,
+            isAsap: ride.asap,
           );
         },
       );
@@ -226,6 +227,7 @@ class Ridespage extends StatelessWidget {
             amount: ride.paymentAmount?.toString(),
             name: ride.createdBy?.name,
             company: ride.createdBy?.company,
+            isAsap: ride.asap,
           );
         },
       
@@ -270,6 +272,7 @@ class Ridespage extends StatelessWidget {
             amount: ride.paymentAmount.toString(),
             name: ride.applicant?.driver?.name,
             company: ride.applicant?.driver?.company,
+            isAsap: ride.asap,
           );
         },
     );
@@ -288,32 +291,38 @@ class Ridespage extends StatelessWidget {
     String? amount,
     String? name,
     String? company,
+    bool? isAsap,
   }) {
     // Format Date and Time
     String displayDateTime = "";
-    String dateStr = "";
-    if (date != null && date.isNotEmpty) {
-      try {
-        DateTime parsed = DateTime.parse(date);
-        dateStr = DateFormat('EEE, MMM dd').format(parsed);
-      } catch (_) {
-        dateStr = date;
-      }
-    }
 
-    String timeStr = time ?? "";
-    if (timeStr.contains(':')) {
-      try {
-        final parts = timeStr.split(':');
-        int hour = int.parse(parts[0]);
-        int minute = int.parse(parts[1].split(' ')[0]);
-        final period = hour >= 12 ? "PM" : "AM";
-        final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-        timeStr =
-            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
-      } catch (_) {}
+    if (isAsap == true) {
+      displayDateTime = "ASAP";
+    } else {
+      String dateStr = "";
+      if (date != null && date.isNotEmpty) {
+        try {
+          DateTime parsed = DateTime.parse(date);
+          dateStr = DateFormat('EEE, MMM dd').format(parsed);
+        } catch (_) {
+          dateStr = date;
+        }
+      }
+
+      String timeStr = time ?? "";
+      if (timeStr.contains(':')) {
+        try {
+          final parts = timeStr.split(':');
+          int hour = int.parse(parts[0]);
+          int minute = int.parse(parts[1].split(' ')[0]);
+          final period = hour >= 12 ? "PM" : "AM";
+          final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+          timeStr =
+              "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+        } catch (_) {}
+      }
+      displayDateTime = dateStr.isNotEmpty ? "$dateStr · $timeStr" : timeStr;
     }
-    displayDateTime = dateStr.isNotEmpty ? "$dateStr · $timeStr" : timeStr;
 
     final vehicleType = vehicle ?? 'N/A';
 

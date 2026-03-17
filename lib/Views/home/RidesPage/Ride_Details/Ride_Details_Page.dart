@@ -127,31 +127,43 @@ class RideDetailsPage extends StatelessWidget {
 
     // --- DATE & TIME FORMATTING (12h AM/PM) ---
     String displayDateTime = "N/A";
-    String dateStr = "";
-    if (dateRaw.isNotEmpty) {
-      try {
-        DateTime parsed = DateTime.parse(dateRaw);
-        dateStr = DateFormat('MMM dd').format(parsed);
-      } catch (_) {
-        dateStr = dateRaw;
-      }
+    
+    bool isAsap = false;
+    if (ride is UpcomingRideData || ride is FinishRideData) {
+      isAsap = ride.asap == true;
+    } else if (ride is Ride) {
+      isAsap = ride.asap == true;
     }
 
-    String formattedTime = timeRaw;
-    if (timeRaw.contains(':')) {
-      try {
-        final parts = timeRaw.split(':');
-        int hour = int.parse(parts[0]);
-        int minute = int.parse(parts[1].split(' ')[0]);
-        final period = hour >= 12 ? "PM" : "AM";
-        final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-        formattedTime =
-            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
-      } catch (_) {}
+    if (isAsap) {
+      displayDateTime = "ASAP";
+    } else {
+      String dateStr = "";
+      if (dateRaw.isNotEmpty) {
+        try {
+          DateTime parsed = DateTime.parse(dateRaw);
+          dateStr = DateFormat('EEE MMM dd').format(parsed);
+        } catch (_) {
+          dateStr = dateRaw;
+        }
+      }
+
+      String formattedTime = timeRaw;
+      if (timeRaw.contains(':')) {
+        try {
+          final parts = timeRaw.split(':');
+          int hour = int.parse(parts[0]);
+          int minute = int.parse(parts[1].split(' ')[0]);
+          final period = hour >= 12 ? "PM" : "AM";
+          final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+          formattedTime =
+              "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+        } catch (_) {}
+      }
+      displayDateTime = dateStr.isNotEmpty
+          ? "$dateStr . $formattedTime"
+          : formattedTime;
     }
-    displayDateTime = dateStr.isNotEmpty
-        ? "$dateStr · $formattedTime"
-        : formattedTime;
 
     return Scaffold(
       appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),

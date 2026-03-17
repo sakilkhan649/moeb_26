@@ -1,6 +1,7 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:moeb_26/Views/auth/Otp_verification/otp_verifications.dart';
+import 'package:moeb_26/Views/auth/Term_and_policy/privacy_policy_sign_up.dart';
 import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Application_Succes/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved/Application_Not_Approved.dart';
@@ -27,9 +28,7 @@ import '../Views/home/JobOfferPage/My_jobs/Edit_screen/edit_screen.dart';
 import '../Views/home/JobOfferPage/My_jobs/my_jobs.dart';
 import '../Views/home/JobOfferPage/Request_Submitted/Request_Submitted.dart';
 import '../Views/home/MarketplacePage/My_Items/my_items.dart';
-import '../Views/home/RidesPage/Finish_Ride/Finish_Ride_page.dart';
-import '../Views/home/RidesPage/On_My_Way_Details_page/On_My_Way_Details_page.dart';
-import '../Views/home/RidesPage/Pob_Details_page/Pob_Details_page.dart';
+
 import '../Views/home/RidesPage/Request_Under_review.dart';
 import '../Views/home/ChatPage/ChatPage.dart';
 import '../Views/home/ChatPage/ChatDetailPage.dart';
@@ -64,9 +63,9 @@ class Routes {
   static const String chatDetailPage = "/ChatDetailPage";
   static const String communityChatDetailPage = "/CommunityChatDetailPage";
   static const String rideDetailsPage = "/RideDetailsPage";
-  static const String onMyWayDetailsPage = "/OnMyWayDetailsPage";
-  static const String pobDetailsPage = "/PobDetailsPage";
-  static const String finishRidePage = "/FinishRidePage";
+  // static const String onMyWayDetailsPage = "/OnMyWayDetailsPage";
+  // static const String pobDetailsPage = "/PobDetailsPage";
+  // static const String finishRidePage = "/FinishRidePage";
   static const String rideCompletedPage = "/RideCompletedPage";
   static const String approvePage = "/ApprovePage";
   static const String rideProgressWay = "/RideProgressWay";
@@ -82,6 +81,7 @@ class Routes {
   static const String changePasswordScreen = "/ChangePasswordScreen";
   static const String myPropucts = "/MyPropucts";
   static const String supportChatDetailPage = "/SupportChatDetailPage";
+  static const String privacyPolicySignUp = "/PrivacyPolicySignUp";
 
   static List<GetPage> routes = [
     GetPage(
@@ -90,6 +90,11 @@ class Routes {
       transition: Transition.noTransition,
       binding: SplashBinding(),
     ),
+    GetPage(
+      name: privacyPolicySignUp,
+      page: () => PrivacyPolicySignUp(),
+      transition: Transition.noTransition,
+    ),	
     GetPage(
       name: createscreens,
       page: () => Createscreens(),
@@ -201,21 +206,21 @@ class Routes {
       page: () => RideDetailsPage(),
       transition: Transition.noTransition,
     ),
-    GetPage(
-      name: onMyWayDetailsPage,
-      page: () => OnMyWayDetailsPage(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
-      name: pobDetailsPage,
-      page: () => PobDetailsPage(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
-      name: finishRidePage,
-      page: () => FinishRidePage(),
-      transition: Transition.noTransition,
-    ),
+    // GetPage(
+    //   name: onMyWayDetailsPage,
+    //   page: () => OnMyWayDetailsPage(),
+    //   transition: Transition.noTransition,
+    // ),
+    // GetPage(
+    //   name: pobDetailsPage,
+    //   page: () => PobDetailsPage(),
+    //   transition: Transition.noTransition,
+    // ),
+    // GetPage(
+    //   name: finishRidePage,
+    //   page: () => FinishRidePage(),
+    //   transition: Transition.noTransition,
+    // ),
     GetPage(
       name: rideCompletedPage,
       page: () => RideCompletedPage(),
