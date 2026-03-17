@@ -85,7 +85,7 @@ class PrivacyPolicySignUp extends StatelessWidget {
                             ),
                             _item(
                               2,
-                              "Shirts must be clean, pressed, and neutral in color (white or light blue).",
+                              "Shirts must be clean, pressed, and neutral in color (white, black or light blue).",
                             ),
                             _item(
                               3,
@@ -523,10 +523,10 @@ class PrivacyPolicySignUp extends StatelessWidget {
         width: 20.w,
         height: 20.w,
         decoration: BoxDecoration(
-          color: isChecked ? Colors.green : Colors.transparent,
+          color: isChecked ? Color(0xFF364153) : Colors.transparent,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: isChecked ? Colors.green : Colors.white,
+            color: isChecked ? Color(0xFF364153) : Colors.grey,
             width: 2,
           ),
         ),
