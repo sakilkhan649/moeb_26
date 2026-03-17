@@ -142,17 +142,20 @@ class Chatpage extends StatelessWidget {
         child: Row(
           children: [
             Container(
+              width: 56.r,
+              height: 56.r,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                color: Colors.grey[800],
                 border: Border.all(
-                  color: Colors.grey[800]!, // border color
-                  width: 3,
+                  color: Colors.grey[800]!,
+                  width: 2,
                 ),
               ),
-              child: CircleAvatar(
-                radius: 25.r,
-                backgroundColor: Colors.grey[800],
-                backgroundImage: AssetImage(AppImages.app_logo),
+              clipBehavior: Clip.antiAlias,
+              child: Image.asset(
+                AppImages.app_logo,
+                fit: BoxFit.contain,
               ),
             ),
             SizedBox(width: 12.w),
