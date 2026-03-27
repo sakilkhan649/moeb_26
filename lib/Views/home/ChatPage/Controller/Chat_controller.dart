@@ -16,6 +16,19 @@ class ChatController extends GetxController {
   var communityRoom = Rxn<CommunityRoom>();
   var searchController = "".obs;
   var isLoading = false.obs;
+  var selectedChatIdForDelete = "".obs;
+
+  void toggleDeleteIcon(String chatId) {
+    if (selectedChatIdForDelete.value == chatId) {
+      selectedChatIdForDelete.value = "";
+    } else {
+      selectedChatIdForDelete.value = chatId;
+    }
+  }
+
+  void clearDeleteSelection() {
+    selectedChatIdForDelete.value = "";
+  }
 
   @override
   void onInit() {

@@ -67,18 +67,35 @@ class CommunityChatDetailPage extends StatelessWidget {
       titleSpacing: 0,
       title: Row(
         children: [
-          CircleAvatar(
-            radius: 20.r,
-            backgroundColor: const Color(0xff363636),
-            backgroundImage: AssetImage(AppImages.app_logo),
-          ),
+           Container(
+              width: 40.r,
+              height: 40.r,
+              padding: EdgeInsets.all(2.r), // This creates space for the border
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.grey[700]!, // Visible gray border
+                  width: 1.5,
+                ),
+              ),
+              child: ClipOval(
+                child: Transform.scale(
+                  scale: 1.4,
+                  child: Image.asset(
+                    AppImages.moeb26_community_chat_pp,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            
           SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  controller.room.name,
+                  controller.room.name.replaceAll('Network', '').trim(),
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: 16.sp,
@@ -88,7 +105,7 @@ class CommunityChatDetailPage extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  'Community Group',
+                  'Network Chat',
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: 12.sp,

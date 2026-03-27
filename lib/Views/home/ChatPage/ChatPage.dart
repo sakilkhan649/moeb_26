@@ -24,13 +24,16 @@ class Chatpage extends StatelessWidget {
         subtitle: 'Messaging',
         notificationCount: 3,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 4.h),
+      body: GestureDetector(
+        onTap: () => controller.clearDeleteSelection(),
+        behavior: HitTestBehavior.opaque,
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 4.h),
 
               // ── Search Bar ──
               TextFormField(
@@ -126,7 +129,7 @@ class Chatpage extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      ),)
     );
   }
 
@@ -144,18 +147,22 @@ class Chatpage extends StatelessWidget {
             Container(
               width: 56.r,
               height: 56.r,
+              padding: EdgeInsets.all(2.r), // This creates space for the border
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.grey[800],
                 border: Border.all(
-                  color: Colors.grey[800]!,
-                  width: 2,
+                  color: Colors.grey[700]!, // Visible gray border
+                  width: 1.5,
                 ),
               ),
-              clipBehavior: Clip.antiAlias,
-              child: Image.asset(
-                AppImages.app_logo,
-                fit: BoxFit.contain,
+              child: ClipOval(
+                child: Transform.scale(
+                  scale: 1.4,
+                  child: Image.asset(
+                    AppImages.moeb26_community_chat_pp,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
             SizedBox(width: 12.w),
@@ -169,7 +176,7 @@ class Chatpage extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          "Live Chat: ${room.name}",
+                          "Live Chat: ${room.name.replaceAll('Network', '').trim()}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
@@ -214,7 +221,14 @@ class Chatpage extends StatelessWidget {
     final other = chat.getOtherParticipant(userService.userId);
     return InkWell(
       onTap: () {
-        Get.toNamed(Routes.chatDetailPage, arguments: chat);
+        if (controller.selectedChatIdForDelete.value != "") {
+          controller.clearDeleteSelection();
+        } else {
+          Get.toNamed(Routes.chatDetailPage, arguments: chat);
+        }
+      },
+      onLongPress: () {
+        controller.toggleDeleteIcon(chat.id);
       },
       borderRadius: BorderRadius.circular(12.r),
       splashColor: Colors.white10,
@@ -250,14 +264,28 @@ class Chatpage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 8.w),
-                      if (chat.lastMessageAt != null)
-                        Text(
-                          _formatTime(chat.lastMessageAt!),
-                          style: GoogleFonts.inter(
-                            color: Colors.grey,
-                            fontSize: 12.sp,
-                          ),
-                        ),
+                      Obx(() {
+                        final isDeleteMode =
+                            controller.selectedChatIdForDelete.value == chat.id;
+                        return isDeleteMode
+                            ? GestureDetector(
+                                onTap: () => _showDeleteConfirmation(chat),
+                                child: Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.red,
+                                  size: 22.sp,
+                                ),
+                              )
+                            : chat.lastMessageAt != null
+                                ? Text(
+                                    _formatTime(chat.lastMessageAt!),
+                                    style: GoogleFonts.inter(
+                                      color: Colors.grey,
+                                      fontSize: 12.sp,
+                                    ),
+                                  )
+                                : const SizedBox.shrink();
+                      }),
                     ],
                   ),
                   SizedBox(height: 4.h),
@@ -283,6 +311,84 @@ class Chatpage extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(ChatPreview chat) {
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(24.w),
+          decoration: BoxDecoration(
+            color: const Color(0xff1A1A1A),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: Colors.white10),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Delete Chat?",
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                "Are you sure you want to delete this chat? This action cannot be undone.",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: Colors.grey,
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Get.back(),
+                      child: Text(
+                        "Cancel",
+                        style: GoogleFonts.inter(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Implement delete logic here if available
+                        controller.clearDeleteSelection();
+                        Get.back();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      child: Text(
+                        "Delete",
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
