@@ -27,13 +27,14 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
             await controller.fetchUserProfile();
           },
           color: AppColors.orange100,
-          backgroundColor: const Color(0xFF1A1A1A),
+          backgroundColor: Colors.black,
           child: Obx(() {
             if (controller.isLoading.value && controller.userProfile.value == null) {
               return const Center(
@@ -45,340 +46,344 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Segment
-                Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Profile Image
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          child: CircleAvatar(
-                            radius: 35.r,
-                            backgroundImage:
-                                controller.profilePicture.value.isNotEmpty
-                                ? NetworkImage(controller.profilePicture.value)
-                                : AssetImage(AppImages.sadat_image)
-                                      as ImageProvider,
+                // Header Icons Row
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h), // Reduced vertical padding
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Back Button
+                      GestureDetector(
+                        onTap: () => Get.back(),
+                        child: Container(
+                          padding: EdgeInsets.all(6.r), // Smaller padding
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF1A1A1A),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: Colors.white,
+                            size: 20.sp, // Smaller icon
                           ),
                         ),
-                        // Profile Info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                controller.fullName.value,
-                                style: GoogleFonts.inter(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              SizedBox(height: 2.h),
-
-                              Text(
-                                controller.ecn.value,
-                                style: GoogleFonts.inter(
-                                  color: Colors.grey,
-                                  fontSize: 10.sp,
-                                ),
-                              ),
-                              SizedBox(height: 2.h),
-
-                              Row(
+                      ),
+                      // Right Icons
+                      Row(
+                        children: [
+                          Obx(
+                            () => GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomNotificationPopup();
+                                  },
+                                );
+                              },
+                              child: Stack(
+                                clipBehavior: Clip.none,
                                 children: [
                                   Icon(
-                                    Icons.star,
-                                    color: AppColors.orange100,
-                                    size: 15.sp,
+                                    Icons.notifications_none,
+                                    color: Colors.white,
+                                    size: 24.sp, // Smaller icon
                                   ),
-                                  SizedBox(width: 4.w),
-                                  Flexible(
-                                    child: Text(
-                                      controller.rating.value.toString(),
-                                      style: GoogleFonts.inter(
-                                        color: Colors.white,
-                                        fontSize: 13.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Header Icons
-                        Row(
-                          children: [
-                            Obx(
-                              () => GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomNotificationPopup();
-                                    },
-                                  );
-                                },
-                                child: Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    Icon(
-                                      Icons.notifications_none,
-                                      color: Colors.white,
-                                      size: 30.sp,
-                                    ),
-                                    if (_notificationController.unreadCount > 0)
-                                      Positioned(
-                                        top: -2.w,
-                                        right: -1.w,
-                                        child: Container(
-                                          width: 15.w,
-                                          height: 15.w,
-                                          decoration: const BoxDecoration(
-                                            color: AppColors.orange100,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              _notificationController
-                                                          .unreadCount >
-                                                      99
-                                                  ? '99+'
-                                                  : "${_notificationController.unreadCount}",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 10.sp,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                  if (_notificationController.unreadCount > 0)
+                                    Positioned(
+                                      top: -2.w,
+                                      right: -1.w,
+                                      child: Container(
+                                        width: 14.w,
+                                        height: 14.w,
+                                        decoration: const BoxDecoration(
+                                          color: AppColors.orange100,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            _notificationController.unreadCount > 99
+                                                ? '99+'
+                                                : "${_notificationController.unreadCount}",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 9.sp, // Smaller font
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
                                       ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12.w), // Smaller spacing
+                          PopupMenuButton<int>(
+                            icon: Icon(
+                              Icons.person_outline,
+                              color: Colors.white,
+                              size: 24.sp, // Smaller icon
+                            ),
+                            color: const Color(0xFF1E1E1E),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                              side: const BorderSide(
+                                color: Color(0xFF364153),
+                              ),
+                            ),
+                            offset: const Offset(0, 40),
+                            onSelected: (item) {
+                              switch (item) {
+                                case 0:
+                                  Get.offNamed(Routes.profileScreen);
+                                  break;
+                                case 1:
+                                  Get.toNamed(Routes.myJobsScreen);
+                                  break;
+                                case 2:
+                                  Get.toNamed(Routes.serviceArea);
+                                  break;
+                                case 3:
+                                  Get.bottomSheet(
+                                    const LogoutBottomSheet(),
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                  );
+                                  break;
+                                case 4:
+                                  Get.toNamed(Routes.myPropucts);
+                                  break;
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem<int>(
+                                value: 1,
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      AppIcons.job_offer_icon,
+                                      width: 24.sp,
+                                      height: 24.sp,
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.white,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Text(
+                                      'My Jobs',
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Icon(
+                                      CupertinoIcons.chevron_forward,
+                                      size: 20.sp,
+                                      color: Colors.white,
+                                    ),
                                   ],
                                 ),
                               ),
-                            ),
-                            SizedBox(width: 10.w),
-                            PopupMenuButton<int>(
-                              icon: Icon(
-                                Icons.person_outline,
+                              PopupMenuItem<int>(
+                                value: 2,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_on_outlined,
+                                      color: Colors.white,
+                                      size: 24.sp,
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Text(
+                                      'Service Area',
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Icon(
+                                      CupertinoIcons.chevron_forward,
+                                      size: 20.sp,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              PopupMenuItem<int>(
+                                value: 4,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.shopping_bag_outlined,
+                                      color: Colors.white,
+                                      size: 24.sp,
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Text(
+                                      'My Items',
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Icon(
+                                      CupertinoIcons.chevron_forward,
+                                      size: 20.sp,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 10.h),
+
+                // Profile Info Row
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: Row(
+                    children: [
+                      // Profile Image
+                      CircleAvatar(
+                        radius: 42.r, // Slightly smaller
+                        backgroundImage: controller.profilePicture.value.isNotEmpty
+                            ? NetworkImage(controller.profilePicture.value)
+                            : AssetImage(AppImages.sadat_image) as ImageProvider,
+                      ),
+                      SizedBox(width: 14.w),
+                      // Profile Text Info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              controller.fullName.value,
+                              style: GoogleFonts.inter(
                                 color: Colors.white,
-                                size: 30.sp,
+                                fontSize: 18.sp, // Reduced font size
+                                fontWeight: FontWeight.bold,
                               ),
-                              color: const Color(0xFF1E1E1E), // Dark background
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
-                                side: const BorderSide(
-                                  color: Color(0xFF364153),
-                                ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            Text(
+                              controller.ecn.value,
+                              style: GoogleFonts.inter(
+                                color: Colors.grey,
+                                fontSize: 13.sp, // Reduced font size
                               ),
-                              offset: const Offset(0, 50),
-                              onSelected: (item) {
-                                switch (item) {
-                                  case 0:
-                                    Get.offNamed(Routes.profileScreen);
-                                    break;
-                                  case 1:
-                                    Get.toNamed(Routes.myJobsScreen);
-                                    break;
-                                  case 2:
-                                    Get.toNamed(Routes.serviceArea);
-                                    break;
-                                  case 3:
-                                    Get.bottomSheet(
-                                      const LogoutBottomSheet(),
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                    );
-                                    break;
-                                  case 4:
-                                    Get.toNamed(Routes.myPropucts);
-                                    break;
-                                }
-                              },
-                              itemBuilder: (context) => [
-                                // PopupMenuItem<int>(
-                                //   value: 0,
-                                //   child: Row(
-                                //     children: [
-                                //       Icon(
-                                //         Icons.person_outline,
-                                //         color: Colors.white,
-                                //         size: 24.sp,
-                                //       ),
-                                //       SizedBox(width: 12.w),
-                                //       Text(
-                                //         'Account',
-                                //         style: GoogleFonts.inter(
-                                //           color: Colors.white,
-                                //           fontSize: 14.sp,
-                                //           fontWeight: FontWeight.w500,
-                                //         ),
-                                //       ),
-                                //       const Spacer(),
-                                //       Icon(
-                                //         CupertinoIcons.chevron_forward,
-                                //         size: 20.sp,
-                                //         color: Colors.white,
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                                PopupMenuItem<int>(
-                                  value: 1,
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        AppIcons.job_offer_icon,
-                                        width: 24.sp,
-                                        height: 24.sp,
-                                        colorFilter: const ColorFilter.mode(
-                                          Colors.white,
-                                          BlendMode.srcIn,
-                                        ),
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      Text(
-                                        'My Jobs',
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Icon(
-                                        CupertinoIcons.chevron_forward,
-                                        size: 20.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ],
+                            ),
+                            SizedBox(height: 2.h),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: AppColors.orange100,
+                                  size: 16.sp, // Smaller icon
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  controller.rating.value.toString(),
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 15.sp, // Reduced font size
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                PopupMenuItem<int>(
-                                  value: 2,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_on_outlined,
-                                        color: Colors.white,
-                                        size: 24.sp,
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      Text(
-                                        'Service Area',
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Icon(
-                                        CupertinoIcons.chevron_forward,
-                                        size: 20.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                PopupMenuItem<int>(
-                                  value: 4,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.shopping_bag_outlined,
-                                        color: Colors.white,
-                                        size: 24.sp,
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      Text(
-                                        'My Items',
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Icon(
-                                        CupertinoIcons.chevron_forward,
-                                        size: 20.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                // PopupMenuItem<int>(
-                                //   value: 3,
-                                //   child: Row(
-                                //     children: [
-                                //       Icon(
-                                //         Icons.logout_outlined,
-                                //         color: Colors.white,
-                                //         size: 24.sp,
-                                //       ),
-                                //       SizedBox(width: 12.w),
-                                //       Text(
-                                //         'Logout',
-                                //         style: GoogleFonts.inter(
-                                //           color: Colors.white,
-                                //           fontSize: 14.sp,
-                                //           fontWeight: FontWeight.w500,
-                                //         ),
-                                //       ),
-                                //       const Spacer(),
-                                //       Icon(
-                                //         CupertinoIcons.chevron_forward,
-                                //         size: 20.sp,
-                                //         color: Colors.white,
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
                               ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 24.h),
-                    // Action Buttons
-                    Wrap(
-                      spacing: 10.w,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        _buildHeaderButton("Edit Profile", () {
-                          Get.bottomSheet(
-                            EditProfileBottomSheet(),
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                          );
-                        }),
-                        _buildHeaderButton("Edit Vehicles", () {
-                          Get.toNamed(
-                            Routes.vehicleinformation,
-                            arguments: {
-                              "vehicles":
-                                  controller.userProfile.value?.vehicles,
-                            },
-                          );
-                        }),
-                        _buildHeaderButton("My Jobs", () {
-                          Get.toNamed(Routes.myJobsScreen);
-                        }),
-                      ],
-                    ),
-                  ],
+                      ),
+                      // Edit Button
+                      PopupMenuButton<int>(
+                        padding: EdgeInsets.zero,
+                        color: const Color(0xFF000000),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                          side: const BorderSide(
+                            color: Color(0xFF364153),
+                            width: 1,
+                          ),
+                        ),
+                        offset: const Offset(0, 50),
+                        onSelected: (item) {
+                          switch (item) {
+                            case 0:
+                              Get.bottomSheet(
+                                EditProfileBottomSheet(),
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                              );
+                              break;
+                            case 1:
+                              Get.toNamed(
+                                Routes.vehicleinformation,
+                                arguments: {
+                                  "vehicles": controller.userProfile.value?.vehicles,
+                                },
+                              );
+                              break;
+                            case 2:
+                              Get.toNamed(Routes.serviceArea);
+                              break;
+                            case 3:
+                              Get.toNamed(Routes.myPropucts);
+                              break;
+                            case 4:
+                              Get.toNamed(Routes.myJobsScreen);
+                              break;
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          _buildPopupItem(0, Icons.person_outline, "Profile"),
+                          _buildPopupItem(1, Icons.directions_car_outlined, "Vehicle"),
+                          _buildPopupItem(2, Icons.location_on_outlined, "Service Area"),
+                          _buildPopupItem(3, Icons.shopping_bag_outlined, "My Items"),
+                          _buildPopupItem(4, Icons.business_center_outlined, "My Jobs"),
+                        ],
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.orange100,
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.edit_outlined, color: Colors.white, size: 18.sp),
+                              SizedBox(width: 6.w),
+                              Text(
+                                "Edit",
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                Divider(color: Colors.grey.withOpacity(0.2), thickness: 1.h),
+                SizedBox(height: 20.h),
+                Divider(color: Colors.grey.withOpacity(0.15), thickness: 0.8.h),
 
                 // Account Details Section
                 _buildSectionTitle("Account Details"),
@@ -598,19 +603,48 @@ class ProfileScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: AppColors.orange100,
-          borderRadius: BorderRadius.circular(12.r),
+          color: const Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
         ),
         child: Text(
           label,
           style: GoogleFonts.inter(
             color: Colors.white,
             fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
         ),
+      ),
+    );
+  }
+
+  PopupMenuItem<int> _buildPopupItem(int value, IconData icon, String title) {
+    return PopupMenuItem<int>(
+      value: value,
+      height: 45.h,
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white, size: 22.sp),
+          SizedBox(width: 14.w),
+          Expanded(
+            child: Text(
+              title,
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Icon(
+            CupertinoIcons.chevron_forward,
+            size: 18.sp,
+            color: Colors.white,
+          ),
+        ],
       ),
     );
   }

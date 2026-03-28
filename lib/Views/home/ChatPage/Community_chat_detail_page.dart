@@ -42,6 +42,7 @@ class CommunityChatDetailPage extends StatelessWidget {
             }),
           ),
 
+
           // Image Previews (Before sending)
           Obx(
             () => controller.selectedImages.isEmpty
