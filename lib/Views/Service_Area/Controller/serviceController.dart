@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:moeb_26/Services/user_service.dart';
 import '../../../../Services/serviceAreas_service.dart';
 import '../Model/ServiceAreaModel.dart';
 
@@ -16,13 +17,60 @@ class ServiceAreaController extends GetxController {
   var limit = 10;
 
   final ScrollController scrollController = ScrollController();
+  
+  // Selected service area name
+  var selectedAreaName = "".obs;
+  var isUpdating = false.obs;
 
   @override
   void onInit() {
     super.onInit();
+    // Get current user's service area from profile
+    final userProfile = Get.find<UserService>().userId;
+    _initCurrentServiceArea();
     // Default load (initial fetch)
     fetchServiceAreas();
     scrollController.addListener(_onScroll);
+  }
+
+  void _initCurrentServiceArea() {
+    final userService = Get.find<UserService>();
+    // If the UserService has the profile data, we could pre-select it
+    // For now, it will be updated when the user selects one
+  }
+
+  void selectServiceArea(String areaName) {
+    selectedAreaName.value = areaName;
+  }
+
+  Future<void> updateServiceArea() async {
+    if (selectedAreaName.value.isEmpty) {
+      Get.snackbar("Error", "Please select a service area first");
+      return;
+    }
+
+    try {
+      isUpdating.value = true;
+ 
+      
+      final response = await _serviceAreasService.updateServiceArea(
+      selectedAreaName.value
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar("Success", "Service area updated successfully");
+        // Optionally refresh user profile in UserService
+        Get.find<UserService>().fetchUserId();
+        Get.back(); // Go back after success
+      } else {
+        Get.snackbar("Error", "Failed to update service area");
+      }
+    } catch (e) {
+      print("Error updating service area: $e");
+      Get.snackbar("Error", "Something went wrong while updating");
+    } finally {
+      isUpdating.value = false;
+    }
   }
 
   @override

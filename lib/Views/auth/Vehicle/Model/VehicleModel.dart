@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,8 +7,19 @@ class VehicleModel {
   final TextEditingController makeController;
   final TextEditingController modelController;
   final TextEditingController yearController;
-  final TextEditingController colorController; // 👈 একটাই
+  final TextEditingController colorController;
   final TextEditingController licensePlateController;
+
+  // New Fields from DocumentsUpload
+  final Rx<File?> commercialInsuranceFile = Rx<File?>(null);
+  final TextEditingController commercialInsuranceExpireController = TextEditingController();
+
+  final Rx<File?> vehicleRegistrationFile = Rx<File?>(null);
+  final TextEditingController vehicleRegistrationExpireController = TextEditingController();
+
+  final Rx<File?> frontViewFile = Rx<File?>(null);
+  final Rx<File?> rearViewFile = Rx<File?>(null);
+  final Rx<File?> interiorViewFile = Rx<File?>(null);
 
   VehicleModel({String? initialType})
     : selectedVehicleType = (initialType ?? '').obs,
@@ -45,5 +57,7 @@ class VehicleModel {
     yearController.dispose();
     colorController.dispose();
     licensePlateController.dispose();
+    commercialInsuranceExpireController.dispose();
+    vehicleRegistrationExpireController.dispose();
   }
 }

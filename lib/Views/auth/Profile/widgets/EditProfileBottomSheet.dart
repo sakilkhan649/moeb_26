@@ -132,6 +132,8 @@ class EditProfileBottomSheet extends StatelessWidget {
                       _buildField(
                         "Full Name",
                         controller.nameController,
+                        readOnly: true,
+                        suffixIcon: Icon(Icons.lock_outline, color: Colors.grey, size: 18.sp),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter your name";
@@ -142,6 +144,8 @@ class EditProfileBottomSheet extends StatelessWidget {
                       _buildField(
                         "Email",
                         controller.emailController,
+                        readOnly: true,
+                        suffixIcon: Icon(Icons.lock_outline, color: Colors.grey, size: 18.sp),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter your email";
@@ -163,17 +167,7 @@ class EditProfileBottomSheet extends StatelessWidget {
                           return null;
                         },
                       ),
-                      _buildDropdownField(
-                        "Service Area",
-                        controller.serviceAreaController,
-                        controller.serviceAreas,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please select service area";
-                          }
-                          return null;
-                        },
-                      ),
+
                       _buildField("Nick Name", controller.nickNameController),
 
                       SizedBox(height: 30.h),
@@ -341,6 +335,8 @@ class EditProfileBottomSheet extends StatelessWidget {
     TextEditingController textController, {
     String? Function(String?)? validator,
     TextInputType? keyboardType,
+    bool readOnly = false,
+    Widget? suffixIcon,
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
@@ -360,11 +356,15 @@ class EditProfileBottomSheet extends StatelessWidget {
             controller: textController,
             validator: validator,
             keyboardType: keyboardType,
-            style: GoogleFonts.inter(color: Colors.white),
+            readOnly: readOnly,
+            style: GoogleFonts.inter(
+              color: readOnly ? Colors.grey : Colors.white,
+            ),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.black.withOpacity(0.2),
               errorStyle: TextStyle(fontSize: 12.sp),
+              suffixIcon: suffixIcon,
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 16.w,
                 vertical: 12.h,

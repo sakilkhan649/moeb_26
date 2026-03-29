@@ -97,15 +97,29 @@ class _JobofferpageState extends State<Jobofferpage> {
                         }
 
                         if (controller.jobOffersList.isEmpty) {
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 40.h),
-                              child: Text(
-                                "No jobs found",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                ),
+                          return SizedBox(
+                            height: constraints.maxHeight * 0.6, // Occupy 60% of screen height to appear centered
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "No offers at this time",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    "Available ride offers will be here",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.grey,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -229,7 +243,7 @@ class _JobofferpageState extends State<Jobofferpage> {
 class VehicleTypeColors {
   static const Color sedan = Color(0xFFDC2626);
   static const Color suv = Color(0xFF0A1F44);
-  static const Color bus = Color(0xFF1A1515);
+  static const Color bus = Color(0xFF3E2723); // Dark Brown color
   static const Color sprinter = Color(0xFF000000);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 

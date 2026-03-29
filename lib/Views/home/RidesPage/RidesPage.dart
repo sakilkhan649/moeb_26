@@ -347,7 +347,7 @@ class Ridespage extends StatelessWidget {
 class VehicleTypeColors {
   static const Color sedan = Color(0xFFDC2626);
   static const Color suv = Color(0xFF0A1F44);
-   static const Color bus = Color(0xFF1A1515);
+static const Color bus = Color(0xFF3E2723); 
   static const Color sprinter = Color(0xFF000000);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 

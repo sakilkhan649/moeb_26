@@ -13,4 +13,11 @@ class ServiceAreasRepo {
       query: {'page': page, 'limit': limit},
     );
   }
+
+  Future<Response> updateServiceArea(String areaName) async {
+    return await apiClient.patchData(
+      ApiConstants.profile,
+     {'serviceArea': areaName},
+    );
+  }
 }

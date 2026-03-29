@@ -48,21 +48,12 @@ class DocumentsUploadController extends GetxController {
   final Rx<File?> licensePlateFile = Rx<File?>(null);
   final Rx<File?> hackLicenseFile = Rx<File?>(null);
   final Rx<File?> localPermitFile = Rx<File?>(null);
-  final Rx<File?> commercialInsuranceFile = Rx<File?>(null);
-  final Rx<File?> vehicleRegistrationFile = Rx<File?>(null);
   final Rx<File?> headshotFile = Rx<File?>(null);
-
-  // ========== Vehicle photo files ==========
-  final Rx<File?> frontViewFile = Rx<File?>(null);
-  final Rx<File?> rearViewFile = Rx<File?>(null);
-  final Rx<File?> interiorViewFile = Rx<File?>(null);
 
   // ========== Expire date controllers ==========
   final licensePlateExpireController = TextEditingController();
   final hackLicenseExpireController = TextEditingController();
   final localPermitExpireController = TextEditingController();
-  final commercialInsuranceExpireController = TextEditingController();
-  final vehicleRegistrationExpireController = TextEditingController();
 
   final RxBool showErrors = false.obs;
 
@@ -94,12 +85,7 @@ class DocumentsUploadController extends GetxController {
   bool validateDocuments() {
     return licensePlateFile.value != null &&
         hackLicenseFile.value != null &&
-        commercialInsuranceFile.value != null &&
-        vehicleRegistrationFile.value != null &&
-        headshotFile.value != null &&
-        frontViewFile.value != null &&
-        rearViewFile.value != null &&
-        interiorViewFile.value != null;
+        headshotFile.value != null;
   }
 
   // ========== Submit Documents ==========
@@ -118,14 +104,7 @@ class DocumentsUploadController extends GetxController {
         localPermitExpiry: localPermitExpireController.text.isEmpty
             ? null
             : localPermitExpireController.text,
-        commercialInsurance: commercialInsuranceFile.value!,
-        commercialInsuranceExpiry: commercialInsuranceExpireController.text,
-        vehicleRegistration: vehicleRegistrationFile.value!,
-        vehicleRegistrationExpiry: vehicleRegistrationExpireController.text,
         headshot: headshotFile.value!,
-        front: frontViewFile.value!,
-        rear: rearViewFile.value!,
-        interior: interiorViewFile.value!,
       );
 
       // Navigate to PrivacyPolicySignUp (no API call here)
@@ -142,8 +121,6 @@ class DocumentsUploadController extends GetxController {
     licensePlateExpireController.dispose();
     hackLicenseExpireController.dispose();
     localPermitExpireController.dispose();
-    commercialInsuranceExpireController.dispose();
-    vehicleRegistrationExpireController.dispose();
     super.onClose();
   }
 }

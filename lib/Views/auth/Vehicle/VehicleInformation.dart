@@ -1,7 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
 import '../../../widgets/CustomButton.dart';
 import '../../../widgets/CustomText.dart';
@@ -28,7 +28,16 @@ class Vehicleinformation extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 100.w),
+              SizedBox(height: 50.w),
+              IconButton(
+                onPressed: () => Get.back(),
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 22.sp,
+                ),
+              ),
+              SizedBox(height: 50.w),
               CustomText(text: "Vehicle Information", fontSize: 20.sp),
               SizedBox(height: 7.h),
               CustomTextgray(
@@ -47,6 +56,7 @@ class Vehicleinformation extends StatelessWidget {
                       ...List.generate(
                         controller.vehicles.length,
                         (index) => _buildVehicleCard(
+                          context,
                           index,
                           controller.vehicles[index],
                         ),
@@ -100,7 +110,11 @@ class Vehicleinformation extends StatelessWidget {
   }
 
   // একটা vehicle card
-  Widget _buildVehicleCard(int index, VehicleModel model) {
+  Widget _buildVehicleCard(
+    BuildContext context,
+    int index,
+    VehicleModel model,
+  ) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 20.h),
@@ -280,8 +294,9 @@ class Vehicleinformation extends StatelessWidget {
                       controller: model.modelController,
                       hintText: "S-Class",
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return "Enter Model";
+                        }
                         return null;
                       },
                     ),
@@ -307,8 +322,9 @@ class Vehicleinformation extends StatelessWidget {
                       controller: model.colorController,
                       hintText: "Black(Fix)",
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return "Enter Color";
+                        }
                         return null;
                       },
                     ),
@@ -341,12 +357,332 @@ class Vehicleinformation extends StatelessWidget {
               return null;
             },
           ),
+          SizedBox(height: 24.h),
+
+          /// Commercial Insurance
+          _buildDocumentSection(
+            title: "Commercial Insurance",
+            isRequired: true,
+            fileRx: model.commercialInsuranceFile,
+          ),
+          SizedBox(height: 16.h),
+          Row(
+            children: [
+              CustomText(
+                text: "Expire Date",
+                fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
+              ),
+              Text(
+                " *",
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          _buildExpireDateField(
+            context: context,
+            textController: model.commercialInsuranceExpireController,
+            hintText: "1 June 2030",
+            validator: (value) {
+              if (value == null || value.isEmpty) return "Enter expire date";
+              return null;
+            },
+          ),
+          SizedBox(height: 24.h),
+
+          /// Vehicle Registration
+          _buildDocumentSection(
+            title: "Vehicle Registration",
+            isRequired: true,
+            fileRx: model.vehicleRegistrationFile,
+          ),
+          SizedBox(height: 16.h),
+          Row(
+            children: [
+              CustomText(
+                text: "Expire Date",
+                fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
+              ),
+              Text(
+                " *",
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          _buildExpireDateField(
+            context: context,
+            textController: model.vehicleRegistrationExpireController,
+            hintText: "1 June 2030",
+            validator: (value) {
+              if (value == null || value.isEmpty) return "Enter expire date";
+              return null;
+            },
+          ),
+          SizedBox(height: 24.h),
+
+          /// Vehicle Photos
+          Row(
+            children: [
+              CustomText(
+                text: "Vehicle Photos",
+                fontWeight: FontWeight.w600,
+                fontSize: 15.sp,
+              ),
+              Text(
+                " *",
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              ),
+            ],
+          ),
+          SizedBox(height: 10.h),
+
+          /// Front View
+          _buildPhotoSection(title: "Front View", fileRx: model.frontViewFile),
+          SizedBox(height: 12.h),
+
+          /// Rear View
+          _buildPhotoSection(title: "Rear View", fileRx: model.rearViewFile),
+          SizedBox(height: 12.h),
+
+          /// Interior View
+          _buildPhotoSection(
+            title: "Interior View",
+            fileRx: model.interiorViewFile,
+          ),
         ],
       ),
     );
   }
 
-  // Method to build the chip (with selected/unselected color)
+  // ========== UI Helpers ==========
+
+  Widget _buildDocumentSection({
+    required String title,
+    required bool isRequired,
+    required Rx<File?> fileRx,
+  }) {
+    return Obx(() {
+      final hasFile = fileRx.value != null;
+      final showError = showErrors.value && isRequired && !hasFile;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CustomContainer(
+            child: Row(
+              children: [
+                _buildDocumentIcon(),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: CustomText(
+                              text: title,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                          if (isRequired)
+                            Text(
+                              " *",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: 4.h),
+                      hasFile
+                          ? Text(
+                              controller.getFileName(fileRx),
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 11.sp,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : CustomTextgray(
+                              text: "PDF, JPG, PNG",
+                              fontSize: 11.sp,
+                            ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => controller.pickFromCamera(fileRx),
+                  icon: Icon(
+                    Icons.camera_alt_outlined,
+                    color: Colors.white,
+                    size: 20.sp,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => controller.pickFromFile(fileRx),
+                  icon: Icon(
+                    Icons.file_upload_outlined,
+                    color: Colors.white,
+                    size: 20.sp,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (showError)
+            Padding(
+              padding: EdgeInsets.only(left: 4.w, top: 6.h),
+              child: Text(
+                "Please upload $title",
+                style: TextStyle(color: Colors.red, fontSize: 12.sp),
+              ),
+            ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildPhotoSection({
+    required String title,
+    required Rx<File?> fileRx,
+  }) {
+    return Obx(() {
+      final hasFile = fileRx.value != null;
+      final showError = showErrors.value && !hasFile;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CustomContainer(
+            child: Row(
+              children: [
+                _buildDocumentIconPhoto(),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomText(
+                        text: title,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14.sp,
+                      ),
+                      if (hasFile)
+                        Padding(
+                          padding: EdgeInsets.only(top: 4.h),
+                          child: Text(
+                            controller.getFileName(fileRx),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 11.sp,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => controller.pickFromCamera(fileRx),
+                  icon: Icon(
+                    Icons.camera_alt_outlined,
+                    color: Colors.white,
+                    size: 20.sp,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => controller.pickFromFile(fileRx),
+                  icon: Icon(
+                    Icons.file_upload_outlined,
+                    color: Colors.white,
+                    size: 20.sp,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (showError)
+            Padding(
+              padding: EdgeInsets.only(left: 4.w, top: 6.h),
+              child: Text(
+                "Please upload $title",
+                style: TextStyle(color: Colors.red, fontSize: 12.sp),
+              ),
+            ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildExpireDateField({
+    required BuildContext context,
+    required TextEditingController textController,
+    required String hintText,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: textController,
+      readOnly: true,
+      onTap: () => controller.selectDate(context, textController),
+      validator: validator,
+      style: TextStyle(color: Colors.white, fontSize: 14.sp),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
+        suffixIcon: Icon(
+          Icons.calendar_today_outlined,
+          color: Colors.white,
+          size: 18.sp,
+        ),
+        filled: true,
+        fillColor: Colors.transparent,
+        contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: BorderSide(color: AppColors.black200),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: BorderSide(color: AppColors.black200),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: BorderSide(color: AppColors.black200),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDocumentIcon() {
+    return Container(
+      width: 40.r,
+      height: 40.r,
+      decoration: BoxDecoration(
+        color: Color(0xFF1E2939),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Icon(Icons.description_outlined, color: Colors.white, size: 20.sp),
+    );
+  }
+
+  Widget _buildDocumentIconPhoto() {
+    return Container(
+      width: 40.r,
+      height: 40.r,
+      decoration: BoxDecoration(
+        color: Color(0xFF1E2939),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Icon(Icons.image_outlined, color: Colors.white, size: 20.sp),
+    );
+  }
+
   Widget _buildVehicleTypeChip(VehicleModel model, String vehicleType) {
     return Obx(() {
       bool isSelected = model.selectedVehicleType.value == vehicleType;
@@ -371,7 +707,19 @@ class Vehicleinformation extends StatelessWidget {
     });
   }
 
-  // Text field method
+  Widget _CustomContainer({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.black200),
+      ),
+      child: child,
+    );
+  }
+
   Widget _buildTextField({
     required TextEditingController controller,
     required String hintText,

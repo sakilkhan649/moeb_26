@@ -144,7 +144,6 @@ class ProfileController extends GetxController {
       Map<String, dynamic> body = {
         "name": nameController.text,
         "phone": phoneController.text,
-        "serviceArea": serviceAreaController.text,
         "nickName": nickNameController.text, // If backend supports it
       };
 

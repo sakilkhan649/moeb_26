@@ -82,14 +82,7 @@ class SignupController extends GetxController {
     required String hackLicenseExpiry,
     File? localPermit,
     String? localPermitExpiry,
-    required File commercialInsurance,
-    required String commercialInsuranceExpiry,
-    required File vehicleRegistration,
-    required String vehicleRegistrationExpiry,
     required File headshot,
-    required File front,
-    required File rear,
-    required File interior,
   }) {
     drivingLicenseFile = drivingLicense;
     this.drivingLicenseExpiry = drivingLicenseExpiry;
@@ -97,14 +90,7 @@ class SignupController extends GetxController {
     this.hackLicenseExpiry = hackLicenseExpiry;
     localPermitFile = localPermit;
     this.localPermitExpiry = localPermitExpiry;
-    commercialInsuranceFile = commercialInsurance;
-    this.commercialInsuranceExpiry = commercialInsuranceExpiry;
-    vehicleRegistrationFile = vehicleRegistration;
-    this.vehicleRegistrationExpiry = vehicleRegistrationExpiry;
     headshotFile = headshot;
-    vehiclePhotoFront = front;
-    vehiclePhotoRear = rear;
-    vehiclePhotoInterior = interior;
   }
 
   // ============ Final Submit — POST /user ============

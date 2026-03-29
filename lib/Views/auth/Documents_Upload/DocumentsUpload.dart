@@ -27,7 +27,16 @@ class Documentsupload extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 100.w),
+                   SizedBox(height: 50.w),
+              IconButton(
+                onPressed: () => Get.back(),
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 22.sp,
+                ),
+              ),
+              SizedBox(height: 50.w),
                 // Page title
                 CustomText(text: "Documents Upload", fontSize: 20.sp),
                 SizedBox(height: 7.h),
@@ -136,114 +145,10 @@ class Documentsupload extends StatelessWidget {
                 ),
                 SizedBox(height: 16.h),
 
-                /// Second document Commercial Insurance
-                _buildDocumentSection(
-                  title: "Commercial Insurance",
-                  isRequired: true,
-                  fileRx: controller.commercialInsuranceFile,
-                  titleFontSize: 13.sp,
-                ),
-                SizedBox(height: 16.h),
-                Row(
-                  children: [
-                    CustomText(
-                      text: "Expire Date",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15.sp,
-                    ),
-                    Text(
-                      " *",
-                      style: TextStyle(color: Colors.white, fontSize: 14.sp),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                _buildExpireDateField(
-                  textController:
-                      controller.commercialInsuranceExpireController,
-                  hintText: "1 June 2030",
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Enter expire date";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.h),
-
-                /// First document Vehicle Registration
-                _buildDocumentSection(
-                  title: "Vehicle Registration",
-                  isRequired: true,
-                  fileRx: controller.vehicleRegistrationFile,
-                  titleFontSize: 13.sp,
-                ),
-                SizedBox(height: 16.h),
-                Row(
-                  children: [
-                    CustomText(
-                      text: "Expire Date",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15.sp,
-                    ),
-                    Text(
-                      " *",
-                      style: TextStyle(color: Colors.white, fontSize: 14.sp),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                _buildExpireDateField(
-                  textController:
-                      controller.vehicleRegistrationExpireController,
-                  hintText: "1 June 2030",
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Enter expire date";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.h),
-
                 /// Second document Upload Headshot
                 _buildHeadshotSection(),
                 SizedBox(height: 20.h),
 
-                /// Vehicle Photos
-                Row(
-                  children: [
-                    CustomText(
-                      text: "Vehicle Photos",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15.sp,
-                    ),
-                    Text(
-                      " *",
-                      style: TextStyle(color: Colors.white, fontSize: 14.sp),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10.h),
-
-                /// Front View
-                _buildPhotoSection(
-                  title: "Front View",
-                  fileRx: controller.frontViewFile,
-                ),
-                SizedBox(height: 12.h),
-
-                /// Rear View
-                _buildPhotoSection(
-                  title: "Rear View",
-                  fileRx: controller.rearViewFile,
-                ),
-                SizedBox(height: 12.h),
-
-                /// Interior View
-                _buildPhotoSection(
-                  title: "Interior View",
-                  fileRx: controller.interiorViewFile,
-                ),
-                SizedBox(height: 20.h),
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(18.w),
@@ -459,83 +364,6 @@ class Documentsupload extends StatelessWidget {
               padding: EdgeInsets.only(left: 12.w, top: 6.h),
               child: Text(
                 "Please upload Headshot",
-                style: TextStyle(color: Colors.red, fontSize: 12.sp),
-              ),
-            ),
-        ],
-      );
-    });
-  }
-
-  /// Builds a vehicle photo section (Front View, Rear View, Interior View)
-  Widget _buildPhotoSection({
-    required String title,
-    required Rx<File?> fileRx,
-  }) {
-    return Obx(() {
-      final hasFile = fileRx.value != null;
-      final showError = controller.showErrors.value && !hasFile;
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _CustomContainer(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildDocumentIconPhoto(),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      hasFile
-                          ? Row(
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green,
-                                  size: 14.sp,
-                                ),
-                                SizedBox(width: 4.w),
-                                Flexible(
-                                  child: Text(
-                                    controller.getFileName(fileRx),
-                                    style: TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 12.sp,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : CustomText(
-                              text: title,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15.sp,
-                            ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 30.w),
-                IconButton(
-                  onPressed: () => controller.pickFromCamera(fileRx),
-                  icon: Icon(Icons.camera_alt_outlined, color: Colors.white),
-                ),
-                IconButton(
-                  onPressed: () => controller.pickFromFile(fileRx),
-                  icon: Icon(Icons.file_upload_outlined, color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-          if (showError)
-            Padding(
-              padding: EdgeInsets.only(left: 12.w, top: 6.h),
-              child: Text(
-                "Please upload $title",
                 style: TextStyle(color: Colors.red, fontSize: 12.sp),
               ),
             ),

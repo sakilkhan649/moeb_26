@@ -19,4 +19,12 @@ class ServiceAreasService extends GetxService {
       rethrow;
     }
   }
+
+  Future<Response> updateServiceArea(String areaName) async {
+    try {
+      return await _serviceAreasRepo.updateServiceArea(areaName);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
