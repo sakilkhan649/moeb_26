@@ -2,6 +2,7 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:moeb_26/Views/auth/All%20Vehicle/all_vehicle.dart';
 import 'package:moeb_26/Views/auth/Otp_verification/otp_verifications.dart';
+import 'package:moeb_26/Views/auth/Personal%20Document/personal_document.dart';
 import 'package:moeb_26/Views/auth/Term_and_policy/privacy_policy_sign_up.dart';
 import 'package:moeb_26/Views/auth/Vehicle/AddNewVehicle.dart';
 import '../Views/Service_Area/Service_Area.dart';
@@ -86,6 +87,7 @@ class Routes {
   static const String privacyPolicySignUp = "/PrivacyPolicySignUp";
   static const String allVehicle = "/AllVehicle";
   static const String addNewVehicle = "/AddNewVehicle";
+  static const String personalDocument = "/PersonalDocument";
 
   static List<GetPage> routes = [
     GetPage(
@@ -98,7 +100,7 @@ class Routes {
       name: privacyPolicySignUp,
       page: () => PrivacyPolicySignUp(),
       transition: Transition.noTransition,
-    ),	
+    ),
     GetPage(
       name: createscreens,
       page: () => Createscreens(),
@@ -295,6 +297,11 @@ class Routes {
     GetPage(
       name: addNewVehicle,
       page: () => AddNewVehicle(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: personalDocument,
+      page: () => PersonalDocument(),
       transition: Transition.noTransition,
     ),
   ];

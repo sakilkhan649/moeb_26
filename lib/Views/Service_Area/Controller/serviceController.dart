@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:moeb_26/Services/user_service.dart';
 import '../../../../Services/serviceAreas_service.dart';
 import '../Model/ServiceAreaModel.dart';
+import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 class ServiceAreaController extends GetxController {
   final ServiceAreasService _serviceAreasService = Get.put(
@@ -45,29 +46,29 @@ class ServiceAreaController extends GetxController {
 
   Future<void> updateServiceArea() async {
     if (selectedAreaName.value.isEmpty) {
-      Get.snackbar("Error", "Please select a service area first");
+      Helpers.showCustomSnackBar("Please select a service area first", isError: true);
       return;
     }
 
     try {
       isUpdating.value = true;
- 
-      
-      final response = await _serviceAreasService.updateServiceArea(
-      selectedAreaName.value
-      );
+      final response = await _serviceAreasService.updateServiceArea(selectedAreaName.value);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar("Success", "Service area updated successfully");
-        // Optionally refresh user profile in UserService
-        Get.find<UserService>().fetchUserId();
-        Get.back(); // Go back after success
+        Get.back(); // Go back immediately after success for snappy UX
+        Helpers.showCustomSnackBar("Service area updated successfully", isError: false);
+        
+        try {
+          Get.find<UserService>().fetchUserId();
+        } catch (e) {
+          debugPrint("Safe to ignore: User profile refresh failed $e");
+        }
       } else {
-        Get.snackbar("Error", "Failed to update service area");
+        Helpers.showCustomSnackBar(response.data['message'] ?? "Failed to update service area", isError: true);
       }
     } catch (e) {
-      print("Error updating service area: $e");
-      Get.snackbar("Error", "Something went wrong while updating");
+      debugPrint("Error updating service area: $e");
+      Helpers.showCustomSnackBar("Something went wrong while updating", isError: true);
     } finally {
       isUpdating.value = false;
     }

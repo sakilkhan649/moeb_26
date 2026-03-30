@@ -8,12 +8,20 @@ import 'package:moeb_26/Utils/app_colors.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
-import 'Controller/AddNewVehicleController.dart';
+import 'Controller/VehicleActionController.dart';
 
 class AddNewVehicle extends StatelessWidget {
-  AddNewVehicle({super.key});
+  // Use a unique tag for each navigation to ensure NO data leaks or copying from previous visits
+  final String tag = DateTime.now().millisecondsSinceEpoch.toString();
 
-  final AddNewVehicleController controller = Get.put(AddNewVehicleController());
+  AddNewVehicle({super.key}) {
+    // Inject a completely fresh and unique controller instance
+    Get.put(VehicleActionController(), tag: tag);
+  }
+
+  // Find the exact instance using the unique tag
+  VehicleActionController get controller => Get.find<VehicleActionController>(tag: tag);
+  
   final _formKey = GlobalKey<FormState>();
   final RxBool showErrors = false.obs;
 
@@ -32,11 +40,7 @@ class AddNewVehicle extends StatelessWidget {
               color: Color(0xFF1A1A1A),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.chevron_left,
-              color: Colors.white,
-              size: 20.sp,
-            ),
+            child: Icon(Icons.chevron_left, color: Colors.white, size: 20.sp),
           ),
         ),
         title: Text(
@@ -64,13 +68,19 @@ class AddNewVehicle extends StatelessWidget {
                   () => controller.isLoading.value
                       ? const Center(child: CircularProgressIndicator())
                       : CustomButton(
-                          text: controller.isEditMode.value ? "Update Vehicle" : "Add Vehicle",
+                          text: controller.isEditMode.value
+                              ? "Update Vehicle"
+                              : "Add Vehicle",
                           onPressed: () {
                             showErrors.value = true;
                             if (_formKey.currentState!.validate()) {
                               if (controller.selectedVehicleType.value.isEmpty) {
-                                Get.snackbar("Error", "Please select a vehicle type", 
-                                  backgroundColor: Colors.red, colorText: Colors.white);
+                                Get.snackbar(
+                                  "Error",
+                                  "Please select a vehicle type",
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
                                 return;
                               }
                               controller.submitVehicle();
@@ -122,7 +132,8 @@ class AddNewVehicle extends StatelessWidget {
 
         // Vehicle type validation error
         Obx(() {
-          if (showErrors.value && controller.selectedVehicleType.value.isEmpty) {
+          if (showErrors.value &&
+              controller.selectedVehicleType.value.isEmpty) {
             return Padding(
               padding: EdgeInsets.only(left: 4.w, top: 6.h),
               child: Text(
@@ -153,10 +164,7 @@ class AddNewVehicle extends StatelessWidget {
                       ),
                       Text(
                         " *",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
                       ),
                     ],
                   ),
@@ -179,10 +187,7 @@ class AddNewVehicle extends StatelessWidget {
                       ),
                       Text(
                         " *",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
                       ),
                     ],
                   ),
@@ -214,10 +219,7 @@ class AddNewVehicle extends StatelessWidget {
                       ),
                       Text(
                         " *",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
                       ),
                     ],
                   ),
@@ -242,10 +244,7 @@ class AddNewVehicle extends StatelessWidget {
                       ),
                       Text(
                         " *",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
                       ),
                     ],
                   ),
@@ -372,7 +371,10 @@ class AddNewVehicle extends StatelessWidget {
         SizedBox(height: 10.h),
 
         /// Front View
-        _buildPhotoSection(title: "Front View", fileRx: controller.frontViewFile),
+        _buildPhotoSection(
+          title: "Front View",
+          fileRx: controller.frontViewFile,
+        ),
         SizedBox(height: 12.h),
 
         /// Rear View

@@ -18,6 +18,7 @@ class UserProfileModel {
   final DateTime updatedAt;
   final double averageRating;
   final String? selectedVehicle;
+  final String? nickname;
 
   UserProfileModel({
     required this.id,
@@ -39,6 +40,7 @@ class UserProfileModel {
     required this.updatedAt,
     this.averageRating = 0.0,
     this.selectedVehicle,
+    this.nickname,
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -72,6 +74,7 @@ class UserProfileModel {
           : DateTime.now(),
       averageRating: (json['averageRating'] ?? 0.0).toDouble(),
       selectedVehicle: json['selectedVehicle']?.toString(),
+      nickname: json['nickname']?.toString(),
     );
   }
 
@@ -96,6 +99,7 @@ class UserProfileModel {
       'updatedAt': updatedAt.toIso8601String(),
       'averageRating': averageRating,
       'selectedVehicle': selectedVehicle,
+      'nickname': nickname,
     };
   }
 }
@@ -146,9 +150,11 @@ class Vehicle {
       year: json['year'] is int ? json['year'] : 0,
       licensePlate: json['licensePlate']?.toString() ?? '',
       vehicleRegistrationImage: json['vehicleRegistrationImage']?.toString(),
-      vehicleRegistrationExpiryDate: json['vehicleRegistrationExpiryDate']?.toString(),
+      vehicleRegistrationExpiryDate: json['vehicleRegistrationExpiryDate']
+          ?.toString(),
       commercialInsuranceImage: json['commercialInsuranceImage']?.toString(),
-      commercialInsuranceExpiryDate: json['commercialInsuranceExpiryDate']?.toString(),
+      commercialInsuranceExpiryDate: json['commercialInsuranceExpiryDate']
+          ?.toString(),
       vehiclePhotoFront: json['vehiclePhotoFront']?.toString(),
       vehiclePhotoRear: json['vehiclePhotoRear']?.toString(),
       vehiclePhotoInterior: json['vehiclePhotoInterior']?.toString(),

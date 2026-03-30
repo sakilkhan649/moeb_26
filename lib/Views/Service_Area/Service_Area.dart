@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/widgets/CustomButton.dart';
 import 'Controller/serviceController.dart';
 
 class ServiceArea extends StatefulWidget {
@@ -234,32 +235,14 @@ class _ServiceAreaState extends State<ServiceArea> {
               ),
               SizedBox(height: 20.h),
               // Save Changes Button
-              Obx(() => SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: controller.isUpdating.value
-                      ? null
-                      : () => controller.updateServiceArea(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF1A107),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    disabledBackgroundColor: const Color(0xFFF1A107).withOpacity(0.5),
-                  ),
-                  child: controller.isUpdating.value
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          "Save Changes",
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                ),
-              )),
+              Obx(
+                () => controller.isUpdating.value
+                    ? const Center(child: CircularProgressIndicator())
+                    : CustomButton(
+                        text: "Save Changes",
+                        onPressed: () => controller.updateServiceArea(),
+                      ),
+              ),
             ],
           ),
         ),

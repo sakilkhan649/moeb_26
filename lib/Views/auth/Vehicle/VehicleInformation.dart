@@ -2,21 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:moeb_26/Core/routs.dart';
+import 'package:moeb_26/Views/auth/Signup_Flow/SignupController.dart';
+import 'package:moeb_26/Views/auth/Vehicle/Model/VehicleModel.dart';
 import '../../../Utils/app_colors.dart';
 import '../../../widgets/CustomButton.dart';
 import '../../../widgets/CustomText.dart';
 import '../../../widgets/CustomTextGary.dart';
-import 'Controller/VehicleInformationController.dart';
-import 'Model/VehicleModel.dart';
 
 class Vehicleinformation extends StatelessWidget {
   Vehicleinformation({super.key});
 
-  final VehicleInformationController controller = Get.put(
-    VehicleInformationController(),
-  );
+  // Using the unified SignupController
+  final SignupController controller = Get.find<SignupController>();
   final _formKey = GlobalKey<FormState>();
-  final RxBool showErrors = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -47,55 +46,51 @@ class Vehicleinformation extends StatelessWidget {
               ),
               SizedBox(height: 30.h),
 
-              // Vehicle list with buttons inside
+              // Vehicle list
               Expanded(
                 child: Obx(
                   () => ListView(
                     children: [
-                      // সব vehicle cards
                       ...List.generate(
-                        controller.vehicles.length,
+                        controller.vehiclesList.length,
                         (index) => _buildVehicleCard(
                           context,
                           index,
-                          controller.vehicles[index],
+                          controller.vehiclesList[index],
                         ),
                       ),
 
                       SizedBox(height: 25.h),
 
                       // Add Another Vehicle Button
-                      CustomAddButton(
-                        onPressed: () {
-                          controller.addVehicle();
-                        },
-                      ),
+                      CustomAddButton(onPressed: () => controller.addVehicle()),
 
                       SizedBox(height: 30.h),
-                      Obx(
-                        () => controller.isLoading.value
-                            ? Center(child: CircularProgressIndicator())
-                            : CustomButton(
-                                text: "Continue",
-                                onPressed: () {
-                                  showErrors.value = true;
 
-                                  final isFormValid = _formKey.currentState!
-                                      .validate();
+                      CustomButton(
+                        text: "Continue",
+                        onPressed: () {
+                          controller.showErrors.value = true;
+                          final isFormValid = _formKey.currentState!.validate();
 
-                                  bool allTypesSelected = true;
-                                  for (var v in controller.vehicles) {
-                                    if (v.selectedVehicleType.value.isEmpty) {
-                                      allTypesSelected = false;
-                                    }
-                                  }
+                          bool allValid = true;
+                          for (var v in controller.vehiclesList) {
+                            if (v.selectedVehicleType.value.isEmpty ||
+                                v.commercialInsuranceFile.value == null ||
+                                v.vehicleRegistrationFile.value == null ||
+                                v.frontViewFile.value == null ||
+                                v.rearViewFile.value == null ||
+                                v.interiorViewFile.value == null) {
+                              allValid = false;
+                              break;
+                            }
+                          }
 
-                                  if (isFormValid && allTypesSelected) {
-                                    controller
-                                        .submitVehicles(); // 👈 Get.toNamed এর বদলে API call
-                                  }
-                                },
-                              ),
+                          if (isFormValid && allValid) {
+                            // Just navigate to the next page
+                            Get.toNamed(Routes.documentsupload);
+                          }
+                        },
                       ),
                       SizedBox(height: 60.h),
                     ],
@@ -109,7 +104,7 @@ class Vehicleinformation extends StatelessWidget {
     );
   }
 
-  // একটা vehicle card
+  // --- Vehicle Card ---
   Widget _buildVehicleCard(
     BuildContext context,
     int index,
@@ -131,11 +126,9 @@ class Vehicleinformation extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomText(text: "Vehicle ${index + 1}", fontSize: 15.sp),
-              if (controller.vehicles.length > 1)
+              if (controller.vehiclesList.length > 1)
                 GestureDetector(
-                  onTap: () {
-                    controller.removeVehicle(index); // Vehicle delete করো
-                  },
+                  onTap: () => controller.removeVehicle(index),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       vertical: 8.h,
@@ -188,9 +181,10 @@ class Vehicleinformation extends StatelessWidget {
           SizedBox(height: 10.h),
           _buildVehicleTypeChip(model, "LimoStretch"),
 
-          // Vehicle type validation error
+          // Validation Error
           Obx(() {
-            if (showErrors.value && model.selectedVehicleType.value.isEmpty) {
+            if (controller.showErrors.value &&
+                model.selectedVehicleType.value.isEmpty) {
               return Padding(
                 padding: EdgeInsets.only(left: 4.w, top: 6.h),
                 child: Text(
@@ -199,7 +193,7 @@ class Vehicleinformation extends StatelessWidget {
                 ),
               );
             }
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           }),
 
           SizedBox(height: 20.h),
@@ -207,126 +201,52 @@ class Vehicleinformation extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Column for Make and Year
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        CustomText(
-                          text: "Make",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14.sp,
-                        ),
-                        Text(
-                          " *",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
+                    _buildFieldLabel("Make"),
                     _buildTextField(
                       controller: model.makeController,
                       hintText: "Mercedes",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Enter Make";
-                        return null;
-                      },
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Enter Make"
+                          : null,
                     ),
                     SizedBox(height: 15.h),
-                    Row(
-                      children: [
-                        CustomText(
-                          text: "Year",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14.sp,
-                        ),
-                        Text(
-                          " *",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
+                    _buildFieldLabel("Year"),
                     _buildTextField(
                       controller: model.yearController,
-                      hintText: "5 years maxim",
+                      hintText: "2023",
                       keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Enter Year";
-                        return null;
-                      },
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Enter Year"
+                          : null,
                     ),
                   ],
                 ),
               ),
               SizedBox(width: 15.w),
-              // Column for Model and Color
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        CustomText(
-                          text: "Model",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14.sp,
-                        ),
-                        Text(
-                          " *",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
+                    _buildFieldLabel("Model"),
                     _buildTextField(
                       controller: model.modelController,
                       hintText: "S-Class",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Enter Model";
-                        }
-                        return null;
-                      },
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Enter Model"
+                          : null,
                     ),
                     SizedBox(height: 15.h),
-                    Row(
-                      children: [
-                        CustomText(
-                          text: "Color",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14.sp,
-                        ),
-                        Text(
-                          " *",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
+                    _buildFieldLabel("Color"),
                     _buildTextField(
                       controller: model.colorController,
-                      hintText: "Black(Fix)",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Enter Color";
-                        }
-                        return null;
-                      },
+                      hintText: "Black",
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Enter Color"
+                          : null,
                     ),
                   ],
                 ),
@@ -335,209 +255,213 @@ class Vehicleinformation extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
 
-          Row(
-            children: [
-              CustomText(
-                text: "License Plate",
-                fontWeight: FontWeight.w500,
-                fontSize: 14.sp,
-              ),
-              Text(
-                " *",
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
+          _buildFieldLabel("License Plate"),
           _buildTextField(
             controller: model.licensePlateController,
             hintText: "ABC-1234",
-            validator: (value) {
-              if (value == null || value.isEmpty) return "Enter License Plate";
-              return null;
-            },
+            validator: (value) =>
+                (value == null || value.isEmpty) ? "Enter License Plate" : null,
           ),
           SizedBox(height: 24.h),
 
-          /// Commercial Insurance
-          _buildDocumentSection(
+          _buildFileSection(
             title: "Commercial Insurance",
-            isRequired: true,
             fileRx: model.commercialInsuranceFile,
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              CustomText(
-                text: "Expire Date",
-                fontWeight: FontWeight.w500,
-                fontSize: 14.sp,
-              ),
-              Text(
-                " *",
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          _buildExpireDateField(
-            context: context,
-            textController: model.commercialInsuranceExpireController,
-            hintText: "1 June 2030",
-            validator: (value) {
-              if (value == null || value.isEmpty) return "Enter expire date";
-              return null;
-            },
-          ),
-          SizedBox(height: 24.h),
-
-          /// Vehicle Registration
-          _buildDocumentSection(
-            title: "Vehicle Registration",
             isRequired: true,
-            fileRx: model.vehicleRegistrationFile,
           ),
           SizedBox(height: 16.h),
-          Row(
-            children: [
-              CustomText(
-                text: "Expire Date",
-                fontWeight: FontWeight.w500,
-                fontSize: 14.sp,
-              ),
-              Text(
-                " *",
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
+          _buildFieldLabel("Expire Date"),
           _buildExpireDateField(
-            context: context,
-            textController: model.vehicleRegistrationExpireController,
-            hintText: "1 June 2030",
-            validator: (value) {
-              if (value == null || value.isEmpty) return "Enter expire date";
-              return null;
-            },
+            context,
+            model.commercialInsuranceExpireController,
           ),
+
           SizedBox(height: 24.h),
 
-          /// Vehicle Photos
-          Row(
-            children: [
-              CustomText(
-                text: "Vehicle Photos",
-                fontWeight: FontWeight.w600,
-                fontSize: 15.sp,
-              ),
-              Text(
-                " *",
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
-              ),
-            ],
+          _buildFileSection(
+            title: "Vehicle Registration",
+            fileRx: model.vehicleRegistrationFile,
+            isRequired: true,
+          ),
+          SizedBox(height: 16.h),
+          _buildFieldLabel("Expire Date"),
+          _buildExpireDateField(
+            context,
+            model.vehicleRegistrationExpireController,
+          ),
+
+          SizedBox(height: 24.h),
+          CustomText(
+            text: "Vehicle Photos",
+            fontWeight: FontWeight.w600,
+            fontSize: 13.sp,
           ),
           SizedBox(height: 10.h),
-
-          /// Front View
-          _buildPhotoSection(title: "Front View", fileRx: model.frontViewFile),
+          _buildPhotoSection(
+            title: "Front View",
+            fileRx: model.frontViewFile,
+            isRequired: true,
+          ),
           SizedBox(height: 12.h),
-
-          /// Rear View
-          _buildPhotoSection(title: "Rear View", fileRx: model.rearViewFile),
+          _buildPhotoSection(
+            title: "Rear View",
+            fileRx: model.rearViewFile,
+            isRequired: true,
+          ),
           SizedBox(height: 12.h),
-
-          /// Interior View
           _buildPhotoSection(
             title: "Interior View",
             fileRx: model.interiorViewFile,
+            isRequired: true,
           ),
         ],
       ),
     );
   }
 
-  // ========== UI Helpers ==========
+  // --- UI Helpers ---
 
-  Widget _buildDocumentSection({
+  Widget _buildFieldLabel(String text) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Row(
+        children: [
+          CustomText(text: text, fontWeight: FontWeight.w500, fontSize: 13.sp),
+          Text(
+            " *",
+            style: TextStyle(color: Colors.white, fontSize: 14.sp),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      validator: validator,
+      keyboardType: keyboardType,
+      style: TextStyle(color: Colors.white, fontSize: 14.sp),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
+        contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExpireDateField(
+    BuildContext context,
+    TextEditingController textController,
+  ) {
+    return TextFormField(
+      controller: textController,
+      readOnly: true,
+      onTap: () => controller.selectDate(context, textController),
+      style: TextStyle(color: Colors.white, fontSize: 14.sp),
+      validator: (value) =>
+          (value == null || value.isEmpty) ? "Date required" : null,
+      decoration: InputDecoration(
+        hintText: "Select Date",
+        hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
+        suffixIcon: Icon(
+          Icons.calendar_today_outlined,
+          color: Colors.white,
+          size: 18.sp,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFileSection({
     required String title,
-    required bool isRequired,
     required Rx<File?> fileRx,
+    bool isRequired = false,
   }) {
     return Obx(() {
       final hasFile = fileRx.value != null;
-      final showError = showErrors.value && isRequired && !hasFile;
-
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CustomContainer(
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: AppColors.black200),
+            ),
             child: Row(
               children: [
-                _buildDocumentIcon(),
+                _buildIcon(Icons.description_outlined),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: CustomText(
-                              text: title,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
-                            ),
-                          ),
-                          if (isRequired)
-                            Text(
-                              " *",
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                        ],
+                      CustomText(
+                        text: title,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13.sp,
                       ),
-                      SizedBox(height: 4.h),
-                      hasFile
-                          ? Text(
-                              controller.getFileName(fileRx),
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 11.sp,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          : CustomTextgray(
-                              text: "PDF, JPG, PNG",
-                              fontSize: 11.sp,
-                            ),
+                      if (hasFile)
+                        Text(
+                          controller.getFileName(fileRx),
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 11.sp,
+                          ),
+                        ),
                     ],
                   ),
                 ),
                 IconButton(
                   onPressed: () => controller.pickFromCamera(fileRx),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.camera_alt_outlined,
                     color: Colors.white,
-                    size: 20.sp,
                   ),
                 ),
                 IconButton(
                   onPressed: () => controller.pickFromFile(fileRx),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.file_upload_outlined,
                     color: Colors.white,
-                    size: 20.sp,
                   ),
                 ),
               ],
             ),
           ),
-          if (showError)
+          if (controller.showErrors.value && isRequired && !hasFile)
             Padding(
-              padding: EdgeInsets.only(left: 4.w, top: 6.h),
+              padding: EdgeInsets.only(top: 4.h),
               child: Text(
                 "Please upload $title",
                 style: TextStyle(color: Colors.red, fontSize: 12.sp),
@@ -551,38 +475,47 @@ class Vehicleinformation extends StatelessWidget {
   Widget _buildPhotoSection({
     required String title,
     required Rx<File?> fileRx,
+    bool isRequired = false,
   }) {
     return Obx(() {
       final hasFile = fileRx.value != null;
-      final showError = showErrors.value && !hasFile;
-
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CustomContainer(
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: AppColors.black200),
+            ),
             child: Row(
               children: [
-                _buildDocumentIconPhoto(),
+                _buildIcon(Icons.image_outlined),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomText(
-                        text: title,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
+                      Row(
+                        children: [
+                          CustomText(
+                            text: title,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13.sp,
+                          ),
+                          if (isRequired)
+                            const Text(
+                              " *",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                        ],
                       ),
                       if (hasFile)
-                        Padding(
-                          padding: EdgeInsets.only(top: 4.h),
-                          child: Text(
-                            controller.getFileName(fileRx),
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 11.sp,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                        Text(
+                          controller.getFileName(fileRx),
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 11.sp,
                           ),
                         ),
                     ],
@@ -590,26 +523,24 @@ class Vehicleinformation extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () => controller.pickFromCamera(fileRx),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.camera_alt_outlined,
                     color: Colors.white,
-                    size: 20.sp,
                   ),
                 ),
                 IconButton(
                   onPressed: () => controller.pickFromFile(fileRx),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.file_upload_outlined,
                     color: Colors.white,
-                    size: 20.sp,
                   ),
                 ),
               ],
             ),
           ),
-          if (showError)
+          if (controller.showErrors.value && isRequired && !hasFile)
             Padding(
-              padding: EdgeInsets.only(left: 4.w, top: 6.h),
+              padding: EdgeInsets.only(top: 4.h),
               child: Text(
                 "Please upload $title",
                 style: TextStyle(color: Colors.red, fontSize: 12.sp),
@@ -620,149 +551,42 @@ class Vehicleinformation extends StatelessWidget {
     });
   }
 
-  Widget _buildExpireDateField({
-    required BuildContext context,
-    required TextEditingController textController,
-    required String hintText,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: textController,
-      readOnly: true,
-      onTap: () => controller.selectDate(context, textController),
-      validator: validator,
-      style: TextStyle(color: Colors.white, fontSize: 14.sp),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
-        suffixIcon: Icon(
-          Icons.calendar_today_outlined,
-          color: Colors.white,
-          size: 18.sp,
-        ),
-        filled: true,
-        fillColor: Colors.transparent,
-        contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: AppColors.black200),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: AppColors.black200),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: AppColors.black200),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDocumentIcon() {
+  Widget _buildIcon(IconData icon) {
     return Container(
-      width: 40.r,
-      height: 40.r,
+      padding: EdgeInsets.all(8.r),
       decoration: BoxDecoration(
-        color: Color(0xFF1E2939),
+        color: const Color(0xFF1E2939),
         borderRadius: BorderRadius.circular(8.r),
       ),
-      child: Icon(Icons.description_outlined, color: Colors.white, size: 20.sp),
+      child: Icon(icon, color: Colors.white, size: 20.sp),
     );
   }
 
-  Widget _buildDocumentIconPhoto() {
-    return Container(
-      width: 40.r,
-      height: 40.r,
-      decoration: BoxDecoration(
-        color: Color(0xFF1E2939),
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Icon(Icons.image_outlined, color: Colors.white, size: 20.sp),
-    );
-  }
-
-  Widget _buildVehicleTypeChip(VehicleModel model, String vehicleType) {
+  Widget _buildVehicleTypeChip(VehicleModel model, String type) {
     return Obx(() {
-      bool isSelected = model.selectedVehicleType.value == vehicleType;
+      bool isSelected = model.selectedVehicleType.value == type;
       return GestureDetector(
-        onTap: () {
-          model.selectedVehicleType.value = vehicleType;
-        },
+        onTap: () => model.selectedVehicleType.value = type,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 15.w),
+          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
           decoration: BoxDecoration(
-            color: isSelected ? Color(0xFF181F26) : Colors.transparent,
+            color: isSelected ? const Color(0xFF181F26) : Colors.transparent,
             borderRadius: BorderRadius.circular(30.r),
-            border: Border.all(color: Color(0xFF364153)),
+            border: Border.all(color: const Color(0xFF364153)),
           ),
           child: CustomTextgray(
-            text: vehicleType,
+            text: type,
             color: Colors.white,
-            fontSize: 14.sp,
+            fontSize: 13.sp,
           ),
         ),
       );
     });
   }
-
-  Widget _CustomContainer({required Widget child}) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.black200),
-      ),
-      child: child,
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(bottom: 16.h),
-      child: TextFormField(
-        controller: controller,
-        validator: validator,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
-          contentPadding: EdgeInsets.symmetric(
-            vertical: 12.h,
-            horizontal: 12.w,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: AppColors.black200),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: AppColors.black200),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: AppColors.black200),
-          ),
-        ),
-        style: TextStyle(color: Colors.white, fontSize: 14.sp),
-      ),
-    );
-  }
 }
 
-/// Custom "Add Another Vehicle" Button
 class CustomAddButton extends StatelessWidget {
   final VoidCallback onPressed;
-
   const CustomAddButton({super.key, required this.onPressed});
 
   @override
@@ -770,23 +594,21 @@ class CustomAddButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        alignment: Alignment.center,
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 25.w),
+        padding: EdgeInsets.symmetric(vertical: 16.h),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.white, width: 1),
+          border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(16.r),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add, color: Color(0xFFFAC0C0), size: 20.r),
-            SizedBox(width: 10.w),
-            Text(
+            const Icon(Icons.add, color: Color(0xFFFAC0C0), size: 20),
+            SizedBox(width: 8.w),
+            const Text(
               'Add Another Vehicle',
               style: TextStyle(
                 color: Color(0xFFFAC0C0),
-                fontSize: 16.sp,
+                fontSize: 15,
                 fontWeight: FontWeight.w500,
               ),
             ),

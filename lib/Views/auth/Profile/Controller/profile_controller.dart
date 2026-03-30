@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
@@ -61,10 +62,14 @@ class ProfileController extends GetxController {
       var response = await _profileService.getLegals();
       if (response.statusCode == 200) {
         var dataList = response.data['data'] as List;
-        legalPages.value = dataList.map((item) => {
-          'slug': item['slug'].toString(),
-          'title': item['title'].toString(),
-        }).toList();
+        legalPages.value = dataList
+            .map(
+              (item) => {
+                'slug': item['slug'].toString(),
+                'title': item['title'].toString(),
+              },
+            )
+            .toList();
       }
     } catch (e) {
       debugPrint("Error fetching legal pages: $e");
@@ -103,7 +108,7 @@ class ProfileController extends GetxController {
         email.value = userProfile.value?.email ?? "";
         phone.value = userProfile.value?.phone ?? "";
         serviceArea.value = userProfile.value?.serviceArea ?? "";
-        nickName.value = userProfile.value?.name ?? "";
+        nickName.value = userProfile.value?.nickname ?? "";
         profilePicture.value = userProfile.value?.profilePicture ?? "";
         rating.value = userProfile.value?.averageRating ?? 0.0;
 
@@ -169,13 +174,46 @@ class ProfileController extends GetxController {
     }
   }
 
+  Future<void> deleteVehicle(String vehicleId) async {
+    isUpdating.value = true;
+    try {
+      final vehicles = userProfile.value?.vehicles ?? [];
+      final updatedVehicles = vehicles
+          .where((v) => v.id != vehicleId)
+          .map((v) => v.toJson())
+          .toList();
+
+      final formData = dio.FormData();
+      formData.fields.add(MapEntry("vehicles", json.encode(updatedVehicles)));
+
+      var response = await _profileService.patchProfile(formData);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Helpers.showCustomSnackBar(
+          "Vehicle deleted successfully",
+          isError: false,
+        );
+        fetchUserProfile();
+      } else {
+        Helpers.showCustomSnackBar(
+          response.data['message'] ?? "Failed to delete vehicle",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error deleting vehicle: $e");
+      Helpers.showCustomSnackBar("Something went wrong", isError: true);
+    } finally {
+      isUpdating.value = false;
+    }
+  }
+
   Future<void> saveProfile() async {
     isUpdating.value = true;
     try {
       Map<String, dynamic> body = {
         "name": nameController.text,
         "phone": phoneController.text,
-        "nickName": nickNameController.text, // If backend supports it
+        "nickname": nickNameController.text, // Sent explicitly as "nickname"
       };
 
       dynamic requestBody;
@@ -201,7 +239,7 @@ class ProfileController extends GetxController {
         email.value = userProfile.value?.email ?? "";
         phone.value = userProfile.value?.phone ?? "";
         serviceArea.value = userProfile.value?.serviceArea ?? "";
-        nickName.value = userProfile.value?.name ?? ""; // Local fallback
+        nickName.value = userProfile.value?.nickname ?? "";
         profilePicture.value = userProfile.value?.profilePicture ?? "";
         rating.value = userProfile.value?.averageRating ?? 0.0;
 

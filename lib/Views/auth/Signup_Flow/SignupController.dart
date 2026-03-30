@@ -1,123 +1,217 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Services/auth_service.dart';
+import 'package:moeb_26/Views/Service_Area/Controller/serviceController.dart';
 import 'package:moeb_26/Views/auth/Vehicle/Model/VehicleModel.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 class SignupController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
+  final ImagePicker _imagePicker = ImagePicker();
+
+  final ServiceAreaController _serviceAreaController =
+      Get.isRegistered<ServiceAreaController>()
+      ? Get.find<ServiceAreaController>()
+      : Get.put(ServiceAreaController());
 
   var isLoading = false.obs;
+  var showErrors = false.obs;
 
-  // ============ Step 1: Account Info ============
-  String name = '';
-  String email = '';
-  String password = '';
-  String phone = '';
-  String home = '';
-  String serviceArea = '';
-  int experience = 0;
-  String company = '';
-  String companyRole = '';
+  // ===========================================================================
+  // STEP 1: ACCOUNT INFORMATION
+  // ===========================================================================
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final emailController = TextEditingController();
+  final homeAddressController = TextEditingController();
+  final yearController = TextEditingController();
+  final companyNameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  // ============ Step 2: Vehicles ============
-  List<VehicleModel> vehiclesList = [];
+  var showPassword = false.obs;
+  var showConfirmPassword = false.obs;
+  var selectedRole = ''.obs;
+  var selectedArea = ''.obs;
 
-  // ============ Step 3: Documents ============
-  File? profilePictureFile;
-  File? headshotFile;
+  final roles = ['Company manager', 'Owner operator', 'Driver'];
 
-  File? drivingLicenseFile;
-  String drivingLicenseExpiry = '';
+  // Service Area Data
+  List<String> get cities => _serviceAreaController.serviceAreas
+      .map((e) => e.areaName)
+      .toSet()
+      .toList();
+  bool get isCitiesLoading => _serviceAreaController.isLoading.value;
+  bool get isMoreCitiesLoading => _serviceAreaController.isMoreLoading.value;
+  bool get hasNextCitiesPage =>
+      _serviceAreaController.currentPage.value <
+      _serviceAreaController.totalPages.value;
 
-  File? hackLicenseFile;
-  String hackLicenseExpiry = '';
+  void togglePassword() => showPassword.value = !showPassword.value;
+  void toggleConfirmPassword() =>
+      showConfirmPassword.value = !showConfirmPassword.value;
 
-  File? localPermitFile;
-  String? localPermitExpiry;
+  void pickRole(String role) => selectedRole.value = role;
+  void pickArea(String area) => selectedArea.value = area;
 
-  // ============ Save Step 1 ============
-  void saveAccountInfo({
-    required String name,
-    required String email,
-    required String password,
-    required String phone,
-    required String home,
-    required String serviceArea,
-    required int experience,
-    required String company,
-    required String companyRole,
-  }) {
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.phone = phone;
-    this.home = home;
-    this.serviceArea = serviceArea;
-    this.experience = experience;
-    this.company = company;
-    this.companyRole = companyRole;
+  void fetchServiceAreas() => _serviceAreaController.fetchServiceAreas();
+  void loadMoreCities() => _serviceAreaController.loadMoreServiceAreas();
+
+  // ===========================================================================
+  // STEP 2: VEHICLE INFORMATION
+  // ===========================================================================
+  final RxList<VehicleModel> vehiclesList = <VehicleModel>[VehicleModel()].obs;
+
+  void addVehicle() => vehiclesList.add(VehicleModel());
+  void removeVehicle(int index) {
+    if (vehiclesList.length > 1) {
+      vehiclesList[index].dispose();
+      vehiclesList.removeAt(index);
+    }
   }
 
-  // ============ Save Step 2 ============
-  void saveVehicles(List<VehicleModel> vehicles) {
-    this.vehiclesList = vehicles;
+  // ===========================================================================
+  // STEP 3: DOCUMENTS UPLOAD
+  // ===========================================================================
+  final Rx<File?> licensePlateFile = Rx<File?>(null);
+  final Rx<File?> hackLicenseFile = Rx<File?>(null);
+  final Rx<File?> localPermitFile = Rx<File?>(null);
+  final Rx<File?> headshotFile = Rx<File?>(null);
+  final Rx<File?> profilePictureFile = Rx<File?>(null);
+
+  final licensePlateExpireController = TextEditingController();
+  final hackLicenseExpireController = TextEditingController();
+  final localPermitExpireController = TextEditingController();
+
+  // ===========================================================================
+  // STEP 4: TERMS & POLICY
+  // ===========================================================================
+  final RxList<bool> termChecks = List.generate(63, (_) => false).obs;
+  final RxBool showTermError = false.obs;
+
+  void toggleTermCheck(int index) {
+    termChecks[index] = !termChecks[index];
+    if (allTermsChecked) showTermError.value = false;
   }
 
-  // ============ Save Step 3 ============
-  void saveDocuments({
-    required File drivingLicense,
-    required String drivingLicenseExpiry,
-    required File hackLicense,
-    required String hackLicenseExpiry,
-    File? localPermit,
-    String? localPermitExpiry,
-    required File headshot,
-    File? profilePicture,
-  }) {
-    drivingLicenseFile = drivingLicense;
-    this.drivingLicenseExpiry = drivingLicenseExpiry;
-    hackLicenseFile = hackLicense;
-    this.hackLicenseExpiry = hackLicenseExpiry;
-    localPermitFile = localPermit;
-    this.localPermitExpiry = localPermitExpiry;
-    headshotFile = headshot;
-    profilePictureFile = profilePicture;
+  bool get allTermsChecked => termChecks.every((e) => e);
+
+  // ===========================================================================
+  // HELPER METHODS (MEDIA & DATE)
+  // ===========================================================================
+
+  Future<void> selectDate(
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.dark(
+            primary: Color(0xFF14F195),
+            onPrimary: Colors.black,
+            surface: Color(0xFF1E2939),
+            onSurface: Colors.white,
+          ),
+          dialogBackgroundColor: const Color(0xFF1E2939),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) {
+      controller.text = DateFormat('d MMMM y').format(picked);
+    }
   }
 
-  // ============ Final Submit — POST /user ============
+  Future<void> pickFromCamera(Rx<File?> target) async {
+    final XFile? image = await _imagePicker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+    if (image != null) target.value = File(image.path);
+  }
+
+  Future<void> pickFromFile(Rx<File?> target) async {
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+    if (result != null && result.files.single.path != null) {
+      target.value = File(result.files.single.path!);
+    }
+  }
+
+  String getFileName(Rx<File?> file) {
+    if (file.value == null) return '';
+    return file.value!.path.split(Platform.pathSeparator).last;
+  }
+
+  // ===========================================================================
+  // FINAL SUBMIT — POST /user
+  // ===========================================================================
   Future<void> submitAll() async {
+    if (!allTermsChecked) {
+      showTermError.value = true;
+      Helpers.showCustomSnackBar(
+        'Please agree to all terms before continuing',
+        isError: true,
+      );
+      return;
+    }
+
     try {
       isLoading.value = true;
 
+      // Map role to backend expected format
+      String roleToSubmit = selectedRole.value;
+      if (roleToSubmit == 'Company manager') {
+        roleToSubmit = 'MANAGER';
+        // ignore: curly_braces_in_flow_control_structures
+      } else if (roleToSubmit == 'Owner operator')
+        // ignore: curly_braces_in_flow_control_structures
+        roleToSubmit = 'OWNER';
+      // ignore: curly_braces_in_flow_control_structures
+      else if (roleToSubmit == 'Driver')
+        // ignore: curly_braces_in_flow_control_structures
+        roleToSubmit = 'DRIVER';
+
       final response = await _authService.signup(
-        name: name,
-        email: email,
-        password: password,
-        phone: phone,
-        home: home,
-        serviceArea: serviceArea,
-        experience: experience,
-        company: company,
-        companyRole: companyRole,
-        vehicles: vehiclesList, // Passing the list of models
-        drivingLicenseFile: drivingLicenseFile!,
-        drivingLicenseExpiry: drivingLicenseExpiry,
-        hackLicenseFile: hackLicenseFile!,
-        hackLicenseExpiry: hackLicenseExpiry,
-        localPermitFile: localPermitFile,
-        localPermitExpiry: localPermitExpiry,
-        headshotFile: headshotFile!,
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        phone: phoneController.text,
+        home: homeAddressController.text,
+        serviceArea: selectedArea.value,
+        experience: int.tryParse(yearController.text) ?? 0,
+        company: companyNameController.text,
+        companyRole: roleToSubmit,
+        vehicles: vehiclesList.toList(),
+        drivingLicenseFile: licensePlateFile.value!,
+        drivingLicenseExpiry: licensePlateExpireController.text,
+        hackLicenseFile: hackLicenseFile.value!,
+        hackLicenseExpiry: hackLicenseExpireController.text,
+        localPermitFile: localPermitFile.value,
+        localPermitExpiry: localPermitExpireController.text.isEmpty
+            ? null
+            : localPermitExpireController.text,
+        headshotFile: headshotFile.value!,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar('Registration successful', isError: false);
         Get.toNamed(
           Routes.otpVerificationScreen,
-          arguments: {'email': email, 'isRegister': true},
+          arguments: {'email': emailController.text, 'isRegister': true},
         );
       } else {
         final message = response.data is Map
@@ -133,5 +227,24 @@ class SignupController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
+    homeAddressController.dispose();
+    yearController.dispose();
+    companyNameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    licensePlateExpireController.dispose();
+    hackLicenseExpireController.dispose();
+    localPermitExpireController.dispose();
+    for (var v in vehiclesList) {
+      v.dispose();
+    }
+    super.onClose();
   }
 }

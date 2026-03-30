@@ -2,134 +2,111 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
 import '../../../widgets/CustomButton.dart';
 import '../../../widgets/CustomText.dart';
 import '../../../widgets/CustomTextGary.dart';
-import '../Signup_Flow/SignupController.dart';
+import 'Controller/PersonalDocumentController.dart';
 
-class Documentsupload extends StatelessWidget {
-  Documentsupload({super.key});
+class PersonalDocument extends StatelessWidget {
+  PersonalDocument({super.key});
 
-  final controller = Get.find<SignupController>();
-  final _formKey = GlobalKey<FormState>();
+  final controller = Get.put(PersonalDocumentController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 50.w),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 22,
-                  ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 50.w),
+              IconButton(
+                onPressed: () => Get.back(),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 22,
                 ),
-                SizedBox(height: 50.w),
-                CustomText(text: "Documents Upload", fontSize: 20.sp),
-                SizedBox(height: 7.h),
-                CustomTextgray(
-                  text: "Upload required documents for verification",
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w400,
-                ),
-                SizedBox(height: 30.h),
+              ),
+              SizedBox(height: 20.w),
+              CustomText(text: "Personal Documents", fontSize: 20.sp),
+              SizedBox(height: 7.h),
+              CustomTextgray(
+                text: "Update or replace your professional documents.",
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w400,
+              ),
+              SizedBox(height: 30.h),
 
-                _buildDocumentSection(
-                  title: "Driving License",
-                  isRequired: true,
-                  fileRx: controller.licensePlateFile,
-                ),
-                SizedBox(height: 16.h),
-                _buildFieldLabel("Expire Date"),
-                _buildExpireDateField(
-                  context,
-                  controller.licensePlateExpireController,
-                ),
+              _buildDocumentSection(
+                title: "Driving License",
+                fileRx: controller.drivingLicenseFile,
+              ),
+              SizedBox(height: 16.h),
+              _buildFieldLabel("Expire Date"),
+              _buildExpireDateField(
+                context,
+                controller.drivingLicenseExpireController,
+              ),
 
-                SizedBox(height: 24.h),
-                _buildDocumentSection(
-                  title: "Hack License",
-                  isRequired: true,
-                  fileRx: controller.hackLicenseFile,
-                ),
-                SizedBox(height: 16.h),
-                _buildFieldLabel("Expire Date"),
-                _buildExpireDateField(
-                  context,
-                  controller.hackLicenseExpireController,
-                ),
+              SizedBox(height: 24.h),
+              _buildDocumentSection(
+                title: "Hack License",
+                fileRx: controller.hackLicenseFile,
+              ),
+              SizedBox(height: 16.h),
+              _buildFieldLabel("Expire Date"),
+              _buildExpireDateField(
+                context,
+                controller.hackLicenseExpireController,
+              ),
 
-                SizedBox(height: 24.h),
-                _buildDocumentSection(
-                  title: "Local Permit",
-                  isRequired: true,
-                  fileRx: controller.localPermitFile,
-                ),
-                SizedBox(height: 16.h),
-                _buildFieldLabel("Expire Date"),
-                _buildExpireDateField(
-                  context,
-                  controller.localPermitExpireController,
-                  isRequired: true,
-                ),
+              SizedBox(height: 24.h),
+              _buildDocumentSection(
+                title: "Local Permit",
+                fileRx: controller.localPermitFile,
+              ),
+              SizedBox(height: 16.h),
+              _buildFieldLabel("Expire Date"),
+              _buildExpireDateField(
+                context,
+                controller.localPermitExpireController,
+              ),
 
-                SizedBox(height: 24.h),
-                _buildDocumentSection(
-                  title: "Profile Picture",
-                  isRequired: true,
-                  fileRx: controller.profilePictureFile,
-                ),
+              SizedBox(height: 24.h),
+              _buildHeadshotSection(),
 
-                SizedBox(height: 24.h),
-                _buildHeadshotSection(),
-
-                SizedBox(height: 30.h),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(18.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E2939),
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: const CustomTextgray(
-                    text:
-                        "All documents will be reviewed by our admin team. This process typically takes 24-48 hours. You'll be notified via email once approved.",
-                  ),
+              SizedBox(height: 30.h),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(18.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E2939),
+                  borderRadius: BorderRadius.circular(16.r),
                 ),
-                SizedBox(height: 40.h),
-
-                CustomButton(
-                  text: "Submit Application",
-                  onPressed: () {
-                    controller.showErrors.value = true;
-                    if (_formKey.currentState!.validate()) {
-                      bool docsValid =
-                          controller.licensePlateFile.value != null &&
-                          controller.hackLicenseFile.value != null &&
-                          controller.localPermitFile.value != null &&
-                          controller.profilePictureFile.value != null &&
-                          controller.headshotFile.value != null;
-                      if (docsValid) {
-                        Get.toNamed(Routes.privacyPolicySignUp);
-                      }
-                    }
-                  },
+                child: const CustomTextgray(
+                  text:
+                      "Updates to your documents may take up to 24-48 hours to be reviewed and approved by our admin team.",
                 ),
-                SizedBox(height: 60.h),
-              ],
-            ),
+              ),
+              SizedBox(height: 40.h),
+
+              Obx(
+                () => controller.isLoading.value
+                    ? const Center(child: CircularProgressIndicator())
+                    : CustomButton(
+                        text: "Update Documents",
+                        onPressed: () {
+                          controller.submitDocuments();
+                        },
+                      ),
+              ),
+              SizedBox(height: 60.h),
+            ],
           ),
         ),
       ),
@@ -151,7 +128,6 @@ class Documentsupload extends StatelessWidget {
 
   Widget _buildDocumentSection({
     required String title,
-    required bool isRequired,
     required Rx<File?> fileRx,
   }) {
     return Obx(() {
@@ -180,11 +156,6 @@ class Documentsupload extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                             fontSize: 13.sp,
                           ),
-                          if (isRequired)
-                            const Text(
-                              " *",
-                              style: TextStyle(color: Colors.red),
-                            ),
                         ],
                       ),
                       if (hasFile)
@@ -215,14 +186,6 @@ class Documentsupload extends StatelessWidget {
               ],
             ),
           ),
-          if (controller.showErrors.value && isRequired && !hasFile)
-            Padding(
-              padding: EdgeInsets.only(top: 4.h),
-              child: Text(
-                "Please upload $title",
-                style: TextStyle(color: Colors.red, fontSize: 12.sp),
-              ),
-            ),
         ],
       );
     });
@@ -255,7 +218,6 @@ class Documentsupload extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                             fontSize: 13.sp,
                           ),
-                          Text(" *", style: TextStyle(color: Colors.red)),
                         ],
                       ),
                       if (hasFile)
@@ -293,14 +255,6 @@ class Documentsupload extends StatelessWidget {
               ],
             ),
           ),
-          if (controller.showErrors.value && !hasFile)
-            Padding(
-              padding: EdgeInsets.only(top: 4.h),
-              child: Text(
-                "Please upload Headshot",
-                style: TextStyle(color: Colors.red, fontSize: 12.sp),
-              ),
-            ),
         ],
       );
     });
@@ -319,19 +273,15 @@ class Documentsupload extends StatelessWidget {
 
   Widget _buildExpireDateField(
     BuildContext context,
-    TextEditingController textController, {
-    bool isRequired = true,
-  }) {
+    TextEditingController textController,
+  ) {
     return TextFormField(
       controller: textController,
       readOnly: true,
       onTap: () => controller.selectDate(context, textController),
       style: TextStyle(color: Colors.white, fontSize: 14.sp),
-      validator: isRequired
-          ? (v) => (v == null || v.isEmpty) ? "Date required" : null
-          : null,
       decoration: InputDecoration(
-        hintText: "Select Expiry Date",
+        hintText: "Select New Expiry Date",
         hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
         suffixIcon: Icon(
           Icons.calendar_month,
