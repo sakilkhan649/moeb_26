@@ -332,7 +332,7 @@ class ProfileScreen extends StatelessWidget {
                               break;
                             case 1:
                               Get.toNamed(
-                                Routes.vehicleinformation,
+                                Routes.allVehicle,
                                 arguments: {
                                   "vehicles": controller.userProfile.value?.vehicles,
                                 },
@@ -421,75 +421,97 @@ class ProfileScreen extends StatelessWidget {
                     return Column(
                       children: vehicles.map((vehicle) {
                         final vehicleStyle = VehicleTypeColors.getVehicleStyle(vehicle.carType);
+                        final isSelected = controller.userProfile.value?.selectedVehicle == vehicle.id;
                         
                         return Padding(
                           padding: EdgeInsets.only(bottom: 12.h),
-                          child: Container(
-                            padding: EdgeInsets.all(16.w),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1A1A1A),
-                              borderRadius: BorderRadius.circular(16.r),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.1),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (!isSelected) {
+                                controller.updateSelectedVehicle(vehicle.id);
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(16.w),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1A1A1A),
+                                borderRadius: BorderRadius.circular(16.r),
+                                border: Border.all(
+                                  color: isSelected 
+                                      ? Colors.green.withOpacity(0.5) 
+                                      : Colors.white.withOpacity(0.1),
+                                  width: isSelected ? 1.5.w : 1.w,
+                                ),
                               ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(8.w),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(8.r),
-                                  ),
-                                  child: Icon(
-                                    Icons.directions_car,
-                                    color: Colors.grey,
-                                    size: 24.sp,
-                                  ),
-                                ),
-                                SizedBox(width: 16.w),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "${vehicle.year} ${vehicle.make} ${vehicle.model}",
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        "${vehicle.carType} • ${vehicle.licensePlate}",
-                                        style: GoogleFonts.inter(
-                                          color: Colors.grey,
-                                          fontSize: 12.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                    vertical: 6.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: vehicleStyle is Color ? vehicleStyle : null,
-                                    gradient: vehicleStyle is Gradient ? vehicleStyle : null,
-                                    borderRadius: BorderRadius.circular(4.r),
-                                  ),
-                                  child: Text(
-                                    vehicle.carType.toUpperCase(),
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.bold,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(8.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Icon(
+                                      Icons.directions_car,
+                                      color: isSelected ? Colors.green : Colors.grey,
+                                      size: 24.sp,
                                     ),
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 16.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${vehicle.year} ${vehicle.make} ${vehicle.model}",
+                                          style: GoogleFonts.inter(
+                                            color: Colors.white,
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          "${vehicle.carType} • ${vehicle.licensePlate}",
+                                          style: GoogleFonts.inter(
+                                            color: Colors.grey,
+                                            fontSize: 12.sp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (isSelected)
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 12.w),
+                                      child: Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                        size: 20.sp,
+                                      ),
+                                    ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                      vertical: 6.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: vehicleStyle is Color ? vehicleStyle : null,
+                                      gradient: vehicleStyle is Gradient ? vehicleStyle : null,
+                                      borderRadius: BorderRadius.circular(4.r),
+                                    ),
+                                    child: Text(
+                                      vehicle.carType.toUpperCase(),
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );

@@ -25,7 +25,7 @@ class TermPolicyController extends GetxController {
 
   // Validate — if all checked, trigger the final API call
   void validate() {
-    if (!allChecked) {
+    if (allChecked) {
       showError.value = true;
       return;
     }

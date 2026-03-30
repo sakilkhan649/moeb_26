@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -49,6 +48,7 @@ class DocumentsUploadController extends GetxController {
   final Rx<File?> hackLicenseFile = Rx<File?>(null);
   final Rx<File?> localPermitFile = Rx<File?>(null);
   final Rx<File?> headshotFile = Rx<File?>(null);
+  final Rx<File?> profilePictureFile = Rx<File?>(null);
 
   // ========== Expire date controllers ==========
   final licensePlateExpireController = TextEditingController();
@@ -105,6 +105,7 @@ class DocumentsUploadController extends GetxController {
             ? null
             : localPermitExpireController.text,
         headshot: headshotFile.value!,
+        profilePicture: profilePictureFile.value,
       );
 
       // Navigate to PrivacyPolicySignUp (no API call here)

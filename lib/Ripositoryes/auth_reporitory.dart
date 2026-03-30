@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:moeb_26/Views/auth/Vehicle/Model/VehicleModel.dart';
 import '../Config/api_constants.dart';
 import '../Services/api_client.dart';
 
@@ -38,21 +39,14 @@ class AuthRepo {
     required int experience,
     required String company,
     required String companyRole,
-    required List<Map<String, dynamic>> vehicles,
+    required List<VehicleModel> vehicles,
     required File drivingLicenseFile,
     required String drivingLicenseExpiry,
     required File hackLicenseFile,
     required String hackLicenseExpiry,
     File? localPermitFile,
     String? localPermitExpiry,
-    required File commercialInsuranceFile,
-    required String commercialInsuranceExpiry,
-    required File vehicleRegistrationFile,
-    required String vehicleRegistrationExpiry,
     required File headshotFile,
-    required File vehiclePhotoFront,
-    required File vehiclePhotoRear,
-    required File vehiclePhotoInterior,
   }) async {
     final formData = FormData();
 
@@ -67,33 +61,67 @@ class AuthRepo {
       MapEntry('experience', experience.toString()),
       MapEntry('company', company),
       MapEntry('companyRole', companyRole),
-      MapEntry('vehicles', jsonEncode(vehicles)),
-      MapEntry('drivingLicense[expiryDate]', drivingLicenseExpiry),
-      MapEntry('hackLicense[expiryDate]', hackLicenseExpiry),
-      MapEntry('commercialInsurance[expiryDate]', commercialInsuranceExpiry),
-      MapEntry('vehicleRegistration[expiryDate]', vehicleRegistrationExpiry),
+      MapEntry('drivingLicenseExpiryDate', drivingLicenseExpiry),
+      MapEntry('hackLicenseExpiryDate', hackLicenseExpiry),
     ]);
 
     if (localPermitExpiry != null) {
-      formData.fields.add(MapEntry('localPermit[expiryDate]', localPermitExpiry));
+      formData.fields.add(MapEntry('localPermitExpiryDate', localPermitExpiry));
     }
 
-    // File fields
+    // Vehicle JSON string
+    final vehicleJsonList = vehicles.map((v) => v.toJson()).toList();
+    formData.fields.add(MapEntry('vehicles', jsonEncode(vehicleJsonList)));
+
+    // User-level files
     formData.files.addAll([
       MapEntry('drivingLicenseImage', await MultipartFile.fromFile(drivingLicenseFile.path)),
       MapEntry('hackLicenseImage', await MultipartFile.fromFile(hackLicenseFile.path)),
-      MapEntry('commercialInsuranceImage', await MultipartFile.fromFile(commercialInsuranceFile.path)),
-      MapEntry('vehicleRegistrationImage', await MultipartFile.fromFile(vehicleRegistrationFile.path)),
       MapEntry('uploadedHeadshot', await MultipartFile.fromFile(headshotFile.path)),
-      MapEntry('vehiclePhotoFront', await MultipartFile.fromFile(vehiclePhotoFront.path)),
-      MapEntry('vehiclePhotoRear', await MultipartFile.fromFile(vehiclePhotoRear.path)),
-      MapEntry('vehiclePhotoInterior', await MultipartFile.fromFile(vehiclePhotoInterior.path)),
     ]);
 
     if (localPermitFile != null) {
       formData.files.add(
         MapEntry('localPermitImage', await MultipartFile.fromFile(localPermitFile.path)),
       );
+    }
+
+
+
+    // Vehicle-specific files (Sending with flat keys as expected by backend)
+    for (int i = 0; i < vehicles.length; i++) {
+      final v = vehicles[i];
+
+      if (v.vehicleRegistrationFile.value != null) {
+        formData.files.add(MapEntry(
+          'vehicleRegistrationImage',
+          await MultipartFile.fromFile(v.vehicleRegistrationFile.value!.path),
+        ));
+      }
+      if (v.commercialInsuranceFile.value != null) {
+        formData.files.add(MapEntry(
+          'commercialInsuranceImage',
+          await MultipartFile.fromFile(v.commercialInsuranceFile.value!.path),
+        ));
+      }
+      if (v.frontViewFile.value != null) {
+        formData.files.add(MapEntry(
+          'vehiclePhotoFront',
+          await MultipartFile.fromFile(v.frontViewFile.value!.path),
+        ));
+      }
+      if (v.rearViewFile.value != null) {
+        formData.files.add(MapEntry(
+          'vehiclePhotoRear',
+          await MultipartFile.fromFile(v.rearViewFile.value!.path),
+        ));
+      }
+      if (v.interiorViewFile.value != null) {
+        formData.files.add(MapEntry(
+          'vehiclePhotoInterior',
+          await MultipartFile.fromFile(v.interiorViewFile.value!.path),
+        ));
+      }
     }
 
     return await apiClient.postData(ApiConstants.signup, formData);

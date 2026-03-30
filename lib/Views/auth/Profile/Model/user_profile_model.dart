@@ -17,6 +17,7 @@ class UserProfileModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   final double averageRating;
+  final String? selectedVehicle;
 
   UserProfileModel({
     required this.id,
@@ -37,6 +38,7 @@ class UserProfileModel {
     required this.createdAt,
     required this.updatedAt,
     this.averageRating = 0.0,
+    this.selectedVehicle,
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -69,6 +71,7 @@ class UserProfileModel {
           ? DateTime.parse(json['updatedAt'])
           : DateTime.now(),
       averageRating: (json['averageRating'] ?? 0.0).toDouble(),
+      selectedVehicle: json['selectedVehicle']?.toString(),
     );
   }
 
@@ -92,6 +95,7 @@ class UserProfileModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'averageRating': averageRating,
+      'selectedVehicle': selectedVehicle,
     };
   }
 }
@@ -105,6 +109,13 @@ class Vehicle {
   final String colorOutside;
   final int year;
   final String licensePlate;
+  final String? vehicleRegistrationImage;
+  final String? vehicleRegistrationExpiryDate;
+  final String? commercialInsuranceImage;
+  final String? commercialInsuranceExpiryDate;
+  final String? vehiclePhotoFront;
+  final String? vehiclePhotoRear;
+  final String? vehiclePhotoInterior;
 
   Vehicle({
     required this.id,
@@ -115,6 +126,13 @@ class Vehicle {
     required this.colorOutside,
     required this.year,
     required this.licensePlate,
+    this.vehicleRegistrationImage,
+    this.vehicleRegistrationExpiryDate,
+    this.commercialInsuranceImage,
+    this.commercialInsuranceExpiryDate,
+    this.vehiclePhotoFront,
+    this.vehiclePhotoRear,
+    this.vehiclePhotoInterior,
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
@@ -127,6 +145,13 @@ class Vehicle {
       colorOutside: json['colorOutside']?.toString() ?? '',
       year: json['year'] is int ? json['year'] : 0,
       licensePlate: json['licensePlate']?.toString() ?? '',
+      vehicleRegistrationImage: json['vehicleRegistrationImage']?.toString(),
+      vehicleRegistrationExpiryDate: json['vehicleRegistrationExpiryDate']?.toString(),
+      commercialInsuranceImage: json['commercialInsuranceImage']?.toString(),
+      commercialInsuranceExpiryDate: json['commercialInsuranceExpiryDate']?.toString(),
+      vehiclePhotoFront: json['vehiclePhotoFront']?.toString(),
+      vehiclePhotoRear: json['vehiclePhotoRear']?.toString(),
+      vehiclePhotoInterior: json['vehiclePhotoInterior']?.toString(),
     );
   }
 
@@ -140,6 +165,13 @@ class Vehicle {
       'colorOutside': colorOutside,
       'year': year,
       'licensePlate': licensePlate,
+      'vehicleRegistrationImage': vehicleRegistrationImage,
+      'vehicleRegistrationExpiryDate': vehicleRegistrationExpiryDate,
+      'commercialInsuranceImage': commercialInsuranceImage,
+      'commercialInsuranceExpiryDate': commercialInsuranceExpiryDate,
+      'vehiclePhotoFront': vehiclePhotoFront,
+      'vehiclePhotoRear': vehiclePhotoRear,
+      'vehiclePhotoInterior': vehiclePhotoInterior,
     };
   }
 }

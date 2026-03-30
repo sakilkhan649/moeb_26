@@ -45,9 +45,11 @@ class VehicleModel {
       "make": makeController.text,
       "model": modelController.text,
       "year": int.tryParse(yearController.text) ?? 0,
-      "colorInside": colorController.text, // 👈 same value
-      "colorOutside": colorController.text, // 👈 same value
+      "colorInside": colorController.text,
+      "colorOutside": colorController.text,
       "licensePlate": licensePlateController.text,
+      "vehicleRegistrationExpiryDate": vehicleRegistrationExpireController.text,
+      "commercialInsuranceExpiryDate": commercialInsuranceExpireController.text,
     };
   }
 

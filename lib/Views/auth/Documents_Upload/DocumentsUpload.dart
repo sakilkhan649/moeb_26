@@ -145,6 +145,14 @@ class Documentsupload extends StatelessWidget {
                 ),
                 SizedBox(height: 16.h),
 
+                /// Profile Picture section
+                _buildDocumentSection(
+                  title: "Profile Picture",
+                  isRequired: false,
+                  fileRx: controller.profilePictureFile,
+                ),
+                SizedBox(height: 16.h),
+
                 /// Second document Upload Headshot
                 _buildHeadshotSection(),
                 SizedBox(height: 20.h),

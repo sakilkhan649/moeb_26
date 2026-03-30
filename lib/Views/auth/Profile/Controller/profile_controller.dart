@@ -138,6 +138,37 @@ class ProfileController extends GetxController {
     }
   }
 
+  Future<void> updateSelectedVehicle(String vehicleId) async {
+    isUpdating.value = true;
+    try {
+      Map<String, dynamic> body = {"selectedVehicle": vehicleId};
+
+      var response = await _profileService.patchProfile(body);
+      if (response.statusCode == 200) {
+        var data = response.data['data'];
+        userProfile.value = UserProfileModel.fromJson(data);
+
+        Helpers.showCustomSnackBar(
+          "Vehicle selected successfully",
+          isError: false,
+        );
+      } else {
+        Helpers.showCustomSnackBar(
+          response.data['message'] ?? "Failed to update selected vehicle",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error updating selected vehicle: $e");
+      Helpers.showCustomSnackBar(
+        "Something went wrong while selecting vehicle",
+        isError: true,
+      );
+    } finally {
+      isUpdating.value = false;
+    }
+  }
+
   Future<void> saveProfile() async {
     isUpdating.value = true;
     try {

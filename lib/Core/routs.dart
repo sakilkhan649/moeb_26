@@ -1,7 +1,9 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
+import 'package:moeb_26/Views/auth/All%20Vehicle/all_vehicle.dart';
 import 'package:moeb_26/Views/auth/Otp_verification/otp_verifications.dart';
 import 'package:moeb_26/Views/auth/Term_and_policy/privacy_policy_sign_up.dart';
+import 'package:moeb_26/Views/auth/Vehicle/AddNewVehicle.dart';
 import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Application_Succes/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved/Application_Not_Approved.dart';
@@ -82,6 +84,8 @@ class Routes {
   static const String myPropucts = "/MyPropucts";
   static const String supportChatDetailPage = "/SupportChatDetailPage";
   static const String privacyPolicySignUp = "/PrivacyPolicySignUp";
+  static const String allVehicle = "/AllVehicle";
+  static const String addNewVehicle = "/AddNewVehicle";
 
   static List<GetPage> routes = [
     GetPage(
@@ -281,6 +285,16 @@ class Routes {
     GetPage(
       name: supportChatDetailPage,
       page: () => SupportChatDetailPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: allVehicle,
+      page: () => AllVehicle(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: addNewVehicle,
+      page: () => AddNewVehicle(),
       transition: Transition.noTransition,
     ),
   ];

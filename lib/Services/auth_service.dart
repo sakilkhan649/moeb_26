@@ -13,6 +13,7 @@ import 'package:moeb_26/Services/socket_service.dart';
 import 'package:moeb_26/Services/storege_service.dart';
 
 import 'package:moeb_26/Services/user_service.dart';
+import 'package:moeb_26/Views/auth/Vehicle/Model/VehicleModel.dart';
 
 import '../Config/storage_constants.dart';
 import '../Core/routs.dart';
@@ -66,21 +67,14 @@ class AuthService extends GetxService {
     required int experience,
     required String company,
     required String companyRole,
-    required List<Map<String, dynamic>> vehicles,
+    required List<VehicleModel> vehicles,
     required File drivingLicenseFile,
     required String drivingLicenseExpiry,
     required File hackLicenseFile,
     required String hackLicenseExpiry,
     File? localPermitFile,
     String? localPermitExpiry,
-    required File commercialInsuranceFile,
-    required String commercialInsuranceExpiry,
-    required File vehicleRegistrationFile,
-    required String vehicleRegistrationExpiry,
     required File headshotFile,
-    required File vehiclePhotoFront,
-    required File vehiclePhotoRear,
-    required File vehiclePhotoInterior,
   }) async {
     try {
       final response = await _authRepo.signup(
@@ -100,14 +94,7 @@ class AuthService extends GetxService {
         hackLicenseExpiry: hackLicenseExpiry,
         localPermitFile: localPermitFile,
         localPermitExpiry: localPermitExpiry,
-        commercialInsuranceFile: commercialInsuranceFile,
-        commercialInsuranceExpiry: commercialInsuranceExpiry,
-        vehicleRegistrationFile: vehicleRegistrationFile,
-        vehicleRegistrationExpiry: vehicleRegistrationExpiry,
         headshotFile: headshotFile,
-        vehiclePhotoFront: vehiclePhotoFront,
-        vehiclePhotoRear: vehiclePhotoRear,
-        vehiclePhotoInterior: vehiclePhotoInterior,
       );
       return response;
     } catch (e) {

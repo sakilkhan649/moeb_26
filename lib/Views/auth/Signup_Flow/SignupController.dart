@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Services/auth_service.dart';
+import 'package:moeb_26/Views/auth/Vehicle/Model/VehicleModel.dart';
 import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 class SignupController extends GetxController {
@@ -22,9 +24,12 @@ class SignupController extends GetxController {
   String companyRole = '';
 
   // ============ Step 2: Vehicles ============
-  List<Map<String, dynamic>> vehicles = [];
+  List<VehicleModel> vehiclesList = [];
 
   // ============ Step 3: Documents ============
+  File? profilePictureFile;
+  File? headshotFile;
+
   File? drivingLicenseFile;
   String drivingLicenseExpiry = '';
 
@@ -33,18 +38,6 @@ class SignupController extends GetxController {
 
   File? localPermitFile;
   String? localPermitExpiry;
-
-  File? commercialInsuranceFile;
-  String commercialInsuranceExpiry = '';
-
-  File? vehicleRegistrationFile;
-  String vehicleRegistrationExpiry = '';
-
-  File? headshotFile;
-
-  File? vehiclePhotoFront;
-  File? vehiclePhotoRear;
-  File? vehiclePhotoInterior;
 
   // ============ Save Step 1 ============
   void saveAccountInfo({
@@ -70,8 +63,8 @@ class SignupController extends GetxController {
   }
 
   // ============ Save Step 2 ============
-  void saveVehicles(List<Map<String, dynamic>> vehicles) {
-    this.vehicles = vehicles;
+  void saveVehicles(List<VehicleModel> vehicles) {
+    this.vehiclesList = vehicles;
   }
 
   // ============ Save Step 3 ============
@@ -83,6 +76,7 @@ class SignupController extends GetxController {
     File? localPermit,
     String? localPermitExpiry,
     required File headshot,
+    File? profilePicture,
   }) {
     drivingLicenseFile = drivingLicense;
     this.drivingLicenseExpiry = drivingLicenseExpiry;
@@ -91,6 +85,7 @@ class SignupController extends GetxController {
     localPermitFile = localPermit;
     this.localPermitExpiry = localPermitExpiry;
     headshotFile = headshot;
+    profilePictureFile = profilePicture;
   }
 
   // ============ Final Submit — POST /user ============
@@ -108,21 +103,14 @@ class SignupController extends GetxController {
         experience: experience,
         company: company,
         companyRole: companyRole,
-        vehicles: vehicles,
+        vehicles: vehiclesList, // Passing the list of models
         drivingLicenseFile: drivingLicenseFile!,
         drivingLicenseExpiry: drivingLicenseExpiry,
         hackLicenseFile: hackLicenseFile!,
         hackLicenseExpiry: hackLicenseExpiry,
         localPermitFile: localPermitFile,
         localPermitExpiry: localPermitExpiry,
-        commercialInsuranceFile: commercialInsuranceFile!,
-        commercialInsuranceExpiry: commercialInsuranceExpiry,
-        vehicleRegistrationFile: vehicleRegistrationFile!,
-        vehicleRegistrationExpiry: vehicleRegistrationExpiry,
         headshotFile: headshotFile!,
-        vehiclePhotoFront: vehiclePhotoFront!,
-        vehiclePhotoRear: vehiclePhotoRear!,
-        vehiclePhotoInterior: vehiclePhotoInterior!,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

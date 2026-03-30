@@ -100,12 +100,8 @@ class VehicleInformationController extends GetxController {
   Future<void> submitVehicles() async {
     isLoading.value = true;
     try {
-      final vehicleData = vehicles.map((v) => v.toJson()).toList();
-
       if (isEditMode.value) {
-        // Build the structure required by the PATCH API
-        // In edit mode, we might need to handle multipart if files are changed
-        // For now, following the existing structure for text data
+        final vehicleData = vehicles.map((v) => v.toJson()).toList();
         Map<String, dynamic> body = {"vehicles": vehicleData};
 
         var response = await _profileService.patchProfile(body);
@@ -131,22 +127,9 @@ class VehicleInformationController extends GetxController {
           );
         }
       } else {
-        // Existing Signup Logic - Associating first vehicle's docs with the signup
-        // If there are multiple vehicles, we take the docs from the first one 
-        // as per current API limitation (or we could update API if needed)
+        // Signup Logic - Saving full models to include files
         final signupCtrl = Get.find<SignupController>();
-        signupCtrl.saveVehicles(vehicleData);
-        
-        if (vehicles.isNotEmpty) {
-          final firstVehicle = vehicles[0];
-          signupCtrl.commercialInsuranceFile = firstVehicle.commercialInsuranceFile.value;
-          signupCtrl.commercialInsuranceExpiry = firstVehicle.commercialInsuranceExpireController.text;
-          signupCtrl.vehicleRegistrationFile = firstVehicle.vehicleRegistrationFile.value;
-          signupCtrl.vehicleRegistrationExpiry = firstVehicle.vehicleRegistrationExpireController.text;
-          signupCtrl.vehiclePhotoFront = firstVehicle.frontViewFile.value;
-          signupCtrl.vehiclePhotoRear = firstVehicle.rearViewFile.value;
-          signupCtrl.vehiclePhotoInterior = firstVehicle.interiorViewFile.value;
-        }
+        signupCtrl.saveVehicles(vehicles.toList());
         
         Get.toNamed(Routes.documentsupload);
       }
