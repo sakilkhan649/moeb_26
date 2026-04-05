@@ -98,7 +98,9 @@ class _JobofferpageState extends State<Jobofferpage> {
 
                         if (controller.jobOffersList.isEmpty) {
                           return SizedBox(
-                            height: constraints.maxHeight * 0.6, // Occupy 60% of screen height to appear centered
+                            height:
+                                constraints.maxHeight *
+                                0.6, // Occupy 60% of screen height to appear centered
                             child: Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -181,9 +183,11 @@ class _JobofferpageState extends State<Jobofferpage> {
                                     pickupLocation: job.pickupLocation,
                                     dropoffLocation: job.dropoffLocation ?? '',
                                     driverName:
-                                        job.createdBy?.name ?? 'Unknown',
+                                        "${job.createdBy!.nickname.length == 0
+                                            ? job.createdBy?.name
+                                            : job.createdBy?.nickname}",
                                     companyName:
-                                        job.createdBy?.name ?? 'Unknown',
+                                        job.createdBy?.companyName ?? 'Unknown',
                                     flightNumberHint: job.flightNumber ?? '',
                                     paymentMethodHint: job.paymentType
                                         .replaceAll('_', ' '),
@@ -477,25 +481,22 @@ class _CustomJobCardState extends State<CustomJobCard> {
           ),
           SizedBox(height: 16.h),
 
-          /// FLIGHT NUMBER
-          CustomTextgray(
-            text: "Flight Number",
-            color: const Color(0xFF737373),
-            fontWeight: FontWeight.w500,
-          ),
-          SizedBox(height: 8.h),
-          CustomTextFieldGold(
-            readOnly: true,
-            controller: widget.flightNumberController,
-            hintText:
-                widget.flightNumberHint.isEmpty ||
-                    widget.flightNumberHint == "N/A"
-                ? "N/A"
-                : widget.flightNumberHint,
-            obscureText: false,
-            textInputType: TextInputType.text,
-          ),
-          SizedBox(height: 10.h),
+          if (widget.flightNumberHint.isNotEmpty && widget.flightNumberHint != "N/A") ...[
+            CustomTextgray(
+              text: "Flight Number",
+              color: const Color(0xFF737373),
+              fontWeight: FontWeight.w500,
+            ),
+            SizedBox(height: 8.h),
+            CustomTextFieldGold(
+              readOnly: true,
+              controller: widget.flightNumberController,
+              hintText: widget.flightNumberHint,
+              obscureText: false,
+              textInputType: TextInputType.text,
+            ),
+            SizedBox(height: 10.h),
+          ],
 
           /// PAYMENT METHOD
           CustomTextgray(

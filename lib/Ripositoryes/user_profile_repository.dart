@@ -26,4 +26,8 @@ class UserProfileRepo {
   Future<Response> getLegalBySlug(String slug) {
     return apiClient.getData(ApiConstants.legalsBySlug.replaceFirst('{{slug}}', slug));
   }
+
+  Future<Response> deleteVehicle(String vehicleId) {
+    return apiClient.deleteData(ApiConstants.deleteVehicle.replaceFirst('{{vehicleId}}', vehicleId));
+  }
 }

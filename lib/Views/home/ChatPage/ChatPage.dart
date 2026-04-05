@@ -35,101 +35,106 @@ class Chatpage extends StatelessWidget {
               children: [
                 SizedBox(height: 4.h),
 
-              // ── Search Bar ──
-              TextFormField(
-                onChanged: (value) => controller.filterChats(value),
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),
-                decoration: InputDecoration(
-                  hintText: 'Search messages...',
-                  hintStyle: GoogleFonts.inter(
-                    color: Colors.grey,
+                // ── Search Bar ──
+                TextFormField(
+                  onChanged: (value) => controller.filterChats(value),
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
                     fontSize: 16.sp,
                   ),
-                  filled: true,
-                  fillColor: const Color(0xff1A1A1A),
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.only(left: 12.w, right: 8.w),
-                    child: Icon(Icons.search, color: Colors.grey, size: 24.sp),
-                  ),
-                  prefixIconConstraints: BoxConstraints(
-                    minWidth: 40.w,
-                    minHeight: 40.h,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 15.h,
-                    horizontal: 16.w,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.r),
-                    borderSide: BorderSide(
-                      color: const Color(0xff242424),
-                      width: 1.w,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.r),
-                    borderSide: BorderSide(
+                  decoration: InputDecoration(
+                    hintText: 'Search messages...',
+                    hintStyle: GoogleFonts.inter(
                       color: Colors.grey,
-                      width: 1.w,
+                      fontSize: 16.sp,
                     ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.r),
-                    borderSide: BorderSide(
-                      color: const Color(0xff242424),
-                      width: 1.w,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.h),
-
-              // ── Chat List ──
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    await controller.fetchChats();
-                    await controller.fetchCommunityRoom();
-                  },
-                  color: Colors.grey,
-                  backgroundColor: const Color(0xff1A1A1A),
-                  child: Obx(() {
-                    if (controller.isLoading.value &&
-                        controller.chats.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    final communityRoom = controller.communityRoom.value;
-
-                    return ListView.separated(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount:
-                          controller.filteredChats.length +
-                          (communityRoom != null ? 1 : 0),
-                      separatorBuilder: (context, index) => Divider(
-                        color: Colors.grey.withOpacity(0.15),
-                        height: 1.h,
-                        thickness: 0.5.h,
+                    filled: true,
+                    fillColor: const Color(0xff1A1A1A),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.only(left: 12.w, right: 8.w),
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                        size: 24.sp,
                       ),
-                      itemBuilder: (context, index) {
-                        if (communityRoom != null && index == 0) {
-                          return _buildCommunityChatTile(communityRoom);
-                        }
-
-                        final chatIndex = communityRoom != null
-                            ? index - 1
-                            : index;
-                        final chat = controller.filteredChats[chatIndex];
-                        return _buildChatTile(chat);
-                      },
-                    );
-                  }),
+                    ),
+                    prefixIconConstraints: BoxConstraints(
+                      minWidth: 40.w,
+                      minHeight: 40.h,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 15.h,
+                      horizontal: 16.w,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.r),
+                      borderSide: BorderSide(
+                        color: const Color(0xff242424),
+                        width: 1.w,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.r),
+                      borderSide: BorderSide(color: Colors.grey, width: 1.w),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.r),
+                      borderSide: BorderSide(
+                        color: const Color(0xff242424),
+                        width: 1.w,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: 10.h),
+
+                // ── Chat List ──
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      await controller.fetchChats();
+                      await controller.fetchCommunityRoom();
+                    },
+                    color: Colors.grey,
+                    backgroundColor: const Color(0xff1A1A1A),
+                    child: Obx(() {
+                      if (controller.isLoading.value &&
+                          controller.chats.isEmpty) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      final communityRoom = controller.communityRoom.value;
+
+                      return ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount:
+                            controller.filteredChats.length +
+                            (communityRoom != null ? 1 : 0),
+                        separatorBuilder: (context, index) => Divider(
+                          color: Colors.grey.withOpacity(0.15),
+                          height: 1.h,
+                          thickness: 0.5.h,
+                        ),
+                        itemBuilder: (context, index) {
+                          if (communityRoom != null && index == 0) {
+                            return _buildCommunityChatTile(communityRoom);
+                          }
+
+                          final chatIndex = communityRoom != null
+                              ? index - 1
+                              : index;
+                          final chat = controller.filteredChats[chatIndex];
+                          return _buildChatTile(chat);
+                        },
+                      );
+                    }),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),)
+      ),
     );
   }
 
@@ -277,14 +282,14 @@ class Chatpage extends StatelessWidget {
                                 ),
                               )
                             : chat.lastMessageAt != null
-                                ? Text(
-                                    _formatTime(chat.lastMessageAt!),
-                                    style: GoogleFonts.inter(
-                                      color: Colors.grey,
-                                      fontSize: 12.sp,
-                                    ),
-                                  )
-                                : const SizedBox.shrink();
+                            ? Text(
+                                _formatTime(chat.lastMessageAt!),
+                                style: GoogleFonts.inter(
+                                  color: Colors.grey,
+                                  fontSize: 12.sp,
+                                ),
+                              )
+                            : const SizedBox.shrink();
                       }),
                     ],
                   ),
@@ -345,10 +350,7 @@ class Chatpage extends StatelessWidget {
               Text(
                 "Are you sure you want to delete this chat? This action cannot be undone.",
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  color: Colors.grey,
-                  fontSize: 14.sp,
-                ),
+                style: GoogleFonts.inter(color: Colors.grey, fontSize: 14.sp),
               ),
               SizedBox(height: 24.h),
               Row(
@@ -365,10 +367,8 @@ class Chatpage extends StatelessWidget {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Implement delete logic here if available
-                        controller.clearDeleteSelection();
-                        Get.back();
+                      onPressed: () async {
+                        await controller.deleteChat(chat.id);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,

@@ -1,6 +1,7 @@
 class ApiConstants {
   // Base URL
-  static const String baseUrl = 'https://nayem5001.binarybards.online/api/v1';
+  // static const String baseUrl = 'https://nayem5001.binarybards.online/api/v1';
+  static const String baseUrl = 'http://10.10.7.47:5001/api/v1';
 
   // Auth Endpoints
   static const String login = '/auth/login';
@@ -64,4 +65,7 @@ class ApiConstants {
   // Community Chat Endpoints
   static const String communityRoom = '/community-chats/room';
   static const String communityMessages = '/community-chats/messages';
+
+  // Driver Endpoints
+  static const String deleteVehicle = '/user/vehicles/{{vehicleId}}';
 }

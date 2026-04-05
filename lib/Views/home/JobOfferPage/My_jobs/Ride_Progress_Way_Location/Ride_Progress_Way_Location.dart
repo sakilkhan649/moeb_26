@@ -46,7 +46,9 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
       debugPrint("⚠️ RideProgressWayLocation: jobId is null, cannot refresh");
       return;
     }
-    debugPrint("🔄 RideProgressWayLocation: Refreshing job details for jobId: $jobId");
+    debugPrint(
+      "🔄 RideProgressWayLocation: Refreshing job details for jobId: $jobId",
+    );
     try {
       await controller.fetchJobDetails(jobId: jobId!);
       debugPrint("✨ RideProgressWayLocation: Refresh completed");
@@ -77,7 +79,9 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
             displayDateTime = "ASAP";
           } else {
             String dateStr = "";
-            if (job?.date != null && job?.date != "null" && job!.date!.isNotEmpty) {
+            if (job?.date != null &&
+                job?.date != "null" &&
+                job!.date!.isNotEmpty) {
               try {
                 DateTime parsedDate = DateTime.parse(job!.date!);
                 dateStr = DateFormat('EEE MMM dd').format(parsedDate);
@@ -98,7 +102,9 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
                     "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
               } catch (_) {}
             }
-            displayDateTime = dateStr.isNotEmpty ? "$dateStr . $timeStr" : timeStr;
+            displayDateTime = dateStr.isNotEmpty
+                ? "$dateStr . $timeStr"
+                : timeStr;
           }
 
           final driver = job?.assignedTo;
@@ -123,8 +129,10 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
                       child: CustomDriverCard(
                         profileImage:
                             driver?.profilePicture ?? AppImages.profile_image,
-                        name: driver?.name ?? "No Driver",
-                        rating: "${driver?.averageRating ?? 0.0}",
+                        // ignore: prefer_is_empty
+                        name:
+                            "${driver!.nickname?.length == 0 ? driver.name : driver.nickname}",
+                        rating: "${driver.averageRating ?? 0.0}",
                         vehicleNumber: vehicle?.licensePlate ?? "N/A",
                         vehicleInfo: vehicleInfo,
                         buttonText: "Chat with Driver",
@@ -180,7 +188,7 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
                         dateTime: displayDateTime,
                         vehicleType: job?.vehicleType ?? "N/A",
                         jobPoster: job?.assignedTo?.name ?? "Unknown",
-                        company: "N/A",
+                        company: job?.applicant?.driver?.company ?? "N/A",
                         payment: job?.paymentType ?? "N/A",
                         amount: job != null ? "\$${job.paymentAmount}" : "N/A",
 

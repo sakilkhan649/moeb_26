@@ -342,8 +342,7 @@ class AllVehicle extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Get.back();
-                        // controller.deleteVehicle(vehicleId);
+                        controller.deleteVehicle(vehicleId);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,

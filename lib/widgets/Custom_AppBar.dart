@@ -177,99 +177,99 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
+            // PopupMenuItem<int>(
+            //   value: 1,
+            //   child: Row(
+            //     children: [
+            //       SvgPicture.asset(
+            //         AppIcons.job_offer_icon,
+            //         width: 24.sp,
+            //         height: 24.sp,
+            //         colorFilter: const ColorFilter.mode(
+            //           Colors.white,
+            //           BlendMode.srcIn,
+            //         ),
+            //       ),
+            //       SizedBox(width: 12.w),
+            //       Expanded(
+            //         child: Text(
+            //           'My Jobs',
+            //           style: GoogleFonts.inter(
+            //             color: Colors.white,
+            //             fontSize: 14.sp,
+            //             fontWeight: FontWeight.w500,
+            //           ),
+            //           overflow: TextOverflow.ellipsis,
+            //         ),
+            //       ),
+            //       Icon(
+            //         CupertinoIcons.chevron_forward,
+            //         size: 20.sp,
+            //         color: Colors.white,
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // PopupMenuItem<int>(
+            //   value: 2,
+            //   child: Row(
+            //     children: [
+            //       Icon(
+            //         Icons.location_on_outlined,
+            //         color: Colors.white,
+            //         size: 24.sp,
+            //       ),
+            //       SizedBox(width: 12.w),
+            //       Expanded(
+            //         child: Text(
+            //           'Service Area',
+            //           style: GoogleFonts.inter(
+            //             color: Colors.white,
+            //             fontSize: 14.sp,
+            //             fontWeight: FontWeight.w500,
+            //           ),
+            //           overflow: TextOverflow.ellipsis,
+            //         ),
+            //       ),
+            //       Icon(
+            //         CupertinoIcons.chevron_forward,
+            //         size: 20.sp,
+            //         color: Colors.white,
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // PopupMenuItem<int>(
+            //   value: 4,
+            //   child: Row(
+            //     children: [
+            //       Icon(
+            //         Icons.shopping_bag_outlined,
+            //         color: Colors.white,
+            //         size: 24.sp,
+            //       ),
+            //       SizedBox(width: 12.w),
+            //       Expanded(
+            //         child: Text(
+            //           'My Items',
+            //           style: GoogleFonts.inter(
+            //             color: Colors.white,
+            //             fontSize: 14.sp,
+            //             fontWeight: FontWeight.w500,
+            //           ),
+            //           overflow: TextOverflow.ellipsis,
+            //         ),
+            //       ),
+            //       Icon(
+            //         CupertinoIcons.chevron_forward,
+            //         size: 20.sp,
+            //         color: Colors.white,
+            //       ),
+            //     ],
+            //   ),
+            // ),
             PopupMenuItem<int>(
               value: 1,
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    AppIcons.job_offer_icon,
-                    width: 24.sp,
-                    height: 24.sp,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      'My Jobs',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.chevron_forward,
-                    size: 20.sp,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem<int>(
-              value: 2,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.location_on_outlined,
-                    color: Colors.white,
-                    size: 24.sp,
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      'Service Area',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.chevron_forward,
-                    size: 20.sp,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem<int>(
-              value: 4,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.shopping_bag_outlined,
-                    color: Colors.white,
-                    size: 24.sp,
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      'My Items',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.chevron_forward,
-                    size: 20.sp,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem<int>(
-              value: 3,
               child: Row(
                 children: [
                   Icon(Icons.logout_outlined, color: Colors.white, size: 24.sp),
@@ -296,7 +296,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
           offset: const Offset(0, 50),
         ),
-       // SizedBox(width: 16.w),
+        // SizedBox(width: 16.w),
       ],
     );
   }
@@ -310,21 +310,32 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Get.toNamed(Routes.profileScreen);
         }
         break;
+      // case 1:
+      //   if (onMyJobsTap != null) {
+      //     onMyJobsTap!();
+      //   } else {
+      //     Get.toNamed(Routes.myJobsScreen);
+      //   }
+      //   break;
+      // case 2:
+      //   if (serviceAreaTap != null) {
+      //     serviceAreaTap!();
+      //   } else {
+      //     Get.toNamed(Routes.serviceArea);
+      //   }
+      //   break;
+      // case 3:
+      //   if (onLogoutTap != null) {
+      //     onLogoutTap!();
+      //   } else {
+      //     Get.bottomSheet(
+      //       const LogoutBottomSheet(),
+      //       isScrollControlled: true,
+      //       backgroundColor: Colors.transparent,
+      //     );
+      //   }
+      //   break;
       case 1:
-        if (onMyJobsTap != null) {
-          onMyJobsTap!();
-        } else {
-          Get.toNamed(Routes.myJobsScreen);
-        }
-        break;
-      case 2:
-        if (serviceAreaTap != null) {
-          serviceAreaTap!();
-        } else {
-          Get.toNamed(Routes.serviceArea);
-        }
-        break;
-      case 3:
         if (onLogoutTap != null) {
           onLogoutTap!();
         } else {
@@ -333,13 +344,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
           );
-        }
-        break;
-      case 4:
-        if (onMyProductsTap != null) {
-          onMyProductsTap!();
-        } else {
-          Get.toNamed(Routes.myPropucts);
         }
         break;
     }

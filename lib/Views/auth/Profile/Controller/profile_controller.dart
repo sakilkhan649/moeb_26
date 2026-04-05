@@ -177,21 +177,13 @@ class ProfileController extends GetxController {
   Future<void> deleteVehicle(String vehicleId) async {
     isUpdating.value = true;
     try {
-      final vehicles = userProfile.value?.vehicles ?? [];
-      final updatedVehicles = vehicles
-          .where((v) => v.id != vehicleId)
-          .map((v) => v.toJson())
-          .toList();
-
-      final formData = dio.FormData();
-      formData.fields.add(MapEntry("vehicles", json.encode(updatedVehicles)));
-
-      var response = await _profileService.patchProfile(formData);
+      var response = await _profileService.deleteVehicle(vehicleId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar(
           "Vehicle deleted successfully",
           isError: false,
         );
+        Get.back();
         fetchUserProfile();
       } else {
         Helpers.showCustomSnackBar(
@@ -201,7 +193,7 @@ class ProfileController extends GetxController {
       }
     } catch (e) {
       debugPrint("Error deleting vehicle: $e");
-      Helpers.showCustomSnackBar("Something went wrong", isError: true);
+      Helpers.showDebugLog("Error deleting vehicle: $e");
     } finally {
       isUpdating.value = false;
     }

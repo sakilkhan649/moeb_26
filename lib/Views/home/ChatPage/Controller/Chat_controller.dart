@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:moeb_26/Utils/helpers.dart';
 import '../../../../Ripositoryes/socket_repository.dart';
 import '../../../../Services/socket_service.dart';
 import '../../../../Services/user_service.dart';
@@ -10,7 +11,7 @@ class ChatController extends GetxController {
   final SocketRepository socketRepo = Get.find();
   final SocketService socketService = Get.find();
   final CommunityService communityService = Get.find();
-  
+
   var chats = <ChatPreview>[].obs;
   var filteredChats = <ChatPreview>[].obs;
   var communityRoom = Rxn<CommunityRoom>();
@@ -42,7 +43,9 @@ class ChatController extends GetxController {
     try {
       final response = await communityService.getCommunityRoom();
       if (response.statusCode == 200 || response.statusCode == 201) {
-        communityRoom.value = CommunityRoom.fromJson(response.data['data'] ?? {});
+        communityRoom.value = CommunityRoom.fromJson(
+          response.data['data'] ?? {},
+        );
       }
     } catch (e) {
       print("Error fetching community room: $e");
@@ -61,7 +64,7 @@ class ChatController extends GetxController {
           updatedChat.lastMessage = newMessage.text;
           updatedChat.lastMessageAt = newMessage.createdAt;
           // You might want to update unread count here if needed
-          
+
           chats.removeAt(index);
           chats.insert(0, updatedChat);
           filterChats(searchController.value);
@@ -95,10 +98,27 @@ class ChatController extends GetxController {
         chats.where((chat) {
           final currentUserId = Get.find<UserService>().userId;
           final other = chat.getOtherParticipant(currentUserId);
-          return other?.name.toLowerCase().contains(query.toLowerCase()) ?? false;
+          return other?.name.toLowerCase().contains(query.toLowerCase()) ??
+              false;
         }).toList(),
       );
     }
   }
-}
 
+  Future<void> deleteChat(String chatId) async {
+    try {
+      isLoading.value = true;
+      final success = await socketRepo.deleteChat(chatId);
+      if (success.statusCode == 200) {
+        chats.removeWhere((c) => c.id == chatId);
+        filterChats(searchController.value);
+        selectedChatIdForDelete.value = "";
+        Get.back();
+      }
+    } catch (e) {
+      Helpers.showDebugLog("Error deleting chat: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}

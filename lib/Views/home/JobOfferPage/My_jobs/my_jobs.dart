@@ -204,7 +204,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final flight = job.flightNumber ?? 'N/A';
     final paymentType = job.paymentType?.replaceAll('_', ' ');
     final instruction = job.instruction ?? 'N/A';
-    final jobType = job.jobType == 'ONE_WAY' ? 'SADAX' : 'HOURLY';
+    final company = job.applicant?.driver?.company ??job.assignedTo?.company??'N/A';
     final amount = job.paymentAmount;
     final status = job.status;
 
@@ -401,7 +401,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     SvgPicture.asset(AppIcons.sadax_icon),
                     SizedBox(width: 5.w),
                     Text(
-                      jobType,
+                      company!,
                       style: GoogleFonts.inter(
                         color: Colors.white,
                         fontSize: 12.sp,
@@ -411,21 +411,22 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                 ),
                 SizedBox(height: 16.h),
 
-                ///Fligt Number
-                const CustomTextgray(
-                  text: "Flight Number",
-                  color: Color(0xFF737373),
-                  fontWeight: FontWeight.w500,
-                ),
-                SizedBox(height: 8.h),
-                CustomTextFieldGold(
-                  readOnly: true,
-                  controller: cardFlightController,
-                  hintText: "Flight AA 1234",
-                  obscureText: false,
-                  textInputType: TextInputType.text,
-                ),
-                SizedBox(height: 10.h),
+                if (flight != 'N/A' && flight.isNotEmpty) ...[
+                  const CustomTextgray(
+                    text: "Flight Number",
+                    color: Color(0xFF737373),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: 8.h),
+                  CustomTextFieldGold(
+                    readOnly: true,
+                    controller: cardFlightController,
+                    hintText: flight,
+                    obscureText: false,
+                    textInputType: TextInputType.text,
+                  ),
+                  SizedBox(height: 10.h),
+                ],
 
                 ///Payment Method
                 const CustomTextgray(
@@ -444,20 +445,20 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                 SizedBox(height: 10.h),
 
                 ///Special Instructions
-                const CustomTextgray(
-                  text: "Special Instructions",
-                  color: Color(0xFF737373),
-                  fontWeight: FontWeight.w500,
-                ),
-                SizedBox(height: 8.h),
-                CustomTextFieldGold(
-                  readOnly: true,
-                  controller: cardInstructionController,
+                  const CustomTextgray(
+                    text: "Special Instructions",
+                    color: Color(0xFF737373),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: 8.h),
+                  CustomTextFieldGold(
+                    readOnly: true,
+                    controller: cardInstructionController,
                   hintText: "Airport Expert, Vip Client",
-                  obscureText: false,
-                  textInputType: TextInputType.text,
-                ),
-                SizedBox(height: 10.h),
+                    obscureText: false,
+                    textInputType: TextInputType.text,
+                  ),
+                  SizedBox(height: 10.h),
 
                 ///Amount
                 const CustomTextgray(
@@ -532,7 +533,9 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      driver?.name?.split(' ').first ?? "",
+                                      driver!.nickname?.length == 0
+                                          ? driver.name!
+                                          : driver.nickname!,
                                       style: GoogleFonts.inter(
                                         color: Colors.white,
                                         fontSize: 16.sp,

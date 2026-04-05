@@ -25,4 +25,8 @@ class UserProfileService {
   Future<Response> getLegalBySlug(String slug) {
     return userProfileRepo.getLegalBySlug(slug);
   }
+
+  Future<Response> deleteVehicle(String vehicleId) {
+    return userProfileRepo.deleteVehicle(vehicleId);
+  }
 }

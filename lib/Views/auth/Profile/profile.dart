@@ -142,29 +142,29 @@ class ProfileScreen extends StatelessWidget {
                               onSelected: (item) {
                                 switch (item) {
                                   case 0:
-                                    Get.offNamed(Routes.profileScreen);
+                                    Get.offNamed(Routes.myJobsScreen);
                                     break;
+                                  // case 1:
+                                  //   Get.toNamed(Routes.myJobsScreen);
+                                  //   break;
+                                  // case 2:
+                                  //   Get.toNamed(Routes.serviceArea);
+                                  //   break;
+                                  // case 3:
+                                  //   Get.bottomSheet(
+                                  //     const LogoutBottomSheet(),
+                                  //     isScrollControlled: true,
+                                  //     backgroundColor: Colors.transparent,
+                                  //   );
+                                  //   break;
                                   case 1:
-                                    Get.toNamed(Routes.myJobsScreen);
-                                    break;
-                                  case 2:
-                                    Get.toNamed(Routes.serviceArea);
-                                    break;
-                                  case 3:
-                                    Get.bottomSheet(
-                                      const LogoutBottomSheet(),
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                    );
-                                    break;
-                                  case 4:
                                     Get.toNamed(Routes.myPropucts);
                                     break;
                                 }
                               },
                               itemBuilder: (context) => [
                                 PopupMenuItem<int>(
-                                  value: 1,
+                                  value: 0,
                                   child: Row(
                                     children: [
                                       SvgPicture.asset(
@@ -194,35 +194,35 @@ class ProfileScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
+                                // PopupMenuItem<int>(
+                                //   value: 2,
+                                //   child: Row(
+                                //     children: [
+                                //       Icon(
+                                //         Icons.location_on_outlined,
+                                //         color: Colors.white,
+                                //         size: 24.sp,
+                                //       ),
+                                //       SizedBox(width: 12.w),
+                                //       Text(
+                                //         'Service Area',
+                                //         style: GoogleFonts.inter(
+                                //           color: Colors.white,
+                                //           fontSize: 14.sp,
+                                //           fontWeight: FontWeight.w500,
+                                //         ),
+                                //       ),
+                                //       const Spacer(),
+                                //       Icon(
+                                //         CupertinoIcons.chevron_forward,
+                                //         size: 20.sp,
+                                //         color: Colors.white,
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                                 PopupMenuItem<int>(
-                                  value: 2,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_on_outlined,
-                                        color: Colors.white,
-                                        size: 24.sp,
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      Text(
-                                        'Service Area',
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Icon(
-                                        CupertinoIcons.chevron_forward,
-                                        size: 20.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                PopupMenuItem<int>(
-                                  value: 4,
+                                  value: 1,
                                   child: Row(
                                     children: [
                                       Icon(

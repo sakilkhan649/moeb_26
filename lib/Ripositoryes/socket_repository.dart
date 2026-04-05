@@ -141,5 +141,15 @@ class SocketRepository {
     }
     return null;
   }
+  /// Delete a chat
+  Future<Response> deleteChat(String chatId) async {
+    try {
+      final url = ApiConstants.chatsId.replaceAll('{{chatId}}', chatId);
+      final response = await apiClient.deleteData(url);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
 }
