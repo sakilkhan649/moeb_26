@@ -102,38 +102,44 @@ class _CreateaccountscreenState extends State<Createaccountscreen> {
                 ),
                 SizedBox(height: 20.h),
 
-                // ========== Home Address ==========
-                _buildLabel("Home Address", isRequired: true),
-                Customtextfield(
-                  controller: controller.homeAddressController,
-                  hintText: "Enter your home address",
-                  obscureText: false,
-                  textInputType: TextInputType.streetAddress,
-                  validator: (value) => Validators.required(value, message: "Enter your Home Address"),
-                ),
-                SizedBox(height: 20.h),
+                // // ========== Home Address ==========
+                // _buildLabel("Home Address", isRequired: true),
+                // Customtextfield(
+                //   controller: controller.homeAddressController,
+                //   hintText: "Enter your home address",
+                //   obscureText: false,
+                //   textInputType: TextInputType.streetAddress,
+                //   validator: (value) => Validators.required(value, message: "Enter your Home Address"),
+                // ),
+                // SizedBox(height: 20.h),
 
                 // ========== Service Area ==========
                 _buildLabel("Service Area", isRequired: true),
-                Obx(() => _buildDropdownField(
-                  error: areaError.value,
-                  isLoading: controller.isCitiesLoading,
-                  child: CustomDropdown(
-                    hintText: 'Select Service Area',
-                    value: controller.selectedArea.value.isEmpty ? null : controller.selectedArea.value,
-                    items: controller.cities,
-                    scrollController: dropdownScrollController,
-                    isLoadingMore: controller.isMoreCitiesLoading,
-                    hasNextPage: controller.hasNextCitiesPage,
-                    onLoadMore: () => controller.loadMoreCities(),
-                    onChanged: (value) {
-                      if (value != null && value != 'loading' && value != 'loadMore') {
-                        controller.pickArea(value);
-                        areaError.value = '';
-                      }
-                    },
+                Obx(
+                  () => _buildDropdownField(
+                    error: areaError.value,
+                    isLoading: controller.isCitiesLoading,
+                    child: CustomDropdown(
+                      hintText: 'Select Service Area',
+                      value: controller.selectedArea.value.isEmpty
+                          ? null
+                          : controller.selectedArea.value,
+                      items: controller.cities,
+                      scrollController: dropdownScrollController,
+                      isLoadingMore: controller.isMoreCitiesLoading,
+                      hasNextPage: controller.hasNextCitiesPage,
+                      onLoadMore: () => controller.loadMoreCities(),
+                      onChanged: (value) {
+                        if (value != null &&
+                            value != 'loading' &&
+                            value != 'loadMore') {
+                          controller.pickArea(value);
+                          areaError.value = '';
+                        }
+                      },
+                    ),
                   ),
-                )),
+                ),
                 SizedBox(height: 20.h),
 
                 // ========== Years of Experience ==========
@@ -143,7 +149,10 @@ class _CreateaccountscreenState extends State<Createaccountscreen> {
                   hintText: "7",
                   obscureText: false,
                   textInputType: TextInputType.number,
-                  validator: (value) => Validators.required(value, message: "Enter your Years of Experience"),
+                  validator: (value) => Validators.required(
+                    value,
+                    message: "Enter your Years of Experience",
+                  ),
                 ),
                 SizedBox(height: 20.h),
 
@@ -154,69 +163,84 @@ class _CreateaccountscreenState extends State<Createaccountscreen> {
                   hintText: "SADRTX",
                   obscureText: false,
                   textInputType: TextInputType.name,
-                  validator: (value) => Validators.required(value, message: "Enter your Company Name"),
+                  validator: (value) => Validators.required(
+                    value,
+                    message: "Enter your Company Name",
+                  ),
                 ),
                 SizedBox(height: 20.h),
 
                 // ========== Company Role ==========
                 _buildLabel("COMPANY ROLE", isRequired: true),
-                Obx(() => _buildDropdownField(
-                  error: roleError.value,
-                  child: CustomDropdown(
-                    hintText: 'Select Company Role',
-                    value: controller.selectedRole.value.isEmpty ? null : controller.selectedRole.value,
-                    items: controller.roles,
-                    onChanged: (value) {
-                      if (value != null) {
-                        controller.pickRole(value);
-                        roleError.value = '';
-                      }
-                    },
+                Obx(
+                  () => _buildDropdownField(
+                    error: roleError.value,
+                    child: CustomDropdown(
+                      hintText: 'Select Company Role',
+                      value: controller.selectedRole.value.isEmpty
+                          ? null
+                          : controller.selectedRole.value,
+                      items: controller.roles,
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.pickRole(value);
+                          roleError.value = '';
+                        }
+                      },
+                    ),
                   ),
-                )),
+                ),
                 SizedBox(height: 20.h),
 
                 // ========== Password ==========
                 _buildLabel("Create Password", isRequired: false),
-                Obx(() => Customtextfield(
-                  controller: controller.passwordController,
-                  hintText: "Enter your password",
-                  obscureText: !controller.showPassword.value,
-                  textInputType: TextInputType.visiblePassword,
-                  validator: (value) => Validators.password(value),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      controller.showPassword.value ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                      color: AppColors.gray100,
+                Obx(
+                  () => Customtextfield(
+                    controller: controller.passwordController,
+                    hintText: "Enter your password",
+                    obscureText: !controller.showPassword.value,
+                    textInputType: TextInputType.visiblePassword,
+                    validator: (value) => Validators.password(value),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.showPassword.value
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: AppColors.gray100,
+                      ),
+                      onPressed: controller.togglePassword,
                     ),
-                    onPressed: controller.togglePassword,
                   ),
-                )),
+                ),
                 SizedBox(height: 20.h),
 
                 // ========== Confirm Password ==========
                 _buildLabel("Confirm Password", isRequired: false),
-                Obx(() => Customtextfield(
-                  controller: controller.confirmPasswordController,
-                  hintText: "Enter your password",
-                  obscureText: !controller.showConfirmPassword.value,
-                  textInputType: TextInputType.visiblePassword,
-                  validator: (value) => Validators.confirmPassword(value, controller.passwordController.text),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      controller.showConfirmPassword.value ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                      color: AppColors.gray100,
+                Obx(
+                  () => Customtextfield(
+                    controller: controller.confirmPasswordController,
+                    hintText: "Enter your password",
+                    obscureText: !controller.showConfirmPassword.value,
+                    textInputType: TextInputType.visiblePassword,
+                    validator: (value) => Validators.confirmPassword(
+                      value,
+                      controller.passwordController.text,
                     ),
-                    onPressed: controller.toggleConfirmPassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.showConfirmPassword.value
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: AppColors.gray100,
+                      ),
+                      onPressed: controller.toggleConfirmPassword,
+                    ),
                   ),
-                )),
+                ),
                 SizedBox(height: 30.h),
 
                 // ========== Submit Button ==========
-                CustomButton(
-                  text: "Continue",
-                  onPressed: _handleSubmit,
-                ),
+                CustomButton(text: "Continue", onPressed: _handleSubmit),
                 SizedBox(height: 40.h),
               ],
             ),
@@ -233,11 +257,7 @@ class _CreateaccountscreenState extends State<Createaccountscreen> {
       padding: EdgeInsets.only(bottom: 8.h),
       child: Row(
         children: [
-          CustomText(
-            text: text,
-            fontWeight: FontWeight.w500,
-            fontSize: 14.sp,
-          ),
+          CustomText(text: text, fontWeight: FontWeight.w500, fontSize: 14.sp),
           if (isRequired)
             Text(
               " *",
@@ -248,7 +268,11 @@ class _CreateaccountscreenState extends State<Createaccountscreen> {
     );
   }
 
-  Widget _buildDropdownField({required Widget child, String? error, bool isLoading = false}) {
+  Widget _buildDropdownField({
+    required Widget child,
+    String? error,
+    bool isLoading = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -277,7 +301,7 @@ class _CreateaccountscreenState extends State<Createaccountscreen> {
 
   void _handleSubmit() {
     final isFormValid = _formKey.currentState!.validate();
-    
+
     bool dropdownsValid = true;
     if (controller.selectedArea.value.isEmpty) {
       areaError.value = 'Select a Service Area';
