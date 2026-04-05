@@ -19,6 +19,7 @@ class UserProfileModel {
   final double averageRating;
   final String? selectedVehicle;
   final String? nickname;
+  final String? uid;
 
   UserProfileModel({
     required this.id,
@@ -41,6 +42,7 @@ class UserProfileModel {
     this.averageRating = 0.0,
     this.selectedVehicle,
     this.nickname,
+    this.uid,
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -75,6 +77,7 @@ class UserProfileModel {
       averageRating: (json['averageRating'] ?? 0.0).toDouble(),
       selectedVehicle: json['selectedVehicle']?.toString(),
       nickname: json['nickname']?.toString(),
+      uid: json['uid']?.toString(),
     );
   }
 
@@ -100,6 +103,7 @@ class UserProfileModel {
       'averageRating': averageRating,
       'selectedVehicle': selectedVehicle,
       'nickname': nickname,
+      'uid': uid,
     };
   }
 }

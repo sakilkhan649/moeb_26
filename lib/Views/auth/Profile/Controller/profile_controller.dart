@@ -19,8 +19,7 @@ class ProfileController extends GetxController {
   var serviceArea = "".obs;
   var nickName = "".obs;
   var rating = 5.0.obs;
-  var ecn = "ECN-456985"
-      .obs; // Assuming this is still static or come from another field
+  var ecn = "".obs; // Assuming this is still static or come from another field
   var profilePicture = "".obs;
   var pickedImage = Rxn<File>();
 
@@ -111,6 +110,7 @@ class ProfileController extends GetxController {
         nickName.value = userProfile.value?.nickname ?? "";
         profilePicture.value = userProfile.value?.profilePicture ?? "";
         rating.value = userProfile.value?.averageRating ?? 0.0;
+        ecn.value = userProfile.value?.uid ?? "";
 
         // Update controllers for the edit form
         nameController.text = fullName.value;
@@ -234,6 +234,7 @@ class ProfileController extends GetxController {
         nickName.value = userProfile.value?.nickname ?? "";
         profilePicture.value = userProfile.value?.profilePicture ?? "";
         rating.value = userProfile.value?.averageRating ?? 0.0;
+        ecn.value = userProfile.value?.uid ?? "";
 
         pickedImage.value = null; // Clear picked image after success
         Get.back(); // Close bottom sheet

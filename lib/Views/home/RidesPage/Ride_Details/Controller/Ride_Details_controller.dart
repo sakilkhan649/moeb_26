@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Ripositoryes/job_repository.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
+import 'package:moeb_26/Utils/helpers.dart';
 
 import 'package:moeb_26/Views/home/RidesPage/Controller/Rides_controller.dart';
 import '../../../../../Core/routs.dart';

@@ -187,7 +187,11 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
                         flightNumber: job?.flightNumber ?? "N/A",
                         dateTime: displayDateTime,
                         vehicleType: job?.vehicleType ?? "N/A",
-                        jobPoster: job?.assignedTo?.name ?? "Unknown",
+                        jobPoster:
+                            (job?.createdBy?.nickname != null &&
+                                job!.createdBy!.nickname!.isNotEmpty)
+                            ? job.createdBy!.nickname!
+                            : (job?.createdBy?.name ?? "Unknown"),
                         company: job?.applicant?.driver?.company ?? "N/A",
                         payment: job?.paymentType ?? "N/A",
                         amount: job != null ? "\$${job.paymentAmount}" : "N/A",

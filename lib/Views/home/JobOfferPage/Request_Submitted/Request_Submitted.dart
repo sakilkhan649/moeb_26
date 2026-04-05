@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 
@@ -17,7 +18,8 @@ class RequestSubmitted extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get the job data from arguments
-    final job = Get.arguments;
+    // Get the job data from arguments as dynamic to handle different model types (Job or JobData)
+    final dynamic job = Get.arguments;
 
     return Scaffold(
       appBar: AppBar(
@@ -84,17 +86,17 @@ class RequestSubmitted extends StatelessWidget {
               Builder(
                 builder: (context) {
                   String displayDateTime = "ASAP";
-                  if (job?.asap == true) {
+                  if (job.asap == true) {
                     displayDateTime = "ASAP";
                   } else {
                     String dateStr = "";
-                    if (job?.date != null) {
+                    if (job.date != null) {
                       try {
                         DateTime parsed;
-                        if (job!.date is DateTime) {
-                          parsed = job!.date;
+                        if (job.date is DateTime) {
+                          parsed = job.date as DateTime;
                         } else {
-                          parsed = DateTime.parse(job!.date.toString());
+                          parsed = DateTime.parse(job.date.toString());
                         }
                         dateStr = DateFormat('EEE MMM dd').format(parsed);
                       } catch (_) {
@@ -109,26 +111,38 @@ class RequestSubmitted extends StatelessWidget {
                         int hour = int.parse(parts[0]);
                         int minute = int.parse(parts[1].split(' ')[0]);
                         final period = hour >= 12 ? "PM" : "AM";
-                        final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-                        timeStr = "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+                        final hour12 = hour == 0
+                            ? 12
+                            : (hour > 12 ? hour - 12 : hour);
+                        timeStr =
+                            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
                       } catch (_) {}
                     }
-                    displayDateTime = dateStr.isNotEmpty ? "$dateStr . $timeStr" : timeStr;
+                    displayDateTime = dateStr.isNotEmpty
+                        ? "$dateStr . $timeStr"
+                        : timeStr;
                   }
 
                   return CustomJobDetailsCard(
                     // Location details
-                    pickupLocation: job?.pickupLocation ?? "Unknown",
-                    dropoffLocation: job?.dropoffLocation ?? "N/A",
+                    pickupLocation: job.pickupLocation ?? "Unknown",
+                    dropoffLocation: job.dropoffLocation ?? "N/A",
 
                     // Job information
-                    flightNumber: job?.flightNumber ?? "N/A",
+                    flightNumber: job.flightNumber ?? "N/A",
                     dateTime: displayDateTime,
-                    vehicleType: job?.vehicleType ?? "Unknown",
-                    jobPoster: job?.createdBy?.name ?? "Unknown",
-                    company: job?.createdBy?.name ?? "Unknown",
-                    payment: job?.paymentType ?? "Unknown",
-                    amount: "\$${job?.paymentAmount ?? 0}",
+                    vehicleType: job.vehicleType ?? "Unknown",
+                    jobPoster: job.createdBy is String
+                        ? "Unknown"
+                        : (job.createdBy?.nickname != null &&
+                                job.createdBy!.nickname.isNotEmpty
+                            ? job.createdBy!.nickname
+                            : (job.createdBy?.name ?? "Unknown")),
+                    company: job.createdBy is String
+                        ? "Unknown"
+                        : (job.createdBy?.company ?? "Unknown"),
+                    payment: job.paymentType ?? "Unknown",
+                    amount: "\$${job.paymentAmount ?? 0}",
 
                     // Optional: Custom colors
                     backgroundColor: const Color(0xFF1C1C1C),

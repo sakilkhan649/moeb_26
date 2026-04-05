@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Services/job_service.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
+import 'package:moeb_26/Utils/helpers.dart';
 
 class PostJobController extends GetxController {
   final JobService _jobService = Get.find<JobService>();

@@ -20,8 +20,9 @@ class AddNewVehicle extends StatelessWidget {
   }
 
   // Find the exact instance using the unique tag
-  VehicleActionController get controller => Get.find<VehicleActionController>(tag: tag);
-  
+  VehicleActionController get controller =>
+      Get.find<VehicleActionController>(tag: tag);
+
   final _formKey = GlobalKey<FormState>();
   final RxBool showErrors = false.obs;
 
@@ -74,7 +75,10 @@ class AddNewVehicle extends StatelessWidget {
                           onPressed: () {
                             showErrors.value = true;
                             if (_formKey.currentState!.validate()) {
-                              if (controller.selectedVehicleType.value.isEmpty) {
+                              if (controller
+                                  .selectedVehicleType
+                                  .value
+                                  .isEmpty) {
                                 Get.snackbar(
                                   "Error",
                                   "Please select a vehicle type",
@@ -300,7 +304,7 @@ class AddNewVehicle extends StatelessWidget {
         Row(
           children: [
             CustomText(
-              text: "Expire Date",
+              text: "Expiration Date",
               fontWeight: FontWeight.w500,
               fontSize: 14.sp,
             ),
@@ -332,7 +336,7 @@ class AddNewVehicle extends StatelessWidget {
         Row(
           children: [
             CustomText(
-              text: "Expire Date",
+              text: "Expiration Date",
               fontWeight: FontWeight.w500,
               fontSize: 14.sp,
             ),

@@ -9,8 +9,9 @@ class MyJobsModel {
   MyJobsModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    pagination =
-        json['pagination'] != null ? Pagination.fromJson(json['pagination']) : null;
+    pagination = json['pagination'] != null
+        ? Pagination.fromJson(json['pagination'])
+        : null;
 
     if (json['data'] != null) {
       data = <JobData>[];
@@ -42,6 +43,7 @@ class JobData {
   String? jobType;
   String? pickupLocation;
   String? dropoffLocation;
+  String? companyName;
   String? flightNumber;
   bool? asap;
   String? date;
@@ -77,6 +79,7 @@ class JobData {
     this.status,
     this.rideStatus,
     this.createdBy,
+    this.companyName,
     this.createdAt,
     this.updatedAt,
     this.reviewByDriver,
@@ -86,6 +89,7 @@ class JobData {
   });
 
   JobData.fromJson(Map<String, dynamic> json) {
+    companyName = json['companyName'];
     id = json['_id'];
     jobType = json['jobType'];
     pickupLocation = json['pickupLocation'];
@@ -100,7 +104,7 @@ class JobData {
     instruction = json['instruction'];
     status = json['status'];
     rideStatus = json['rideStatus'];
-    
+
     // Handle createdBy as either String or Driver Object
     if (json['createdBy'] is Map<String, dynamic>) {
       createdBy = Driver.fromJson(json['createdBy']);
@@ -150,8 +154,7 @@ class Applicant {
   Applicant({this.driver, this.appliedAt});
 
   Applicant.fromJson(Map<String, dynamic> json) {
-    driver =
-        json['driver'] != null ? Driver.fromJson(json['driver']) : null;
+    driver = json['driver'] != null ? Driver.fromJson(json['driver']) : null;
     appliedAt = json['appliedAt'];
   }
 }

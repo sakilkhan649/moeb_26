@@ -138,14 +138,16 @@ class CreatedBy {
   final String phone;
   final String profilePicture;
   final String nickname;
-  final String companyName;
+  final String company;
 
   CreatedBy({
     required this.id,
     required this.name,
     required this.email,
     required this.phone,
-    required this.profilePicture, required this.nickname, required this.companyName,
+    required this.profilePicture,
+    required this.nickname,
+    required this.company,
   });
 
   factory CreatedBy.fromJson(Map<String, dynamic> json) {
@@ -156,7 +158,7 @@ class CreatedBy {
       phone: json['phone'] ?? '',
       profilePicture: json['profilePicture'] ?? '',
       nickname: json['nickname'] ?? '',
-      companyName: json['company'] ?? '',
+      company: json['company'] ?? '',
     );
   }
 }

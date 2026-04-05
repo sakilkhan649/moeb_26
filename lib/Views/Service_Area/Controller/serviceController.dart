@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/Services/user_service.dart';
+import 'package:moeb_26/Utils/helpers.dart';
 import '../../../../Services/serviceAreas_service.dart';
 import '../Model/ServiceAreaModel.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 class ServiceAreaController extends GetxController {
   final ServiceAreasService _serviceAreasService = Get.put(

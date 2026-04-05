@@ -22,12 +22,8 @@ class RequestUnderReview extends StatelessWidget {
     final Ride? ride = Get.arguments as Ride?;
 
     // Format date and time
-    String displayDateTime = "N/A";
     if (ride?.date != null) {
-      displayDateTime = "${DateFormat('MMM dd').format(ride!.date!)} · ${ride.time}";
-    } else if (ride != null) {
-      displayDateTime = ride.time;
-    }
+    } else if (ride != null) {}
 
     return Scaffold(
       appBar: AppBar(
@@ -121,11 +117,15 @@ class RequestUnderReview extends StatelessWidget {
                         dropoffLocation: ride.dropoffLocation,
 
                         // Job information
-                        flightNumber: "N/A", // Not available in Ride model
+                        flightNumber: ride.flightNumber ?? "N/A",
                         dateTime: displayDateTime,
                         vehicleType: ride.vehicleType,
-                        jobPoster: ride.applicant?.driver?.name ?? "Unknown",
-                        company: ride.applicant?.driver?.name ?? "Unknown",
+                        jobPoster:
+                            ride.createdBy?.nickname != null &&
+                                ride.createdBy!.nickname!.isNotEmpty
+                            ? ride.createdBy!.nickname!
+                            : (ride.createdBy?.name ?? "Unknown"),
+                        company: ride.createdBy?.company ?? "Unknown",
                         payment: ride.paymentType,
                         amount: "\$${ride.paymentAmount}",
 

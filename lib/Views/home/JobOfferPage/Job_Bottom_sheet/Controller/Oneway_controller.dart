@@ -28,6 +28,26 @@ class OnewayController extends GetxController {
       initialDate: selectedDate.value ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF364153), // Selected date circle color
+              onPrimary: Colors.white, // Selected date text color
+              surface: Color(0xFF1E1E1E), // Slightly lighter than pure black
+              onSurface: Colors.white, // Text color on the picker
+            ),
+            dialogBackgroundColor: const Color(0xFF1E1E1E),
+            dialogTheme: DialogThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF404040), width: 1),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != selectedDate.value) {
       selectedDate.value = picked;
@@ -39,9 +59,26 @@ class OnewayController extends GetxController {
       context: context,
       initialTime: selectedTime.value ?? TimeOfDay.now(),
       builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-          child: child!,
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF364153), // Selection hand and selected circle
+              onPrimary: Colors.white,
+              surface: Color(0xFF1E1E1E), // Lighter background
+              onSurface: Colors.white, // Text color
+            ),
+            dialogBackgroundColor: const Color(0xFF1E1E1E),
+            dialogTheme: DialogThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF404040), width: 1),
+              ),
+            ),
+          ),
+          child: MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child!,
+          ),
         );
       },
     );

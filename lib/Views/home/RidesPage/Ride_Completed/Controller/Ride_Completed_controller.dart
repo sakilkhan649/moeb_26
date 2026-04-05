@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get.dart';
-import '../../../../../Core/routs.dart';
+import 'package:moeb_26/Utils/helpers.dart';
 
 import 'package:moeb_26/Ripositoryes/job_repository.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 import 'package:dio/dio.dart' as dio;
 
 class RideCompletedController extends GetxController {

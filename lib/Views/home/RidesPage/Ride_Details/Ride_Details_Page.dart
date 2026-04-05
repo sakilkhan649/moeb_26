@@ -68,6 +68,7 @@ class RideDetailsPage extends StatelessWidget {
     String amount = "N/A";
     String rating = "0.0";
     String posterName = "Unknown";
+    String posterCompany = "Unknown";
     String participantId = "";
     String posterImage = AppImages.profile_image;
     String vehicleInfo = "N/A";
@@ -88,7 +89,10 @@ class RideDetailsPage extends StatelessWidget {
       flightNumber = r.flightNumber ?? "N/A";
 
       final driver = r.createdBy;
-      posterName = driver?.name ?? "Unknown";
+      posterName = (driver?.nickname != null && driver!.nickname!.isNotEmpty)
+          ? driver.nickname!
+          : (driver?.name ?? "Unknown");
+      posterCompany = driver?.company ?? "Unknown";
       participantId = driver?.id ?? "";
       posterImage = driver?.profilePicture ?? AppImages.profile_image;
       rating = driver?.averageRating?.toString() ?? "0.0";
@@ -113,7 +117,9 @@ class RideDetailsPage extends StatelessWidget {
       amount = "\$${r.paymentAmount}";
 
       final driver = r.createdBy ?? r.assignedTo ?? r.applicant?.driver;
-      posterName = driver?.name ?? "Unknown";
+      posterName = (driver?.nickname != null && driver!.nickname!.isNotEmpty)
+          ? driver.nickname!
+          : (driver?.name ?? "Unknown");
       participantId = driver?.id ?? "";
       posterImage =
           (driver?.profilePicture != null && driver!.profilePicture.isNotEmpty)
@@ -127,7 +133,7 @@ class RideDetailsPage extends StatelessWidget {
 
     // --- DATE & TIME FORMATTING (12h AM/PM) ---
     String displayDateTime = "N/A";
-    
+
     bool isAsap = false;
     if (ride is UpcomingRideData || ride is FinishRideData) {
       isAsap = ride.asap == true;
@@ -194,10 +200,8 @@ class RideDetailsPage extends StatelessWidget {
                     onButtonPressed: () async {
                       if (participantId.isNotEmpty && id.isNotEmpty) {
                         try {
-                          final chat = await Get.find<SocketRepository>().createChat(
-                            participantId,
-                            id,
-                          );
+                          final chat = await Get.find<SocketRepository>()
+                              .createChat(participantId, id);
                           if (chat != null) {
                             Get.toNamed(Routes.chatDetailPage, arguments: chat);
                           }
@@ -226,7 +230,7 @@ class RideDetailsPage extends StatelessWidget {
                     dateTime: displayDateTime,
                     vehicleType: vehicleType,
                     jobPoster: posterName,
-                    company: posterName,
+                    company: posterCompany,
                     payment: paymentType,
                     amount: amount,
                     backgroundColor: const Color(0xFF1C1C1C),

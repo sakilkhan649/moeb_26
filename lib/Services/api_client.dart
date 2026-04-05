@@ -11,7 +11,7 @@ import 'package:moeb_26/Services/storege_service.dart';
 import '../Config/api_constants.dart';
 import '../Config/storage_constants.dart';
 import '../Controller/internet_controller.dart';
-import '../widgets/Custom_snacbar.dart' as Helpers;
+import '../Utils/helpers.dart';
 
 class ApiClient extends GetxService {
   static late Dio dio;

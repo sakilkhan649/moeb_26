@@ -182,12 +182,12 @@ class _JobofferpageState extends State<Jobofferpage> {
                                     vehicleType: job.vehicleType,
                                     pickupLocation: job.pickupLocation,
                                     dropoffLocation: job.dropoffLocation ?? '',
-                                    driverName:
-                                        "${job.createdBy!.nickname.length == 0
-                                            ? job.createdBy?.name
-                                            : job.createdBy?.nickname}",
+                                    driverName: job.createdBy?.nickname != null &&
+                                            job.createdBy!.nickname.isNotEmpty
+                                        ? job.createdBy!.nickname
+                                        : (job.createdBy?.name ?? "Unknown"),
                                     companyName:
-                                        job.createdBy?.companyName ?? 'Unknown',
+                                        job.createdBy?.company ?? 'Unknown',
                                     flightNumberHint: job.flightNumber ?? '',
                                     paymentMethodHint: job.paymentType
                                         .replaceAll('_', ' '),

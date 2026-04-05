@@ -5,8 +5,9 @@ import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Data/models/job_model.dart';
 import 'package:moeb_26/Data/my_jobs_model.dart';
 import 'package:moeb_26/Ripositoryes/job_repository.dart';
+import 'package:moeb_26/Services/api_cheker.dart';
 import 'package:moeb_26/Services/job_service.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
+import 'package:moeb_26/Utils/helpers.dart';
 
 class BookingController extends GetxController {  
   final JobService _jobService = Get.find<JobService>();
@@ -137,6 +138,7 @@ class BookingController extends GetxController {
     try {
       isLoadingList.value = true;
       final response = await _jobService.applyToJob(jobId: jobId);
+    ApiChecker.checkWriteApi(response);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Find the job object before removing it from the list
         final appliedJob = jobOffersList.firstWhere((job) => job.id == jobId);
@@ -146,18 +148,9 @@ class BookingController extends GetxController {
 
         Helpers.showCustomSnackBar('Job applied successfully.', isError: false);
         Get.toNamed(Routes.requestSubmitted, arguments: appliedJob);
-      } else {
-        final message = response.data is Map
-            ? (response.data['message'] ?? 'Failed to apply for job.')
-            : 'Failed to apply for job.';
-        Helpers.showCustomSnackBar(message, isError: true);
       }
-    } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Failed to apply for job.';
-      Helpers.showCustomSnackBar(message, isError: true);
-    } catch (e) {
-      print("Error applying for job: $e");
-      Helpers.showCustomSnackBar('Something went wrong.', isError: true);
+    }catch (e) {
+      Helpers.showDebugLog("job application error:$e");
     } finally {
       isLoadingList.value = false;
     }

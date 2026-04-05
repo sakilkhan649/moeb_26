@@ -5,7 +5,7 @@ import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
 import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/Ripositoryes/job_repository.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
+import 'package:moeb_26/Utils/helpers.dart';
 
 class RidesController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();

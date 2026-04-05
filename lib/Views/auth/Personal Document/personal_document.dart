@@ -47,7 +47,7 @@ class PersonalDocument extends StatelessWidget {
                 fileRx: controller.drivingLicenseFile,
               ),
               SizedBox(height: 16.h),
-              _buildFieldLabel("Expire Date"),
+              _buildFieldLabel("Expiration Date"),
               _buildExpireDateField(
                 context,
                 controller.drivingLicenseExpireController,
@@ -59,7 +59,7 @@ class PersonalDocument extends StatelessWidget {
                 fileRx: controller.hackLicenseFile,
               ),
               SizedBox(height: 16.h),
-              _buildFieldLabel("Expire Date"),
+              _buildFieldLabel("Expiration Date"),
               _buildExpireDateField(
                 context,
                 controller.hackLicenseExpireController,
@@ -71,7 +71,7 @@ class PersonalDocument extends StatelessWidget {
                 fileRx: controller.localPermitFile,
               ),
               SizedBox(height: 16.h),
-              _buildFieldLabel("Expire Date"),
+              _buildFieldLabel("Expiration Date"),
               _buildExpireDateField(
                 context,
                 controller.localPermitExpireController,
@@ -281,7 +281,7 @@ class PersonalDocument extends StatelessWidget {
       onTap: () => controller.selectDate(context, textController),
       style: TextStyle(color: Colors.white, fontSize: 14.sp),
       decoration: InputDecoration(
-        hintText: "Select New Expiry Date",
+        hintText: "Select Date",
         hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
         suffixIcon: Icon(
           Icons.calendar_month,

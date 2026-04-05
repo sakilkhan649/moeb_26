@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/Data/my_jobs_model.dart';
+import 'package:moeb_26/Utils/helpers.dart';
 import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progress_Way_Location.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
@@ -13,7 +14,6 @@ import '../../../../Utils/app_colors.dart';
 import '../../../../Utils/app_icons.dart';
 import '../../../../Utils/app_images.dart';
 import '../../../../widgets/Custom_AppBar.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 import 'Controller/My_job_controller.dart';
 
 class VehicleTypeColors {
@@ -204,7 +204,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final flight = job.flightNumber ?? 'N/A';
     final paymentType = job.paymentType?.replaceAll('_', ' ');
     final instruction = job.instruction ?? 'N/A';
-    final company = job.applicant?.driver?.company ??job.assignedTo?.company??'N/A';
+    final company = job.companyName;
     final amount = job.paymentAmount;
     final status = job.status;
 
@@ -217,7 +217,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final TextEditingController cardInstructionController =
         TextEditingController(text: instruction);
     final TextEditingController cardAmountController = TextEditingController(
-      text: "\$${amount}",
+      text: "\$${amount ?? 0}",
     );
     return Container(
       width: double.infinity,
@@ -266,8 +266,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                       onSelected: (value) {
                         if (value == 'edit') {
                           Get.toNamed(Routes.editScreen, arguments: job);
-                        } else {
-                          _showDeleteDialog(jobId: job.id.toString());
+                        } else if (job.id != null) {
+                          _showDeleteDialog(jobId: job.id!);
                         }
                       },
                       itemBuilder: (_) => [
@@ -334,8 +334,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             ),
                           ),
                           Expanded(
-                            child: Text(
-                              puLocation!,
+                              child: Text(
+                                puLocation ?? "N/A",
                               style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 14.sp,
@@ -359,7 +359,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: Text(
-                        vehicle!.toUpperCase(),
+                        (vehicle ?? "N/A").toUpperCase(),
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 10.sp,
@@ -492,7 +492,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     ? driver.vehicles!.first
                     : null;
                 final vehicleInfo = vehicle != null
-                    ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
+                    ? "${vehicle.make ?? ""} ${vehicle.model ?? ""}${vehicle.colorOutside != null && vehicle.colorOutside!.isNotEmpty ? ", ${vehicle.colorOutside}" : ""}"
+                        .trim()
                     : job.vehicleType ?? "N/A";
 
                 ///=========================================================================================================================================
@@ -533,9 +534,10 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      driver!.nickname?.length == 0
-                                          ? driver.name!
-                                          : driver.nickname!,
+                                      (driver!.nickname != null &&
+                                              driver.nickname!.isNotEmpty)
+                                          ? driver.nickname!
+                                          : (driver.name ?? "Unknown"),
                                       style: GoogleFonts.inter(
                                         color: Colors.white,
                                         fontSize: 16.sp,

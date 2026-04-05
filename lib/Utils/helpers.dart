@@ -44,9 +44,7 @@ class Helpers {
 
   //show bebug log
   static void showDebugLog(String message) {
-    debugPrint(
-      "❌❌❌❌\n❌❌❌❌DEBUG LOG: $message\n❌❌❌❌",
-    );
+    debugPrint("❌❌❌❌\n❌❌❌❌DEBUG LOG: $message\n❌❌❌❌");
   }
 
   // Show loading dialog
@@ -64,16 +62,12 @@ class Helpers {
     }
   }
 
-
-
-
   static void showCustomSnackBar(
-      String? message, {
-        bool isError = true,
-        bool getXSnackBar = true,
-        Duration? duration,
-
-      }) {
+    String? message, {
+    bool isError = true,
+    bool getXSnackBar = true,
+    Duration? duration,
+  }) {
     if (message != null && message.isNotEmpty) {
       if (getXSnackBar) {
         Get.showSnackbar(
@@ -95,7 +89,7 @@ class Helpers {
             backgroundColor: isError
                 ? Colors.red.shade100
                 : Colors.green.shade100,
-            snackPosition: SnackPosition.BOTTOM,
+            snackPosition: SnackPosition.TOP,
           ),
         );
       } else {
@@ -130,5 +124,4 @@ class Helpers {
       }
     }
   }
-
 }

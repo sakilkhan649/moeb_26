@@ -262,10 +262,11 @@ class ProfileScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Profile Image
                         CircleAvatar(
-                          radius: 42.r, // Slightly smaller
+                          radius: 42.r,
                           backgroundImage:
                               controller.profilePicture.value.isNotEmpty
                               ? NetworkImage(controller.profilePicture.value)
@@ -278,145 +279,142 @@ class ProfileScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              // Name — full width, no button competing
+                              Obx(() => Text(
                                 controller.fullName.value,
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
-                                  fontSize: 18.sp, // Reduced font size
+                                  fontSize: 18.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              Text(
-                                controller.ecn.value,
-                                style: GoogleFonts.inter(
-                                  color: Colors.grey,
-                                  fontSize: 13.sp, // Reduced font size
-                                ),
-                              ),
-                              SizedBox(height: 2.h),
-                              Row(
+                                maxLines: 2,
+                              )),
+                              SizedBox(height: 4.h),
+                              // ECN + Rating row with Edit button on the right
+                              Obx(() => Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: AppColors.orange100,
-                                    size: 16.sp, // Smaller icon
+                                  // ECN and Rating stacked on the left
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        if (controller.ecn.value.isNotEmpty)
+                                          Text(
+                                            controller.ecn.value,
+                                            style: GoogleFonts.inter(
+                                              color: Colors.grey,
+                                              fontSize: 13.sp,
+                                            ),
+                                          ),
+                                        SizedBox(height: 2.h),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.star,
+                                              color: AppColors.orange100,
+                                              size: 16.sp,
+                                            ),
+                                            SizedBox(width: 4.w),
+                                            Text(
+                                              controller.rating.value.toString(),
+                                              style: GoogleFonts.inter(
+                                                color: Colors.white,
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    controller.rating.value.toString(),
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 15.sp, // Reduced font size
-                                      fontWeight: FontWeight.w600,
+                                  // Edit Button — right side of ECN/rating row
+                                  PopupMenuButton<int>(
+                                    padding: EdgeInsets.zero,
+                                    color: const Color(0xFF000000),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      side: const BorderSide(
+                                        color: Color(0xFF364153),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    offset: const Offset(0, 50),
+                                    onSelected: (item) {
+                                      switch (item) {
+                                        case 0:
+                                          Get.bottomSheet(
+                                            EditProfileBottomSheet(),
+                                            isScrollControlled: true,
+                                            backgroundColor: Colors.transparent,
+                                          );
+                                          break;
+                                        case 1:
+                                          Get.toNamed(
+                                            Routes.allVehicle,
+                                            arguments: {
+                                              "vehicles":
+                                                  controller.userProfile.value?.vehicles,
+                                            },
+                                          );
+                                          break;
+                                        case 2:
+                                          Get.toNamed(Routes.serviceArea);
+                                          break;
+                                        case 3:
+                                          Get.toNamed(Routes.personalDocument);
+                                          break;
+                                        case 4:
+                                          Get.toNamed(Routes.myPropucts);
+                                          break;
+                                        case 5:
+                                          Get.toNamed(Routes.myJobsScreen);
+                                          break;
+                                      }
+                                    },
+                                    itemBuilder: (context) => [
+                                      _buildPopupItem(0, Icons.person_outline, "Profile"),
+                                      _buildPopupItem(1, Icons.directions_car_outlined, "Vehicle"),
+                                      _buildPopupItem(2, Icons.location_on_outlined, "Service Area"),
+                                      _buildPopupItem(3, Icons.document_scanner_outlined, "Personal doc"),
+                                      _buildPopupItem(4, Icons.shopping_bag_outlined, "My Items"),
+                                      _buildPopupItem(5, Icons.business_center_outlined, "My Jobs"),
+                                    ],
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 18.w,
+                                        vertical: 8.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.orange100,
+                                        borderRadius: BorderRadius.circular(12.r),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.edit_outlined,
+                                            color: Colors.white,
+                                            size: 18.sp,
+                                          ),
+                                          SizedBox(width: 6.w),
+                                          Text(
+                                            "Edit",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white,
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
-                              ),
+                              )),
                             ],
-                          ),
-                        ),
-                        // Edit Button
-                        PopupMenuButton<int>(
-                          padding: EdgeInsets.zero,
-                          color: const Color(0xFF000000),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.r),
-                            side: const BorderSide(
-                              color: Color(0xFF364153),
-                              width: 1,
-                            ),
-                          ),
-                          offset: const Offset(0, 50),
-                          onSelected: (item) {
-                            switch (item) {
-                              case 0:
-                                Get.bottomSheet(
-                                  EditProfileBottomSheet(),
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                );
-                                break;
-                              case 1:
-                                Get.toNamed(
-                                  Routes.allVehicle,
-                                  arguments: {
-                                    "vehicles":
-                                        controller.userProfile.value?.vehicles,
-                                  },
-                                );
-                                break;
-                              case 2:
-                                Get.toNamed(Routes.serviceArea);
-                                break;
-                              case 3:
-                                Get.toNamed(Routes.personalDocument);
-                                break;
-                              case 4:
-                                Get.toNamed(Routes.myJobsScreen);
-                                break;
-                              case 5:
-                                Get.toNamed(Routes.myPropucts);
-                                break;
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            _buildPopupItem(0, Icons.person_outline, "Profile"),
-                            _buildPopupItem(
-                              1,
-                              Icons.directions_car_outlined,
-                              "Vehicle",
-                            ),
-                            _buildPopupItem(
-                              2,
-                              Icons.location_on_outlined,
-                              "Service Area",
-                            ),
-                            _buildPopupItem(
-                              3,
-                              Icons.document_scanner_outlined,
-                              "Personal doc",
-                            ),
-                            _buildPopupItem(
-                              4,
-                              Icons.shopping_bag_outlined,
-                              "My Items",
-                            ),
-                            _buildPopupItem(
-                              5,
-                              Icons.business_center_outlined,
-                              "My Jobs",
-                            ),
-                          ],
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 18.w,
-                              vertical: 8.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.orange100,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.edit_outlined,
-                                  color: Colors.white,
-                                  size: 18.sp,
-                                ),
-                                SizedBox(width: 6.w),
-                                Text(
-                                  "Edit",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
                         ),
                       ],
@@ -438,6 +436,7 @@ class ProfileScreen extends StatelessWidget {
                         _buildDetailRow("Phone", controller.phone),
                         _buildDetailRow("Service Area", controller.serviceArea),
                         _buildDetailRow("Nick Name", controller.nickName),
+                        _buildDetailRow("UID", controller.ecn),
                       ],
                     ),
                   ),

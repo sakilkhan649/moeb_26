@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../../../Data/my_jobs_model.dart';
 import '../../../../../Ripositoryes/job_repository.dart';
-import '../../../../../widgets/Custom_snacbar.dart' as Helpers;
+import '../../../../../Utils/helpers.dart';
 import 'My_job_controller.dart';
 
 class EditController extends GetxController {
@@ -109,6 +109,26 @@ class EditController extends GetxController {
       initialDate: selectedDate.value ?? DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF364153), // Selected date circle color
+              onPrimary: Colors.white, // Selected date text color
+              surface: Color(0xFF1E1E1E), // Slightly lighter than pure black
+              onSurface: Colors.white, // Text color on the picker
+            ),
+            dialogBackgroundColor: const Color(0xFF1E1E1E),
+            dialogTheme: DialogThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF404040), width: 1),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != selectedDate.value) {
       selectedDate.value = picked;
@@ -120,9 +140,26 @@ class EditController extends GetxController {
       context: context,
       initialTime: selectedTime.value ?? TimeOfDay.now(),
       builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-          child: child!,
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF364153), // Selection hand and selected circle
+              onPrimary: Colors.white,
+              surface: Color(0xFF1E1E1E), // Lighter background
+              onSurface: Colors.white, // Text color
+            ),
+            dialogBackgroundColor: const Color(0xFF1E1E1E),
+            dialogTheme: DialogThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF404040), width: 1),
+              ),
+            ),
+          ),
+          child: MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child!,
+          ),
         );
       },
     );

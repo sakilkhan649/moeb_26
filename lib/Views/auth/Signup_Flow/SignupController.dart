@@ -7,9 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/Core/routs.dart';
 import 'package:moeb_26/Services/auth_service.dart';
+import 'package:moeb_26/Utils/helpers.dart';
 import 'package:moeb_26/Views/Service_Area/Controller/serviceController.dart';
 import 'package:moeb_26/Views/auth/Vehicle/Model/VehicleModel.dart';
-import 'package:moeb_26/widgets/Custom_snacbar.dart' as Helpers;
 
 class SignupController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();

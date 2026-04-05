@@ -64,6 +64,7 @@ class Ride {
   final String id;
   final String pickupLocation;
   final String dropoffLocation;
+  final String? flightNumber;
   final String vehicleType;
   final bool? asap;
   final num paymentAmount;
@@ -91,6 +92,7 @@ class Ride {
     this.applicant,
     this.assignedTo,
     this.createdBy,
+    this.flightNumber,
   });
 
   factory Ride.fromJson(Map<String, dynamic> json) {
@@ -119,6 +121,7 @@ class Ride {
       createdBy: (json['createdBy'] != null && json['createdBy'] is Map)
           ? Driver.fromJson(json['createdBy'])
           : null,
+      flightNumber: json['flightNumber'],
     );
   }
 }
@@ -130,6 +133,7 @@ class Driver {
   final String phone;
   final String profilePicture;
   final String? company;
+  final String? nickname;
 
   Driver({
     required this.id,
@@ -138,6 +142,7 @@ class Driver {
     required this.phone,
     required this.profilePicture,
     this.company,
+    this.nickname,
   });
 
   factory Driver.fromJson(Map<String, dynamic> json) {
@@ -148,6 +153,7 @@ class Driver {
       phone: json['phone'] ?? '',
       profilePicture: json['profilePicture'] ?? '',
       company: json['company'],
+      nickname: json['nickname'],
     );
   }
 }
