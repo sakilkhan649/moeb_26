@@ -179,11 +179,11 @@ class ProfileController extends GetxController {
     try {
       var response = await _profileService.deleteVehicle(vehicleId);
       if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.back(); // Close dialog first
         Helpers.showCustomSnackBar(
           "Vehicle deleted successfully",
           isError: false,
         );
-        Get.back();
         fetchUserProfile();
       } else {
         Helpers.showCustomSnackBar(

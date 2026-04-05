@@ -153,15 +153,20 @@ class Vehicle {
       colorOutside: json['colorOutside']?.toString() ?? '',
       year: json['year'] is int ? json['year'] : 0,
       licensePlate: json['licensePlate']?.toString() ?? '',
-      vehicleRegistrationImage: json['vehicleRegistrationImage']?.toString(),
-      vehicleRegistrationExpiryDate: json['vehicleRegistrationExpiryDate']
+      // Nested: vehicleRegistration.image / .expiryDate
+      vehicleRegistrationImage: json['vehicleRegistration']?['image']
           ?.toString(),
-      commercialInsuranceImage: json['commercialInsuranceImage']?.toString(),
-      commercialInsuranceExpiryDate: json['commercialInsuranceExpiryDate']
+      vehicleRegistrationExpiryDate: json['vehicleRegistration']?['expiryDate']
           ?.toString(),
-      vehiclePhotoFront: json['vehiclePhotoFront']?.toString(),
-      vehiclePhotoRear: json['vehiclePhotoRear']?.toString(),
-      vehiclePhotoInterior: json['vehiclePhotoInterior']?.toString(),
+      // Nested: commercialInsurance.image / .expiryDate
+      commercialInsuranceImage: json['commercialInsurance']?['image']
+          ?.toString(),
+      commercialInsuranceExpiryDate: json['commercialInsurance']?['expiryDate']
+          ?.toString(),
+      // Nested: photos.frontView / .rearView / .interiorView
+      vehiclePhotoFront: json['photos']?['frontView']?.toString(),
+      vehiclePhotoRear: json['photos']?['rearView']?.toString(),
+      vehiclePhotoInterior: json['photos']?['interiorView']?.toString(),
     );
   }
 

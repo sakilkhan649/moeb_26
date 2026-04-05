@@ -30,6 +30,13 @@ class VehicleActionController extends GetxController {
   var rearViewFile = Rx<File?>(null);
   var interiorViewFile = Rx<File?>(null);
 
+  // Existing image URLs from server (for eye-preview in edit mode)
+  var commercialInsuranceUrl = RxnString();
+  var vehicleRegistrationUrl = RxnString();
+  var frontViewUrl = RxnString();
+  var rearViewUrl = RxnString();
+  var interiorViewUrl = RxnString();
+
   var isLoading = false.obs;
   var isEditMode = false.obs;
   String? editVehicleId;
@@ -49,11 +56,70 @@ class VehicleActionController extends GetxController {
       yearController.text = (v.year ?? "").toString();
       colorController.text = v.colorInside ?? "";
       licensePlateController.text = v.licensePlate ?? "";
-      commercialInsuranceExpireController.text =
-          v.commercialInsuranceExpiryDate ?? "";
-      vehicleRegistrationExpireController.text =
-          v.vehicleRegistrationExpiryDate ?? "";
+      if (v.commercialInsuranceExpiryDate != null && v.commercialInsuranceExpiryDate!.isNotEmpty) {
+        try {
+          commercialInsuranceExpireController.text = DateFormat('yyyy-MM-dd').format(DateTime.parse(v.commercialInsuranceExpiryDate!));
+        } catch (_) {
+          commercialInsuranceExpireController.text = v.commercialInsuranceExpiryDate!;
+        }
+      }
+      
+      if (v.vehicleRegistrationExpiryDate != null && v.vehicleRegistrationExpiryDate!.isNotEmpty) {
+        try {
+          vehicleRegistrationExpireController.text = DateFormat('yyyy-MM-dd').format(DateTime.parse(v.vehicleRegistrationExpiryDate!));
+        } catch (_) {
+          vehicleRegistrationExpireController.text = v.vehicleRegistrationExpiryDate!;
+        }
+      }
+
+      // Load existing image URLs for preview
+      commercialInsuranceUrl.value = v.commercialInsuranceImage;
+      vehicleRegistrationUrl.value = v.vehicleRegistrationImage;
+      frontViewUrl.value = v.vehiclePhotoFront;
+      rearViewUrl.value = v.vehiclePhotoRear;
+      interiorViewUrl.value = v.vehiclePhotoInterior;
     }
+  }
+
+  /// Shows the existing server image or the newly picked local file in a dialog.
+  void previewImage(BuildContext context, Rx<File?> fileRx, RxnString urlRx) {
+    final localFile = fileRx.value;
+    final serverUrl = urlRx.value;
+
+    if (localFile == null && (serverUrl == null || serverUrl.isEmpty)) {
+      Helpers.showCustomSnackBar(
+        'No image available to preview.',
+        isError: true,
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.black,
+        insetPadding: const EdgeInsets.all(16),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: localFile != null
+              ? Image.file(localFile, fit: BoxFit.contain)
+              : Image.network(
+                  serverUrl!,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (_, child, progress) => progress == null
+                      ? child
+                      : const Center(child: CircularProgressIndicator()),
+                  errorBuilder: (_, __, ___) => const Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                      'Failed to load image',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+        ),
+      ),
+    );
   }
 
   Future<void> selectDate(
@@ -182,6 +248,7 @@ class VehicleActionController extends GetxController {
 
       var response = await _profileService.patchProfile(formData);
       if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.back(); // Navigate back first
         Helpers.showCustomSnackBar(
           isEditMode.value
               ? "Vehicle updated successfully"
@@ -189,7 +256,6 @@ class VehicleActionController extends GetxController {
           isError: false,
         );
         profileCtrl.fetchUserProfile();
-        Get.back();
       } else {
         Helpers.showCustomSnackBar(
           response.data['message'] ?? "Failed to save vehicle",

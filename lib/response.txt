@@ -1,173 +1,93 @@
 {
     "success": true,
-    "message": "Jobs retrieved successfully",
-    "pagination": {
-        "total": 3,
-        "limit": 10,
-        "page": 1,
-        "totalPage": 1
-    },
-    "data": [
-        {
-            "_id": "69d148720b0ff71c96c6f7e0",
-            "jobType": "ONE WAY",
-            "pickupLocation": "1st",
-            "dropoffLocation": "1st",
-            "asap": true,
-            "vehicleType": "SUV",
-            "paymentAmount": 33,
-            "paymentType": "COLLECT",
-            "serviceArea": "Manhattan1",
-            "status": "PENDING",
-            "rideStatus": null,
-            "createdBy": {
-                "_id": "69c9a93de6459d36bb877ca3",
-                "name": "Sakil",
-                "email": "mdsakilkhan649@gmail.com",
-                "phone": "01868569162",
-                "company": "snd",
-                "companyRole": "MANAGER",
-                "profilePicture": "http://10.10.7.47:5001/uploads/images/1775323208501-tkisbj.jpg",
-                "vehicles": [
-                    {
-                        "carType": "SUV",
-                        "make": "prado",
-                        "model": "53u006t",
-                        "colorInside": "back",
-                        "colorOutside": "back",
-                        "year": 2015,
-                        "licensePlate": "Agjh664u",
-                        "vehicleRegistration": {
-                            "image": "https://nayem5001.binarybards.online/uploads/images/1774823740670-npbcxh.jpg",
-                            "expiryDate": "2026-03-29T18:00:00.000Z"
-                        },
-                        "commercialInsurance": {
-                            "image": "https://nayem5001.binarybards.online/uploads/images/1774823740706-qayryv.jpg",
-                            "expiryDate": "2026-03-29T18:00:00.000Z"
-                        },
-                        "photos": {
-                            "frontView": "https://nayem5001.binarybards.online/uploads/images/1774823740751-d5mcd5.jpg",
-                            "rearView": "https://nayem5001.binarybards.online/uploads/images/1774823741131-a7rjb3.jpg",
-                            "interiorView": "https://nayem5001.binarybards.online/uploads/images/1774823741171-8p7e1w.jpg"
-                        },
-                        "_id": "69c9a93de6459d36bb877ca4"
-                    }
-                ],
-                "averageRating": 0,
-                "totalReviews": 0,
-                "selectedVehicle": "69c9a93de6459d36bb877ca4",
-                "nickname": "jannat"
+    "message": "Profile data retrieved successfully",
+    "data": {
+        "_id": "69d2afcf2c74b5f393f64989",
+        "name": "Md Bayzid Hosen",
+        "role": "DRIVER",
+        "email": "mdbayazid131@gmail.com",
+        "phone": "01990641482",
+        "home": "Dhaka",
+        "serviceArea": "Manhattan",
+        "experience": 5,
+        "company": "STA",
+        "companyRole": "DRIVER",
+        "profilePicture": "https://i.ibb.co/z5YHLV9/profile.png",
+        "status": "ACTIVE",
+        "verified": true,
+        "deviceTokens": [
+            "optional-fcm-token",
+            "eAcF-muqQkSYTZ5roBEQA2:APA91bGQ7lbsz_Afxn6xKojvOiKl25k-FSOxV0rHJGYHdJ8dZh5LFdigP_m2GDHKkEE4w7p1tkGG9t7U7WsMwHbKh5wjLA-IyMtYqM1nF9WtT5VV2rBdFtM"
+        ],
+        "vehicles": [
+            {
+                "carType": "SUV",
+                "make": "Mercedes",
+                "model": "B",
+                "colorInside": "black",
+                "colorOutside": "black",
+                "year": 2005,
+                "licensePlate": "AB-123",
+                "vehicleRegistration": {
+                    "image": "http://10.10.7.47:5001/uploads/images/1775415247252-gjejvs.png",
+                    "expiryDate": "2026-04-29T18:00:00.000Z"
+                },
+                "commercialInsurance": {
+                    "image": "http://10.10.7.47:5001/uploads/images/1775415247270-9azkoj.png",
+                    "expiryDate": "2026-04-29T18:00:00.000Z"
+                },
+                "photos": {
+                    "frontView": "http://10.10.7.47:5001/uploads/images/1775415247288-9bzqme.png",
+                    "rearView": "http://10.10.7.47:5001/uploads/images/1775415247316-y7scq8.png",
+                    "interiorView": "http://10.10.7.47:5001/uploads/images/1775415247334-w04vz2.png"
+                },
+                "_id": "69d2afcf2c74b5f393f6498a"
             },
-            "createdAt": "2026-04-04T17:20:50.646Z",
-            "updatedAt": "2026-04-04T17:20:50.646Z"
+            {
+                "carType": "Bus",
+                "make": "alif",
+                "model": "s",
+                "colorInside": "yellow",
+                "colorOutside": "yellow",
+                "year": 2008,
+                "licensePlate": "1234",
+                "vehicleRegistration": {
+                    "image": "http://10.10.7.47:5001/uploads/images/1775421907186-kvp68x.png",
+                    "expiryDate": "2026-04-30T00:00:00.000Z"
+                },
+                "commercialInsurance": {
+                    "image": "http://10.10.7.47:5001/uploads/images/1775421907187-m60ym7.png",
+                    "expiryDate": "2026-04-30T00:00:00.000Z"
+                },
+                "photos": {
+                    "frontView": "http://10.10.7.47:5001/uploads/images/1775421907228-0kq73x.png",
+                    "rearView": "http://10.10.7.47:5001/uploads/images/1775421907276-zgeug4.png",
+                    "interiorView": "http://10.10.7.47:5001/uploads/images/1775421907305-6wfhal.png"
+                },
+                "_id": "69d2c9d3e74511d58b834dee"
+            }
+        ],
+        "drivingLicense": {
+            "image": "http://10.10.7.47:5001/uploads/images/1775421804782-yt78bk.jpg",
+            "expiryDate": "2026-04-30T00:00:00.000Z"
         },
-        {
-            "_id": "69c9c30618f3f92767323c65",
-            "jobType": "ONE WAY",
-            "pickupLocation": "Feni",
-            "dropoffLocation": "Dhaka",
-            "flightNumber": "7754y8",
-            "asap": true,
-            "vehicleType": "SEDAN",
-            "paymentAmount": 56322,
-            "paymentType": "NO COLLECT",
-            "serviceArea": "Manhattan1",
-            "status": "PENDING",
-            "rideStatus": null,
-            "createdBy": {
-                "_id": "69c9a93de6459d36bb877ca3",
-                "name": "Sakil",
-                "email": "mdsakilkhan649@gmail.com",
-                "phone": "01868569162",
-                "company": "snd",
-                "companyRole": "MANAGER",
-                "profilePicture": "http://10.10.7.47:5001/uploads/images/1775323208501-tkisbj.jpg",
-                "vehicles": [
-                    {
-                        "carType": "SUV",
-                        "make": "prado",
-                        "model": "53u006t",
-                        "colorInside": "back",
-                        "colorOutside": "back",
-                        "year": 2015,
-                        "licensePlate": "Agjh664u",
-                        "vehicleRegistration": {
-                            "image": "https://nayem5001.binarybards.online/uploads/images/1774823740670-npbcxh.jpg",
-                            "expiryDate": "2026-03-29T18:00:00.000Z"
-                        },
-                        "commercialInsurance": {
-                            "image": "https://nayem5001.binarybards.online/uploads/images/1774823740706-qayryv.jpg",
-                            "expiryDate": "2026-03-29T18:00:00.000Z"
-                        },
-                        "photos": {
-                            "frontView": "https://nayem5001.binarybards.online/uploads/images/1774823740751-d5mcd5.jpg",
-                            "rearView": "https://nayem5001.binarybards.online/uploads/images/1774823741131-a7rjb3.jpg",
-                            "interiorView": "https://nayem5001.binarybards.online/uploads/images/1774823741171-8p7e1w.jpg"
-                        },
-                        "_id": "69c9a93de6459d36bb877ca4"
-                    }
-                ],
-                "averageRating": 0,
-                "totalReviews": 0,
-                "selectedVehicle": "69c9a93de6459d36bb877ca4",
-                "nickname": "jannat"
-            },
-            "createdAt": "2026-03-30T00:25:42.020Z",
-            "updatedAt": "2026-03-30T00:25:42.020Z"
+        "hackLicense": {
+            "image": "http://10.10.7.47:5001/uploads/images/1775421804784-nd90uj.jpg",
+            "expiryDate": "2026-04-30T00:00:00.000Z"
         },
-        {
-            "_id": "69c9c2d918f3f92767323c54",
-            "jobType": "ONE WAY",
-            "pickupLocation": "Noakhali",
-            "dropoffLocation": "Dhaka",
-            "flightNumber": "4tuuge456",
-            "asap": true,
-            "vehicleType": "SUV",
-            "paymentAmount": 58855,
-            "paymentType": "NO COLLECT",
-            "serviceArea": "Manhattan1",
-            "status": "PENDING",
-            "rideStatus": null,
-            "createdBy": {
-                "_id": "69c9a93de6459d36bb877ca3",
-                "name": "Sakil",
-                "email": "mdsakilkhan649@gmail.com",
-                "phone": "01868569162",
-                "company": "snd",
-                "companyRole": "MANAGER",
-                "profilePicture": "http://10.10.7.47:5001/uploads/images/1775323208501-tkisbj.jpg",
-                "vehicles": [
-                    {
-                        "carType": "SUV",
-                        "make": "prado",
-                        "model": "53u006t",
-                        "colorInside": "back",
-                        "colorOutside": "back",
-                        "year": 2015,
-                        "licensePlate": "Agjh664u",
-                        "vehicleRegistration": {
-                            "image": "https://nayem5001.binarybards.online/uploads/images/1774823740670-npbcxh.jpg",
-                            "expiryDate": "2026-03-29T18:00:00.000Z"
-                        },
-                        "commercialInsurance": {
-                            "image": "https://nayem5001.binarybards.online/uploads/images/1774823740706-qayryv.jpg",
-                            "expiryDate": "2026-03-29T18:00:00.000Z"
-                        },
-                        "photos": {
-                            "frontView": "https://nayem5001.binarybards.online/uploads/images/1774823740751-d5mcd5.jpg",
-                            "rearView": "https://nayem5001.binarybards.online/uploads/images/1774823741131-a7rjb3.jpg",
-                            "interiorView": "https://nayem5001.binarybards.online/uploads/images/1774823741171-8p7e1w.jpg"
-                        },
-                        "_id": "69c9a93de6459d36bb877ca4"
-                    }
-                ],
-                "averageRating": 0,
-                "totalReviews": 0,
-                "selectedVehicle": "69c9a93de6459d36bb877ca4",
-                "nickname": "jannat"
-            },
-            "createdAt": "2026-03-30T00:24:57.717Z",
-            "updatedAt": "2026-03-30T00:24:57.717Z"
-        }
-    ]
+        "localPermit": {
+            "image": "http://10.10.7.47:5001/uploads/images/1775421804794-gaxiyl.jpg",
+            "expiryDate": "2026-04-30T00:00:00.000Z"
+        },
+        "uploadedHeadshot": "http://10.10.7.47:5001/uploads/images/1775421804808-v2q9op.jpg",
+        "blockReason": null,
+        "averageRating": 0,
+        "totalReviews": 0,
+        "createdAt": "2026-04-05T18:54:07.466Z",
+        "updatedAt": "2026-04-05T20:54:47.812Z",
+        "__v": 0,
+        "selectedVehicle": "69d2c9d3e74511d58b834dee",
+        "nickname": "bayzid",
+        "uid": "MAN-706571"
+    }
 }

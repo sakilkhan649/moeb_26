@@ -43,42 +43,33 @@ class PersonalDocument extends StatelessWidget {
               SizedBox(height: 30.h),
 
               _buildDocumentSection(
+                context: context,
                 title: "Driving License",
                 fileRx: controller.drivingLicenseFile,
-              ),
-              SizedBox(height: 16.h),
-              _buildFieldLabel("Expiration Date"),
-              _buildExpireDateField(
-                context,
-                controller.drivingLicenseExpireController,
+                urlRx: controller.drivingLicenseUrl,
+                expireController: controller.drivingLicenseExpireController,
               ),
 
               SizedBox(height: 24.h),
               _buildDocumentSection(
+                context: context,
                 title: "Hack License",
                 fileRx: controller.hackLicenseFile,
-              ),
-              SizedBox(height: 16.h),
-              _buildFieldLabel("Expiration Date"),
-              _buildExpireDateField(
-                context,
-                controller.hackLicenseExpireController,
+                urlRx: controller.hackLicenseUrl,
+                expireController: controller.hackLicenseExpireController,
               ),
 
               SizedBox(height: 24.h),
               _buildDocumentSection(
+                context: context,
                 title: "Local Permit",
                 fileRx: controller.localPermitFile,
-              ),
-              SizedBox(height: 16.h),
-              _buildFieldLabel("Expiration Date"),
-              _buildExpireDateField(
-                context,
-                controller.localPermitExpireController,
+                urlRx: controller.localPermitUrl,
+                expireController: controller.localPermitExpireController,
               ),
 
               SizedBox(height: 24.h),
-              _buildHeadshotSection(),
+              _buildHeadshotSection(context),
 
               SizedBox(height: 30.h),
               Container(
@@ -127,14 +118,21 @@ class PersonalDocument extends StatelessWidget {
   }
 
   Widget _buildDocumentSection({
+    required BuildContext context,
     required String title,
     required Rx<File?> fileRx,
+    required RxnString urlRx,
+    required TextEditingController expireController,
   }) {
     return Obx(() {
-      final hasFile = fileRx.value != null;
+      final hasLocalFile = fileRx.value != null;
+      final hasServerUrl = urlRx.value != null && urlRx.value!.isNotEmpty;
+      final canPreview = hasLocalFile || hasServerUrl;
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Document picker row
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
@@ -149,26 +147,41 @@ class PersonalDocument extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          CustomText(
-                            text: title,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13.sp,
-                          ),
-                        ],
+                      CustomText(
+                        text: title,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13.sp,
                       ),
-                      if (hasFile)
+                      if (hasLocalFile)
                         Text(
                           controller.getFileName(fileRx),
                           style: TextStyle(
                             color: Colors.green,
                             fontSize: 11.sp,
                           ),
+                        )
+                      else if (hasServerUrl)
+                        Text(
+                          "Current image on file",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 11.sp,
+                          ),
                         ),
                     ],
                   ),
                 ),
+                // 👁 Eye preview icon — shows if local file or server URL exists
+                if (canPreview)
+                  IconButton(
+                    onPressed: () =>
+                        controller.previewImage(context, fileRx, urlRx),
+                    icon: const Icon(
+                      Icons.remove_red_eye_outlined,
+                      color: Colors.blue,
+                    ),
+                    tooltip: "Preview current image",
+                  ),
                 IconButton(
                   onPressed: () => controller.pickFromCamera(fileRx),
                   icon: const Icon(
@@ -186,14 +199,23 @@ class PersonalDocument extends StatelessWidget {
               ],
             ),
           ),
+
+          // Expiry date field
+          SizedBox(height: 12.h),
+          _buildFieldLabel("Expiration Date"),
+          _buildExpireDateField(context, expireController),
         ],
       );
     });
   }
 
-  Widget _buildHeadshotSection() {
+  Widget _buildHeadshotSection(BuildContext context) {
     return Obx(() {
-      final hasFile = controller.headshotFile.value != null;
+      final hasLocalFile = controller.headshotFile.value != null;
+      final hasServerUrl = controller.headshotUrl.value != null &&
+          controller.headshotUrl.value!.isNotEmpty;
+      final canPreview = hasLocalFile || hasServerUrl;
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -211,20 +233,24 @@ class PersonalDocument extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          CustomText(
-                            text: "Upload Headshot",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13.sp,
-                          ),
-                        ],
+                      CustomText(
+                        text: "Upload Headshot",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13.sp,
                       ),
-                      if (hasFile)
+                      if (hasLocalFile)
                         Text(
                           controller.getFileName(controller.headshotFile),
                           style: TextStyle(
                             color: Colors.green,
+                            fontSize: 11.sp,
+                          ),
+                        )
+                      else if (hasServerUrl)
+                        Text(
+                          "Current headshot on file",
+                          style: TextStyle(
+                            color: Colors.grey,
                             fontSize: 11.sp,
                           ),
                         )
@@ -236,6 +262,19 @@ class PersonalDocument extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (canPreview)
+                  IconButton(
+                    onPressed: () => controller.previewImage(
+                      context,
+                      controller.headshotFile,
+                      controller.headshotUrl,
+                    ),
+                    icon: const Icon(
+                      Icons.remove_red_eye_outlined,
+                      color: Colors.blue,
+                    ),
+                    tooltip: "Preview current headshot",
+                  ),
                 IconButton(
                   onPressed: () =>
                       controller.pickFromCamera(controller.headshotFile),

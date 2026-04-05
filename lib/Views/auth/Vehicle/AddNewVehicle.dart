@@ -296,9 +296,11 @@ class AddNewVehicle extends StatelessWidget {
 
         /// Commercial Insurance
         _buildDocumentSection(
+          context: context,
           title: "Commercial Insurance",
           isRequired: true,
           fileRx: controller.commercialInsuranceFile,
+          urlRx: controller.commercialInsuranceUrl,
         ),
         SizedBox(height: 16.h),
         Row(
@@ -328,9 +330,11 @@ class AddNewVehicle extends StatelessWidget {
 
         /// Vehicle Registration
         _buildDocumentSection(
+          context: context,
           title: "Vehicle Registration",
           isRequired: true,
           fileRx: controller.vehicleRegistrationFile,
+          urlRx: controller.vehicleRegistrationUrl,
         ),
         SizedBox(height: 16.h),
         Row(
@@ -376,19 +380,28 @@ class AddNewVehicle extends StatelessWidget {
 
         /// Front View
         _buildPhotoSection(
+          context: context,
           title: "Front View",
           fileRx: controller.frontViewFile,
+          urlRx: controller.frontViewUrl,
         ),
         SizedBox(height: 12.h),
 
         /// Rear View
-        _buildPhotoSection(title: "Rear View", fileRx: controller.rearViewFile),
+        _buildPhotoSection(
+          context: context,
+          title: "Rear View",
+          fileRx: controller.rearViewFile,
+          urlRx: controller.rearViewUrl,
+        ),
         SizedBox(height: 12.h),
 
         /// Interior View
         _buildPhotoSection(
+          context: context,
           title: "Interior View",
           fileRx: controller.interiorViewFile,
+          urlRx: controller.interiorViewUrl,
         ),
       ],
     );
@@ -397,13 +410,17 @@ class AddNewVehicle extends StatelessWidget {
   // ========== UI Helpers ==========
 
   Widget _buildDocumentSection({
+    required BuildContext context,
     required String title,
     required bool isRequired,
     required Rx<File?> fileRx,
+    required RxnString urlRx,
   }) {
     return Obx(() {
       final hasFile = fileRx.value != null;
-      final showError = showErrors.value && isRequired && !hasFile;
+      final hasUrl = urlRx.value != null && urlRx.value!.isNotEmpty;
+      final canPreview = hasFile || hasUrl;
+      final showError = showErrors.value && isRequired && !hasFile && !hasUrl;
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,6 +463,14 @@ class AddNewVehicle extends StatelessWidget {
                               ),
                               overflow: TextOverflow.ellipsis,
                             )
+                          : hasUrl
+                          ? Text(
+                              "Current file on record",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 11.sp,
+                              ),
+                            )
                           : CustomTextgray(
                               text: "PDF, JPG, PNG",
                               fontSize: 11.sp,
@@ -453,6 +478,17 @@ class AddNewVehicle extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (canPreview)
+                  IconButton(
+                    onPressed: () =>
+                        controller.previewImage(context, fileRx, urlRx),
+                    icon: Icon(
+                      Icons.remove_red_eye_outlined,
+                      color: Colors.blue,
+                      size: 20.sp,
+                    ),
+                    tooltip: "Preview image",
+                  ),
                 IconButton(
                   onPressed: () => controller.pickFromCamera(fileRx),
                   icon: Icon(
@@ -486,12 +522,16 @@ class AddNewVehicle extends StatelessWidget {
   }
 
   Widget _buildPhotoSection({
+    required BuildContext context,
     required String title,
     required Rx<File?> fileRx,
+    required RxnString urlRx,
   }) {
     return Obx(() {
       final hasFile = fileRx.value != null;
-      final showError = showErrors.value && !hasFile;
+      final hasUrl = urlRx.value != null && urlRx.value!.isNotEmpty;
+      final canPreview = hasFile || hasUrl;
+      final showError = showErrors.value && !hasFile && !hasUrl;
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -521,10 +561,32 @@ class AddNewVehicle extends StatelessWidget {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
+                        )
+                      else if (hasUrl)
+                        Padding(
+                          padding: EdgeInsets.only(top: 4.h),
+                          child: Text(
+                            "Current photo on record",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 11.sp,
+                            ),
+                          ),
                         ),
                     ],
                   ),
                 ),
+                if (canPreview)
+                  IconButton(
+                    onPressed: () =>
+                        controller.previewImage(context, fileRx, urlRx),
+                    icon: Icon(
+                      Icons.remove_red_eye_outlined,
+                      color: Colors.blue,
+                      size: 20.sp,
+                    ),
+                    tooltip: "Preview photo",
+                  ),
                 IconButton(
                   onPressed: () => controller.pickFromCamera(fileRx),
                   icon: Icon(
