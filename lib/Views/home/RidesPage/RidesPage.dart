@@ -326,7 +326,11 @@ class Ridespage extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: CustomJobCard(
-        pickupPaymentType: payment?.replaceAll('_', ' ') ?? 'N/A',
+        pickupPaymentType: (payment == 'NO_COLLECT' || payment == 'NO COLLECT')
+            ? 'No collect'
+            : (payment == 'COLLECT'
+                ? 'Collect'
+                : payment?.replaceAll('_', ' ') ?? 'N/A'),
         dateTime: displayDateTime,
         vehicleType: vehicleType.toUpperCase(),
         pickupLocation: pickup ?? 'N/A',
