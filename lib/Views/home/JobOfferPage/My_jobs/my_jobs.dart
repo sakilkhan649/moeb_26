@@ -23,7 +23,6 @@ class VehicleTypeColors {
   static const Color sprinter = Color(0xFF000000);
   static const Color gray = Color.fromARGB(255, 65, 63, 63);
 
-
   static LinearGradient sedanSuvGradient = LinearGradient(
     colors: [
       Color(0xFFB11226),
@@ -202,7 +201,12 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     final vehicle = job.vehicleType;
     final vehicleStyle = VehicleTypeColors.getVehicleStyle(vehicle);
     final flight = job.flightNumber ?? 'N/A';
-    final paymentType = job.paymentType?.replaceAll('_', ' ');
+    final paymentType =
+        (job.paymentType == 'NO_COLLECT' || job.paymentType == 'NO COLLECT')
+        ? 'No collect'
+        : (job.paymentType == 'COLLECT'
+              ? 'Collect'
+              : job.paymentType?.replaceAll('_', ' '));
     final instruction = job.instruction ?? 'N/A';
     final company = job.companyName;
     final amount = job.paymentAmount;
@@ -334,8 +338,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             ),
                           ),
                           Expanded(
-                              child: Text(
-                                puLocation ?? "N/A",
+                            child: Text(
+                              puLocation ?? "N/A",
                               style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 14.sp,
@@ -445,20 +449,20 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                 SizedBox(height: 10.h),
 
                 ///Special Instructions
-                  const CustomTextgray(
-                    text: "Special Instructions",
-                    color: Color(0xFF737373),
-                    fontWeight: FontWeight.w500,
-                  ),
-                  SizedBox(height: 8.h),
-                  CustomTextFieldGold(
-                    readOnly: true,
-                    controller: cardInstructionController,
+                const CustomTextgray(
+                  text: "Special Instructions",
+                  color: Color(0xFF737373),
+                  fontWeight: FontWeight.w500,
+                ),
+                SizedBox(height: 8.h),
+                CustomTextFieldGold(
+                  readOnly: true,
+                  controller: cardInstructionController,
                   hintText: "Airport Expert, Vip Client",
-                    obscureText: false,
-                    textInputType: TextInputType.text,
-                  ),
-                  SizedBox(height: 10.h),
+                  obscureText: false,
+                  textInputType: TextInputType.text,
+                ),
+                SizedBox(height: 10.h),
 
                 ///Amount
                 const CustomTextgray(
@@ -493,7 +497,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     : null;
                 final vehicleInfo = vehicle != null
                     ? "${vehicle.make ?? ""} ${vehicle.model ?? ""}${vehicle.colorOutside != null && vehicle.colorOutside!.isNotEmpty ? ", ${vehicle.colorOutside}" : ""}"
-                        .trim()
+                          .trim()
                     : job.vehicleType ?? "N/A";
 
                 ///=========================================================================================================================================
@@ -955,7 +959,7 @@ class CustomTextFieldGold extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: textInputType,
       validator: validator,
-      style: const TextStyle(color: Color(0xFFD08700)),
+      style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: Color(0xFFD08700)),

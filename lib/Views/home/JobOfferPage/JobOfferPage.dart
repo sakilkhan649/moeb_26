@@ -168,13 +168,10 @@ class _JobofferpageState extends State<Jobofferpage> {
                                   }
                                 } else {
                                   formattedDateTime =
-                                      (job.time == null ||
-                                          job.time == "null" ||
-                                          job.time.isEmpty)
+                                      (job.time == "null" || job.time.isEmpty)
                                       ? "ASAP"
                                       : job.time;
                                 }
-
                                 return Padding(
                                   padding: EdgeInsets.only(bottom: 16.h),
                                   child: CustomJobCard(
@@ -182,15 +179,24 @@ class _JobofferpageState extends State<Jobofferpage> {
                                     vehicleType: job.vehicleType,
                                     pickupLocation: job.pickupLocation,
                                     dropoffLocation: job.dropoffLocation ?? '',
-                                    driverName: job.createdBy?.nickname != null &&
+                                    driverName:
+                                        job.createdBy?.nickname != null &&
                                             job.createdBy!.nickname.isNotEmpty
                                         ? job.createdBy!.nickname
                                         : (job.createdBy?.name ?? "Unknown"),
                                     companyName:
                                         job.createdBy?.company ?? 'Unknown',
                                     flightNumberHint: job.flightNumber ?? '',
-                                    paymentMethodHint: job.paymentType
-                                        .replaceAll('_', ' '),
+                                    paymentMethodHint:
+                                        (job.paymentType == 'NO_COLLECT' ||
+                                            job.paymentType == 'NO COLLECT')
+                                        ? 'No collect'
+                                        : (job.paymentType == 'COLLECT'
+                                              ? 'Collect'
+                                              : job.paymentType.replaceAll(
+                                                  '_',
+                                                  ' ',
+                                                )),
                                     specialInstructionsHint:
                                         job.instruction ?? '',
                                     price: job.paymentAmount.toString(),
@@ -481,7 +487,8 @@ class _CustomJobCardState extends State<CustomJobCard> {
           ),
           SizedBox(height: 16.h),
 
-          if (widget.flightNumberHint.isNotEmpty && widget.flightNumberHint != "N/A") ...[
+          if (widget.flightNumberHint.isNotEmpty &&
+              widget.flightNumberHint != "N/A") ...[
             CustomTextgray(
               text: "Flight Number",
               color: const Color(0xFF737373),
@@ -672,7 +679,7 @@ class CustomTextFieldGold extends StatelessWidget {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Color(0xFFD08700)),
+        hintStyle: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
