@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color? backgroundColor;
   final Color? textColor;
   final double width;
@@ -13,6 +13,8 @@ class CustomButton extends StatelessWidget {
   final Color? borderColor;
   final double? fontSize;
   final FontWeight? fontWeight;
+
+  final bool loading;
 
   const CustomButton({
     super.key,
@@ -26,6 +28,7 @@ class CustomButton extends StatelessWidget {
     this.borderColor,
     this.fontSize,
     this.fontWeight,
+    this.loading = false,
   });
 
   @override
@@ -33,7 +36,7 @@ class CustomButton extends StatelessWidget {
     return SizedBox(
       width: width,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: loading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor ?? Colors.white,
           foregroundColor: textColor ?? Colors.black,
@@ -47,17 +50,27 @@ class CustomButton extends StatelessWidget {
                 ? BorderSide(color: borderColor!)
                 : BorderSide.none,
           ),
+          disabledBackgroundColor: (backgroundColor ?? Colors.white).withOpacity(0.6),
         ),
-        child: Text(
-          text,
-          style:
-              style ??
-              GoogleFonts.inter(
-                fontSize: fontSize ?? 16.sp, // Default font size with scaling
-                fontWeight: fontWeight ?? FontWeight.bold,
-                color: textColor ?? Colors.black,
+        child: loading
+            ? SizedBox(
+                height: 20.h,
+                width: 20.h,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: textColor ?? Colors.black,
+                ),
+              )
+            : Text(
+                text,
+                style:
+                    style ??
+                    GoogleFonts.inter(
+                      fontSize: fontSize ?? 16.sp, // Default font size with scaling
+                      fontWeight: fontWeight ?? FontWeight.bold,
+                      color: textColor ?? Colors.black,
+                    ),
               ),
-        ),
       ),
     );
   }

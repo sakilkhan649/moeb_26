@@ -1,15 +1,39 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/Utils/helpers.dart';
+import '../Model/user_profile_model.dart';
+import '../../../../Services/user_profile_service.dart';
 
 class ProfileController extends GetxController {
+  final UserProfileService _profileService = Get.find<UserProfileService>();
+
   // Profile Data
-  var fullName = "Sadat".obs;
-  var email = "sadatviper@gmail.com".obs;
-  var phone = "01744114084".obs;
-  var serviceArea = "Brooklyn".obs;
-  var nickName = "Omi Khan".obs;
+  var fullName = "".obs;
+  var email = "".obs;
+  var phone = "".obs;
+  var serviceArea = "".obs;
+  var nickName = "".obs;
   var rating = 5.0.obs;
-  var ecn = "ECN-456985".obs;
+  var ecn = "".obs; // Assuming this is still static or come from another field
+  var profilePicture = "".obs;
+  var pickedImage = Rxn<File>();
+
+  var isLoading = false.obs;
+  var isUpdating = false.obs;
+  var userProfile = Rxn<UserProfileModel>();
+
+  // Service Areas
+  var serviceAreas = <String>[].obs;
+  var isServiceAreasLoading = false.obs;
+
+  // Legal Pages
+  var legalPages = <Map<String, dynamic>>[].obs;
+  var isLegalsLoading = false.obs;
 
   // Controllers for Edit Profile Form
   late TextEditingController nameController;
@@ -21,27 +45,218 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    nameController = TextEditingController(text: fullName.value);
-    emailController = TextEditingController(text: email.value);
-    phoneController = TextEditingController(text: phone.value);
-    serviceAreaController = TextEditingController(text: serviceArea.value);
-    nickNameController = TextEditingController(text: nickName.value);
+    nameController = TextEditingController();
+    emailController = TextEditingController();
+    phoneController = TextEditingController();
+    serviceAreaController = TextEditingController();
+    nickNameController = TextEditingController();
+    fetchUserProfile();
+    fetchServiceAreas();
+    fetchLegalPages();
   }
 
-  void saveProfile() {
-    fullName.value = nameController.text;
-    email.value = emailController.text;
-    phone.value = phoneController.text;
-    serviceArea.value = serviceAreaController.text;
-    nickName.value = nickNameController.text;
-    Get.back();
-    Get.snackbar(
-      "Success",
-      "Profile updated successfully",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+  Future<void> fetchLegalPages() async {
+    isLegalsLoading.value = true;
+    try {
+      var response = await _profileService.getLegals();
+      if (response.statusCode == 200) {
+        var dataList = response.data['data'] as List;
+        legalPages.value = dataList
+            .map(
+              (item) => {
+                'slug': item['slug'].toString(),
+                'title': item['title'].toString(),
+              },
+            )
+            .toList();
+      }
+    } catch (e) {
+      debugPrint("Error fetching legal pages: $e");
+    } finally {
+      isLegalsLoading.value = false;
+    }
+  }
+
+  Future<void> fetchServiceAreas() async {
+    isServiceAreasLoading.value = true;
+    try {
+      var response = await _profileService.getServiceAreas();
+      if (response.statusCode == 200) {
+        var dataList = response.data['data'] as List;
+        serviceAreas.value = dataList
+            .map((item) => item['areaName'].toString())
+            .toList();
+      }
+    } catch (e) {
+      debugPrint("Error fetching service areas: $e");
+    } finally {
+      isServiceAreasLoading.value = false;
+    }
+  }
+
+  Future<void> fetchUserProfile() async {
+    isLoading.value = true;
+    try {
+      var response = await _profileService.getUserProfile();
+      if (response.statusCode == 200) {
+        var data = response.data['data'];
+        userProfile.value = UserProfileModel.fromJson(data);
+
+        // Update reactive variables
+        fullName.value = userProfile.value?.name ?? "";
+        email.value = userProfile.value?.email ?? "";
+        phone.value = userProfile.value?.phone ?? "";
+        serviceArea.value = userProfile.value?.serviceArea ?? "";
+        nickName.value = userProfile.value?.nickname ?? "";
+        profilePicture.value = userProfile.value?.profilePicture ?? "";
+        rating.value = userProfile.value?.averageRating ?? 0.0;
+        ecn.value = userProfile.value?.uid ?? "";
+
+        // Update controllers for the edit form
+        nameController.text = fullName.value;
+        emailController.text = email.value;
+        phoneController.text = phone.value;
+        serviceAreaController.text = serviceArea.value;
+        nickNameController.text = nickName.value;
+      } else {
+        Get.snackbar(
+          "Error",
+          "Failed to load profile",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching profile: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      pickedImage.value = File(image.path);
+    }
+  }
+
+  Future<void> updateSelectedVehicle(String vehicleId) async {
+    isUpdating.value = true;
+    try {
+      Map<String, dynamic> body = {"selectedVehicle": vehicleId};
+
+      var response = await _profileService.patchProfile(body);
+      if (response.statusCode == 200) {
+        var data = response.data['data'];
+        userProfile.value = UserProfileModel.fromJson(data);
+
+        Helpers.showCustomSnackBar(
+          "Vehicle selected successfully",
+          isError: false,
+        );
+      } else {
+        Helpers.showCustomSnackBar(
+          response.data['message'] ?? "Failed to update selected vehicle",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error updating selected vehicle: $e");
+      Helpers.showCustomSnackBar(
+        "Something went wrong while selecting vehicle",
+        isError: true,
+      );
+    } finally {
+      isUpdating.value = false;
+    }
+  }
+
+  Future<void> deleteVehicle(String vehicleId) async {
+    isUpdating.value = true;
+    try {
+      var response = await _profileService.deleteVehicle(vehicleId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.back(); // Close dialog first
+        Helpers.showCustomSnackBar(
+          "Vehicle deleted successfully",
+          isError: false,
+        );
+        fetchUserProfile();
+      } else {
+        Helpers.showCustomSnackBar(
+          response.data['message'] ?? "Failed to delete vehicle",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error deleting vehicle: $e");
+      Helpers.showDebugLog("Error deleting vehicle: $e");
+    } finally {
+      isUpdating.value = false;
+    }
+  }
+
+  Future<void> saveProfile() async {
+    isUpdating.value = true;
+    try {
+      Map<String, dynamic> body = {
+        "name": nameController.text,
+        "phone": phoneController.text,
+        "nickname": nickNameController.text, // Sent explicitly as "nickname"
+      };
+
+      dynamic requestBody;
+      if (pickedImage.value != null) {
+        requestBody = dio.FormData.fromMap({
+          ...body,
+          "profilePicture": await dio.MultipartFile.fromFile(
+            pickedImage.value!.path,
+            filename: pickedImage.value!.path.split('/').last,
+          ),
+        });
+      } else {
+        requestBody = body;
+      }
+
+      var response = await _profileService.patchProfile(requestBody);
+      if (response.statusCode == 200) {
+        var data = response.data['data'];
+        userProfile.value = UserProfileModel.fromJson(data);
+
+        // Update reactive variables
+        fullName.value = userProfile.value?.name ?? "";
+        email.value = userProfile.value?.email ?? "";
+        phone.value = userProfile.value?.phone ?? "";
+        serviceArea.value = userProfile.value?.serviceArea ?? "";
+        nickName.value = userProfile.value?.nickname ?? "";
+        profilePicture.value = userProfile.value?.profilePicture ?? "";
+        rating.value = userProfile.value?.averageRating ?? 0.0;
+        ecn.value = userProfile.value?.uid ?? "";
+
+        pickedImage.value = null; // Clear picked image after success
+        Get.back(); // Close bottom sheet
+        Helpers.showCustomSnackBar(
+          "Profile updated successfully",
+          isError: false,
+        );
+      } else {
+        Helpers.showCustomSnackBar(
+          response.data['message'] ?? "Failed to update profile",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error updating profile: $e");
+      Helpers.showCustomSnackBar(
+        "Something went wrong while updating profile",
+        isError: true,
+      );
+    } finally {
+      isUpdating.value = false;
+    }
   }
 
   @override

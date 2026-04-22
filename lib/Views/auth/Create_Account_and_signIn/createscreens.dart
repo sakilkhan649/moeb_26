@@ -19,7 +19,7 @@ class Createscreens extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: .center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // The logo (use an image asset or network image)
                 Container(
@@ -35,7 +35,10 @@ class Createscreens extends StatelessWidget {
                 CustomText(text: "Elite Chauffeur Network"),
                 SizedBox(height: 11.h),
                 // Subtitle Text
-                CustomTextgray(text: "Where Excellence Connects",fontSize: 16.sp,),
+                CustomTextgray(
+                  text: "Where Excellence Connects",
+                  fontSize: 16.sp,
+                ),
                 SizedBox(height: 240.h),
                 // Dots for the indicator (if needed)
                 CustomButton(

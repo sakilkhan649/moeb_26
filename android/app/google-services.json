@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "895230679164",
+    "project_id": "moeb26-7b4fc",
+    "storage_bucket": "moeb26-7b4fc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895230679164:android:f9bbf067c70461f726d1f9",
+        "android_client_info": {
+          "package_name": "com.moeb26.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBS9ImSNXzk_l9SrC6sdUS0a5fKAE5pE5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:moeb_26/Data/models/my_rides_model.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 
@@ -16,6 +18,13 @@ class RequestUnderReview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the ride data passed from the previous screen
+    final Ride? ride = Get.arguments as Ride?;
+
+    // Format date and time
+    if (ride?.date != null) {
+    } else if (ride != null) {}
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -30,7 +39,7 @@ class RequestUnderReview extends StatelessWidget {
               height: 40.w,
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: Color(0xFF1C1C1C),
+                color: const Color(0xFF1C1C1C),
                 shape: BoxShape.circle,
               ),
               child: SvgPicture.asset(
@@ -72,39 +81,64 @@ class RequestUnderReview extends StatelessWidget {
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                   textAlign: TextAlign.center,
-                  color: Color(0xFFF2F2F2),
+                  color: const Color(0xFFF2F2F2),
                 ),
               ),
               SizedBox(height: 30.h),
 
-              // Status Steps Container (You can use this in your widget tree)
-              GestureDetector(
-                onTap: () {
-                  // Handle tap on the card
-                  Get.toNamed(Routes.rideDetailsPage);
-                },
-                child: CustomJobDetailsCard(
-                  // Location details
-                  pickupLocation: "Dhaka Airport",
-                  dropoffLocation: "Barisal",
+              // Status Steps Container
+              if (ride != null)
+                GestureDetector(
+                  onTap: () {
+                    // Handle tap on the card
+                    Get.toNamed(Routes.rideDetailsPage, arguments: ride);
+                  },
+                  child: Builder(
+                    builder: (context) {
+                      String displayDateTime = "";
+                      if (ride.asap == true) {
+                        displayDateTime = "ASAP";
+                      } else {
+                        if (ride.date != null) {
+                          try {
+                            displayDateTime =
+                                "${DateFormat('EEE, MMM dd').format(ride.date!)} · ${ride.time}";
+                          } catch (_) {
+                            displayDateTime = ride.time;
+                          }
+                        } else {
+                          displayDateTime = ride.time;
+                        }
+                      }
 
-                  // Job information
-                  flightNumber: "Flight AA 1234",
-                  dateTime: "Jan 20 · 08:30 AM",
-                  vehicleType: "SEDAN",
-                  jobPoster: "Khaled",
-                  company: "Khaled Transportation",
-                  payment: "Collect",
-                  amount: "\$125",
+                      return CustomJobDetailsCard(
+                        // Location details
+                        pickupLocation: ride.pickupLocation,
+                        dropoffLocation: ride.dropoffLocation,
 
-                  // Optional: Custom colors
-                  backgroundColor: const Color(0xFF1C1C1C),
-                  borderColor: const Color(0xFF2A2A2A),
-                  labelColor: Colors.grey,
-                  valueColor: Colors.white,
-                  iconColor: Colors.grey,
+                        // Job information
+                        flightNumber: ride.flightNumber ?? "N/A",
+                        dateTime: displayDateTime,
+                        vehicleType: ride.vehicleType,
+                        jobPoster:
+                            ride.createdBy?.nickname != null &&
+                                ride.createdBy!.nickname!.isNotEmpty
+                            ? ride.createdBy!.nickname!
+                            : (ride.createdBy?.name ?? "Unknown"),
+                        company: ride.createdBy?.company ?? "Unknown",
+                        payment: ride.paymentType,
+                        amount: "\$${ride.paymentAmount}",
+
+                        // Optional: Custom colors
+                        backgroundColor: const Color(0xFF1C1C1C),
+                        borderColor: const Color(0xFF2A2A2A),
+                        labelColor: Colors.grey,
+                        valueColor: Colors.white,
+                        iconColor: Colors.grey,
+                      );
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
         ),

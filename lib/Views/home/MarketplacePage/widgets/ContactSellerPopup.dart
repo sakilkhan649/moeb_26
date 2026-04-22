@@ -3,11 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../Core/routs.dart';
+import '../../../../Ripositoryes/socket_repository.dart';
 import '../../../../widgets/CustomButton.dart';
 import '../Model/Marketplace_model.dart';
 
 class ContactSellerPopup extends StatefulWidget {
-  final MarketplaceItem item;
+  final ItemData item;
 
   const ContactSellerPopup({super.key, required this.item});
 
@@ -17,7 +18,9 @@ class ContactSellerPopup extends StatefulWidget {
 
 class _ContactSellerPopupState extends State<ContactSellerPopup> {
   final TextEditingController _messageController = TextEditingController();
+  final SocketRepository _socketRepo = Get.find();
   int _charCount = 0;
+  bool _isSending = false;
 
   @override
   void initState() {
@@ -75,19 +78,28 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
               Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color(
+                    0xFF1E1E1E,
+                  ), // Slightly lighter than background to stand out
                   borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: const Color(0xFF242424)),
                 ),
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
-                      child: Image.asset(
-                        widget.item.imagePath,
-                        height: 50.w,
-                        width: 50.w,
-                        fit: BoxFit.cover,
-                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                      child:
+                          (widget.item.photos != null &&
+                              widget.item.photos!.isNotEmpty)
+                          ? Image.network(
+                              widget.item.photos!.first,
+                              height: 60.w,
+                              width: 60.w,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  _buildNoImagePlaceholder(),
+                            )
+                          : _buildNoImagePlaceholder(),
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
@@ -95,13 +107,13 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.item.name,
+                            widget.item.title ?? '',
                             style: GoogleFonts.inter(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           SizedBox(height: 4.h),
@@ -109,7 +121,7 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                             "\$${widget.item.price}",
                             style: GoogleFonts.inter(
                               color: const Color(0xFFF1A107),
-                              fontSize: 14.sp,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -160,15 +172,41 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
               ),
               SizedBox(height: 24.h),
               // Buttons
-              CustomButton(
-                text: "Send Message",
-                backgroundColor: const Color(0xFFF1A107),
-                textColor: Colors.white,
-                onPressed: () {
-                  Get.back(); // Close popup
-                  Get.toNamed(Routes.chatPage); // Navigate to ChatPage
-                },
-              ),
+              _isSending
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFF1A107),
+                      ),
+                    )
+                  : CustomButton(
+                      text: "Send Message",
+                      backgroundColor: const Color(0xFFF1A107),
+                      textColor: Colors.white,
+                      onPressed: () async {
+                        final text = _messageController.text.trim();
+                        if (text.isEmpty) {
+                          Get.snackbar('Error', 'Please enter a message');
+                          return;
+                        }
+
+                        setState(() => _isSending = true);
+                        try {
+                          final chat = await _socketRepo.contactSeller(
+                            widget.item.createdBy?.id ?? '',
+                            widget.item.id ?? '',
+                          );
+                          if (chat != null) {
+                            await _socketRepo.sendMessage(chat.id, text);
+                            Get.back(); // Close popup
+                            Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                          }
+                        } catch (e) {
+                          Get.snackbar('Error', 'Failed to contact seller');
+                        } finally {
+                          if (mounted) setState(() => _isSending = false);
+                        }
+                      },
+                    ),
               SizedBox(height: 12.h),
               CustomButton(
                 text: "Cancel",
@@ -181,6 +219,15 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildNoImagePlaceholder() {
+    return Container(
+      height: 60.w,
+      width: 60.w,
+      color: Colors.grey[900],
+      child: Icon(Icons.image_not_supported, color: Colors.grey, size: 24.sp),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,6 +10,17 @@ class VehicleModel {
   final TextEditingController colorController;
   final TextEditingController licensePlateController;
 
+  // New Fields from DocumentsUpload
+  final Rx<File?> commercialInsuranceFile = Rx<File?>(null);
+  final TextEditingController commercialInsuranceExpireController = TextEditingController();
+
+  final Rx<File?> vehicleRegistrationFile = Rx<File?>(null);
+  final TextEditingController vehicleRegistrationExpireController = TextEditingController();
+
+  final Rx<File?> frontViewFile = Rx<File?>(null);
+  final Rx<File?> rearViewFile = Rx<File?>(null);
+  final Rx<File?> interiorViewFile = Rx<File?>(null);
+
   VehicleModel({String? initialType})
     : selectedVehicleType = (initialType ?? '').obs,
       makeController = TextEditingController(),
@@ -17,11 +29,37 @@ class VehicleModel {
       colorController = TextEditingController(),
       licensePlateController = TextEditingController();
 
+  factory VehicleModel.fromVehicle(dynamic vehicle) {
+    final model = VehicleModel(initialType: vehicle.carType);
+    model.makeController.text = vehicle.make;
+    model.modelController.text = vehicle.model;
+    model.yearController.text = vehicle.year.toString();
+    model.colorController.text = vehicle.colorInside;
+    model.licensePlateController.text = vehicle.licensePlate;
+    return model;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "carType": selectedVehicleType.value,
+      "make": makeController.text,
+      "model": modelController.text,
+      "year": int.tryParse(yearController.text) ?? 0,
+      "colorInside": colorController.text,
+      "colorOutside": colorController.text,
+      "licensePlate": licensePlateController.text,
+      "vehicleRegistrationExpiryDate": vehicleRegistrationExpireController.text,
+      "commercialInsuranceExpiryDate": commercialInsuranceExpireController.text,
+    };
+  }
+
   void dispose() {
     makeController.dispose();
     modelController.dispose();
     yearController.dispose();
     colorController.dispose();
     licensePlateController.dispose();
+    commercialInsuranceExpireController.dispose();
+    vehicleRegistrationExpireController.dispose();
   }
 }

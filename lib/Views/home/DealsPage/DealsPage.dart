@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:moeb_26/Utils/app_icons.dart';
-import '../../../Core/routs.dart';
 import '../../../widgets/Custom_AppBar.dart';
 import 'Controller/Deals_controller.dart';
 import 'Model/Deals_model.dart';
@@ -14,7 +14,7 @@ class Dealspage extends StatelessWidget {
   Dealspage({super.key});
 
   // Initialize the controller
-  final DealsController controller = Get.put(DealsController());
+  final DealsController controller = Get.find<DealsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,54 +23,91 @@ class Dealspage extends StatelessWidget {
         title: 'Deals',
         subtitle: 'ELITE NETWORK EXCLUSIVE SAVINGS',
         notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
       ),
-      body: Obx(() {
-        // Handle empty state
-        if (controller.dealsList.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Empty State Box Icon (Placeholder wrapper)
-                Container(
-                  padding: EdgeInsets.all(40.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xff1C1C1C),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.inventory_2_outlined,
-                    color: Colors.grey[700],
-                    size: 60.sp,
-                  ),
-                ),
-                SizedBox(height: 24.h),
-                Text(
-                  "No deals at this time",
-                  style: GoogleFonts.inter(
-                    color: Colors.grey[600],
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
+      body: RefreshIndicator(
+        onRefresh: () => controller.fetchDeals(),
+        color: const Color(0xffF1A107),
+        child: Obx(() {
+          if (controller.isLoading.value && controller.dealsList.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xffF1A107)),
+            );
+          }
 
-        // Handle list of deals
-        return ListView.builder(
-          padding: EdgeInsets.fromLTRB(20.w, 10.w, 20.w, 10.w),
-          itemCount: controller.dealsList.length,
-          itemBuilder: (context, index) {
-            final deal = controller.dealsList[index];
-            return DealsCard(deal: deal, controller: controller);
-          },
-        );
-      }),
+          return Stack(
+            children: [
+              // Handle empty state
+              if (controller.dealsList.isEmpty)
+                SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    height: 600.h, // Sufficient height for scroll
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Empty State Box Icon (Placeholder wrapper)
+                        Container(
+                          padding: EdgeInsets.all(40.w),
+                          decoration: BoxDecoration(
+                            color: const Color(0xff1C1C1C),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.inventory_2_outlined,
+                            color: Colors.grey[700],
+                            size: 60.sp,
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+                        Text(
+                          "No deals at this time",
+                          style: GoogleFonts.inter(
+                            color: Colors.grey[600],
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                // Handle list of deals
+                ListView.builder(
+                  controller: controller.scrollController,
+                  padding: EdgeInsets.fromLTRB(20.w, 10.w, 20.w, 10.w),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: controller.dealsList.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == controller.dealsList.length) {
+                      return Obx(
+                        () => controller.isLoadMore.value
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20.h),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xFFF1A107),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(),
+                      );
+                    }
+                    final deal = controller.dealsList[index];
+                    return DealsCard(deal: deal, controller: controller);
+                  },
+                ),
+
+              // Overlay loader when fetching fresh data but not the first time
+              if (controller.isLoading.value && controller.dealsList.isNotEmpty)
+                const Center(
+                  child: CircularProgressIndicator(color: Color(0xffF1A107)),
+                ),
+            ],
+          );
+        }),
+      ),
     );
   }
 }
@@ -110,7 +147,7 @@ class DealsCard extends StatelessWidget {
                   border: Border.all(color: const Color(0xff242424)),
                 ),
                 child: Text(
-                  deal.category,
+                  deal.tags.isNotEmpty ? deal.tags.first : "Deal",
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: 12.sp,
@@ -142,7 +179,7 @@ class DealsCard extends StatelessWidget {
           SizedBox(height: 10.h),
           // Promo Code Section
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
             decoration: BoxDecoration(
               color: const Color(0xff1E1E1E),
               borderRadius: BorderRadius.circular(16.r),
@@ -166,7 +203,7 @@ class DealsCard extends StatelessWidget {
                       deal.promoCode,
                       style: GoogleFonts.inter(
                         color: const Color(0xffF1A107), // Gold color
-                        fontSize: 18.sp,
+                        fontSize: 11.sp,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                       ),
@@ -178,8 +215,8 @@ class DealsCard extends StatelessWidget {
                   onTap: () => controller.copyToClipboard(deal.promoCode),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 10.h,
+                      horizontal: 12.w,
+                      vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -212,7 +249,7 @@ class DealsCard extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    "Expires ${deal.expiryDate}",
+                    "Expires ${DateFormat('MMM dd').format(deal.expiryDate)}",
                     style: GoogleFonts.inter(
                       color: Colors.grey[600],
                       fontSize: 13.sp,
@@ -223,7 +260,7 @@ class DealsCard extends StatelessWidget {
               // Use QR Button
               GestureDetector(
                 onTap: () {
-                  Get.dialog(const QrPopup());
+                  Get.dialog(QrPopup(qrCodeData: deal.qrCode));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(

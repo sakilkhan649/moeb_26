@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -5,13 +6,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QrPopup extends StatelessWidget {
-  const QrPopup({super.key});
+  final String? qrCodeData;
+  const QrPopup({super.key, this.qrCodeData});
 
   @override
   Widget build(BuildContext context) {
+    bool isBase64 = qrCodeData != null && qrCodeData!.startsWith('data:image');
+
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 24.w,vertical: 20.w),
+      insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.w),
       child: Container(
         padding: EdgeInsets.all(24.w),
         decoration: BoxDecoration(
@@ -56,21 +60,28 @@ class QrPopup extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  // QR Image generated locally via qr_flutter
-                  QrImageView(
-                    data: "EliteNetworkDeals",
-                    version: QrVersions.auto,
-                    size: 200.w,
-                    gapless: false,
-                    eyeStyle: const QrEyeStyle(
-                      eyeShape: QrEyeShape.square,
-                      color: Colors.black,
+                  if (isBase64)
+                    Image.memory(
+                      base64Decode(qrCodeData!.split(',').last),
+                      width: 200.w,
+                      height: 200.w,
+                      fit: BoxFit.contain,
+                    )
+                  else
+                    QrImageView(
+                      data: qrCodeData ?? "EliteNetworkDeals",
+                      version: QrVersions.auto,
+                      size: 200.w,
+                      gapless: false,
+                      eyeStyle: const QrEyeStyle(
+                        eyeShape: QrEyeShape.square,
+                        color: Colors.black,
+                      ),
+                      dataModuleStyle: const QrDataModuleStyle(
+                        dataModuleShape: QrDataModuleShape.square,
+                        color: Colors.black,
+                      ),
                     ),
-                    dataModuleStyle: const QrDataModuleStyle(
-                      dataModuleShape: QrDataModuleShape.square,
-                      color: Colors.black,
-                    ),
-                  ),
                   SizedBox(height: 20.h),
                   Text(
                     "Scan the QR code to view available offers for this vehicle or part.",

@@ -67,9 +67,73 @@ class EditProfileBottomSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Center(
+                        child: Stack(
+                          children: [
+                            Obx(
+                              () => Container(
+                                height: 100.h,
+                                width: 100.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.2),
+                                    width: 2,
+                                  ),
+                                  image: DecorationImage(
+                                    image: controller.pickedImage.value != null
+                                        ? FileImage(
+                                            controller.pickedImage.value!,
+                                          )
+                                        : (controller
+                                                  .userProfile
+                                                  .value
+                                                  ?.profilePicture
+                                                  .isEmpty ??
+                                              true)
+                                        ? const AssetImage(
+                                                "assets/images/profile.png",
+                                              )
+                                              as ImageProvider
+                                        : NetworkImage(
+                                            controller
+                                                .userProfile
+                                                .value!
+                                                .profilePicture,
+                                          ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () => controller.pickImage(),
+                                child: Container(
+                                  padding: EdgeInsets.all(8.h),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.black,
+                                    size: 16.sp,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
                       _buildField(
                         "Full Name",
                         controller.nameController,
+                        readOnly: true,
+                        suffixIcon: Icon(Icons.lock_outline, color: Colors.grey, size: 18.sp),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter your name";
@@ -80,6 +144,8 @@ class EditProfileBottomSheet extends StatelessWidget {
                       _buildField(
                         "Email",
                         controller.emailController,
+                        readOnly: true,
+                        suffixIcon: Icon(Icons.lock_outline, color: Colors.grey, size: 18.sp),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter your email";
@@ -92,6 +158,7 @@ class EditProfileBottomSheet extends StatelessWidget {
                       ),
                       _buildField(
                         "Phone",
+                        keyboardType: TextInputType.phone,
                         controller.phoneController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -100,16 +167,7 @@ class EditProfileBottomSheet extends StatelessWidget {
                           return null;
                         },
                       ),
-                      _buildField(
-                        "Service Area",
-                        controller.serviceAreaController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter service area";
-                          }
-                          return null;
-                        },
-                      ),
+
                       _buildField("Nick Name", controller.nickNameController),
 
                       SizedBox(height: 30.h),
@@ -142,7 +200,8 @@ class EditProfileBottomSheet extends StatelessWidget {
                           Expanded(
                             child: GestureDetector(
                               onTap: () {
-                                if (_formKey.currentState!.validate()) {
+                                if (_formKey.currentState!.validate() &&
+                                    !controller.isUpdating.value) {
                                   controller.saveProfile();
                                 }
                               },
@@ -153,13 +212,25 @@ class EditProfileBottomSheet extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 child: Center(
-                                  child: Text(
-                                    "Save Changes",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  child: Obx(
+                                    () => controller.isUpdating.value
+                                        ? SizedBox(
+                                            height: 20.h,
+                                            width: 20.h,
+                                            child:
+                                                const CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                  strokeWidth: 2,
+                                                ),
+                                          )
+                                        : Text(
+                                            "Save Changes",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                   ),
                                 ),
                               ),
@@ -179,10 +250,93 @@ class EditProfileBottomSheet extends StatelessWidget {
     );
   }
 
+  Widget _buildDropdownField(
+    String label,
+    TextEditingController textController,
+    RxList<String> items, {
+    String? Function(String?)? validator,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Obx(
+            () => controller.isServiceAreasLoading.value
+                ? const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  )
+                : DropdownButtonFormField<String>(
+                    value: items.contains(textController.text)
+                        ? textController.text
+                        : null,
+                    dropdownColor: Colors.black,
+                    validator: validator,
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    style: GoogleFonts.inter(color: Colors.white),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.black.withOpacity(0.2),
+                      errorStyle: TextStyle(fontSize: 12.sp),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 12.h,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide:
+                            BorderSide(color: Colors.white.withOpacity(0.1)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide:
+                            BorderSide(color: Colors.white.withOpacity(0.1)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                    ),
+                    items: items.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: GoogleFonts.inter(color: Colors.white),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      if (newValue != null) {
+                        textController.text = newValue;
+                      }
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildField(
     String label,
     TextEditingController textController, {
     String? Function(String?)? validator,
+    TextInputType? keyboardType,
+    bool readOnly = false,
+    Widget? suffixIcon,
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
@@ -201,11 +355,16 @@ class EditProfileBottomSheet extends StatelessWidget {
           TextFormField(
             controller: textController,
             validator: validator,
-            style: GoogleFonts.inter(color: Colors.white),
+            keyboardType: keyboardType,
+            readOnly: readOnly,
+            style: GoogleFonts.inter(
+              color: readOnly ? Colors.grey : Colors.white,
+            ),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.black.withOpacity(0.2),
               errorStyle: TextStyle(fontSize: 12.sp),
+              suffixIcon: suffixIcon,
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 16.w,
                 vertical: 12.h,
@@ -220,7 +379,7 @@ class EditProfileBottomSheet extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                borderSide: const BorderSide(color: Colors.orange),
+                borderSide: const BorderSide(color: Colors.grey),
               ),
             ),
           ),

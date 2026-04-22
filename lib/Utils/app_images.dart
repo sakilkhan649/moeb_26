@@ -8,6 +8,8 @@ class AppImages{
   static const String profile_image="$buseurl/profile_image.jpg";
   static const String sadat_image="$buseurl/sadat_image.jpg";
   static const String final_app_logo="$buseurl/app_logo_m.png";
+  
+  static const String moeb26_community_chat_pp="$buseurl/moeb26_community_chat_pp.png";
 
 
 

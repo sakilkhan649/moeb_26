@@ -26,8 +26,10 @@ class ChatDetailPage extends StatelessWidget {
           Expanded(
             child: Obx(() {
               return ListView.builder(
-                padding: EdgeInsets.all(20.w),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                 itemCount: controller.messages.length,
+                reverse: true, // চ্যাটের জন্য লিস্টটি উল্টো দিক থেকে শুরু হবে
+                physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final message = controller.messages[index];
                   return _buildMessageBubble(message);
@@ -43,6 +45,9 @@ class ChatDetailPage extends StatelessWidget {
   }
 
   PreferredSizeWidget _buildAppBar() {
+    final currentUserId = controller.userService.userId;
+    final other = chat.getOtherParticipant(currentUserId);
+
     return AppBar(
       backgroundColor: Colors.black,
       elevation: 0,
@@ -56,76 +61,104 @@ class ChatDetailPage extends StatelessWidget {
           CircleAvatar(
             radius: 20.r,
             backgroundColor: const Color(0xffE0E0E0),
-            backgroundImage: chat.avatarPath != null
-                ? AssetImage(chat.avatarPath!) as ImageProvider
+            backgroundImage: other?.profilePicture != null
+                ? NetworkImage(other!.profilePicture!) as ImageProvider
                 : null,
-            child: chat.avatarPath == null
+            child: other?.profilePicture == null
                 ? Text(
-                    chat.initials ?? '',
-                    style: GoogleFonts.inter(
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
-                    ),
-                  )
+              other?.initials ?? '?',
+              style: GoogleFonts.inter(
+                color: Colors.grey[700],
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+              ),
+            )
                 : null,
           ),
           SizedBox(width: 12.w),
           Text(
-            chat.name,
+            other?.name ?? 'Chat',
             style: GoogleFonts.inter(
               color: Colors.white,
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
+          SizedBox(width: 8.w),
+          // সকেট স্ট্যাটাস ইন্ডিকেটর
+          Obx(
+                () => Container(
+              width: 8.w,
+              height: 8.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: controller.socketService.isConnected.value
+                    ? Colors.green
+                    : Colors.red,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
-
   Widget _buildMessageBubble(ChatMessage message) {
-    return Align(
-      alignment: message.isSender
-          ? Alignment.centerRight
-          : Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment: message.isSender
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
-        children: [
-          Container(
-            constraints: BoxConstraints(maxWidth: 0.7.sw),
-            padding: EdgeInsets.all(16.w),
-            margin: EdgeInsets.only(bottom: 6.h),
-            decoration: BoxDecoration(
-              color: const Color(0xff1A1A1A),
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-            child: Text(
-              message.text,
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 14.sp,
-                height: 1.4,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 16.h, left: 4.w, right: 4.w),
-            child: Text(
-              message.time,
-              style: GoogleFonts.inter(
-                color: Colors.grey[700],
-                fontSize: 10.sp,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    if (message.text.trim().isEmpty) return const SizedBox.shrink();
 
+    return Obx(() {
+      final String currentUserId = controller.userService.userId;
+      final bool isMe = message.isSentBy(currentUserId);
+
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 4.h),
+        child: Align(
+          alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Container(
+                constraints: BoxConstraints(maxWidth: 0.75.sw),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: isMe
+                      ? const Color(0xff1A1A1A)
+                      : const Color(0xff2A2A2A),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
+                    bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
+                    bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
+                  ),
+                  border: Border.all(color: const Color(0xff333333)),
+                ),
+                child: Text(
+                  message.text,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                    height: 1.4,
+                    fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
+                  ),
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Text(
+                  message.time,
+                  style: GoogleFonts.inter(
+                    color: Colors.grey[600],
+                    fontSize: 10.sp,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
   Widget _buildMessageInput() {
     return Container(
       padding: EdgeInsets.only(

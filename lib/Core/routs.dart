@@ -1,49 +1,54 @@
-
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
-
+import 'package:moeb_26/Views/auth/All%20Vehicle/all_vehicle.dart';
+import 'package:moeb_26/Views/auth/Otp_verification/otp_verifications.dart';
+import 'package:moeb_26/Views/auth/Personal%20Document/personal_document.dart';
+import 'package:moeb_26/Views/auth/Term_and_policy/privacy_policy_sign_up.dart';
+import 'package:moeb_26/Views/auth/Vehicle/AddNewVehicle.dart';
 import '../Views/Service_Area/Service_Area.dart';
 import '../Views/auth/Application_Succes/Account_succes_screen.dart';
 import '../Views/auth/Application_Not_Approved/Application_Not_Approved.dart';
 import '../Views/auth/Application_Submitted/Application_submited.dart';
+import '../Views/auth/Create_Account_and_signIn/createscreens.dart';
+import '../Views/auth/Change_password/change_password_screen.dart';
 import '../Views/auth/CreateAccount/createaccountscreen.dart';
 import '../Views/auth/Documents_Upload/DocumentsUpload.dart';
 import '../Views/auth/Profile/profile.dart';
+import '../Views/auth/Reset_password/ForgetPassword/resetpasswordscreen.dart';
+import '../Views/auth/Reset_password/ResetPassword/resetpasswordthree.dart';
+import '../Views/auth/Reset_password/success_resetpassword.dart';
 import '../Views/auth/Sign_In/signscreen.dart';
 import '../Views/auth/Splash_Screen/Binding/splash_binding.dart';
 import '../Views/auth/Splash_Screen/splashScreen.dart';
 import '../Views/auth/Term_and_policy/Term_policy.dart';
 import '../Views/auth/Vehicle/VehicleInformation.dart';
-import '../Views/auth/resetpassword/resetpasswordscreen.dart';
-import '../Views/auth/resetpassword/resetpasswordthree.dart';
-import '../Views/auth/resetpassword/resetpasswordtwo.dart';
-import '../Views/auth/resetpassword/success_resetpassword.dart';
 import '../Views/home/Bottom_NabBar/Binding/Binging_Class.dart';
+import '../Views/home/ChatPage/Support_chat_detail_page.dart';
 import '../Views/home/JobOfferPage/My_jobs/Approve/approve_page.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ratings_Feedback/Ratings_Feedback.dart';
-import '../Views/home/JobOfferPage/My_jobs/Ride_Complete_Job/Ride_Complete_Job.dart';
-import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Board/Ride_Progress_Board.dart';
-import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way/Ride_Progress_Way.dart';
 import '../Views/home/JobOfferPage/My_jobs/Ride_Progress_Way_Location/Ride_Progress_Way_Location.dart';
 import '../Views/home/JobOfferPage/My_jobs/Edit_screen/edit_screen.dart';
 import '../Views/home/JobOfferPage/My_jobs/my_jobs.dart';
 import '../Views/home/JobOfferPage/Request_Submitted/Request_Submitted.dart';
-import '../Views/home/RidesPage/Finish_Ride/Finish_Ride_page.dart';
-import '../Views/home/RidesPage/On_My_Way_Details_page/On_My_Way_Details_page.dart';
-import '../Views/home/RidesPage/Pob_Details_page/Pob_Details_page.dart';
+import '../Views/home/MarketplacePage/My_Items/my_items.dart';
+
 import '../Views/home/RidesPage/Request_Under_review.dart';
 import '../Views/home/ChatPage/ChatPage.dart';
 import '../Views/home/ChatPage/ChatDetailPage.dart';
 import '../Views/home/RidesPage/Ride_Completed/Ride_Completed_page.dart';
 import '../Views/home/RidesPage/Ride_Details/Ride_Details_Page.dart';
 import '../Views/home/Bottom_NabBar/bottom_nabbar_screens.dart';
+import '../widgets/No_internet_screen.dart';
+
+import '../Views/home/ChatPage/Community_chat_detail_page.dart';
 
 class Routes {
   static const String splashScreen = "/SplashScreen";
+  static const String createscreens = "/Createscreens";
   static const String signscreen = "/Signscreen";
   static const String createaccountscreen = "/Createaccountscreen";
   static const String resetpasswordscreen = "/Resetpasswordscreen";
-  static const String resetpasswordtwo = "/Resetpasswordtwo";
+  //static const String resetpasswordtwo = "/Resetpasswordtwo";
   static const String resetpasswordthree = "/Resetpasswordthree";
   static const String successResetpassword = "/SuccessResetpassword";
   static const String vehicleinformation = "/Vehicleinformation";
@@ -59,10 +64,11 @@ class Routes {
   static const String requestUnderReview = "/RequestUnderReview";
   static const String chatPage = "/Chatpage";
   static const String chatDetailPage = "/ChatDetailPage";
+  static const String communityChatDetailPage = "/CommunityChatDetailPage";
   static const String rideDetailsPage = "/RideDetailsPage";
-  static const String onMyWayDetailsPage = "/OnMyWayDetailsPage";
-  static const String pobDetailsPage = "/PobDetailsPage";
-  static const String finishRidePage = "/FinishRidePage";
+  // static const String onMyWayDetailsPage = "/OnMyWayDetailsPage";
+  // static const String pobDetailsPage = "/PobDetailsPage";
+  // static const String finishRidePage = "/FinishRidePage";
   static const String rideCompletedPage = "/RideCompletedPage";
   static const String approvePage = "/ApprovePage";
   static const String rideProgressWay = "/RideProgressWay";
@@ -70,8 +76,18 @@ class Routes {
   static const String rideProgressBoard = "/RideProgressBoard";
   static const String rideCompleteJob = "/RideCompleteJob";
   static const String profileScreen = "/ProfileScreen";
-  static const String ratingsFeedback= "/RatingsFeedback";
-  static const String serviceArea= "/ServiceArea";
+  static const String ratingsFeedback = "/RatingsFeedback";
+  static const String serviceArea = "/ServiceArea";
+  static const String noInternetScreen = "/NoInternetScreen";
+  static const String otpVerificationScreen = "/OtpVerificationScreen";
+  static const String forgetotpVerificationScreen = "/OtpVerificationScreen";
+  static const String changePasswordScreen = "/ChangePasswordScreen";
+  static const String myPropucts = "/MyPropucts";
+  static const String supportChatDetailPage = "/SupportChatDetailPage";
+  static const String privacyPolicySignUp = "/PrivacyPolicySignUp";
+  static const String allVehicle = "/AllVehicle";
+  static const String addNewVehicle = "/AddNewVehicle";
+  static const String personalDocument = "/PersonalDocument";
 
   static List<GetPage> routes = [
     GetPage(
@@ -79,7 +95,16 @@ class Routes {
       page: () => Splashscreen(),
       transition: Transition.noTransition,
       binding: SplashBinding(),
-
+    ),
+    GetPage(
+      name: privacyPolicySignUp,
+      page: () => PrivacyPolicySignUp(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: createscreens,
+      page: () => Createscreens(),
+      transition: Transition.noTransition,
     ),
     GetPage(
       name: signscreen,
@@ -96,11 +121,11 @@ class Routes {
       page: () => Resetpasswordscreen(),
       transition: Transition.noTransition,
     ),
-    GetPage(
-      name: resetpasswordtwo,
-      page: () => Resetpasswordtwo(),
-      transition: Transition.noTransition,
-    ),
+    // GetPage(
+    //   name: resetpasswordtwo,
+    //   page: () => Resetpasswordtwo(),
+    //   transition: Transition.noTransition,
+    // ),
     GetPage(
       name: resetpasswordthree,
       page: () => Resetpasswordthree(),
@@ -178,25 +203,30 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
+      name: communityChatDetailPage,
+      page: () => CommunityChatDetailPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
       name: rideDetailsPage,
       page: () => RideDetailsPage(),
       transition: Transition.noTransition,
     ),
-    GetPage(
-      name: onMyWayDetailsPage,
-      page: () => OnMyWayDetailsPage(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
-      name: pobDetailsPage,
-      page: () => PobDetailsPage(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
-      name: finishRidePage,
-      page: () => FinishRidePage(),
-      transition: Transition.noTransition,
-    ),
+    // GetPage(
+    //   name: onMyWayDetailsPage,
+    //   page: () => OnMyWayDetailsPage(),
+    //   transition: Transition.noTransition,
+    // ),
+    // GetPage(
+    //   name: pobDetailsPage,
+    //   page: () => PobDetailsPage(),
+    //   transition: Transition.noTransition,
+    // ),
+    // GetPage(
+    //   name: finishRidePage,
+    //   page: () => FinishRidePage(),
+    //   transition: Transition.noTransition,
+    // ),
     GetPage(
       name: rideCompletedPage,
       page: () => RideCompletedPage(),
@@ -208,25 +238,11 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: rideProgressWay,
-      page: () => RideProgressWay(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
       name: rideProgressWayLocation,
       page: () => RideProgressWayLocation(),
       transition: Transition.noTransition,
     ),
-    GetPage(
-      name: rideProgressBoard,
-      page: () => RideProgressBoard(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
-      name: rideCompleteJob,
-      page: () => RideCompleteJob(),
-      transition: Transition.noTransition,
-    ),
+
     GetPage(
       name: profileScreen,
       page: () => ProfileScreen(),
@@ -240,6 +256,52 @@ class Routes {
     GetPage(
       name: serviceArea,
       page: () => ServiceArea(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: noInternetScreen,
+      page: () => NoInternetScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: otpVerificationScreen,
+      page: () => OtpVerificationScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: forgetotpVerificationScreen,
+      page: () => OtpVerificationScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: changePasswordScreen,
+      page: () => ChangePasswordScreen(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: myPropucts,
+      page: () => MyItems(),
+      transition: Transition.noTransition,
+    ),
+
+    GetPage(
+      name: supportChatDetailPage,
+      page: () => SupportChatDetailPage(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: allVehicle,
+      page: () => AllVehicle(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: addNewVehicle,
+      page: () => AddNewVehicle(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: personalDocument,
+      page: () => PersonalDocument(),
       transition: Transition.noTransition,
     ),
   ];

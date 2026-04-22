@@ -9,7 +9,7 @@ class CustomtextFieldHight extends StatelessWidget {
   final bool obscureText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
-  final TextInputType textInputType;
+  final TextInputType? textInputType;
   final String? Function(String?)? validator;
 
   const CustomtextFieldHight({
@@ -18,9 +18,12 @@ class CustomtextFieldHight extends StatelessWidget {
     required this.obscureText,
     this.prefixIcon,
     this.suffixIcon,
-    required this.textInputType,
+    this.textInputType,
     this.validator,
+    this.readOnly = false,
   });
+
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,7 @@ class CustomtextFieldHight extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        readOnly: readOnly,
         keyboardType: textInputType,
         validator: validator,
         style: TextStyle(color: Colors.white),

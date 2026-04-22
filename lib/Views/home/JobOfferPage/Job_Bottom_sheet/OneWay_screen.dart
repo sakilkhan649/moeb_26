@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
-
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/widgets/CustomText.dart';
-
 import 'package:moeb_26/widgets/CustomText_Field_Hight.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
 import '../../../../Core/routs.dart';
@@ -38,38 +38,105 @@ class OnewayScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //dite hove
             _buildFieldWithLabel(
-              textInputType: TextInputType.text,
               "Pickup Location",
               pickupController,
               "e.g., JFK Airport, Terminal 4",
-              Icons.location_on_outlined,
+              SvgPicture.asset(
+                AppIcons.fromlocation_icon,
+                height: 20.sp,
+                width: 20.sp,
+              ),
+              textInputType: TextInputType.text,
               validator: (val) => (val == null || val.isEmpty)
                   ? "Pickup location is required"
                   : null,
             ),
-            //dite hove
             _buildFieldWithLabel(
-              textInputType: TextInputType.text,
               "Drop-off Location",
               dropoffController,
               "e.g., Manhattan, Times Square",
-              Icons.location_on_outlined,
+              SvgPicture.asset(
+                AppIcons.fromlocation_icon,
+                height: 20.sp,
+                width: 20.sp,
+              ),
+              textInputType: TextInputType.text,
               validator: (val) => (val == null || val.isEmpty)
                   ? "Drop-off location is required"
                   : null,
             ),
-            //dite hove
             _buildFieldWithLabel(
-              textInputType: TextInputType.text,
               "Flight Number (Optional)",
               flightController,
               "",
-              Icons.flight,
+              null,
+              textInputType: TextInputType.text,
               isRequired: false,
             ),
-            _buildDateTimeRow(context),
+            Obx(
+              () => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.h, bottom: 5.h),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 24.h,
+                          width: 24.w,
+                          child: Checkbox(
+                            value: onewayControllerInstance.isAsap.value,
+                            onChanged: (val) {
+                              onewayControllerInstance.toggleAsap(val);
+                            },
+                            activeColor: AppColors.black200,
+                            checkColor: Colors.white,
+                            side: const BorderSide(color: Colors.white),
+                            visualDensity: const VisualDensity(
+                              horizontal: VisualDensity.minimumDensity,
+                              vertical: VisualDensity.minimumDensity,
+                            ),
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        GestureDetector(
+                          onTap: () {
+                            final newVal =
+                                !onewayControllerInstance.isAsap.value;
+                            onewayControllerInstance.toggleAsap(newVal);
+                          },
+                          child: Text(
+                            "ASAP",
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (onewayControllerInstance.showAsapError.value)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.h),
+                      child: Text(
+                        "Please confirm ASAP",
+                        style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Obx(
+              () => onewayControllerInstance.isAsap.value
+                  ? const SizedBox.shrink()
+                  : _buildDateTimeRow(context),
+            ),
             FormField<String>(
               initialValue: postJobController.selectedVehicle.value,
               validator: (value) {
@@ -96,13 +163,16 @@ class OnewayScreen extends StatelessWidget {
               },
             ),
             SizedBox(height: 10.h),
-            //dite hove
             _buildFieldWithLabel(
-              textInputType: TextInputType.number,
               "Pay Amount",
               payController,
               "\$",
-              Icons.attach_money,
+              SvgPicture.asset(
+                AppIcons.payAmount_icon,
+                height: 20.sp,
+                width: 20.sp,
+              ),
+              textInputType: TextInputType.number,
               validator: (val) =>
                   (val == null || val.isEmpty) ? "Amount is required" : null,
             ),
@@ -146,7 +216,7 @@ class OnewayScreen extends StatelessWidget {
                                   child: Text(
                                     role,
                                     style: GoogleFonts.inter(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -182,7 +252,7 @@ class OnewayScreen extends StatelessWidget {
                           dropdownStyleData: DropdownStyleData(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.r),
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                             offset: Offset(0, -5.h),
                             scrollbarTheme: ScrollbarThemeData(
@@ -228,21 +298,38 @@ class OnewayScreen extends StatelessWidget {
               },
             ),
             SizedBox(height: 20.h),
-            //dite hove
             _buildFieldWithLabel(
-              textInputType: TextInputType.text,
               "Special Instructions (Optional)",
               specialController,
               "e.g., VIP client, suit required, name sign needed",
-              Icons.notes,
+              null,
+              textInputType: TextInputType.text,
               isRequired: false,
             ),
             SizedBox(height: 24.h),
             CustomJobButton(
               text: "New Job",
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  Get.toNamed(Routes.myJobsScreen);
+                final isFormValid = _formKey.currentState!.validate();
+                onewayControllerInstance.showAsapError.value = false;
+                if (isFormValid) {
+                  postJobController.submitOneWayJob(
+                    pickupLocation: pickupController.text,
+                    dropoffLocation: dropoffController.text,
+                    flightNumber: flightController.text,
+                    date: onewayControllerInstance.isAsap.value
+                        ? null
+                        : onewayControllerInstance.selectedDate.value,
+                    time: onewayControllerInstance.isAsap.value
+                        ? null
+                        : onewayControllerInstance.selectedTime.value,
+                    asap: onewayControllerInstance.isAsap.value,
+                    paymentAmount: payController.text,
+                    paymentType: onewayControllerInstance.selectedRole.value,
+                    instruction: specialController.text.isEmpty
+                        ? null
+                        : specialController.text,
+                  );
                 }
               },
             ),
@@ -257,17 +344,17 @@ class OnewayScreen extends StatelessWidget {
     String label,
     TextEditingController ctrl,
     String hint,
-    IconData icon, {
+    Widget? icon, {
     bool isRequired = true,
     String? Function(String?)? validator,
-    TextInputType textInputType = TextInputType.none,
+    TextInputType textInputType = TextInputType.text,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
+            if (icon != null) icon,
             SizedBox(width: 8.w),
             Text(
               label + (isRequired ? ' *' : ''),
@@ -287,6 +374,7 @@ class OnewayScreen extends StatelessWidget {
           textInputType: textInputType,
           validator: validator,
         ),
+        SizedBox(height: 16.h),
       ],
     );
   }
@@ -295,37 +383,49 @@ class OnewayScreen extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Obx(() {
-            final date = onewayControllerInstance.selectedDate.value;
-            dateController.text = date == null
-                ? ""
-                : "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-            return _buildDateTimeField(
-              "Date",
-              Icons.date_range,
-              dateController,
-              "Select Date",
-              () => onewayControllerInstance.chooseDate(context),
-              validator: (val) =>
-                  (val == null || val.isEmpty) ? "Date is required" : null,
-            );
-          }),
+          child: _buildDateTimeField(
+            "Date",
+            SvgPicture.asset(AppIcons.date_icon, height: 20.sp, width: 20.sp),
+            dateController,
+            "Select Date",
+            () async {
+              await onewayControllerInstance.chooseDate(context);
+              final date = onewayControllerInstance.selectedDate.value;
+              if (date != null) {
+                dateController.text =
+                    "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+              }
+            },
+            validator: (val) {
+              if (onewayControllerInstance.isAsap.value) return null;
+              return (val == null || val.isEmpty) ? "Date is required" : null;
+            },
+          ),
         ),
         SizedBox(width: 12.w),
         Expanded(
-          child: Obx(() {
-            final time = onewayControllerInstance.selectedTime.value;
-            timeController.text = time == null ? "" : time.format(context);
-            return _buildDateTimeField(
-              "Time",
-              Icons.access_time,
-              timeController,
-              "Select Time",
-              () => onewayControllerInstance.chooseTime(context),
-              validator: (val) =>
-                  (val == null || val.isEmpty) ? "Time is required" : null,
-            );
-          }),
+          child: _buildDateTimeField(
+            "Time",
+            SvgPicture.asset(
+              AppIcons.time_myjob_icon,
+              height: 20.sp,
+              width: 20.sp,
+            ),
+            timeController,
+            "Select Time",
+            () async {
+              await onewayControllerInstance.chooseTime(context);
+              final time = onewayControllerInstance.selectedTime.value;
+              if (time != null) {
+                timeController.text =
+                    onewayControllerInstance.formattedTime.value;
+              }
+            },
+            validator: (val) {
+              if (onewayControllerInstance.isAsap.value) return null;
+              return (val == null || val.isEmpty) ? "Time is required" : null;
+            },
+          ),
         ),
       ],
     );
@@ -333,7 +433,7 @@ class OnewayScreen extends StatelessWidget {
 
   Widget _buildDateTimeField(
     String label,
-    IconData icon,
+    Widget? icon,
     TextEditingController ctrl,
     String hint,
     VoidCallback onPressed, {
@@ -344,7 +444,7 @@ class OnewayScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
+            if (icon != null) icon,
             SizedBox(width: 8.w),
             Text(
               '$label *',
@@ -369,6 +469,7 @@ class OnewayScreen extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(height: 16.h),
       ],
     );
   }
@@ -378,11 +479,11 @@ class OnewayScreen extends StatelessWidget {
     FormFieldState<String> state,
   ) {
     final vehicles = [
-      'Sedan',
+      'SEDAN',
       'SUV',
-      'Sprinter',
-      'Bus',
-      'LimoStretch',
+      'SPRINTER',
+      'BUS',
+      'LIMO STRETCH',
       'SEDAN/SUV',
     ];
 
@@ -391,7 +492,11 @@ class OnewayScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.directions_car, color: Colors.white, size: 18.sp),
+            SvgPicture.asset(
+              AppIcons.vechile_car_icon,
+              height: 20.sp,
+              width: 20.sp,
+            ),
             SizedBox(width: 8.w),
             Text(
               'Vehicle Type Required *',
@@ -421,10 +526,15 @@ class OnewayScreen extends StatelessWidget {
                     vertical: 10.h,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected ? Color(0xFF2A2A2A) : Colors.transparent,
+                    color: isSelected
+                        ///select color========================================================
+                        ? const Color(0xFF364153)
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
-                      color: isSelected ? Color(0xFF404040) : Color(0xFF2A2A2A),
+                      color: isSelected
+                          ? const Color(0xFF404040)
+                          : const Color(0xFF2A2A2A),
                     ),
                   ),
                   child: Text(
@@ -440,6 +550,7 @@ class OnewayScreen extends StatelessWidget {
             }).toList(),
           ),
         ),
+        SizedBox(height: 16.h),
       ],
     );
   }

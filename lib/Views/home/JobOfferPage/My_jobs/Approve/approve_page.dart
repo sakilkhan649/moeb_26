@@ -10,7 +10,6 @@ import '../../../../../widgets/Custom_AppBar.dart';
 import '../../../../../widgets/Custom_Card_Ditails.dart';
 import '../../../../../widgets/Custom_Driver_Card.dart';
 
-
 class ApprovePage extends StatelessWidget {
   ApprovePage({super.key});
 
@@ -20,16 +19,13 @@ class ApprovePage extends StatelessWidget {
       appBar: CustomAppBar(
         logoPath: AppImages.app_logo,
         notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
-        },
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Column(
-              mainAxisAlignment: .start,
-              crossAxisAlignment: .start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),

@@ -1,0 +1,67 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:moeb_26/Services/auth_service.dart';
+import '../../../../Core/routs.dart';
+import '../../../../Utils/helpers.dart';
+
+class ResetPasswordController extends GetxController {
+  final AuthService _authService = Get.find<AuthService>();
+
+  final formKey = GlobalKey<FormState>();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  final isLoading = false.obs;
+  final isPasswordVisible = false.obs;
+  final isPasswordVisibleTwo = false.obs;
+
+  String _resetToken = '';
+
+  @override
+  void onInit() {
+    super.onInit();
+    _resetToken = Get.arguments?['resetToken'] ?? '';
+    print('=====> RESET TOKEN: $_resetToken'); // 👈 add করো
+  }
+
+  void togglePassword() => isPasswordVisible.value = !isPasswordVisible.value;
+  void toggleConfirmPassword() =>
+      isPasswordVisibleTwo.value = !isPasswordVisibleTwo.value;
+
+  Future<void> resetPassword() async {
+    if (!formKey.currentState!.validate()) return;
+
+    isLoading.value = true;
+
+    try {
+      final response = await _authService.resetPassword(
+        resetToken: _resetToken,
+        newPassword: passwordController.text,
+        confirmPassword: confirmPasswordController.text,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Helpers.showCustomSnackBar(
+          'Your password has been successfully reset.',
+          isError: false,
+        );
+        Get.offAllNamed(Routes.successResetpassword);
+        Future.delayed(const Duration(seconds: 5), () {
+          Get.offAllNamed(Routes.signscreen);
+        });
+      }
+    } catch (e) {
+      Helpers.showDebugLog("resetPassword error => $e");
+      Helpers.showCustomSnackBar('Something went wrong.', isError: true);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  @override
+  void onClose() {
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.onClose();
+  }
+}

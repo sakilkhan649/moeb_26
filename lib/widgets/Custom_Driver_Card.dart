@@ -43,7 +43,9 @@ class CustomDriverCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 30.r,
-                backgroundImage: AssetImage(profileImage),
+                backgroundImage: profileImage.startsWith('http')
+                    ? NetworkImage(profileImage)
+                    : AssetImage(profileImage) as ImageProvider,
               ),
               SizedBox(width: 12.w),
               Expanded(

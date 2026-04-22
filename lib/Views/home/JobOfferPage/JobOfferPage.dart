@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:moeb_26/Utils/app_images.dart';
+import 'package:moeb_26/Views/home/JobOfferPage/My_jobs/Controller/My_job_controller.dart';
 import 'package:moeb_26/widgets/Custom_Job_Button.dart';
-import '../../../Core/routs.dart';
 import '../../../Utils/app_colors.dart';
 import '../../../Utils/app_icons.dart';
 import '../../../widgets/CustomText.dart';
@@ -28,72 +27,221 @@ class _JobofferpageState extends State<Jobofferpage> {
   final TextEditingController specialInstructionsController =
       TextEditingController();
 
+  final BookingController controller = Get.find<BookingController>();
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      if (scrollController.hasClients &&
+          scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 200) {
+        controller.loadMoreJobOffers();
+      }
+    });
+  }
+
   @override
   void dispose() {
     flightNumberController.dispose();
     paymentMethodController.dispose();
     specialInstructionsController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        logoPath: AppImages.app_logo,
-        notificationCount: 3,
-        onMyJobsTap: () {
-          Get.toNamed(Routes.myJobsScreen);
+      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await controller.fetchJobOffers(isRefresh: true);
         },
-        onAccountTap: () {
-          Get.toNamed(Routes.profileScreen);
-        },
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 2.w),
-              CustomJobButton(
-                text: "New Job",
-                onPressed: () {
-                  Get.bottomSheet(
-                    PostJobBottomSheet(),
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                  );
-                },
-              ),
-              SizedBox(height: 15.h),
-              CustomJobCard(
-                dateTime: "Tue, Jan 20 · 08:30 AM",
-                vehicleType: "SEDAN",
-                pickupLocation: "Dhaka Airport",
-                dropoffLocation: "Barisal",
-                driverName: "Khaled",
-                companyName: "Khaled Transportation",
-                flightNumberHint: "Flight AA 1234",
-                paymentMethodHint: "Collect",
-                specialInstructionsHint: "Airport Expert, Vip Client",
-                price: "\$125",
-                flightNumberController: flightNumberController,
-                paymentMethodController: paymentMethodController,
-                specialInstructionsController: specialInstructionsController,
-                vehicleTypeColor: VehicleTypeColors.sedan,
-                onArrowTap: () {
-                  // Handle arrow tap
-                  Get.toNamed(Routes.requestSubmitted);
+        color: AppColors.orange100,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 2.w),
+                      CustomJobButton(
+                        text: "New Job",
+                        onPressed: () {
+                          Get.bottomSheet(
+                            PostJobBottomSheet(),
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                          );
+                        },
+                      ),
+                      SizedBox(height: 15.h),
+                      Obx(() {
+                        if (controller.isLoadingList.value &&
+                            controller.jobOffersList.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 40.h),
+                              child: const CircularProgressIndicator(
+                                color: AppColors.orange100,
+                              ),
+                            ),
+                          );
+                        }
 
-                  print("Arrow tapped");
-                },
-                onPriceTap: () {
-                  // Handle price tap
-                  print("Price tapped");
-                },
-              ),
-              SizedBox(height: 60.h),
-            ],
+                        if (controller.jobOffersList.isEmpty) {
+                          return SizedBox(
+                            height:
+                                constraints.maxHeight *
+                                0.6, // Occupy 60% of screen height to appear centered
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "No offers at this time",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    "Available ride offers will be here",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.grey,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.jobOffersList.length,
+                              itemBuilder: (context, index) {
+                                final job = controller.jobOffersList[index];
+
+                                // Format Date and Time
+                                String formattedDateTime = "";
+                                if (job.date != null) {
+                                  String dateStr = DateFormat(
+                                    'EEE, MMM dd',
+                                  ).format(job.date!);
+
+                                  String timeStr = job.time;
+                                  try {
+                                    if (timeStr.contains(':')) {
+                                      final parts = timeStr.split(':');
+                                      int hour = int.parse(parts[0]);
+                                      int minute = int.parse(
+                                        parts[1].split(' ')[0],
+                                      );
+
+                                      final period = hour >= 12 ? "PM" : "AM";
+                                      final hour12 = hour == 0
+                                          ? 12
+                                          : (hour > 12 ? hour - 12 : hour);
+                                      String formattedTime =
+                                          "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+                                      formattedDateTime =
+                                          "$dateStr · $formattedTime";
+                                    } else {
+                                      formattedDateTime = "$dateStr · $timeStr";
+                                    }
+                                  } catch (_) {
+                                    formattedDateTime = "$dateStr · $timeStr";
+                                  }
+                                } else {
+                                  formattedDateTime =
+                                      (job.time == "null" || job.time.isEmpty)
+                                      ? "ASAP"
+                                      : job.time;
+                                }
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  child: CustomJobCard(
+                                    dateTime: formattedDateTime,
+                                    vehicleType: job.vehicleType,
+                                    pickupLocation: job.pickupLocation,
+                                    dropoffLocation: job.dropoffLocation ?? '',
+                                    driverName:
+                                        job.createdBy?.nickname != null &&
+                                            job.createdBy!.nickname.isNotEmpty
+                                        ? job.createdBy!.nickname
+                                        : (job.createdBy?.name ?? "Unknown"),
+                                    companyName:
+                                        job.createdBy?.company ?? 'Unknown',
+                                    flightNumberHint: job.flightNumber ?? '',
+                                    paymentMethodHint:
+                                        (job.paymentType == 'NO_COLLECT' ||
+                                            job.paymentType == 'NO COLLECT')
+                                        ? 'No collect'
+                                        : (job.paymentType == 'COLLECT'
+                                              ? 'Collect'
+                                              : job.paymentType.replaceAll(
+                                                  '_',
+                                                  ' ',
+                                                )),
+                                    specialInstructionsHint:
+                                        job.instruction ?? '',
+                                    price: job.paymentAmount.toString(),
+                                    flightNumberController:
+                                        flightNumberController,
+                                    paymentMethodController:
+                                        paymentMethodController,
+                                    specialInstructionsController:
+                                        specialInstructionsController,
+                                    vehicleStyle:
+                                        VehicleTypeColors.getVehicleStyle(
+                                          job.vehicleType,
+                                        ),
+                                    onArrowTap: () {
+                                      // Handle arrow tap
+                                      controller.applyToJob(jobId: job.id);
+
+                                      print("Arrow tapped");
+                                    },
+                                    onPriceTap: () {
+                                      // Handle price tap
+                                      print("Price tapped");
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            if (controller.isLoadMore.value)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20.h),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.orange100,
+                                  ),
+                                ),
+                              ),
+                            SizedBox(height: 10.h),
+                          ],
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -103,18 +251,41 @@ class _JobofferpageState extends State<Jobofferpage> {
 
 /// ================= VEHICLE TYPE COLORS =================
 class VehicleTypeColors {
-  static const Color sedan = Colors.red;
-  static const Color suv = Colors.blue;
-  static const Color van = Colors.green;
-  static const Color luxury = Color(0xFFD4AF37); // Gold
-  static const Color truck = Colors.orange;
-  static const Color mini = Colors.purple;
+  static const Color sedan = Color(0xFFDC2626);
+  static const Color suv = Color(0xFF0A1F44);
+  static const Color bus = Color(0xFF3E2723); // Dark Brown color
+  static const Color sprinter = Color(0xFF000000);
+  static const Color gray = Color.fromARGB(255, 65, 63, 63);
+
+  static final LinearGradient sedanSuvGradient = LinearGradient(
+    colors: [
+      const Color(0xFFB11226),
+      const Color(0xFFB11226).withOpacity(0.90),
+      const Color(0xFF0A1F44).withOpacity(0.95),
+      const Color(0xFF0A1F44).withOpacity(0.9),
+    ],
+
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
+  static dynamic getVehicleStyle(String? type) {
+    if (type == null) return gray;
+    final t = type.toUpperCase();
+    if (t == 'SUV') return suv;
+    if (t == 'SEDAN') return sedan;
+    if (t == 'BUS') return bus;
+    if (t == 'SEDAN/SUV') return sedanSuvGradient;
+    if (t == 'SPRINTER') return sprinter;
+    return gray;
+  }
 }
 
 /// ================= CUSTOM VEHICLE TYPE BADGE =================
 class VehicleTypeBadge extends StatelessWidget {
   final String vehicleType;
-  final Color backgroundColor;
+  final Color? backgroundColor;
+  final Gradient? gradient;
   final Color textColor;
   final double? fontSize;
   final FontWeight? fontWeight;
@@ -122,7 +293,8 @@ class VehicleTypeBadge extends StatelessWidget {
   const VehicleTypeBadge({
     Key? key,
     required this.vehicleType,
-    this.backgroundColor = Colors.red,
+    this.backgroundColor,
+    this.gradient,
     this.textColor = Colors.white,
     this.fontSize,
     this.fontWeight,
@@ -133,7 +305,8 @@ class VehicleTypeBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: gradient == null ? (backgroundColor ?? Colors.red) : null,
+        gradient: gradient,
         borderRadius: BorderRadius.circular(6.r),
       ),
       child: Text(
@@ -148,8 +321,6 @@ class VehicleTypeBadge extends StatelessWidget {
   }
 }
 
-/// ================= CUSTOM JOB CARD WIDGET =================
-/// ================= CUSTOM JOB CARD WIDGET =================
 class CustomJobCard extends StatefulWidget {
   final String dateTime;
   final String vehicleType;
@@ -166,7 +337,7 @@ class CustomJobCard extends StatefulWidget {
   final TextEditingController specialInstructionsController;
   final VoidCallback? onArrowTap;
   final VoidCallback? onPriceTap;
-  final Color vehicleTypeColor;
+  final dynamic vehicleStyle;
 
   const CustomJobCard({
     Key? key,
@@ -185,7 +356,7 @@ class CustomJobCard extends StatefulWidget {
     required this.specialInstructionsController,
     this.onArrowTap,
     this.onPriceTap,
-    this.vehicleTypeColor = Colors.red,
+    required this.vehicleStyle,
   }) : super(key: key);
 
   @override
@@ -228,46 +399,65 @@ class _CustomJobCardState extends State<CustomJobCard> {
                 ],
               ),
               VehicleTypeBadge(
-                vehicleType: widget.vehicleType,
-                backgroundColor: widget.vehicleTypeColor,
+                vehicleType: widget.vehicleType.toUpperCase(),
+                backgroundColor: widget.vehicleStyle is Color
+                    ? widget.vehicleStyle
+                    : null,
+                gradient: widget.vehicleStyle is Gradient
+                    ? widget.vehicleStyle
+                    : null,
               ),
             ],
           ),
           SizedBox(height: 10.h),
 
           /// PICKUP LOCATION
-          RichText(
-            text: TextSpan(
-              style: GoogleFonts.inter(fontSize: 14.sp),
-              children: [
-                TextSpan(
-                  text: "PU: ",
-                  style: const TextStyle(color: Colors.grey),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "PU: ",
+                style: GoogleFonts.inter(
+                  color: Colors.grey,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
                 ),
-                TextSpan(
-                  text: widget.pickupLocation,
-                  style: const TextStyle(color: Colors.white),
+              ),
+              Expanded(
+                child: Text(
+                  widget.pickupLocation,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           SizedBox(height: 6.h),
 
           /// DROPOFF LOCATION
-          RichText(
-            text: TextSpan(
-              style: GoogleFonts.inter(fontSize: 14.sp),
-              children: [
-                TextSpan(
-                  text: "DO: ",
-                  style: const TextStyle(color: Colors.grey),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "DO: ",
+                style: GoogleFonts.inter(
+                  color: Colors.grey,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
                 ),
-                TextSpan(
-                  text: widget.dropoffLocation,
-                  style: const TextStyle(color: Colors.white),
+              ),
+              Expanded(
+                child: Text(
+                  widget.dropoffLocation,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           SizedBox(height: 10.h),
 
@@ -297,20 +487,23 @@ class _CustomJobCardState extends State<CustomJobCard> {
           ),
           SizedBox(height: 16.h),
 
-          /// FLIGHT NUMBER
-          CustomTextgray(
-            text: "Flight Number",
-            color: const Color(0xFF737373),
-            fontWeight: FontWeight.w500,
-          ),
-          SizedBox(height: 8.h),
-          CustomTextFieldGold(
-            controller: widget.flightNumberController,
-            hintText: widget.flightNumberHint,
-            obscureText: false,
-            textInputType: TextInputType.text,
-          ),
-          SizedBox(height: 10.h),
+          if (widget.flightNumberHint.isNotEmpty &&
+              widget.flightNumberHint != "N/A") ...[
+            CustomTextgray(
+              text: "Flight Number",
+              color: const Color(0xFF737373),
+              fontWeight: FontWeight.w500,
+            ),
+            SizedBox(height: 8.h),
+            CustomTextFieldGold(
+              readOnly: true,
+              controller: widget.flightNumberController,
+              hintText: widget.flightNumberHint,
+              obscureText: false,
+              textInputType: TextInputType.text,
+            ),
+            SizedBox(height: 10.h),
+          ],
 
           /// PAYMENT METHOD
           CustomTextgray(
@@ -320,6 +513,7 @@ class _CustomJobCardState extends State<CustomJobCard> {
           ),
           SizedBox(height: 8.h),
           CustomTextFieldGold(
+            readOnly: true,
             controller: widget.paymentMethodController,
             hintText: widget.paymentMethodHint,
             obscureText: false,
@@ -335,8 +529,13 @@ class _CustomJobCardState extends State<CustomJobCard> {
           ),
           SizedBox(height: 8.h),
           CustomTextFieldGold(
+            readOnly: true,
             controller: widget.specialInstructionsController,
-            hintText: widget.specialInstructionsHint,
+            hintText:
+                widget.specialInstructionsHint.isEmpty ||
+                    widget.specialInstructionsHint == "N/A"
+                ? "N/A"
+                : widget.specialInstructionsHint,
             obscureText: false,
             textInputType: TextInputType.text,
           ),
@@ -400,30 +599,42 @@ class _CustomJobCardState extends State<CustomJobCard> {
                   ),
                 ],
               ),
-              DragTarget<String>(
-                onAcceptWithDetails: (details) {
-                  if (details.data == 'confirm') {
-                    widget.onArrowTap?.call();
-                  }
-                },
-                builder: (context, candidateData, rejectedData) {
-                  bool isOver = candidateData.isNotEmpty;
-                  return GestureDetector(
-                    onTap: widget.onPriceTap,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: EdgeInsets.symmetric(
-                        vertical: 15.h,
-                        horizontal: 70.w,
+              Expanded(
+                child: DragTarget<String>(
+                  onAcceptWithDetails: (details) {
+                    if (details.data == 'confirm') {
+                      widget.onArrowTap?.call();
+                    }
+                  },
+                  builder: (context, candidateData, rejectedData) {
+                    bool isOver = candidateData.isNotEmpty;
+                    return GestureDetector(
+                      onTap: widget.onPriceTap,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        height: 55.h,
+                        decoration: BoxDecoration(
+                          color: isOver
+                              ? const Color(0xFFE1C16E)
+                              : AppColors.orange100,
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10.w),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: CustomText(
+                                text: '\$${widget.price}',
+                                fontSize: 18.sp,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: isOver ? Color(0xFFE1C16E) : AppColors.orange100,
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child: CustomText(text: widget.price, fontSize: 18.sp),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -442,6 +653,7 @@ class CustomTextFieldGold extends StatelessWidget {
   final Widget? suffixIcon;
   final TextInputType textInputType;
   final String? Function(String?)? validator;
+  final bool readOnly;
 
   const CustomTextFieldGold({
     Key? key,
@@ -452,11 +664,14 @@ class CustomTextFieldGold extends StatelessWidget {
     this.suffixIcon,
     required this.textInputType,
     this.validator,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: null,
+      readOnly: readOnly,
       controller: controller,
       obscureText: obscureText,
       keyboardType: textInputType,
@@ -464,7 +679,7 @@ class CustomTextFieldGold extends StatelessWidget {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Color(0xFFD08700)),
+        hintStyle: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),

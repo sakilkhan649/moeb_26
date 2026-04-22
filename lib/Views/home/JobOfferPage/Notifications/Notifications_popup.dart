@@ -78,9 +78,9 @@ class CustomNotificationPopup extends StatelessWidget {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => controller.clearAll(),
+                          onTap: () => controller.markAllAsRead(),
                           child: Text(
-                            "Clear All",
+                            "Read All",
                             style: GoogleFonts.inter(
                               fontSize: 14.sp,
                               color: const Color(0xFFD08700),
@@ -99,34 +99,45 @@ class CustomNotificationPopup extends StatelessWidget {
 
             // Notifications List
             Flexible(
-              child: Obx(() {
-                if (controller.notifications.isEmpty) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    child: Center(
-                      child: Text(
-                        "No notifications",
-                        style: GoogleFonts.inter(
-                          color: Colors.white.withOpacity(0.4),
-                          fontSize: 14.sp,
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await controller.fetchNotifications();
+                },
+                color: const Color(0xFFD08700),
+                backgroundColor: const Color(0xFF1A1A1A),
+                child: Obx(() {
+                  if (controller.notifications.isEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 100.h),
+                          child: Center(
+                            child: Text(
+                              "No notifications",
+                              style: GoogleFonts.inter(
+                                color: Colors.white.withOpacity(0.4),
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }
+                      ],
+                    );
+                  }
 
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: controller.notifications.length,
-                  separatorBuilder: (context, index) =>
-                      const Divider(color: Colors.white10, height: 1),
-                  itemBuilder: (context, index) {
-                    final notification = controller.notifications[index];
-                    return _buildNotificationItem(notification);
-                  },
-                );
-              }),
+                  return ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: controller.notifications.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(color: Colors.white10, height: 1),
+                    itemBuilder: (context, index) {
+                      final notification = controller.notifications[index];
+                      return _buildNotificationItem(notification);
+                    },
+                  );
+                }),
+              ),
             ),
             SizedBox(height: 10.h),
           ],
@@ -139,112 +150,144 @@ class CustomNotificationPopup extends StatelessWidget {
     Color iconBgColor = Colors.white.withOpacity(0.05);
     Color iconColor = Colors.white;
 
-    // Logic for icon colors based on title/type
-    if (notification.title.contains("Job")) {
+    // Logic for icon colors based on type
+    if (notification.type == "GENERAL") {
       iconColor = const Color(0xFFD08700);
       iconBgColor = const Color(0xFFD08700).withOpacity(0.1);
-    } else if (notification.title.contains("Message")) {
+    } else if (notification.type == "TASK") {
       iconColor = const Color(0xFF3498DB);
       iconBgColor = const Color(0xFF3498DB).withOpacity(0.1);
-    } else if (notification.title.contains("Item")) {
+    } else if (notification.type == "REMINDER") {
       iconColor = const Color(0xFF2ECC71);
       iconBgColor = const Color(0xFF2ECC71).withOpacity(0.1);
     }
 
     return GestureDetector(
       onTap: () {
+        // Mark as read when clicked
+        if (!notification.isRead) {
+          controller.markAsRead(notification.id);
+        }
+
+        // Logic for navigation if needed based on subtitle/title
         if (notification.title == "Job Acceptance") {
-          final BookingController bookingController = Get.put(
-            BookingController(),
-          );
-          bookingController.setJobAcceptanceView(true);
+          final BookingController bookingController =
+              Get.isRegistered<BookingController>()
+              ? Get.find<BookingController>()
+              : Get.put(BookingController());
+          bookingController.isJobAcceptanceView.value = true;
           Get.back(); // Close the popup
           Get.toNamed(Routes.myJobsScreen);
         }
       },
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Icon Container
-            Container(
-              height: 48.w,
-              width: 48.w,
-              decoration: BoxDecoration(
-                color: iconBgColor,
-                shape: BoxShape.circle,
+      child: Obx(() {
+        // Find the latest state of this notification from the controller
+        final currentNoti = controller.notifications.firstWhere(
+          (n) => n.id == notification.id,
+          orElse: () => notification,
+        );
+        
+        return Container(
+          color: currentNoti.isRead
+              ? Colors.transparent
+              : Colors.white.withOpacity(0.02),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Icon Container
+              Container(
+                height: 48.w,
+                width: 48.w,
+                decoration: BoxDecoration(
+                  color: iconBgColor,
+                  shape: BoxShape.circle,
+                ),
+                padding: EdgeInsets.all(12.w),
+                child: SvgPicture.asset(
+                  notification.icon,
+                  colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                ),
               ),
-              padding: EdgeInsets.all(12.w),
-              child: SvgPicture.asset(
-                notification.icon,
-                colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-              ),
-            ),
-            SizedBox(width: 16.w),
+              SizedBox(width: 16.w),
 
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          notification.title,
-                          style: GoogleFonts.inter(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            currentNoti.title,
+                            style: GoogleFonts.inter(
+                              fontSize: 16.sp,
+                              fontWeight: currentNoti.isRead
+                                  ? FontWeight.w500
+                                  : FontWeight.w700,
+                              color: currentNoti.isRead
+                                  ? Colors.white.withOpacity(0.8)
+                                  : Colors.white,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Icon(
-                        Icons.check,
-                        size: 16.sp,
-                        color: const Color(0xFFD08700),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    notification.message,
-                    style: GoogleFonts.inter(
-                      fontSize: 14.sp,
-                      color: Colors.white.withOpacity(0.6),
-                      height: 1.4,
+                        if (!currentNoti.isRead)
+                          Container(
+                            width: 8.w,
+                            height: 8.w,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFD08700),
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        else
+                          Icon(
+                            Icons.check,
+                            size: 16.sp,
+                            color: Colors.white.withOpacity(0.2),
+                          ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today_outlined,
-                        size: 12.sp,
-                        color: Colors.white.withOpacity(0.4),
+                    SizedBox(height: 4.h),
+                    Text(
+                      currentNoti.subtitle,
+                      style: GoogleFonts.inter(
+                        fontSize: 14.sp,
+                        color: Colors.white.withOpacity(0.6),
+                        height: 1.4,
                       ),
-                      SizedBox(width: 4.w),
-                      Expanded(
-                        child: Text(
-                          notification.time,
-                          style: GoogleFonts.inter(
-                            fontSize: 12.sp,
-                            color: Colors.white.withOpacity(0.4),
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 12.sp,
+                          color: Colors.white.withOpacity(0.4),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        SizedBox(width: 4.w),
+                        Expanded(
+                          child: Text(
+                            currentNoti.timeAgo,
+                            style: GoogleFonts.inter(
+                              fontSize: 12.sp,
+                              color: Colors.white.withOpacity(0.4),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/Utils/app_colors.dart';
+import 'package:moeb_26/Utils/app_icons.dart';
 import 'package:moeb_26/widgets/CustomButton.dart';
 import 'package:moeb_26/widgets/CustomTextField.dart';
 import 'package:moeb_26/widgets/CustomText_Field_Hight.dart';
 import '../Controller/edit_controller.dart';
 
-class EditScreen extends StatelessWidget {
+class EditScreen extends StatefulWidget {
   EditScreen({super.key});
 
+  @override
+  State<EditScreen> createState() => _EditScreenState();
+}
+
+class _EditScreenState extends State<EditScreen> {
   final pickupController = TextEditingController();
   final dropoffController = TextEditingController();
   final flightController = TextEditingController();
@@ -21,6 +28,18 @@ class EditScreen extends StatelessWidget {
   final specialController = TextEditingController();
 
   final EditController editController = Get.put(EditController());
+
+  @override
+  void initState() {
+    super.initState();
+    if (editController.job != null) {
+      pickupController.text = editController.job!.pickupLocation ?? '';
+      dropoffController.text = editController.job!.dropoffLocation ?? '';
+      flightController.text = editController.job!.flightNumber ?? '';
+      payController.text = editController.job!.paymentAmount?.toString() ?? '';
+      specialController.text = editController.job!.instruction ?? '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +53,30 @@ class EditScreen extends StatelessWidget {
             _buildHeader(),
             SizedBox(height: 10.h),
             _buildFieldWithLabel(
-              "Pickup Location",
-              pickupController,
-              "e.g., JFK Airport, Terminal 4",
-              Icons.location_on_outlined,
+              label: "Pickup Location",
+              ctrl: pickupController,
+              hint: "e.g., JFK Airport, Terminal 4",
+              icon: SvgPicture.asset(
+                AppIcons.fromlocation_icon,
+                width: 20.sp,
+                height: 20.sp,
+              ),
             ),
             _buildFieldWithLabel(
-              "Drop-off Location",
-              dropoffController,
-              "e.g., Manhattan, Times Square",
-              Icons.location_on_outlined,
+              label: "Drop-off Location",
+              ctrl: dropoffController,
+              hint: "e.g., Manhattan, Times Square",
+              icon: SvgPicture.asset(
+                AppIcons.duration_icon,
+                width: 20.sp,
+                height: 20.sp,
+              ),
             ),
             _buildFieldWithLabel(
-              "Flight Number (Optional)",
-              flightController,
-              "",
-              Icons.flight,
+              readOnly: true,
+              label: "Flight Number (Optional)",
+              ctrl: flightController,
+              hint: "",
               isRequired: false,
             ),
             _buildDateTimeRow(),
@@ -57,39 +84,61 @@ class EditScreen extends StatelessWidget {
             _buildVehicleSelection(editController),
             SizedBox(height: 16.h),
             _buildFieldWithLabel(
-              "Pay Amount",
-              payController,
-              "\$120",
-              Icons.attach_money,
+              label: "Pay Amount",
+              ctrl: payController,
+              hint: '\$120',
+              icon: SvgPicture.asset(
+                AppIcons.payAmount_icon,
+                width: 20.sp,
+                height: 20.sp,
+              ),
+              isRequired: false,
             ),
             _buildPaymentMethodDropdown(editController),
             SizedBox(height: 16.h),
             _buildFieldWithLabel(
-              "Special Instructions (Optional)",
-              specialController,
-              "e.g., VIP client, suit required, name sign needed",
-              Icons.notes,
               isRequired: false,
+              label: "Special Instructions (Optional)",
+              ctrl: specialController,
+              hint: "e.g., VIP client, suit required, name sign needed",
             ),
             SizedBox(height: 24.h),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    text: "Cancel",
-                    backgroundColor: Colors.white,
-                    onPressed: () {},
-                  ),
-                ),
-                SizedBox(width: 20.w),
-                Expanded(
-                  child: CustomButton(
-                    text: "Save",
-                    backgroundColor: AppColors.orange100,
-                    onPressed: () {},
-                  ),
-                ),
-              ],
+            Obx(
+              () => editController.isLoading.value
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: "Cancel",
+                            backgroundColor: Colors.white,
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 20.w),
+                        Expanded(
+                          child: CustomButton(
+                            text: "Save",
+                            backgroundColor: AppColors.orange100,
+                            onPressed: () {
+                              editController.updateJob(
+                                pickupLocation: pickupController.text,
+                                dropoffLocation: dropoffController.text,
+                                paymentAmount:
+                                    double.tryParse(payController.text) ?? 0.0,
+                                instruction: specialController.text,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
             ),
 
             SizedBox(height: 20.h),
@@ -99,11 +148,12 @@ class EditScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFieldWithLabel(
-    String label,
-    TextEditingController ctrl,
-    String hint,
-    IconData icon, {
+  Widget _buildFieldWithLabel({
+    bool readOnly = false,
+    required String label,
+    required TextEditingController ctrl,
+    required String hint,
+    Widget? icon,
     bool isRequired = true,
   }) {
     return Column(
@@ -111,7 +161,7 @@ class EditScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
+            if (icon != null) icon,
             SizedBox(width: 8.w),
             Text(
               label + (isRequired ? ' *' : ''),
@@ -125,6 +175,7 @@ class EditScreen extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         CustomtextFieldHight(
+          readOnly: readOnly,
           controller: ctrl,
           hintText: hint,
           obscureText: false,
@@ -145,7 +196,7 @@ class EditScreen extends StatelessWidget {
                 : "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
             return _buildDateTimeField(
               "Date",
-              Icons.date_range,
+              SvgPicture.asset(AppIcons.date_icon, width: 20.sp, height: 20.sp),
               dateController,
               "Select Date",
               (context) => editController.chooseDate(context),
@@ -156,11 +207,14 @@ class EditScreen extends StatelessWidget {
         Expanded(
           child: Builder(
             builder: (context) => Obx(() {
-              final time = editController.selectedTime.value;
-              timeController.text = time == null ? "" : time.format(context);
+              timeController.text = editController.formattedTime.value;
               return _buildDateTimeField(
                 "Time",
-                Icons.access_time,
+                SvgPicture.asset(
+                  AppIcons.time_myjob_icon,
+                  width: 20.sp,
+                  height: 20.sp,
+                ),
                 timeController,
                 "Select Time",
                 (context) => editController.chooseTime(context),
@@ -174,7 +228,7 @@ class EditScreen extends StatelessWidget {
 
   Widget _buildDateTimeField(
     String label,
-    IconData icon,
+    Widget? icon,
     TextEditingController ctrl,
     String hint,
     Function(BuildContext) onPressed,
@@ -184,7 +238,7 @@ class EditScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, color: Colors.white, size: 18.sp),
+            if (icon != null) icon,
             SizedBox(width: 8.w),
             Text(
               '$label *',
@@ -216,11 +270,11 @@ class EditScreen extends StatelessWidget {
 
   Widget _buildVehicleSelection(EditController controller) {
     final vehicles = [
-      'Sedan',
+      'SEDAN',
       'SUV',
-      'Sprinter',
-      'Bus',
-      'LimoStretch',
+      'SPRINTER',
+      'BUS',
+      'LIMOSTRETCH',
       'SEDAN/SUV',
     ];
 
@@ -229,7 +283,11 @@ class EditScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.directions_car, color: Colors.white, size: 18.sp),
+            SvgPicture.asset(
+              AppIcons.vechile_car_icon,
+              width: 20.sp,
+              height: 20.sp,
+            ),
             SizedBox(width: 8.w),
             Text(
               'Vehicle Type Required *',
@@ -285,7 +343,7 @@ class EditScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-           // Icon(Icons.payment, color: Colors.white, size: 18.sp),
+            // Icon(Icons.payment, color: Colors.white, size: 18.sp),
             SizedBox(width: 8.w),
             Text(
               'Payment *',
@@ -320,7 +378,7 @@ class EditScreen extends StatelessWidget {
                       child: Text(
                         role,
                         style: GoogleFonts.inter(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                         ),
@@ -352,7 +410,8 @@ class EditScreen extends StatelessWidget {
               dropdownStyleData: DropdownStyleData(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.r),
-                  color: Colors.white,
+                  color: Colors.black,
+                  border: Border.all(color: AppColors.black200),
                 ),
                 offset: Offset(0, -5.h),
                 scrollbarTheme: ScrollbarThemeData(

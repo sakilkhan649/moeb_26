@@ -1,0 +1,93 @@
+{
+    "success": true,
+    "message": "Profile data retrieved successfully",
+    "data": {
+        "_id": "69d2afcf2c74b5f393f64989",
+        "name": "Md Bayzid Hosen",
+        "role": "DRIVER",
+        "email": "mdbayazid131@gmail.com",
+        "phone": "01990641482",
+        "home": "Dhaka",
+        "serviceArea": "Manhattan",
+        "experience": 5,
+        "company": "STA",
+        "companyRole": "DRIVER",
+        "profilePicture": "https://i.ibb.co/z5YHLV9/profile.png",
+        "status": "ACTIVE",
+        "verified": true,
+        "deviceTokens": [
+            "optional-fcm-token",
+            "eAcF-muqQkSYTZ5roBEQA2:APA91bGQ7lbsz_Afxn6xKojvOiKl25k-FSOxV0rHJGYHdJ8dZh5LFdigP_m2GDHKkEE4w7p1tkGG9t7U7WsMwHbKh5wjLA-IyMtYqM1nF9WtT5VV2rBdFtM"
+        ],
+        "vehicles": [
+            {
+                "carType": "SUV",
+                "make": "Mercedes",
+                "model": "B",
+                "colorInside": "black",
+                "colorOutside": "black",
+                "year": 2005,
+                "licensePlate": "AB-123",
+                "vehicleRegistration": {
+                    "image": "http://10.10.7.47:5001/uploads/images/1775415247252-gjejvs.png",
+                    "expiryDate": "2026-04-29T18:00:00.000Z"
+                },
+                "commercialInsurance": {
+                    "image": "http://10.10.7.47:5001/uploads/images/1775415247270-9azkoj.png",
+                    "expiryDate": "2026-04-29T18:00:00.000Z"
+                },
+                "photos": {
+                    "frontView": "http://10.10.7.47:5001/uploads/images/1775415247288-9bzqme.png",
+                    "rearView": "http://10.10.7.47:5001/uploads/images/1775415247316-y7scq8.png",
+                    "interiorView": "http://10.10.7.47:5001/uploads/images/1775415247334-w04vz2.png"
+                },
+                "_id": "69d2afcf2c74b5f393f6498a"
+            },
+            {
+                "carType": "Bus",
+                "make": "alif",
+                "model": "s",
+                "colorInside": "yellow",
+                "colorOutside": "yellow",
+                "year": 2008,
+                "licensePlate": "1234",
+                "vehicleRegistration": {
+                    "image": "http://10.10.7.47:5001/uploads/images/1775421907186-kvp68x.png",
+                    "expiryDate": "2026-04-30T00:00:00.000Z"
+                },
+                "commercialInsurance": {
+                    "image": "http://10.10.7.47:5001/uploads/images/1775421907187-m60ym7.png",
+                    "expiryDate": "2026-04-30T00:00:00.000Z"
+                },
+                "photos": {
+                    "frontView": "http://10.10.7.47:5001/uploads/images/1775421907228-0kq73x.png",
+                    "rearView": "http://10.10.7.47:5001/uploads/images/1775421907276-zgeug4.png",
+                    "interiorView": "http://10.10.7.47:5001/uploads/images/1775421907305-6wfhal.png"
+                },
+                "_id": "69d2c9d3e74511d58b834dee"
+            }
+        ],
+        "drivingLicense": {
+            "image": "http://10.10.7.47:5001/uploads/images/1775421804782-yt78bk.jpg",
+            "expiryDate": "2026-04-30T00:00:00.000Z"
+        },
+        "hackLicense": {
+            "image": "http://10.10.7.47:5001/uploads/images/1775421804784-nd90uj.jpg",
+            "expiryDate": "2026-04-30T00:00:00.000Z"
+        },
+        "localPermit": {
+            "image": "http://10.10.7.47:5001/uploads/images/1775421804794-gaxiyl.jpg",
+            "expiryDate": "2026-04-30T00:00:00.000Z"
+        },
+        "uploadedHeadshot": "http://10.10.7.47:5001/uploads/images/1775421804808-v2q9op.jpg",
+        "blockReason": null,
+        "averageRating": 0,
+        "totalReviews": 0,
+        "createdAt": "2026-04-05T18:54:07.466Z",
+        "updatedAt": "2026-04-05T20:54:47.812Z",
+        "__v": 0,
+        "selectedVehicle": "69d2c9d3e74511d58b834dee",
+        "nickname": "bayzid",
+        "uid": "MAN-706571"
+    }
+}

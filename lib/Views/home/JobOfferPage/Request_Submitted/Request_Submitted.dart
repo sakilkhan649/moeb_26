@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
 import 'package:moeb_26/widgets/CustomText.dart';
 import 'package:moeb_26/widgets/CustomTextGary.dart';
 
@@ -15,6 +17,10 @@ class RequestSubmitted extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the job data from arguments
+    // Get the job data from arguments as dynamic to handle different model types (Job or JobData)
+    final dynamic job = Get.arguments;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -76,27 +82,76 @@ class RequestSubmitted extends StatelessWidget {
               ),
               SizedBox(height: 30.h),
 
-              // Status Steps Container (You can use this in your widget tree)
-              CustomJobDetailsCard(
-                // Location details
-                pickupLocation: "Dhaka Airport",
-                dropoffLocation: "Barisal",
+              // Status Steps Container
+              Builder(
+                builder: (context) {
+                  String displayDateTime = "ASAP";
+                  if (job.asap == true) {
+                    displayDateTime = "ASAP";
+                  } else {
+                    String dateStr = "";
+                    if (job.date != null) {
+                      try {
+                        DateTime parsed;
+                        if (job.date is DateTime) {
+                          parsed = job.date as DateTime;
+                        } else {
+                          parsed = DateTime.parse(job.date.toString());
+                        }
+                        dateStr = DateFormat('EEE MMM dd').format(parsed);
+                      } catch (_) {
+                        dateStr = job!.date.toString();
+                      }
+                    }
 
-                // Job information
-                flightNumber: "Flight AA 1234",
-                dateTime: "Jan 20 · 08:30 AM",
-                vehicleType: "SEDAN",
-                jobPoster: "Khaled",
-                company: "Khaled Transportation",
-                payment: "Collect",
-                amount: "\$125",
+                    String timeStr = job?.time ?? "";
+                    if (timeStr.contains(':')) {
+                      try {
+                        final parts = timeStr.split(':');
+                        int hour = int.parse(parts[0]);
+                        int minute = int.parse(parts[1].split(' ')[0]);
+                        final period = hour >= 12 ? "PM" : "AM";
+                        final hour12 = hour == 0
+                            ? 12
+                            : (hour > 12 ? hour - 12 : hour);
+                        timeStr =
+                            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+                      } catch (_) {}
+                    }
+                    displayDateTime = dateStr.isNotEmpty
+                        ? "$dateStr . $timeStr"
+                        : timeStr;
+                  }
 
-                // Optional: Custom colors
-                backgroundColor: const Color(0xFF1C1C1C),
-                borderColor: const Color(0xFF2A2A2A),
-                labelColor: Colors.grey,
-                valueColor: Colors.white,
-                iconColor: Colors.grey,
+                  return CustomJobDetailsCard(
+                    // Location details
+                    pickupLocation: job.pickupLocation ?? "Unknown",
+                    dropoffLocation: job.dropoffLocation ?? "N/A",
+
+                    // Job information
+                    flightNumber: job.flightNumber ?? "N/A",
+                    dateTime: displayDateTime,
+                    vehicleType: job.vehicleType ?? "Unknown",
+                    jobPoster: job.createdBy is String
+                        ? "Unknown"
+                        : (job.createdBy?.nickname != null &&
+                                job.createdBy!.nickname.isNotEmpty
+                            ? job.createdBy!.nickname
+                            : (job.createdBy?.name ?? "Unknown")),
+                    company: job.createdBy is String
+                        ? "Unknown"
+                        : (job.createdBy?.company ?? "Unknown"),
+                    payment: job.paymentType ?? "Unknown",
+                    amount: "\$${job.paymentAmount ?? 0}",
+
+                    // Optional: Custom colors
+                    backgroundColor: const Color(0xFF1C1C1C),
+                    borderColor: const Color(0xFF2A2A2A),
+                    labelColor: Colors.grey,
+                    valueColor: Colors.white,
+                    iconColor: Colors.grey,
+                  );
+                },
               ),
             ],
           ),

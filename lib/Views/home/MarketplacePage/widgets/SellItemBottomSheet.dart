@@ -7,7 +7,9 @@ import 'package:moeb_26/widgets/CustomButton.dart';
 import '../../../../Utils/app_colors.dart';
 
 class SellItemBottomSheet extends StatelessWidget {
-  SellItemBottomSheet({super.key});
+  final String? editItemId;
+
+  SellItemBottomSheet({super.key, this.editItemId});
 
   final MarketplaceController controller = Get.find<MarketplaceController>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -36,7 +38,7 @@ class SellItemBottomSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Sell Item",
+                    editItemId == null ? "Sell Item" : "Edit Item",
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontSize: 20.sp,
@@ -176,7 +178,12 @@ class SellItemBottomSheet extends StatelessWidget {
                           onTap: () => controller.pickImage(),
                           child: Container(
                             width: double.infinity,
-                            padding: controller.selectedImage.value != null
+                            padding:
+                                (controller.selectedImage.value != null ||
+                                    controller
+                                        .existingImagePath
+                                        .value
+                                        .isNotEmpty)
                                 ? EdgeInsets.zero
                                 : EdgeInsets.symmetric(vertical: 40.h),
                             decoration: BoxDecoration(
@@ -196,37 +203,59 @@ class SellItemBottomSheet extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     ),
                                   )
-                                : Column(
-                                    children: [
-                                      Icon(
-                                        Icons.file_upload_outlined,
-                                        color: Colors.grey,
-                                        size: 32.sp,
-                                      ),
-                                      SizedBox(height: 8.h),
-                                      Text(
-                                        "Upload or take Photos",
-                                        style: GoogleFonts.inter(
-                                          color: Colors.grey,
-                                          fontSize: 14.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                : (controller.existingImagePath.value.isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            16.r,
+                                          ),
+                                          child: Image.network(
+                                            controller.existingImagePath.value,
+                                            height: 150.h,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : Column(
+                                          children: [
+                                            Icon(
+                                              Icons.file_upload_outlined,
+                                              color: Colors.grey,
+                                              size: 32.sp,
+                                            ),
+                                            SizedBox(height: 8.h),
+                                            Text(
+                                              "Upload or take Photos",
+                                              style: GoogleFonts.inter(
+                                                color: Colors.grey,
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        )),
                           ),
                         ),
                       ),
                       SizedBox(height: 30.h),
 
-                      CustomButton(
-                        text: "List Item",
-                        backgroundColor: Colors.white,
-                        textColor: Colors.black,
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            controller.listItem();
-                          }
-                        },
+                      Obx(
+                        () => controller.isLoading.value
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : CustomButton(
+                                text: editItemId == null
+                                    ? "List Item"
+                                    : "Update Item",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    controller.listItem(editItemId: editItemId);
+                                  }
+                                },
+                              ),
                       ),
                       SizedBox(height: 20.h),
                     ],
