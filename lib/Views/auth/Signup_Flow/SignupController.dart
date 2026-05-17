@@ -190,7 +190,7 @@ class SignupController extends GetxController {
         email: emailController.text,
         password: passwordController.text,
         phone: phoneController.text,
-        home: homeAddressController.text,
+        home: "Home Address",
         serviceArea: selectedArea.value,
         experience: int.tryParse(yearController.text) ?? 0,
         company: companyNameController.text,

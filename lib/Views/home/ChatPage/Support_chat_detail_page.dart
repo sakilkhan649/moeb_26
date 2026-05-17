@@ -14,33 +14,35 @@ class SupportChatDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          const Divider(color: Color(0xffDADADA), height: 1),
-          // Messages List
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoading.value && controller.messages.isEmpty) {
-                return const Center(child: CircularProgressIndicator(color: Colors.white));
-              }
-              return ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                itemCount: controller.messages.length,
-                reverse: true,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final message = controller.messages[index];
-                  return _buildMessageBubble(message);
-                },
-              );
-            }),
-          ),
-          // Bottom Input Field
-          _buildMessageInput(),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        appBar: _buildAppBar(),
+        body: Column(
+          children: [
+            const Divider(color: Color(0xffDADADA), height: 1),
+            // Messages List
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value && controller.messages.isEmpty) {
+                  return const Center(child: CircularProgressIndicator(color: Colors.white));
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  itemCount: controller.messages.length,
+                  reverse: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final message = controller.messages[index];
+                    return _buildMessageBubble(message);
+                  },
+                );
+              }),
+            ),
+            // Bottom Input Field
+            _buildMessageInput(),
+          ],
+        ),
       ),
     );
   }
