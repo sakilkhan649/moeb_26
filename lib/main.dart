@@ -1,4 +1,3 @@
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,15 +10,12 @@ import 'Core/routs.dart';
 import 'Utils/app_colors.dart';
 
 void main() async {
-
-    // Ensure Flutter is initialized
+  // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
-      await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   // Initialize Firebase
   await Firebase.initializeApp();
-  
+
   // Initialize Firebase Messaging
   await FirebaseNotificationService.initialize();
   runApp(const MyApp());
@@ -36,9 +32,7 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: GetMaterialApp(
-        theme: ThemeData(
-          scaffoldBackgroundColor: AppColors.black100,
-        ),
+        theme: ThemeData(scaffoldBackgroundColor: AppColors.black100),
         debugShowCheckedModeBanner: false,
         getPages: Routes.routes,
         initialRoute: Routes.splashScreen,
@@ -47,5 +41,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
- ///This main branch ui update
 
+///This main branch ui update
+///
