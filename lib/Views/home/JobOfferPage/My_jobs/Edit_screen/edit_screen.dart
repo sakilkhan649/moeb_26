@@ -43,106 +43,108 @@ class _EditScreenState extends State<EditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 30.h),
-            _buildHeader(),
-            SizedBox(height: 10.h),
-            _buildFieldWithLabel(
-              label: "Pickup Location",
-              ctrl: pickupController,
-              hint: "e.g., JFK Airport, Terminal 4",
-              icon: SvgPicture.asset(
-                AppIcons.fromlocation_icon,
-                width: 20.sp,
-                height: 20.sp,
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 30.h),
+              _buildHeader(),
+              SizedBox(height: 10.h),
+              _buildFieldWithLabel(
+                label: "Pickup Location",
+                ctrl: pickupController,
+                hint: "e.g., JFK Airport, Terminal 4",
+                icon: SvgPicture.asset(
+                  AppIcons.fromlocation_icon,
+                  width: 20.sp,
+                  height: 20.sp,
+                ),
               ),
-            ),
-            _buildFieldWithLabel(
-              label: "Drop-off Location",
-              ctrl: dropoffController,
-              hint: "e.g., Manhattan, Times Square",
-              icon: SvgPicture.asset(
-                AppIcons.duration_icon,
-                width: 20.sp,
-                height: 20.sp,
+              _buildFieldWithLabel(
+                label: "Drop-off Location",
+                ctrl: dropoffController,
+                hint: "e.g., Manhattan, Times Square",
+                icon: SvgPicture.asset(
+                  AppIcons.duration_icon,
+                  width: 20.sp,
+                  height: 20.sp,
+                ),
               ),
-            ),
-            _buildFieldWithLabel(
-              readOnly: true,
-              label: "Flight Number (Optional)",
-              ctrl: flightController,
-              hint: "",
-              isRequired: false,
-            ),
-            _buildDateTimeRow(),
-            SizedBox(height: 16.h),
-            _buildVehicleSelection(editController),
-            SizedBox(height: 16.h),
-            _buildFieldWithLabel(
-              label: "Pay Amount",
-              ctrl: payController,
-              hint: '\$120',
-              icon: SvgPicture.asset(
-                AppIcons.payAmount_icon,
-                width: 20.sp,
-                height: 20.sp,
+              _buildFieldWithLabel(
+                readOnly: true,
+                label: "Flight Number (Optional)",
+                ctrl: flightController,
+                hint: "",
+                isRequired: false,
               ),
-              isRequired: false,
-            ),
-            _buildPaymentMethodDropdown(editController),
-            SizedBox(height: 16.h),
-            _buildFieldWithLabel(
-              isRequired: false,
-              label: "Special Instructions (Optional)",
-              ctrl: specialController,
-              hint: "e.g., VIP client, suit required, name sign needed",
-            ),
-            SizedBox(height: 24.h),
-            Obx(
-              () => editController.isLoading.value
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.orange100,
+              _buildDateTimeRow(),
+              SizedBox(height: 16.h),
+              _buildVehicleSelection(editController),
+              SizedBox(height: 16.h),
+              _buildFieldWithLabel(
+                label: "Pay Amount",
+                ctrl: payController,
+                hint: '\$120',
+                icon: SvgPicture.asset(
+                  AppIcons.payAmount_icon,
+                  width: 20.sp,
+                  height: 20.sp,
+                ),
+                isRequired: false,
+              ),
+              _buildPaymentMethodDropdown(editController),
+              SizedBox(height: 16.h),
+              _buildFieldWithLabel(
+                isRequired: false,
+                label: "Special Instructions (Optional)",
+                ctrl: specialController,
+                hint: "e.g., VIP client, suit required, name sign needed",
+              ),
+              SizedBox(height: 24.h),
+              Obx(
+                () => editController.isLoading.value
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.orange100,
+                        ),
+                      )
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: CustomButton(
+                              text: "Cancel",
+                              backgroundColor: Colors.white,
+                              onPressed: () {
+                                Get.back();
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 20.w),
+                          Expanded(
+                            child: CustomButton(
+                              text: "Save",
+                              backgroundColor: AppColors.orange100,
+                              onPressed: () {
+                                editController.updateJob(
+                                  pickupLocation: pickupController.text,
+                                  dropoffLocation: dropoffController.text,
+                                  paymentAmount:
+                                      double.tryParse(payController.text) ?? 0.0,
+                                  instruction: specialController.text,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                    )
-                  : Row(
-                      children: [
-                        Expanded(
-                          child: CustomButton(
-                            text: "Cancel",
-                            backgroundColor: Colors.white,
-                            onPressed: () {
-                              Get.back();
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 20.w),
-                        Expanded(
-                          child: CustomButton(
-                            text: "Save",
-                            backgroundColor: AppColors.orange100,
-                            onPressed: () {
-                              editController.updateJob(
-                                pickupLocation: pickupController.text,
-                                dropoffLocation: dropoffController.text,
-                                paymentAmount:
-                                    double.tryParse(payController.text) ?? 0.0,
-                                instruction: specialController.text,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
-
-            SizedBox(height: 20.h),
-          ],
+              ),
+      
+              SizedBox(height: 20.h),
+            ],
+          ),
         ),
       ),
     );

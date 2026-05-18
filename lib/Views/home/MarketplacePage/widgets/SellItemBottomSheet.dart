@@ -257,7 +257,7 @@ class SellItemBottomSheet extends StatelessWidget {
                                 },
                               ),
                       ),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 40.h),
                     ],
                   ),
                 ),

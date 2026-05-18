@@ -18,7 +18,9 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
   // Initialize Firebase
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    
+  );
   
   // Initialize Firebase Messaging
   await FirebaseNotificationService.initialize();
