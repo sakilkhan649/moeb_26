@@ -6,9 +6,7 @@ import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/service_area_model.dart';
 
 class ServiceAreaController extends GetxController {
-  final ServiceAreasService _serviceAreasService = Get.put(
-    ServiceAreasService(),
-  );
+  final ServiceAreaService _serviceAreasService = Get.put(ServiceAreaService());
 
   RxList<ServiceAreaModel> serviceAreas = <ServiceAreaModel>[].obs;
   var isLoading = false.obs;

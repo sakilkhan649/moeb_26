@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
 import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/data/repositories/job_repository.dart';
 
 class RidesController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();

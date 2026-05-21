@@ -3,7 +3,7 @@ import 'package:get/get.dart' hide Response;
 import 'package:moeb_26/data/repositories/serviceAreas_repository.dart';
 import 'package:moeb_26/core/services/api_client.dart';
 
-class ServiceAreasService extends GetxService {
+class ServiceAreaService extends GetxService {
   late ServiceAreasRepo _serviceAreasRepo;
 
   @override

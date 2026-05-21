@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/data/repositories/job_repository.dart';
 
 class RideCompletedController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();
