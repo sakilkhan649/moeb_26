@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../../../Services/user_profile_service.dart';
+import 'package:moeb_26/core/services/user_profile_service.dart';
 
 class LegalContentController extends GetxController {
   final UserProfileService _profileService = Get.find<UserProfileService>();

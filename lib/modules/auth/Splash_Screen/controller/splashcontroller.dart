@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:moeb_26/Core/routs.dart';
-import 'package:moeb_26/Views/auth/Create_Account_and_signIn/createscreens.dart';
+import 'package:moeb_26/Views/auth/auth_selection/auth_selection_screen.dart';
 import '../../../../Config/app_constants.dart';
 import '../../../../Config/storage_constants.dart';
 import '../../../../Services/storege_service.dart';
