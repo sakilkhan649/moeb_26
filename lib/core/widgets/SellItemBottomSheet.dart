@@ -49,7 +49,7 @@ class SellItemBottomSheet extends StatelessWidget {
                     onTap: () => Get.back(),
                     child: Icon(
                       Icons.close,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       size: 24.sp,
                     ),
                   ),
@@ -133,7 +133,7 @@ class SellItemBottomSheet extends StatelessWidget {
                                   style: GoogleFonts.inter(
                                     color: isSelected
                                         ? Colors.white
-                                        : Colors.white.withOpacity(0.5),
+                                        : Colors.white.withValues(alpha: 0.5),
                                     fontSize: 14.sp,
                                     fontWeight: isSelected
                                         ? FontWeight.bold

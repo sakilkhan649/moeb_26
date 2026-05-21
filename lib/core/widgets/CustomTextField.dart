@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 
 class Customtextfield extends StatelessWidget {
@@ -12,7 +11,7 @@ class Customtextfield extends StatelessWidget {
   final TextInputType textInputType;
   final String? Function(String?)? validator;
 
-  const Customtextfield({
+  const Customtextfield({super.key, 
     required this.controller,
     required this.hintText,
     required this.obscureText,

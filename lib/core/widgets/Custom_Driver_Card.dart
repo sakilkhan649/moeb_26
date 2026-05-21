@@ -13,7 +13,7 @@ class CustomDriverCard extends StatelessWidget {
   final bool showVehicleInfo;
 
   const CustomDriverCard({
-    Key? key,
+    super.key,
     required this.profileImage,
     required this.name,
     required this.rating,
@@ -23,7 +23,7 @@ class CustomDriverCard extends StatelessWidget {
     required this.buttonIcon,
     required this.onButtonPressed,
     this.showVehicleInfo = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -134,8 +134,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
           maxHeight: 250.h,
           scrollbarTheme: ScrollbarThemeData(
             radius: Radius.circular(40.r),
-            thickness: MaterialStateProperty.all(6),
-            thumbVisibility: MaterialStateProperty.all(true),
+            thickness: WidgetStateProperty.all(6),
+            thumbVisibility: WidgetStateProperty.all(true),
           ),
         ),
         menuItemStyleData: MenuItemStyleData(

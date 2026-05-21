@@ -26,9 +26,9 @@ class VehicleTypeColors {
   static LinearGradient sedanSuvGradient = LinearGradient(
     colors: [
       Color(0xFFB11226),
-      Color(0xFFB11226).withOpacity(0.90),
-      Color(0xFF0A1F44).withOpacity(0.95),
-      Color(0xFF0A1F44).withOpacity(0.9),
+      Color(0xFFB11226).withValues(alpha: 0.90),
+      Color(0xFF0A1F44).withValues(alpha: 0.95),
+      Color(0xFF0A1F44).withValues(alpha: 0.9),
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -228,7 +228,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF161616),
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Column(
         children: [
@@ -559,7 +559,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                       child: Text(
                                         vehicleInfo,
                                         style: GoogleFonts.inter(
-                                          color: Colors.white.withOpacity(0.4),
+                                          color: Colors.white.withValues(alpha: 0.4),
                                           fontSize: 12.sp,
                                         ),
                                         maxLines: 1,
@@ -578,9 +578,9 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                     ),
                                     SizedBox(width: 4.w),
                                     Text(
-                                      "${driver?.averageRating ?? 0.0}/5",
+                                      "${driver.averageRating ?? 0.0}/5",
                                       style: GoogleFonts.inter(
-                                        color: Colors.white.withOpacity(0.4),
+                                        color: Colors.white.withValues(alpha: 0.4),
                                         fontSize: 12.sp,
                                       ),
                                     ),
@@ -631,14 +631,14 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                             children: [
                               Icon(
                                 Icons.chat_bubble_outline,
-                                color: Colors.black.withOpacity(0.6),
+                                color: Colors.black.withValues(alpha: 0.6),
                                 size: 24.sp,
                               ),
                               SizedBox(width: 8.w),
                               Text(
                                 "Chat with Driver",
                                 style: GoogleFonts.inter(
-                                  color: Colors.black.withOpacity(0.6),
+                                  color: Colors.black.withValues(alpha: 0.6),
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
                                 ),

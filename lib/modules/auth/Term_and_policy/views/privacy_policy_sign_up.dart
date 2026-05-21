@@ -75,7 +75,7 @@ class PrivacyPolicySignUp extends StatelessWidget {
                               width: double.infinity,
                               padding: EdgeInsets.all(12.w),
                               decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.15),
+                                color: Colors.red.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(12.r),
                                 border: Border.all(color: Colors.red),
                               ),

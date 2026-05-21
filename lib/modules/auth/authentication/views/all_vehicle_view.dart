@@ -7,8 +7,8 @@ import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
 import 'package:moeb_26/modules/jobs_offers/views/Job_offer_view.dart';
 
-class AllVehicle extends StatelessWidget {
-  AllVehicle({super.key});
+class AllVehicleView extends StatelessWidget {
+  AllVehicleView({super.key});
 
   final ProfileController controller = Get.find<ProfileController>();
 
@@ -74,7 +74,7 @@ class AllVehicle extends StatelessWidget {
                           color: const Color(0xFF1A1A1A),
                           borderRadius: BorderRadius.circular(16.r),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             width: 1.w,
                           ),
                         ),
@@ -164,7 +164,7 @@ class AllVehicle extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(16.r),
@@ -206,7 +206,7 @@ class AllVehicle extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF121212),
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -216,7 +216,7 @@ class AllVehicle extends StatelessWidget {
               height: 4.h,
               margin: EdgeInsets.only(bottom: 24.h),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
@@ -273,9 +273,9 @@ class AllVehicle extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Row(
           children: [
@@ -292,7 +292,7 @@ class AllVehicle extends StatelessWidget {
             const Spacer(),
             Icon(
               Icons.chevron_right,
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               size: 18.sp,
             ),
           ],
@@ -316,7 +316,7 @@ class AllVehicle extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -347,7 +347,9 @@ class AllVehicle extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: () => Get.back(),
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                        side: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.1),
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),

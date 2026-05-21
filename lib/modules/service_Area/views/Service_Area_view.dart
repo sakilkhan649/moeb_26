@@ -6,7 +6,7 @@ import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../Controllers/serviceController.dart';
 
 class ServiceArea extends StatefulWidget {
-  ServiceArea({super.key});
+  const ServiceArea({super.key});
 
   @override
   State<ServiceArea> createState() => _ServiceAreaState();
@@ -41,7 +41,7 @@ class _ServiceAreaState extends State<ServiceArea> {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(

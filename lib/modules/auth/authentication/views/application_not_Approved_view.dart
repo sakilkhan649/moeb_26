@@ -10,8 +10,8 @@ import '../../../../core/widgets/CustomButton.dart';
 
 /// Review Status Screen
 /// Shows application submission status with animated steps
-class ApplicationNotApproved extends StatelessWidget {
-  const ApplicationNotApproved({super.key});
+class ApplicationNotApprovedView extends StatelessWidget {
+  const ApplicationNotApprovedView({super.key});
 
   @override
   Widget build(BuildContext context) {

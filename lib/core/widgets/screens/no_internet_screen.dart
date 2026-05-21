@@ -9,7 +9,7 @@ class NoInternetScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final internet = Get.find<InternetController>();
+    Get.find<InternetController>();
 
     return Scaffold(
       body: Center(

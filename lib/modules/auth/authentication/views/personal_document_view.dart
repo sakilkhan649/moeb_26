@@ -8,8 +8,8 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/personal_document_controller.dart';
 
-class PersonalDocument extends StatelessWidget {
-  PersonalDocument({super.key});
+class PersonalDocumentView extends StatelessWidget {
+  PersonalDocumentView({super.key});
 
   final controller = Get.put(PersonalDocumentController());
 

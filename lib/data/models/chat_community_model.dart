@@ -1,4 +1,4 @@
-import 'Chat_model.dart';
+import 'chat_model.dart';
 
 class CommunityRoom {
   final String name;

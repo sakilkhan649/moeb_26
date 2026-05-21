@@ -31,7 +31,7 @@ class ForgotPasswordController extends GetxController {
 
         // Navigate to OTP screen, pass email for verification
         Get.toNamed(
-          Routes.forgetotpVerificationScreen,
+          Routes.forgetotpVerificationView,
           arguments: {'email': emailController.text.trim()},
         );
       }

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
-import 'package:moeb_26/data/models/Chat_model.dart';
+import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/core/services/community_service.dart';

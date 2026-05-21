@@ -260,9 +260,9 @@ class VehicleTypeColors {
   static final LinearGradient sedanSuvGradient = LinearGradient(
     colors: [
       const Color(0xFFB11226),
-      const Color(0xFFB11226).withOpacity(0.90),
-      const Color(0xFF0A1F44).withOpacity(0.95),
-      const Color(0xFF0A1F44).withOpacity(0.9),
+      const Color(0xFFB11226).withValues(alpha: 0.90),
+      const Color(0xFF0A1F44).withValues(alpha: 0.95),
+      const Color(0xFF0A1F44).withValues(alpha: 0.9),
     ],
 
     begin: Alignment.centerLeft,
@@ -566,7 +566,10 @@ class _CustomJobCardState extends State<CustomJobCard> {
                 ),
                 childWhenDragging: SvgPicture.asset(
                   AppIcons.arre_right_icon,
-                  color: Colors.transparent,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.transparent,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 child: GestureDetector(
                   onTap: widget.onArrowTap,

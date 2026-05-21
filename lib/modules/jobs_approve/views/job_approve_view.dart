@@ -11,7 +11,7 @@ import '../../../core/widgets/Custom_Card_Ditails.dart';
 import '../../../core/widgets/Custom_Driver_Card.dart';
 
 class ApprovePage extends StatelessWidget {
-  ApprovePage({super.key});
+  const ApprovePage({super.key});
 
   @override
   Widget build(BuildContext context) {

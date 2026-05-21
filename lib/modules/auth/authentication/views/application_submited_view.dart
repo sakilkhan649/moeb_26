@@ -7,21 +7,22 @@ import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 
 /// Review Status Screen
 /// Shows application submission status with animated steps
-class ApplicationSubmited extends StatefulWidget {
-  const ApplicationSubmited({super.key});
+class ApplicationSubmitedView extends StatefulWidget {
+  const ApplicationSubmitedView({super.key});
 
   @override
-  State<ApplicationSubmited> createState() => _ApplicationSubmitedState();
+  State<ApplicationSubmitedView> createState() =>
+      _ApplicationSubmitedViewState();
 }
 
-class _ApplicationSubmitedState extends State<ApplicationSubmited> {
+class _ApplicationSubmitedViewState extends State<ApplicationSubmitedView> {
   @override
   void initState() {
     super.initState();
     // Navigate to Createscreens after 10 seconds
     Future.delayed(const Duration(seconds: 10), () {
       if (mounted) {
-        Get.offAllNamed(Routes.createscreens);
+        Get.offAllNamed(Routes.authSelectionView);
       }
     });
   }

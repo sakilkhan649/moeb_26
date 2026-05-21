@@ -11,14 +11,14 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextField.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 
-class Createaccountscreen extends StatefulWidget {
-  const Createaccountscreen({super.key});
+class CreateAccountView extends StatefulWidget {
+  const CreateAccountView({super.key});
 
   @override
-  State<Createaccountscreen> createState() => _CreateaccountscreenState();
+  State<CreateAccountView> createState() => _CreateAccountViewState();
 }
 
-class _CreateaccountscreenState extends State<Createaccountscreen> {
+class _CreateAccountViewState extends State<CreateAccountView> {
   final RxString areaError = ''.obs;
   final RxString roleError = ''.obs;
 

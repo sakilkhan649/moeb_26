@@ -8,8 +8,8 @@ import '../../../../core/widgets/CustomButton.dart';
 import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 
-class Createscreens extends StatelessWidget {
-  const Createscreens({super.key});
+class AuthSelectionView extends StatelessWidget {
+  const AuthSelectionView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class Createscreens extends StatelessWidget {
                 CustomButton(
                   text: "Create Account",
                   onPressed: () {
-                    Get.toNamed(Routes.createaccountscreen);
+                    Get.toNamed(Routes.createaccountview);
                   },
                 ),
                 SizedBox(height: 12.h),

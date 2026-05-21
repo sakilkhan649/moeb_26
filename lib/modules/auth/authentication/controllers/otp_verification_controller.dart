@@ -63,7 +63,7 @@ class OtpController extends GetxController {
         Helpers.showCustomSnackBar('OTP Verified Successfully', isError: false);
 
         if (isRegister) {
-          Get.toNamed(Routes.applicationSubmited);
+          Get.toNamed(Routes.applicationSubmitedView);
         } else {
           final resetToken = response.data['data']; // ✅ token নাও
           Get.toNamed(

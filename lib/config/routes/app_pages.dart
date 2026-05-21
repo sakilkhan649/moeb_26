@@ -3,7 +3,7 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:moeb_26/core/widgets/screens/no_internet_screen.dart';
 import 'package:moeb_26/modules/auth/vehicle/views/add_new_vehicle_view.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/bindings/bottom_nabbar_binding.dart';
-import 'package:moeb_26/modules/service_Area/views/Service_Area_view.dart';
+import 'package:moeb_26/modules/service_area/views/Service_Area_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/all_vehicle_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/application_not_Approved_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/application_submited_view.dart';
@@ -42,22 +42,23 @@ import 'package:moeb_26/modules/ride_details/views/ride_details_view.dart';
 
 class Routes {
   static const String splashScreen = "/SplashScreen";
-  static const String createscreens = "/Createscreens";
+  static const String authSelectionView = "/AuthSelectionView";
   static const String signscreen = "/Signscreen";
-  static const String createaccountscreen = "/Createaccountscreen";
+  static const String createaccountview = "/Createaccountview";
   static const String resetpasswordscreen = "/Resetpasswordscreen";
   //static const String resetpasswordtwo = "/Resetpasswordtwo";
   static const String resetpasswordthree = "/Resetpasswordthree";
   static const String successResetpassword = "/SuccessResetpassword";
   static const String vehicleinformation = "/Vehicleinformation";
-  static const String documentsupload = "/Documentsupload";
+  static const String documentsuploadView = "/DocumentsuploadView";
   static const String termPolicy = "/TermPolicy";
-  static const String applicationSubmited = "/ApplicationSubmited";
-  static const String applicationNotApproved = "/ApplicationNotApproved";
+  static const String applicationSubmitedView = "/ApplicationSubmitedView";
+  static const String applicationNotApprovedView =
+      "/ApplicationNotApprovedView";
   static const String homeScreens = "/HomeScreens";
   static const String myJobsScreen = "/MyJobsScreen";
   static const String editScreen = "/EditScreen";
-  static const String accountSuccesScreen = "/AccountSuccesScreen";
+  static const String accountSuccessView = "/AccountSuccessView";
   static const String requestSubmitted = "/RequestSubmitted";
   static const String requestUnderReview = "/RequestUnderReview";
   static const String chatPage = "/Chatpage";
@@ -77,15 +78,15 @@ class Routes {
   static const String ratingsFeedback = "/RatingsFeedback";
   static const String serviceArea = "/ServiceArea";
   static const String noInternetScreen = "/NoInternetScreen";
-  static const String otpVerificationScreen = "/OtpVerificationScreen";
-  static const String forgetotpVerificationScreen = "/OtpVerificationScreen";
-  static const String changePasswordScreen = "/ChangePasswordScreen";
+  static const String otpVerificationView = "/OtpVerificationView";
+  static const String forgetotpVerificationView = "/ForgetotpVerificationView";
+  static const String changePasswordView = "/ChangePasswordView";
   static const String myPropucts = "/MyPropucts";
   static const String supportChatDetailPage = "/SupportChatDetailPage";
   static const String privacyPolicySignUp = "/PrivacyPolicySignUp";
-  static const String allVehicle = "/AllVehicle";
+  static const String allVehicleView = "/AllVehicleView";
   static const String addNewVehicle = "/AddNewVehicle";
-  static const String personalDocument = "/PersonalDocument";
+  static const String personalDocumentView = "/PersonalDocumentView";
 
   static List<GetPage> routes = [
     GetPage(
@@ -100,8 +101,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: createscreens,
-      page: () => Createscreens(),
+      name: authSelectionView,
+      page: () => AuthSelectionView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -110,8 +111,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: createaccountscreen,
-      page: () => Createaccountscreen(),
+      name: createaccountview,
+      page: () => CreateAccountView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -140,8 +141,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: documentsupload,
-      page: () => Documentsupload(),
+      name: documentsuploadView,
+      page: () => DocumentsuploadView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -150,13 +151,13 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: applicationSubmited,
-      page: () => ApplicationSubmited(),
+      name: applicationSubmitedView,
+      page: () => ApplicationSubmitedView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: applicationNotApproved,
-      page: () => ApplicationNotApproved(),
+      name: applicationNotApprovedView,
+      page: () => ApplicationNotApprovedView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -176,8 +177,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: accountSuccesScreen,
-      page: () => AccountSuccesScreen(),
+      name: accountSuccessView,
+      page: () => AccountSuccessView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -262,18 +263,18 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: otpVerificationScreen,
-      page: () => OtpVerificationScreen(),
+      name: otpVerificationView,
+      page: () => OtpVerificationView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: forgetotpVerificationScreen,
-      page: () => OtpVerificationScreen(),
+      name: forgetotpVerificationView,
+      page: () => OtpVerificationView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: changePasswordScreen,
-      page: () => ChangePasswordScreen(),
+      name: changePasswordView,
+      page: () => ChangePasswordView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -288,8 +289,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: allVehicle,
-      page: () => AllVehicle(),
+      name: allVehicleView,
+      page: () => AllVehicleView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -298,8 +299,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: personalDocument,
-      page: () => PersonalDocument(),
+      name: personalDocumentView,
+      page: () => PersonalDocumentView(),
       transition: Transition.noTransition,
     ),
   ];
