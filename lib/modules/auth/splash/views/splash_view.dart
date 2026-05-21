@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:moeb_26/config/constants/image_paths.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
+import '../../../../core/widgets/CustomText.dart';
+import '../../../../core/widgets/CustomTextGary.dart';
+import '../controller/splash_controller.dart';
+
+class Splashscreen extends StatelessWidget {
+  Splashscreen({super.key});
+  // Initialize the GetX controller
+  final controller = Get.find<SplashScreenController>();
+  // Start the timer as soon as the splash screen is loaded
+
+  @override
+  Widget build(BuildContext context) {
+    controller.startTimer();
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // The logo (use an image asset or network image)
+            Container(
+              width: 150.w,
+              height: 70.w,
+              child: Image.asset(AppImages.final_app_logo, fit: BoxFit.fill),
+            ),
+
+            SizedBox(height: 12.h),
+            // Title Text
+            CustomText(text: "Elite Chauffeur Network"),
+            SizedBox(height: 10.h),
+            // Subtitle Text
+            CustomTextgray(text: "Where Excellence Connects"),
+            SizedBox(height: 20.h),
+            // Dots for the indicator (if needed)
+            Obx(
+              () => Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  3, // number of dots
+                  (index) => Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4.w),
+                    width: 8.w,
+                    height: 8.w,
+                    decoration: BoxDecoration(
+                      color: index == controller.currentIndex.value
+                          ? Colors.white
+                          : AppColors
+                                .gray100, // Change color based on current index
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

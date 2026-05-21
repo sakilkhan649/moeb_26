@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import '../../Services/auth_service.dart';
+// import 'package:moeb_26/services/auth_service.dart';
 // import '../routs.dart';
 //
 // class AuthMiddleware extends GetMiddleware {
