@@ -9,8 +9,8 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signup_controller.dart';
 
-class Documentsupload extends StatelessWidget {
-  Documentsupload({super.key});
+class DocumentsuploadView extends StatelessWidget {
+  DocumentsuploadView({super.key});
 
   final controller = Get.find<SignupController>();
   final _formKey = GlobalKey<FormState>();

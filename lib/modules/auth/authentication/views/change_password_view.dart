@@ -9,8 +9,8 @@ import '../../../../core/widgets/CustomTextField.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/change_pass_controller.dart';
 
-class ChangePasswordScreen extends StatelessWidget {
-  ChangePasswordScreen({super.key});
+class ChangePasswordView extends StatelessWidget {
+  ChangePasswordView({super.key});
 
   final _formKey = GlobalKey<FormState>();
   final ChangePasswordController controller = Get.put(

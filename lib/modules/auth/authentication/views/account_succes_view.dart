@@ -8,8 +8,8 @@ import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 
-class AccountSuccesScreen extends StatelessWidget {
-  const AccountSuccesScreen({super.key});
+class AccountSuccessView extends StatelessWidget {
+  const AccountSuccessView({super.key});
 
   @override
   Widget build(BuildContext context) {

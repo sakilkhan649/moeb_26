@@ -7,8 +7,8 @@ import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
 import 'package:moeb_26/modules/jobs_offers/views/Job_offer_view.dart';
 
-class AllVehicle extends StatelessWidget {
-  AllVehicle({super.key});
+class AllVehicleView extends StatelessWidget {
+  AllVehicleView({super.key});
 
   final ProfileController controller = Get.find<ProfileController>();
 
@@ -347,7 +347,9 @@ class AllVehicle extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: () => Get.back(),
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                        side: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.1),
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),

@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/vehicle_model.dart';
-import 'package:moeb_26/modules/service_Area/controllers/serviceController.dart';
+import 'package:moeb_26/modules/service_area/controllers/serviceController.dart';
 import 'package:moeb_26/core/services/auth_service.dart';
 
 class SignupController extends GetxController {
@@ -122,7 +122,10 @@ class SignupController extends GetxController {
             onPrimary: Colors.black,
             surface: Color(0xFF1E2939),
             onSurface: Colors.white,
-          ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xFF1E2939)),
+          ),
+          dialogTheme: DialogThemeData(
+            backgroundColor: const Color(0xFF1E2939),
+          ),
         ),
         child: child!,
       ),
@@ -209,7 +212,7 @@ class SignupController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar('Registration successful', isError: false);
         Get.toNamed(
-          Routes.otpVerificationScreen,
+          Routes.otpVerificationView,
           arguments: {'email': emailController.text, 'isRegister': true},
         );
       } else {

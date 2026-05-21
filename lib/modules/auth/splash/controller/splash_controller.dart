@@ -10,7 +10,6 @@ class SplashScreenController extends GetxController {
   RxInt currentIndex = 0.obs; // Reactive state for dot index
   @override
   void onInit() async {
-    // TODO: implement onInit
     super.onInit();
     AppConstants.fcmToken = await StorageService.getString(
       StorageConstants.fcmToken,
@@ -40,7 +39,7 @@ class SplashScreenController extends GetxController {
     if (accessToken.isNotEmpty) {
       Get.offAllNamed(Routes.homeScreens);
     } else {
-      Get.offAll(() => const Createscreens());
+      Get.offAll(() => const AuthSelectionView());
     }
   }
 }

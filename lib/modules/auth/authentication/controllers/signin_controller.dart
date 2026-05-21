@@ -45,7 +45,7 @@ class LoginController extends GetxController {
           Helpers.showCustomSnackBar('Account Restricted', isError: true);
 
           Get.offAllNamed(
-            Routes.applicationNotApproved,
+            Routes.applicationNotApprovedView,
             arguments: {
               "title": "Account Restricted",
               "description":
@@ -62,7 +62,7 @@ class LoginController extends GetxController {
             'Application is pending review',
             isError: false,
           );
-          Get.offAllNamed(Routes.applicationSubmited);
+          Get.offAllNamed(Routes.applicationSubmitedView);
           return;
         }
 

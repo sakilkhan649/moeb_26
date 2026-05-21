@@ -88,7 +88,7 @@ class Vehicleinformation extends StatelessWidget {
 
                           if (isFormValid && allValid) {
                             // Just navigate to the next page
-                            Get.toNamed(Routes.documentsupload);
+                            Get.toNamed(Routes.documentsuploadView);
                           }
                         },
                       ),

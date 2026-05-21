@@ -144,19 +144,6 @@ class ProfileScreen extends StatelessWidget {
                                   case 0:
                                     Get.offNamed(Routes.myJobsScreen);
                                     break;
-                                  // case 1:
-                                  //   Get.toNamed(Routes.myJobsScreen);
-                                  //   break;
-                                  // case 2:
-                                  //   Get.toNamed(Routes.serviceArea);
-                                  //   break;
-                                  // case 3:
-                                  //   Get.bottomSheet(
-                                  //     const LogoutBottomSheet(),
-                                  //     isScrollControlled: true,
-                                  //     backgroundColor: Colors.transparent,
-                                  //   );
-                                  //   break;
                                   case 1:
                                     Get.toNamed(Routes.myPropucts);
                                     break;
@@ -194,33 +181,6 @@ class ProfileScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                // PopupMenuItem<int>(
-                                //   value: 2,
-                                //   child: Row(
-                                //     children: [
-                                //       Icon(
-                                //         Icons.location_on_outlined,
-                                //         color: Colors.white,
-                                //         size: 24.sp,
-                                //       ),
-                                //       SizedBox(width: 12.w),
-                                //       Text(
-                                //         'Service Area',
-                                //         style: GoogleFonts.inter(
-                                //           color: Colors.white,
-                                //           fontSize: 14.sp,
-                                //           fontWeight: FontWeight.w500,
-                                //         ),
-                                //       ),
-                                //       const Spacer(),
-                                //       Icon(
-                                //         CupertinoIcons.chevron_forward,
-                                //         size: 20.sp,
-                                //         color: Colors.white,
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
                                 PopupMenuItem<int>(
                                   value: 1,
                                   child: Row(
@@ -361,7 +321,7 @@ class ProfileScreen extends StatelessWidget {
                                             break;
                                           case 1:
                                             Get.toNamed(
-                                              Routes.allVehicle,
+                                              Routes.allVehicleView,
                                               arguments: {
                                                 "vehicles": controller
                                                     .userProfile
@@ -375,7 +335,7 @@ class ProfileScreen extends StatelessWidget {
                                             break;
                                           case 3:
                                             Get.toNamed(
-                                              Routes.personalDocument,
+                                              Routes.personalDocumentView,
                                             );
                                             break;
                                           case 4:
@@ -480,7 +440,10 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16.h),
-                  Divider(color: Colors.grey.withValues(alpha: 0.2), thickness: 1.h),
+                  Divider(
+                    color: Colors.grey.withValues(alpha: 0.2),
+                    thickness: 1.h,
+                  ),
 
                   // My Vehicles Section
                   _buildSectionTitle("My Vehicles"),
@@ -618,7 +581,10 @@ class ProfileScreen extends StatelessWidget {
                     }),
                   ),
                   SizedBox(height: 16.h),
-                  Divider(color: Colors.grey.withValues(alpha: 0.2), thickness: 1.h),
+                  Divider(
+                    color: Colors.grey.withValues(alpha: 0.2),
+                    thickness: 1.h,
+                  ),
 
                   // Settings List
                   Padding(
@@ -670,7 +636,7 @@ class ProfileScreen extends StatelessWidget {
                             width: 24.sp,
                           ),
                           "Password Change",
-                          onTap: () => Get.toNamed(Routes.changePasswordScreen),
+                          onTap: () => Get.toNamed(Routes.changePasswordView),
                         ),
                       ],
                     ),
@@ -716,28 +682,6 @@ class ProfileScreen extends StatelessWidget {
               ),
             );
           }),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderButton(String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.inter(
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-          ),
         ),
       ),
     );
