@@ -10,8 +10,8 @@ import 'package:moeb_26/data/models/chat_model.dart';
 import '../controllers/chat_controller.dart';
 import '../../../data/models/chat_community_model.dart';
 
-class Chatpage extends StatelessWidget {
-  Chatpage({super.key});
+class ChatView extends StatelessWidget {
+  ChatView({super.key});
 
   final ChatController controller = Get.find<ChatController>();
   final UserService userService = Get.find();
@@ -142,7 +142,7 @@ class Chatpage extends StatelessWidget {
   Widget _buildCommunityChatTile(CommunityRoom room) {
     return InkWell(
       onTap: () {
-        Get.toNamed(Routes.communityChatDetailPage, arguments: room);
+        Get.toNamed(Routes.chatCommunityDetailView, arguments: room);
       },
       borderRadius: BorderRadius.circular(12.r),
       child: Padding(
@@ -229,7 +229,7 @@ class Chatpage extends StatelessWidget {
         if (controller.selectedChatIdForDelete.value != "") {
           controller.clearDeleteSelection();
         } else {
-          Get.toNamed(Routes.chatDetailPage, arguments: chat);
+          Get.toNamed(Routes.chatDetailView, arguments: chat);
         }
       },
       onLongPress: () {

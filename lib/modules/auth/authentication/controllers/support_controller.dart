@@ -76,7 +76,7 @@ class SupportController extends GetxController {
       final String chatId = ticket['chat']['_id'] ?? ticket['chat']['id'];
       final String userId = ticket['user']?.toString() ?? '';
       Get.toNamed(
-        Routes.supportChatDetailPage,
+        Routes.chatSupportDetailView,
         arguments: {'chatId': chatId, 'userId': userId},
       );
     }

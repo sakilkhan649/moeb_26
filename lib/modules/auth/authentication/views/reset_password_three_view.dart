@@ -9,10 +9,10 @@ import '../../../../core/widgets/CustomTextField.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/reset_password_controller.dart';
 
-class Resetpasswordthree extends StatelessWidget {
-  Resetpasswordthree({super.key});
+class ResetPasswordThreeView extends StatelessWidget {
+  ResetPasswordThreeView({super.key});
 
-  final _controller = Get.put(ResetPasswordController());
+  final _controller = Get.find<ResetPasswordController>();
 
   @override
   Widget build(BuildContext context) {

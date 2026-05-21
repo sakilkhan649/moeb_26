@@ -11,14 +11,14 @@ import 'package:moeb_26/core/widgets/CustomTextField.dart';
 import 'package:moeb_26/core/widgets/CustomText_Field_Hight.dart';
 import '../controllers/job_edit_controller.dart';
 
-class EditScreen extends StatefulWidget {
-  EditScreen({super.key});
+class JobEditView extends StatefulWidget {
+  const JobEditView({super.key});
 
   @override
-  State<EditScreen> createState() => _EditScreenState();
+  State<JobEditView> createState() => _JobEditViewState();
 }
 
-class _EditScreenState extends State<EditScreen> {
+class _JobEditViewState extends State<JobEditView> {
   final pickupController = TextEditingController();
   final dropoffController = TextEditingController();
   final flightController = TextEditingController();
@@ -27,17 +27,18 @@ class _EditScreenState extends State<EditScreen> {
   final payController = TextEditingController();
   final specialController = TextEditingController();
 
-  final EditController editController = Get.put(EditController());
+  final JobEditController jobEditController = Get.find<JobEditController>();
 
   @override
   void initState() {
     super.initState();
-    if (editController.job != null) {
-      pickupController.text = editController.job!.pickupLocation ?? '';
-      dropoffController.text = editController.job!.dropoffLocation ?? '';
-      flightController.text = editController.job!.flightNumber ?? '';
-      payController.text = editController.job!.paymentAmount?.toString() ?? '';
-      specialController.text = editController.job!.instruction ?? '';
+    if (jobEditController.job != null) {
+      pickupController.text = jobEditController.job!.pickupLocation ?? '';
+      dropoffController.text = jobEditController.job!.dropoffLocation ?? '';
+      flightController.text = jobEditController.job!.flightNumber ?? '';
+      payController.text =
+          jobEditController.job!.paymentAmount?.toString() ?? '';
+      specialController.text = jobEditController.job!.instruction ?? '';
     }
   }
 
@@ -81,7 +82,7 @@ class _EditScreenState extends State<EditScreen> {
             ),
             _buildDateTimeRow(),
             SizedBox(height: 16.h),
-            _buildVehicleSelection(editController),
+            _buildVehicleSelection(jobEditController),
             SizedBox(height: 16.h),
             _buildFieldWithLabel(
               label: "Pay Amount",
@@ -94,7 +95,7 @@ class _EditScreenState extends State<EditScreen> {
               ),
               isRequired: false,
             ),
-            _buildPaymentMethodDropdown(editController),
+            _buildPaymentMethodDropdown(jobEditController),
             SizedBox(height: 16.h),
             _buildFieldWithLabel(
               isRequired: false,
@@ -104,7 +105,7 @@ class _EditScreenState extends State<EditScreen> {
             ),
             SizedBox(height: 24.h),
             Obx(
-              () => editController.isLoading.value
+              () => jobEditController.isLoading.value
                   ? const Center(
                       child: CircularProgressIndicator(
                         color: AppColors.orange100,
@@ -127,7 +128,7 @@ class _EditScreenState extends State<EditScreen> {
                             text: "Save",
                             backgroundColor: AppColors.orange100,
                             onPressed: () {
-                              editController.updateJob(
+                              jobEditController.updateJob(
                                 pickupLocation: pickupController.text,
                                 dropoffLocation: dropoffController.text,
                                 paymentAmount:
@@ -190,7 +191,7 @@ class _EditScreenState extends State<EditScreen> {
       children: [
         Expanded(
           child: Obx(() {
-            final date = editController.selectedDate.value;
+            final date = jobEditController.selectedDate.value;
             dateController.text = date == null
                 ? ""
                 : "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
@@ -199,7 +200,7 @@ class _EditScreenState extends State<EditScreen> {
               SvgPicture.asset(AppIcons.date_icon, width: 20.sp, height: 20.sp),
               dateController,
               "Select Date",
-              (context) => editController.chooseDate(context),
+              (context) => jobEditController.chooseDate(context),
             );
           }),
         ),
@@ -207,7 +208,7 @@ class _EditScreenState extends State<EditScreen> {
         Expanded(
           child: Builder(
             builder: (context) => Obx(() {
-              timeController.text = editController.formattedTime.value;
+              timeController.text = jobEditController.formattedTime.value;
               return _buildDateTimeField(
                 "Time",
                 SvgPicture.asset(
@@ -217,7 +218,7 @@ class _EditScreenState extends State<EditScreen> {
                 ),
                 timeController,
                 "Select Time",
-                (context) => editController.chooseTime(context),
+                (context) => jobEditController.chooseTime(context),
               );
             }),
           ),
@@ -268,7 +269,7 @@ class _EditScreenState extends State<EditScreen> {
     );
   }
 
-  Widget _buildVehicleSelection(EditController controller) {
+  Widget _buildVehicleSelection(JobEditController controller) {
     final vehicles = [
       'SEDAN',
       'SUV',
@@ -337,7 +338,7 @@ class _EditScreenState extends State<EditScreen> {
     );
   }
 
-  Widget _buildPaymentMethodDropdown(EditController controller) {
+  Widget _buildPaymentMethodDropdown(JobEditController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -416,8 +417,8 @@ class _EditScreenState extends State<EditScreen> {
                 offset: Offset(0, -5.h),
                 scrollbarTheme: ScrollbarThemeData(
                   radius: Radius.circular(40.r),
-                  thickness: MaterialStateProperty.all(6),
-                  thumbVisibility: MaterialStateProperty.all(true),
+                  thickness: WidgetStateProperty.all(6),
+                  thumbVisibility: WidgetStateProperty.all(true),
                 ),
               ),
               menuItemStyleData: MenuItemStyleData(

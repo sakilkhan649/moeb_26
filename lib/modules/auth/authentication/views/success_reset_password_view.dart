@@ -2,11 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
-
 import '../../../../core/widgets/CustomText.dart';
 
-class SuccessResetpassword extends StatelessWidget {
-  const SuccessResetpassword({super.key});
+class SuccessResetPasswordView extends StatelessWidget {
+  const SuccessResetPasswordView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -4,16 +4,15 @@ import 'package:get/get.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/utils/app_const.dart';
-
 import '../../../../core/widgets/CustomButton.dart';
 import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/forget_password_controller.dart';
 
-class Resetpasswordscreen extends StatelessWidget {
-  Resetpasswordscreen({super.key});
+class ResetPasswordView extends StatelessWidget {
+  ResetPasswordView({super.key});
 
-  final _controller = Get.put(ForgotPasswordController());
+  final _controller = Get.find<ForgotPasswordController>();
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +134,7 @@ class Resetpasswordscreen extends StatelessWidget {
                             ),
                             SizedBox(width: 10.w),
                             GestureDetector(
-                              onTap: () => Get.toNamed(Routes.signscreen),
+                              onTap: () => Get.toNamed(Routes.signinView),
                               child: CustomTextgray(
                                 text: "Sign In",
                                 color: Color(0xFFA49898),

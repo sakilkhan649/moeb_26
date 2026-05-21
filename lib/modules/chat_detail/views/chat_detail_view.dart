@@ -8,10 +8,10 @@ import 'package:moeb_26/data/models/chat_model.dart';
 import '../controllers/chat_detail_controller.dart';
 import '../../../data/models/chat_message_model.dart';
 
-class ChatDetailPage extends StatelessWidget {
-  ChatDetailPage({super.key});
+class ChatDetailView extends StatelessWidget {
+  ChatDetailView({super.key});
 
-  final ChatDetailController controller = Get.put(ChatDetailController());
+  final ChatDetailController controller = Get.find<ChatDetailController>();
   final ChatPreview chat = Get.arguments;
 
   @override

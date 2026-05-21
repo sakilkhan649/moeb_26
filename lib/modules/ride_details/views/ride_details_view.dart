@@ -203,7 +203,7 @@ class RideDetailsPage extends StatelessWidget {
                           final chat = await Get.find<SocketRepository>()
                               .createChat(participantId, id);
                           if (chat != null) {
-                            Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                            Get.toNamed(Routes.chatDetailView, arguments: chat);
                           }
                         } catch (e) {
                           Get.snackbar(

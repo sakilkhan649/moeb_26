@@ -416,7 +416,7 @@ class ApiClient extends GetxService {
 
   void logoutUser() {
     StorageService.clearAll();
-    Get.offAllNamed(Routes.signscreen);
+    Get.offAllNamed(Routes.signinView);
   }
 }
 

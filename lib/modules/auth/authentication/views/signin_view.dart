@@ -10,10 +10,10 @@ import '../../../../core/widgets/CustomTextField.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signin_controller.dart';
 
-class Signscreen extends StatelessWidget {
-  Signscreen({super.key});
+class SignInView extends StatelessWidget {
+  SignInView({super.key});
 
-  final _controller = Get.put(LoginController());
+  final _controller = Get.find<LoginController>();
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class Signscreen extends StatelessWidget {
                 SizedBox(height: 20.h),
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(Routes.resetpasswordscreen);
+                    Get.toNamed(Routes.resetPasswordView);
                   },
                   child: Align(
                     alignment: Alignment.centerRight,

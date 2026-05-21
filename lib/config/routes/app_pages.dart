@@ -3,6 +3,8 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:moeb_26/core/widgets/screens/no_internet_screen.dart';
 import 'package:moeb_26/modules/auth/vehicle/views/add_new_vehicle_view.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/bindings/bottom_nabbar_binding.dart';
+import 'package:moeb_26/modules/chat_community/bindings/chat_community_detail_binding.dart';
+import 'package:moeb_26/modules/chat_detail/bindings/chat_detail_binding.dart';
 import 'package:moeb_26/modules/service_area/views/Service_Area_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/all_vehicle_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/application_not_Approved_view.dart';
@@ -43,27 +45,27 @@ import 'package:moeb_26/modules/ride_details/views/ride_details_view.dart';
 class Routes {
   static const String splashScreen = "/SplashScreen";
   static const String authSelectionView = "/AuthSelectionView";
-  static const String signscreen = "/Signscreen";
+  static const String signinView = "/SignInView";
   static const String createaccountview = "/Createaccountview";
-  static const String resetpasswordscreen = "/Resetpasswordscreen";
+  static const String resetPasswordView = "/ResetPasswordView";
   //static const String resetpasswordtwo = "/Resetpasswordtwo";
-  static const String resetpasswordthree = "/Resetpasswordthree";
-  static const String successResetpassword = "/SuccessResetpassword";
+  static const String resetpasswordthreeView = "/ResetpasswordthreeView";
+  static const String successResetPasswordView = "/SuccessResetPasswordView";
   static const String vehicleinformation = "/Vehicleinformation";
   static const String documentsuploadView = "/DocumentsuploadView";
   static const String termPolicy = "/TermPolicy";
   static const String applicationSubmitedView = "/ApplicationSubmitedView";
   static const String applicationNotApprovedView =
       "/ApplicationNotApprovedView";
-  static const String homeScreens = "/HomeScreens";
+  static const String bottomNabbarView = "/BottomNabbarView";
   static const String myJobsScreen = "/MyJobsScreen";
-  static const String editScreen = "/EditScreen";
+  static const String jobEditView = "/JobEditView";
   static const String accountSuccessView = "/AccountSuccessView";
   static const String requestSubmitted = "/RequestSubmitted";
   static const String requestUnderReview = "/RequestUnderReview";
-  static const String chatPage = "/Chatpage";
-  static const String chatDetailPage = "/ChatDetailPage";
-  static const String communityChatDetailPage = "/CommunityChatDetailPage";
+  static const String chatView = "/ChatView";
+  static const String chatDetailView = "/ChatDetailView";
+  static const String chatCommunityDetailView = "/ChatCommunityDetailView";
   static const String rideDetailsPage = "/RideDetailsPage";
   // static const String onMyWayDetailsPage = "/OnMyWayDetailsPage";
   // static const String pobDetailsPage = "/PobDetailsPage";
@@ -82,7 +84,7 @@ class Routes {
   static const String forgetotpVerificationView = "/ForgetotpVerificationView";
   static const String changePasswordView = "/ChangePasswordView";
   static const String myPropucts = "/MyPropucts";
-  static const String supportChatDetailPage = "/SupportChatDetailPage";
+  static const String chatSupportDetailView = "/ChatSupportDetailView";
   static const String privacyPolicySignUp = "/PrivacyPolicySignUp";
   static const String allVehicleView = "/AllVehicleView";
   static const String addNewVehicle = "/AddNewVehicle";
@@ -106,8 +108,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: signscreen,
-      page: () => Signscreen(),
+      name: signinView,
+      page: () => SignInView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -116,8 +118,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: resetpasswordscreen,
-      page: () => Resetpasswordscreen(),
+      name: resetPasswordView,
+      page: () => ResetPasswordView(),
       transition: Transition.noTransition,
     ),
     // GetPage(
@@ -126,13 +128,13 @@ class Routes {
     //   transition: Transition.noTransition,
     // ),
     GetPage(
-      name: resetpasswordthree,
-      page: () => Resetpasswordthree(),
+      name: resetpasswordthreeView,
+      page: () => ResetPasswordThreeView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: successResetpassword,
-      page: () => SuccessResetpassword(),
+      name: successResetPasswordView,
+      page: () => SuccessResetPasswordView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -161,8 +163,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: homeScreens,
-      page: () => HomeScreens(),
+      name: bottomNabbarView,
+      page: () => BottomNabbarView(),
       transition: Transition.noTransition,
       binding: BottomNabbarBinding(),
     ),
@@ -172,8 +174,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: editScreen,
-      page: () => EditScreen(),
+      name: jobEditView,
+      page: () => JobEditView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -192,19 +194,21 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: chatPage,
-      page: () => Chatpage(),
+      name: chatView,
+      page: () => ChatView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: chatDetailPage,
-      page: () => ChatDetailPage(),
+      name: chatDetailView,
+      page: () => ChatDetailView(),
       transition: Transition.noTransition,
+      binding: ChatDetailBinding(),
     ),
     GetPage(
-      name: communityChatDetailPage,
-      page: () => CommunityChatDetailPage(),
+      name: chatCommunityDetailView,
+      page: () => ChatCommunityDetailView(),
       transition: Transition.noTransition,
+      binding: ChatCommunityDetailBinding(),
     ),
     GetPage(
       name: rideDetailsPage,
@@ -284,8 +288,8 @@ class Routes {
     ),
 
     GetPage(
-      name: supportChatDetailPage,
-      page: () => SupportChatDetailPage(),
+      name: chatSupportDetailView,
+      page: () => SupportChatDetailView(),
       transition: Transition.noTransition,
     ),
     GetPage(

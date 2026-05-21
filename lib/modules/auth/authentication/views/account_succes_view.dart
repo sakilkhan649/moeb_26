@@ -30,7 +30,7 @@ class AccountSuccessView extends StatelessWidget {
               CustomButton(
                 text: "Sign In",
                 onPressed: () {
-                  Get.toNamed(Routes.signscreen);
+                  Get.toNamed(Routes.signinView);
                 },
                 backgroundColor: Colors.black,
                 textColor: Colors.white,

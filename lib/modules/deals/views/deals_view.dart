@@ -10,8 +10,8 @@ import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/deals_controller.dart';
 import '../../../core/widgets/QrPopup.dart';
 
-class Dealspage extends StatelessWidget {
-  Dealspage({super.key});
+class DealsView extends StatelessWidget {
+  DealsView({super.key});
 
   // Initialize the controller
   final DealsController controller = Get.find<DealsController>();

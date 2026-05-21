@@ -7,10 +7,10 @@ import 'package:moeb_26/config/constants/icon_paths.dart';
 import '../controllers/chat_support_detail_controller.dart';
 import '../../../data/models/chat_message_model.dart';
 
-class SupportChatDetailPage extends StatelessWidget {
-  SupportChatDetailPage({super.key});
+class SupportChatDetailView extends StatelessWidget {
+  SupportChatDetailView({super.key});
 
-  final SupportChatController controller = Get.put(SupportChatController());
+  final SupportChatController controller = Get.find<SupportChatController>();
 
   @override
   Widget build(BuildContext context) {

@@ -13,9 +13,8 @@ class ChangePasswordView extends StatelessWidget {
   ChangePasswordView({super.key});
 
   final _formKey = GlobalKey<FormState>();
-  final ChangePasswordController controller = Get.put(
-    ChangePasswordController(),
-  );
+  final ChangePasswordController controller =
+      Get.find<ChangePasswordController>();
 
   @override
   Widget build(BuildContext context) {

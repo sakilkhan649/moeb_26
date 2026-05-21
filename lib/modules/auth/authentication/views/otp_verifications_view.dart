@@ -12,7 +12,7 @@ import 'package:moeb_26/modules/auth/authentication/controllers/otp_verification
 class OtpVerificationView extends StatelessWidget {
   OtpVerificationView({super.key});
 
-  final OtpController controller = Get.put(OtpController());
+  final OtpController controller = Get.find<OtpController>();
 
   @override
   Widget build(BuildContext context) {

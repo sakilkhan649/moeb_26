@@ -45,9 +45,9 @@ class ResetPasswordController extends GetxController {
           'Your password has been successfully reset.',
           isError: false,
         );
-        Get.offAllNamed(Routes.successResetpassword);
+        Get.offAllNamed(Routes.successResetPasswordView);
         Future.delayed(const Duration(seconds: 5), () {
-          Get.offAllNamed(Routes.signscreen);
+          Get.offAllNamed(Routes.signinView);
         });
       }
     } catch (e) {

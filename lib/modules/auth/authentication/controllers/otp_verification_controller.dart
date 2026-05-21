@@ -67,7 +67,7 @@ class OtpController extends GetxController {
         } else {
           final resetToken = response.data['data']; // ✅ token নাও
           Get.toNamed(
-            Routes.resetpasswordthree,
+            Routes.resetpasswordthreeView,
             arguments: {'resetToken': resetToken}, // ✅ pass করো
           );
         }

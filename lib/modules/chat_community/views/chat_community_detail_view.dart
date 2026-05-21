@@ -9,12 +9,11 @@ import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/modules/chat_community/controllers/chat_community_detail_controller.dart';
 
-class CommunityChatDetailPage extends StatelessWidget {
-  CommunityChatDetailPage({super.key});
+class ChatCommunityDetailView extends StatelessWidget {
+  ChatCommunityDetailView({super.key});
 
-  final CommunityChatDetailController controller = Get.put(
-    CommunityChatDetailController(),
-  );
+  final CommunityChatDetailController controller =
+      Get.find<CommunityChatDetailController>();
 
   @override
   Widget build(BuildContext context) {

@@ -198,7 +198,7 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                           if (chat != null) {
                             await _socketRepo.sendMessage(chat.id, text);
                             Get.back(); // Close popup
-                            Get.toNamed(Routes.chatDetailPage, arguments: chat);
+                            Get.toNamed(Routes.chatDetailView, arguments: chat);
                           }
                         } catch (e) {
                           Get.snackbar('Error', 'Failed to contact seller');

@@ -92,7 +92,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                           IconButton(
                             onPressed: () {
                               controller.setJobAcceptanceView(false);
-                              Get.toNamed(Routes.homeScreens);
+                              Get.toNamed(Routes.bottomNabbarView);
                             },
                             icon: Icon(
                               Icons.arrow_back_ios,
@@ -269,7 +269,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                       color: const Color(0xFF1E1E1E),
                       onSelected: (value) {
                         if (value == 'edit') {
-                          Get.toNamed(Routes.editScreen, arguments: job);
+                          Get.toNamed(Routes.jobEditView, arguments: job);
                         } else if (job.id != null) {
                           _showDeleteDialog(jobId: job.id!);
                         }
@@ -559,7 +559,9 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                       child: Text(
                                         vehicleInfo,
                                         style: GoogleFonts.inter(
-                                          color: Colors.white.withValues(alpha: 0.4),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.4,
+                                          ),
                                           fontSize: 12.sp,
                                         ),
                                         maxLines: 1,
@@ -580,7 +582,9 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                     Text(
                                       "${driver.averageRating ?? 0.0}/5",
                                       style: GoogleFonts.inter(
-                                        color: Colors.white.withValues(alpha: 0.4),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.4,
+                                        ),
                                         fontSize: 12.sp,
                                       ),
                                     ),
@@ -604,7 +608,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                   .createChat(participantId, job.id!);
                               if (chat != null) {
                                 Get.toNamed(
-                                  Routes.chatDetailPage,
+                                  Routes.chatDetailView,
                                   arguments: chat,
                                 );
                               }

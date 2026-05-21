@@ -19,10 +19,8 @@ import 'package:moeb_26/core/widgets/Contact_support_popup.dart';
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
-  final ProfileController controller = Get.put(ProfileController());
-  final NotificationController _notificationController = Get.put(
-    NotificationController(),
-  );
+  final ProfileController controller = Get.find();
+  final NotificationController _notificationController = Get.find();
 
   @override
   Widget build(BuildContext context) {

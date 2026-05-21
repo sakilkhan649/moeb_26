@@ -59,7 +59,6 @@ class InitialBinding extends Bindings {
     // Controllers
     Get.lazyPut(() => NavigationController());
     Get.lazyPut(() => BookingController());
-    Get.lazyPut(() => RidesController());
     Get.lazyPut(() => ChatController());
   }
 }

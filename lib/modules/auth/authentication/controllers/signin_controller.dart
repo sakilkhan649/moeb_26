@@ -67,7 +67,7 @@ class LoginController extends GetxController {
         }
 
         Helpers.showCustomSnackBar('Login successful', isError: false);
-        Get.offAllNamed(Routes.homeScreens);
+        Get.offAllNamed(Routes.bottomNabbarView);
       }
     } catch (e) {
       if (e is DioException) {

@@ -37,7 +37,7 @@ class SplashScreenController extends GetxController {
       StorageConstants.bearerToken,
     );
     if (accessToken.isNotEmpty) {
-      Get.offAllNamed(Routes.homeScreens);
+      Get.offAllNamed(Routes.bottomNabbarView);
     } else {
       Get.offAll(() => const AuthSelectionView());
     }

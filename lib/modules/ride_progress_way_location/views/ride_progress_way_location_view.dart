@@ -147,7 +147,7 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
                                   .createChat(participantId, job!.id!);
                               if (chat != null) {
                                 Get.toNamed(
-                                  Routes.chatDetailPage,
+                                  Routes.chatDetailView,
                                   arguments: chat,
                                 );
                               }

@@ -157,7 +157,7 @@ class AuthService extends GetxService {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         await _clearLocalAuth();
-        Get.offAllNamed(Routes.signscreen);
+        Get.offAllNamed(Routes.signinView);
       }
       return response;
     } catch (e) {

@@ -23,7 +23,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
   final RxString roleError = ''.obs;
 
   // Using the unified SignupController
-  final controller = Get.put(SignupController());
+  final controller = Get.find<SignupController>();
   final _formKey = GlobalKey<FormState>();
   final ScrollController dropdownScrollController = ScrollController();
 

@@ -6,7 +6,7 @@ import 'package:moeb_26/data/models/my_jobs_model.dart';
 import 'package:moeb_26/data/repositories/job_repository.dart';
 import '../../my_jobs/controllers/my_jobs_controller.dart';
 
-class EditController extends GetxController {
+class JobEditController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();
 
   var selectedRole = 'No Collect'.obs;
@@ -118,7 +118,10 @@ class EditController extends GetxController {
               onPrimary: Colors.white, // Selected date text color
               surface: Color(0xFF1E1E1E), // Slightly lighter than pure black
               onSurface: Colors.white, // Text color on the picker
-            ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xFF1E1E1E), shape: RoundedRectangleBorder(
+            ),
+            dialogTheme: DialogThemeData(
+              backgroundColor: const Color(0xFF1E1E1E),
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 side: const BorderSide(color: Color(0xFF404040), width: 1),
               ),
@@ -145,7 +148,10 @@ class EditController extends GetxController {
               onPrimary: Colors.white,
               surface: Color(0xFF1E1E1E), // Lighter background
               onSurface: Colors.white, // Text color
-            ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xFF1E1E1E), shape: RoundedRectangleBorder(
+            ),
+            dialogTheme: DialogThemeData(
+              backgroundColor: const Color(0xFF1E1E1E),
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 side: const BorderSide(color: Color(0xFF404040), width: 1),
               ),

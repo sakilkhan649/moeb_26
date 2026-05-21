@@ -95,7 +95,7 @@ import '../controller/legal_content_controller.dart';
 class TermPolicy extends StatelessWidget {
   TermPolicy({super.key});
 
-  final controller = Get.put(LegalContentController());
+  final controller = Get.find<LegalContentController>();
 
   @override
   Widget build(BuildContext context) {

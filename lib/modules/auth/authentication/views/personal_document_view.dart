@@ -11,7 +11,7 @@ import '../controllers/personal_document_controller.dart';
 class PersonalDocumentView extends StatelessWidget {
   PersonalDocumentView({super.key});
 
-  final controller = Get.put(PersonalDocumentController());
+  final controller = Get.find<PersonalDocumentController>();
 
   @override
   Widget build(BuildContext context) {

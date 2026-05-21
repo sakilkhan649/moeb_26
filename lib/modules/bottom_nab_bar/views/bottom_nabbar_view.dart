@@ -10,15 +10,15 @@ import 'package:moeb_26/modules/jobs_offers/views/Job_offer_view.dart';
 import 'package:moeb_26/modules/market_place/views/market_place_view.dart';
 import 'package:moeb_26/modules/rides/views/rides_view.dart';
 
-class HomeScreens extends StatelessWidget {
-  HomeScreens({super.key});
+class BottomNabbarView extends StatelessWidget {
+  BottomNabbarView({super.key});
 
   final List<Widget> pages = [
     Jobofferpage(),
     Ridespage(),
-    Chatpage(),
+    ChatView(),
     Marketplacepage(),
-    Dealspage(),
+    DealsView(),
   ];
 
   @override
