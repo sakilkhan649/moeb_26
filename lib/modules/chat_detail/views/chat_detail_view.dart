@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/data/models/Chat_model.dart';
+import 'package:moeb_26/data/models/chat_model.dart';
 import '../controllers/chat_detail_controller.dart';
 import '../../../data/models/chat_message_model.dart';
 

@@ -36,10 +36,7 @@ class OnewayController extends GetxController {
               onPrimary: Colors.white, // Selected date text color
               surface: Color(0xFF1E1E1E), // Slightly lighter than pure black
               onSurface: Colors.white, // Text color on the picker
-            ),
-            dialogBackgroundColor: const Color(0xFF1E1E1E),
-            dialogTheme: DialogThemeData(
-              shape: RoundedRectangleBorder(
+            ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xFF1E1E1E), shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 side: const BorderSide(color: Color(0xFF404040), width: 1),
               ),
@@ -66,10 +63,7 @@ class OnewayController extends GetxController {
               onPrimary: Colors.white,
               surface: Color(0xFF1E1E1E), // Lighter background
               onSurface: Colors.white, // Text color
-            ),
-            dialogBackgroundColor: const Color(0xFF1E1E1E),
-            dialogTheme: DialogThemeData(
-              shape: RoundedRectangleBorder(
+            ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xFF1E1E1E), shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 side: const BorderSide(color: Color(0xFF404040), width: 1),
               ),

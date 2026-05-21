@@ -6,7 +6,7 @@ import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/user_service.dart';
 import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
-import 'package:moeb_26/data/models/Chat_model.dart';
+import 'package:moeb_26/data/models/chat_model.dart';
 import '../controllers/chat_controller.dart';
 import '../../../data/models/chat_community_model.dart';
 
@@ -111,7 +111,7 @@ class Chatpage extends StatelessWidget {
                             controller.filteredChats.length +
                             (communityRoom != null ? 1 : 0),
                         separatorBuilder: (context, index) => Divider(
-                          color: Colors.grey.withOpacity(0.15),
+                          color: Colors.grey.withValues(alpha: 0.15),
                           height: 1.h,
                           thickness: 0.5.h,
                         ),

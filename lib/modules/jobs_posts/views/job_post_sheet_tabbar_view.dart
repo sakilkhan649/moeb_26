@@ -7,7 +7,7 @@ import '../controllers/job_post_controller.dart';
 import 'one_way_view.dart';
 
 class PostJobBottomSheet extends StatelessWidget {
-  PostJobBottomSheet({super.key});
+  const PostJobBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {

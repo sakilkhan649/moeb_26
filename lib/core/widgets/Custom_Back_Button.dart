@@ -14,7 +14,7 @@ class CustomBackButton extends StatelessWidget {
   final FontWeight? fontWeight;
 
   const CustomBackButton({
-    Key? key,
+    super.key,
     required this.title,
     this.onTap,
     this.buttonColor,
@@ -24,7 +24,7 @@ class CustomBackButton extends StatelessWidget {
     this.fontSize,
     this.buttonSize,
     this.fontWeight,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

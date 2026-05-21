@@ -117,7 +117,7 @@ class VehicleActionController extends GetxController {
                   loadingBuilder: (_, child, progress) => progress == null
                       ? child
                       : const Center(child: CircularProgressIndicator()),
-                  errorBuilder: (_, __, ___) => const Padding(
+                  errorBuilder: (_, _, _) => const Padding(
                     padding: EdgeInsets.all(20),
                     child: Text(
                       'Failed to load image',
@@ -146,8 +146,7 @@ class VehicleActionController extends GetxController {
             onPrimary: Colors.black,
             surface: Color(0xFF1E2939),
             onSurface: Colors.white,
-          ),
-          dialogBackgroundColor: const Color(0xFF1E2939),
+          ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xFF1E2939)),
         ),
         child: child!,
       ),
@@ -170,8 +169,9 @@ class VehicleActionController extends GetxController {
       type: FileType.custom,
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
-    if (result != null && result.files.single.path != null)
+    if (result != null && result.files.single.path != null) {
       target.value = File(result.files.single.path!);
+    }
   }
 
   String getFileName(Rx<File?> file) {

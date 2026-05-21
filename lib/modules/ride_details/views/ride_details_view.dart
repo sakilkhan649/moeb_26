@@ -286,6 +286,7 @@ class RideDetailsPage extends StatelessWidget {
                             ),
                             childWhenDragging: SvgPicture.asset(
                               AppIcons.arre_right_icon,
+                              // ignore: deprecated_member_use
                               color: Colors.transparent,
                             ),
                             child: GestureDetector(

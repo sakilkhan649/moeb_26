@@ -461,7 +461,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 20.h),
                   Divider(
-                    color: Colors.grey.withOpacity(0.15),
+                    color: Colors.grey.withValues(alpha: 0.15),
                     thickness: 0.8.h,
                   ),
 
@@ -480,7 +480,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16.h),
-                  Divider(color: Colors.grey.withOpacity(0.2), thickness: 1.h),
+                  Divider(color: Colors.grey.withValues(alpha: 0.2), thickness: 1.h),
 
                   // My Vehicles Section
                   _buildSectionTitle("My Vehicles"),
@@ -525,8 +525,8 @@ class ProfileScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16.r),
                                   border: Border.all(
                                     color: isSelected
-                                        ? Colors.green.withOpacity(0.5)
-                                        : Colors.white.withOpacity(0.1),
+                                        ? Colors.green.withValues(alpha: 0.5)
+                                        : Colors.white.withValues(alpha: 0.1),
                                     width: isSelected ? 1.5.w : 1.w,
                                   ),
                                 ),
@@ -618,7 +618,7 @@ class ProfileScreen extends StatelessWidget {
                     }),
                   ),
                   SizedBox(height: 16.h),
-                  Divider(color: Colors.grey.withOpacity(0.2), thickness: 1.h),
+                  Divider(color: Colors.grey.withValues(alpha: 0.2), thickness: 1.h),
 
                   // Settings List
                   Padding(
@@ -729,7 +729,7 @@ class ProfileScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF1A1A1A),
           borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Text(
           label,

@@ -7,6 +7,7 @@ void main() {
     return;
   }
 
+  // ignore: unused_local_variable
   int count = 0;
   for (var file in libDir.listSync(recursive: true)) {
     if (file is File && file.path.endsWith('.dart')) {

@@ -50,7 +50,7 @@ class CustomButton extends StatelessWidget {
                 ? BorderSide(color: borderColor!)
                 : BorderSide.none,
           ),
-          disabledBackgroundColor: (backgroundColor ?? Colors.white).withOpacity(0.6),
+          disabledBackgroundColor: (backgroundColor ?? Colors.white).withValues(alpha: 0.6),
         ),
         child: loading
             ? SizedBox(

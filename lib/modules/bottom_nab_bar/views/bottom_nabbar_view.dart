@@ -11,7 +11,7 @@ import 'package:moeb_26/modules/market_place/views/market_place_view.dart';
 import 'package:moeb_26/modules/rides/views/rides_view.dart';
 
 class HomeScreens extends StatelessWidget {
-  HomeScreens({Key? key}) : super(key: key);
+  HomeScreens({super.key});
 
   final List<Widget> pages = [
     Jobofferpage(),

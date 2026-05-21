@@ -28,7 +28,7 @@ class EditProfileBottomSheet extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
               ),
               child: Row(
@@ -46,7 +46,7 @@ class EditProfileBottomSheet extends StatelessWidget {
                     onTap: () => Get.back(),
                     child: Icon(
                       Icons.close,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       size: 24.sp,
                     ),
                   ),
@@ -77,7 +77,7 @@ class EditProfileBottomSheet extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                     width: 2,
                                   ),
                                   image: DecorationImage(
@@ -258,87 +258,6 @@ class EditProfileBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildDropdownField(
-    String label,
-    TextEditingController textController,
-    RxList<String> items, {
-    String? Function(String?)? validator,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              color: Colors.white,
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Obx(
-            () => controller.isServiceAreasLoading.value
-                ? const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  )
-                : DropdownButtonFormField<String>(
-                    value: items.contains(textController.text)
-                        ? textController.text
-                        : null,
-                    dropdownColor: Colors.black,
-                    validator: validator,
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white.withOpacity(0.5),
-                    ),
-                    style: GoogleFonts.inter(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.black.withOpacity(0.2),
-                      errorStyle: TextStyle(fontSize: 12.sp),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 12.h,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.1),
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.1),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(color: Colors.grey),
-                      ),
-                    ),
-                    items: items.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: GoogleFonts.inter(color: Colors.white),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      if (newValue != null) {
-                        textController.text = newValue;
-                      }
-                    },
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildField(
     String label,
@@ -372,7 +291,7 @@ class EditProfileBottomSheet extends StatelessWidget {
             ),
             decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.black.withOpacity(0.2),
+              fillColor: Colors.black.withValues(alpha: 0.2),
               errorStyle: TextStyle(fontSize: 12.sp),
               suffixIcon: suffixIcon,
               contentPadding: EdgeInsets.symmetric(
@@ -381,11 +300,11 @@ class EditProfileBottomSheet extends StatelessWidget {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),

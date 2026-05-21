@@ -23,7 +23,7 @@ class CustomNotificationPopup extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF0F0F0F),
           borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(color: Colors.white.withOpacity(0.1), width: 0.5),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -52,7 +52,7 @@ class CustomNotificationPopup extends StatelessWidget {
                         onPressed: () => Get.back(),
                         icon: Icon(
                           Icons.close,
-                          color: Colors.white.withOpacity(0.6),
+                          color: Colors.white.withValues(alpha: 0.6),
                           size: 24.sp,
                         ),
                         padding: EdgeInsets.zero,
@@ -70,7 +70,7 @@ class CustomNotificationPopup extends StatelessWidget {
                             "${controller.unreadCount} unread notifications",
                             style: GoogleFonts.inter(
                               fontSize: 14.sp,
-                              color: Colors.white.withOpacity(0.4),
+                              color: Colors.white.withValues(alpha: 0.4),
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -114,7 +114,7 @@ class CustomNotificationPopup extends StatelessWidget {
                             child: Text(
                               "No notifications",
                               style: GoogleFonts.inter(
-                                color: Colors.white.withOpacity(0.4),
+                                color: Colors.white.withValues(alpha: 0.4),
                                 fontSize: 14.sp,
                               ),
                             ),
@@ -145,19 +145,19 @@ class CustomNotificationPopup extends StatelessWidget {
   }
 
   Widget _buildNotificationItem(NotificationItem notification) {
-    Color iconBgColor = Colors.white.withOpacity(0.05);
+    Color iconBgColor = Colors.white.withValues(alpha: 0.05);
     Color iconColor = Colors.white;
 
     // Logic for icon colors based on type
     if (notification.type == "GENERAL") {
       iconColor = const Color(0xFFD08700);
-      iconBgColor = const Color(0xFFD08700).withOpacity(0.1);
+      iconBgColor = const Color(0xFFD08700).withValues(alpha: 0.1);
     } else if (notification.type == "TASK") {
       iconColor = const Color(0xFF3498DB);
-      iconBgColor = const Color(0xFF3498DB).withOpacity(0.1);
+      iconBgColor = const Color(0xFF3498DB).withValues(alpha: 0.1);
     } else if (notification.type == "REMINDER") {
       iconColor = const Color(0xFF2ECC71);
-      iconBgColor = const Color(0xFF2ECC71).withOpacity(0.1);
+      iconBgColor = const Color(0xFF2ECC71).withValues(alpha: 0.1);
     }
 
     return GestureDetector(
@@ -188,7 +188,7 @@ class CustomNotificationPopup extends StatelessWidget {
         return Container(
           color: currentNoti.isRead
               ? Colors.transparent
-              : Colors.white.withOpacity(0.02),
+              : Colors.white.withValues(alpha: 0.02),
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +226,7 @@ class CustomNotificationPopup extends StatelessWidget {
                                   ? FontWeight.w500
                                   : FontWeight.w700,
                               color: currentNoti.isRead
-                                  ? Colors.white.withOpacity(0.8)
+                                  ? Colors.white.withValues(alpha: 0.8)
                                   : Colors.white,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -245,7 +245,7 @@ class CustomNotificationPopup extends StatelessWidget {
                           Icon(
                             Icons.check,
                             size: 16.sp,
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                           ),
                       ],
                     ),
@@ -254,7 +254,7 @@ class CustomNotificationPopup extends StatelessWidget {
                       currentNoti.subtitle,
                       style: GoogleFonts.inter(
                         fontSize: 14.sp,
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         height: 1.4,
                       ),
                     ),
@@ -264,7 +264,7 @@ class CustomNotificationPopup extends StatelessWidget {
                         Icon(
                           Icons.access_time,
                           size: 12.sp,
-                          color: Colors.white.withOpacity(0.4),
+                          color: Colors.white.withValues(alpha: 0.4),
                         ),
                         SizedBox(width: 4.w),
                         Expanded(
@@ -272,7 +272,7 @@ class CustomNotificationPopup extends StatelessWidget {
                             currentNoti.timeAgo,
                             style: GoogleFonts.inter(
                               fontSize: 12.sp,
-                              color: Colors.white.withOpacity(0.4),
+                              color: Colors.white.withValues(alpha: 0.4),
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

@@ -83,10 +83,10 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
                 job?.date != "null" &&
                 job!.date!.isNotEmpty) {
               try {
-                DateTime parsedDate = DateTime.parse(job!.date!);
+                DateTime parsedDate = DateTime.parse(job.date!);
                 dateStr = DateFormat('EEE MMM dd').format(parsedDate);
               } catch (_) {
-                dateStr = job!.date!;
+                dateStr = job.date!;
               }
             }
 
@@ -131,6 +131,7 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
                             driver?.profilePicture ?? AppImages.profile_image,
                         // ignore: prefer_is_empty
                         name:
+                            // ignore: prefer_is_empty
                             "${driver!.nickname?.length == 0 ? driver.name : driver.nickname}",
                         rating: "${driver.averageRating ?? 0.0}",
                         vehicleNumber: vehicle?.licensePlate ?? "N/A",

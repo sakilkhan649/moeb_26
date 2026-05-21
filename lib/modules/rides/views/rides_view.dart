@@ -355,9 +355,9 @@ class VehicleTypeColors {
   static final LinearGradient sedanSuvGradient = LinearGradient(
     colors: [
       const Color(0xFFB11226),
-      const Color(0xFFB11226).withOpacity(0.90),
-      const Color(0xFF0A1F44).withOpacity(0.95),
-      const Color(0xFF0A1F44).withOpacity(0.9),
+      const Color(0xFFB11226).withValues(alpha: 0.90),
+      const Color(0xFF0A1F44).withValues(alpha: 0.95),
+      const Color(0xFF0A1F44).withValues(alpha: 0.9),
     ],
 
     begin: Alignment.centerLeft,
@@ -386,14 +386,14 @@ class VehicleTypeBadge extends StatelessWidget {
   final FontWeight? fontWeight;
 
   const VehicleTypeBadge({
-    Key? key,
+    super.key,
     required this.vehicleType,
     this.backgroundColor,
     this.gradient,
     this.textColor = Colors.white,
     this.fontSize,
     this.fontWeight,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -431,7 +431,7 @@ class CustomJobCard extends StatelessWidget {
 
   const CustomJobCard({
     required this.pickupPaymentType,
-    Key? key,
+    super.key,
     required this.dateTime,
     required this.vehicleType,
     required this.pickupLocation,
@@ -440,7 +440,7 @@ class CustomJobCard extends StatelessWidget {
     required this.driverName,
     required this.companyName,
     required this.vehicleStyle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

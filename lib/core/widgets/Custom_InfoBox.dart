@@ -7,10 +7,10 @@ class CustomInfoBox extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const CustomInfoBox({
-    Key? key,
+    super.key,
     required this.text,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
