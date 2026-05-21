@@ -24,7 +24,8 @@ class OnewayScreen extends StatelessWidget {
   final specialController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  final OnewayController onewayControllerInstance = Get.put(OnewayController());
+  final OnewayController onewayControllerInstance =
+      Get.find<OnewayController>();
 
   @override
   Widget build(BuildContext context) {

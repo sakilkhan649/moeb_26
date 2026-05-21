@@ -7,8 +7,8 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controller/splash_controller.dart';
 
-class Splashscreen extends StatelessWidget {
-  Splashscreen({super.key});
+class SplashView extends StatelessWidget {
+  SplashView({super.key});
   // Initialize the GetX controller
   final controller = Get.find<SplashScreenController>();
   // Start the timer as soon as the splash screen is loaded

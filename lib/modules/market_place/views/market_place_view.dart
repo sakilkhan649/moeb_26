@@ -8,10 +8,10 @@ import '../controllers/market_place_controller.dart';
 import '../../../core/widgets/SellItemBottomSheet.dart';
 import '../../../core/widgets/MarketplaceCard.dart';
 
-class Marketplacepage extends StatelessWidget {
-  Marketplacepage({super.key});
+class MarketPlaceView extends StatelessWidget {
+  MarketPlaceView({super.key});
 
-  final MarketplaceController controller = Get.put(MarketplaceController());
+  final MarketplaceController controller = Get.find<MarketplaceController>();
 
   @override
   Widget build(BuildContext context) {

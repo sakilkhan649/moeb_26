@@ -5,7 +5,7 @@ import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/auth_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 
-class LoginController extends GetxController {
+class SigninController extends GetxController {
   final AuthService _authService = Get.find();
 
   final isLoading = false.obs;

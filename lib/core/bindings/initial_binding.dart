@@ -53,12 +53,5 @@ class InitialBinding extends Bindings {
       RatingsFeedbackService(ratingsFeedbackRepo: Get.find()),
       permanent: true,
     );
-
-    Get.lazyPut(() => SplashScreenController());
-
-    // Controllers
-    Get.lazyPut(() => NavigationController());
-    Get.lazyPut(() => BookingController());
-    Get.lazyPut(() => ChatController());
   }
 }

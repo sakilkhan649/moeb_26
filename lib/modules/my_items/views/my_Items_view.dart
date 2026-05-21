@@ -6,10 +6,10 @@ import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/my_items_controller.dart';
 import '../../../core/widgets/my_items_card.dart';
 
-class MyItems extends StatelessWidget {
-  MyItems({super.key});
+class MyItemsView extends StatelessWidget {
+  MyItemsView({super.key});
 
-  final MyItemsController controller = Get.put(MyItemsController());
+  final MyItemsController controller = Get.find<MyItemsController>();
 
   @override
   Widget build(BuildContext context) {

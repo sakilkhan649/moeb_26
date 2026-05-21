@@ -10,8 +10,8 @@ import '../../../core/widgets/Custom_AppBar.dart';
 import '../../../core/widgets/Custom_Card_Ditails.dart';
 import '../../../core/widgets/Custom_Driver_Card.dart';
 
-class ApprovePage extends StatelessWidget {
-  const ApprovePage({super.key});
+class JobApproveView extends StatelessWidget {
+  const JobApproveView({super.key});
 
   @override
   Widget build(BuildContext context) {

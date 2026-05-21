@@ -5,15 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../Controllers/serviceController.dart';
 
-class ServiceArea extends StatefulWidget {
-  const ServiceArea({super.key});
+class ServiceAreaView extends StatefulWidget {
+  const ServiceAreaView({super.key});
 
   @override
-  State<ServiceArea> createState() => _ServiceAreaState();
+  State<ServiceAreaView> createState() => _ServiceAreaViewState();
 }
 
-class _ServiceAreaState extends State<ServiceArea> {
-  final ServiceAreaController controller = Get.put(ServiceAreaController());
+class _ServiceAreaViewState extends State<ServiceAreaView> {
+  final ServiceAreaController controller = Get.find<ServiceAreaController>();
 
   @override
   Widget build(BuildContext context) {

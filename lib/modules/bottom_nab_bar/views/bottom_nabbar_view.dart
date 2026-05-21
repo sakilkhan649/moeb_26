@@ -14,10 +14,10 @@ class BottomNabbarView extends StatelessWidget {
   BottomNabbarView({super.key});
 
   final List<Widget> pages = [
-    Jobofferpage(),
-    Ridespage(),
+    JobOfferView(),
+    RidesView(),
     ChatView(),
-    Marketplacepage(),
+    MarketPlaceView(),
     DealsView(),
   ];
 

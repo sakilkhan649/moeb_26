@@ -134,7 +134,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return CustomNotificationPopup();
+                      return NotificationsView();
                     },
                   );
                 },
@@ -305,7 +305,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (onAccountTap != null) {
           onAccountTap!();
         } else {
-          Get.toNamed(Routes.profileScreen);
+          Get.toNamed(Routes.profileView);
         }
         break;
       // case 1:

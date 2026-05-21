@@ -22,7 +22,8 @@ class ByTheHour extends StatelessWidget {
   final payController = TextEditingController();
   final specialController = TextEditingController();
 
-  final OnewayController onewayControllerInstance = Get.put(OnewayController());
+  final OnewayController onewayControllerInstance =
+      Get.find<OnewayController>();
   final _formKey = GlobalKey<FormState>();
 
   @override

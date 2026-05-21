@@ -16,6 +16,6 @@ class AuthBinding extends Bindings {
     Get.lazyPut(() => PersonalDocumentController());
     Get.lazyPut(() => ResetPasswordController());
     Get.lazyPut(() => ForgotPasswordController());
-    Get.lazyPut(() => LoginController());
+    Get.lazyPut(() => SigninController());
   }
 }

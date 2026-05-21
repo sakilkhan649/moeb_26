@@ -7,8 +7,8 @@ import 'package:moeb_26/modules/auth/authentication/controllers/signup_controlle
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 
-class PrivacyPolicySignUp extends StatelessWidget {
-  PrivacyPolicySignUp({super.key});
+class PrivacyPolicySignUpView extends StatelessWidget {
+  PrivacyPolicySignUpView({super.key});
 
   final controller = Get.find<SignupController>();
 

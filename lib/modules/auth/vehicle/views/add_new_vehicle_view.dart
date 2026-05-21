@@ -9,11 +9,11 @@ import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:moeb_26/modules/auth/vehicle/controllers/vehicle_action_controller.dart';
 
-class AddNewVehicle extends StatelessWidget {
+class AddNewVehicleView extends StatelessWidget {
   // Use a unique tag for each navigation to ensure NO data leaks or copying from previous visits
   final String tag = DateTime.now().millisecondsSinceEpoch.toString();
 
-  AddNewVehicle({super.key}) {
+  AddNewVehicleView({super.key}) {
     // Inject a completely fresh and unique controller instance
     Get.find<VehicleActionController>(tag: tag);
   }

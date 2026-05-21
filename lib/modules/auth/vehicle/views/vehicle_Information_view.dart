@@ -10,8 +10,8 @@ import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 
-class Vehicleinformation extends StatelessWidget {
-  Vehicleinformation({super.key});
+class VehicleInformationView extends StatelessWidget {
+  VehicleInformationView({super.key});
 
   // Using the unified SignupController
   final SignupController controller = Get.find<SignupController>();

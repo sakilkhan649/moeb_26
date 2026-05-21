@@ -13,7 +13,7 @@ import '../controllers/signin_controller.dart';
 class SignInView extends StatelessWidget {
   SignInView({super.key});
 
-  final _controller = Get.find<LoginController>();
+  final _controller = Get.find<SigninController>();
 
   @override
   Widget build(BuildContext context) {

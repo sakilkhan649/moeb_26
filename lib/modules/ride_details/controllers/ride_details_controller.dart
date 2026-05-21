@@ -44,7 +44,7 @@ class RideDetailsController extends GetxController {
 
         if (nextStatus == "FINISHED") {
           Get.toNamed(
-            Routes.rideCompletedPage,
+            Routes.rideCompletedView,
             arguments: rideData ?? {"id": jobId},
           );
         } else {

@@ -1,11 +1,20 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:moeb_26/core/widgets/screens/no_internet_screen.dart';
+import 'package:moeb_26/modules/auth/Term_and_policy/bindings/term_and_policy_binding.dart';
+import 'package:moeb_26/modules/auth/Term_and_policy/views/privacy_policy_signup_view.dart';
+import 'package:moeb_26/modules/auth/Term_and_policy/views/term_policy_view.dart';
+import 'package:moeb_26/modules/auth/authentication/bindings/auth_binding.dart';
 import 'package:moeb_26/modules/auth/vehicle/views/add_new_vehicle_view.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/bindings/bottom_nabbar_binding.dart';
 import 'package:moeb_26/modules/chat_community/bindings/chat_community_detail_binding.dart';
 import 'package:moeb_26/modules/chat_detail/bindings/chat_detail_binding.dart';
-import 'package:moeb_26/modules/service_area/views/Service_Area_view.dart';
+import 'package:moeb_26/modules/job_edit/bindings/job_edit_binding.dart';
+import 'package:moeb_26/modules/my_jobs/bindings/my_jobs_binding.dart';
+import 'package:moeb_26/modules/ride_completed/bindings/ride_completed_binding.dart';
+import 'package:moeb_26/modules/ride_details/bindings/ride_details_binding.dart';
+import 'package:moeb_26/modules/service_Area/views/Service_Area_view.dart';
+import 'package:moeb_26/modules/service_area/bindings/service_area_binding.dart';
 import 'package:moeb_26/modules/auth/authentication/views/all_vehicle_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/application_not_Approved_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/application_submited_view.dart';
@@ -22,8 +31,6 @@ import 'package:moeb_26/modules/auth/authentication/views/success_reset_password
 import 'package:moeb_26/modules/auth/authentication/views/signin_view.dart';
 import 'package:moeb_26/modules/auth/splash/binding/splash_binding.dart';
 import 'package:moeb_26/modules/auth/splash/views/splash_view.dart';
-import 'package:moeb_26/modules/auth/term_and_policy/views/term_policy.dart';
-import 'package:moeb_26/modules/auth/term_and_policy/views/privacy_policy_sign_up.dart';
 import 'package:moeb_26/modules/auth/vehicle/views/vehicle_Information_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/auth_selection_view.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/views/bottom_nabbar_view.dart';
@@ -43,7 +50,7 @@ import 'package:moeb_26/modules/ride_completed/views/ride_completed_view.dart';
 import 'package:moeb_26/modules/ride_details/views/ride_details_view.dart';
 
 class Routes {
-  static const String splashScreen = "/SplashScreen";
+  static const String splashView = "/SplashView";
   static const String authSelectionView = "/AuthSelectionView";
   static const String signinView = "/SignInView";
   static const String createaccountview = "/Createaccountview";
@@ -51,56 +58,55 @@ class Routes {
   //static const String resetpasswordtwo = "/Resetpasswordtwo";
   static const String resetpasswordthreeView = "/ResetpasswordthreeView";
   static const String successResetPasswordView = "/SuccessResetPasswordView";
-  static const String vehicleinformation = "/Vehicleinformation";
+  static const String vehicleinformationView = "/Vehicleinformation";
   static const String documentsuploadView = "/DocumentsuploadView";
-  static const String termPolicy = "/TermPolicy";
+  static const String termPolicyView = "/TermPolicyView";
   static const String applicationSubmitedView = "/ApplicationSubmitedView";
   static const String applicationNotApprovedView =
       "/ApplicationNotApprovedView";
   static const String bottomNabbarView = "/BottomNabbarView";
-  static const String myJobsScreen = "/MyJobsScreen";
+  static const String myJobsView = "/MyJobsView";
   static const String jobEditView = "/JobEditView";
   static const String accountSuccessView = "/AccountSuccessView";
-  static const String requestSubmitted = "/RequestSubmitted";
-  static const String requestUnderReview = "/RequestUnderReview";
+  static const String requestSubmittedView = "/RequestSubmittedView";
+  static const String requestUnderReviewView = "/RequestUnderReviewView";
   static const String chatView = "/ChatView";
   static const String chatDetailView = "/ChatDetailView";
   static const String chatCommunityDetailView = "/ChatCommunityDetailView";
-  static const String rideDetailsPage = "/RideDetailsPage";
-  // static const String onMyWayDetailsPage = "/OnMyWayDetailsPage";
-  // static const String pobDetailsPage = "/PobDetailsPage";
-  // static const String finishRidePage = "/FinishRidePage";
-  static const String rideCompletedPage = "/RideCompletedPage";
-  static const String approvePage = "/ApprovePage";
+  static const String rideDetailsView = "/RideDetailsView";
+  static const String rideCompletedView = "/RideCompletedView";
+  static const String jobApproveView = "/JobApproveView";
   static const String rideProgressWay = "/RideProgressWay";
-  static const String rideProgressWayLocation = "/RideProgressWayLocation";
+  static const String rideProgressWayLocationView =
+      "/RideProgressWayLocationView";
   static const String rideProgressBoard = "/RideProgressBoard";
   static const String rideCompleteJob = "/RideCompleteJob";
-  static const String profileScreen = "/ProfileScreen";
-  static const String ratingsFeedback = "/RatingsFeedback";
-  static const String serviceArea = "/ServiceArea";
+  static const String profileView = "/ProfileView";
+  static const String ratingsFeedbackView = "/RatingsFeedbackView";
+  static const String serviceAreaView = "/ServiceAreaView";
   static const String noInternetScreen = "/NoInternetScreen";
   static const String otpVerificationView = "/OtpVerificationView";
   static const String forgetotpVerificationView = "/ForgetotpVerificationView";
   static const String changePasswordView = "/ChangePasswordView";
-  static const String myPropucts = "/MyPropucts";
+  static const String myItemsView = "/MyItemsView";
   static const String chatSupportDetailView = "/ChatSupportDetailView";
-  static const String privacyPolicySignUp = "/PrivacyPolicySignUp";
+  static const String privacyPolicySignUpView = "/PrivacyPolicySignUpView";
   static const String allVehicleView = "/AllVehicleView";
-  static const String addNewVehicle = "/AddNewVehicle";
+  static const String addNewVehicleView = "/AddNewVehicleView";
   static const String personalDocumentView = "/PersonalDocumentView";
 
   static List<GetPage> routes = [
     GetPage(
-      name: splashScreen,
-      page: () => Splashscreen(),
+      name: splashView,
+      page: () => SplashView(),
       transition: Transition.noTransition,
       binding: SplashBinding(),
     ),
     GetPage(
-      name: privacyPolicySignUp,
-      page: () => PrivacyPolicySignUp(),
+      name: privacyPolicySignUpView,
+      page: () => PrivacyPolicySignUpView(),
       transition: Transition.noTransition,
+      binding: TermPolicyBinding(),
     ),
     GetPage(
       name: authSelectionView,
@@ -111,56 +117,61 @@ class Routes {
       name: signinView,
       page: () => SignInView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: createaccountview,
       page: () => CreateAccountView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: resetPasswordView,
       page: () => ResetPasswordView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
-    // GetPage(
-    //   name: resetpasswordtwo,
-    //   page: () => Resetpasswordtwo(),
-    //   transition: Transition.noTransition,
-    // ),
     GetPage(
       name: resetpasswordthreeView,
       page: () => ResetPasswordThreeView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: successResetPasswordView,
       page: () => SuccessResetPasswordView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
-      name: vehicleinformation,
-      page: () => Vehicleinformation(),
+      name: vehicleinformationView,
+      page: () => VehicleInformationView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: documentsuploadView,
       page: () => DocumentsuploadView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
-      name: termPolicy,
-      page: () => TermPolicy(),
+      name: termPolicyView,
+      page: () => TermPolicyView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: applicationSubmitedView,
       page: () => ApplicationSubmitedView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: applicationNotApprovedView,
       page: () => ApplicationNotApprovedView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: bottomNabbarView,
@@ -169,28 +180,31 @@ class Routes {
       binding: BottomNabbarBinding(),
     ),
     GetPage(
-      name: myJobsScreen,
-      page: () => MyJobsScreen(),
+      name: myJobsView,
+      page: () => MyJobsView(),
       transition: Transition.noTransition,
+      binding: MyJobsBinding(),
     ),
     GetPage(
       name: jobEditView,
       page: () => JobEditView(),
       transition: Transition.noTransition,
+      binding: JobEditBinding(),
     ),
     GetPage(
       name: accountSuccessView,
       page: () => AccountSuccessView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
-      name: requestSubmitted,
-      page: () => RequestSubmitted(),
+      name: requestSubmittedView,
+      page: () => RequestSubmittedView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: requestUnderReview,
-      page: () => RequestUnderReview(),
+      name: requestUnderReviewView,
+      page: () => RequestUnderReviewView(),
       transition: Transition.noTransition,
     ),
     GetPage(
@@ -211,55 +225,43 @@ class Routes {
       binding: ChatCommunityDetailBinding(),
     ),
     GetPage(
-      name: rideDetailsPage,
-      page: () => RideDetailsPage(),
+      name: rideDetailsView,
+      page: () => RideDetailsView(),
       transition: Transition.noTransition,
+      binding: RideDetailsBinding(),
     ),
-    // GetPage(
-    //   name: onMyWayDetailsPage,
-    //   page: () => OnMyWayDetailsPage(),
-    //   transition: Transition.noTransition,
-    // ),
-    // GetPage(
-    //   name: pobDetailsPage,
-    //   page: () => PobDetailsPage(),
-    //   transition: Transition.noTransition,
-    // ),
-    // GetPage(
-    //   name: finishRidePage,
-    //   page: () => FinishRidePage(),
-    //   transition: Transition.noTransition,
-    // ),
     GetPage(
-      name: rideCompletedPage,
-      page: () => RideCompletedPage(),
+      name: rideCompletedView,
+      page: () => RideCompletedView(),
+      transition: Transition.noTransition,
+      binding: RideCompletedBinding(),
+    ),
+    GetPage(
+      name: jobApproveView,
+      page: () => JobApproveView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: approvePage,
-      page: () => ApprovePage(),
-      transition: Transition.noTransition,
-    ),
-    GetPage(
-      name: rideProgressWayLocation,
-      page: () => RideProgressWayLocation(),
+      name: rideProgressWayLocationView,
+      page: () => RideProgressWayLocationView(),
       transition: Transition.noTransition,
     ),
 
     GetPage(
-      name: profileScreen,
-      page: () => ProfileScreen(),
+      name: profileView,
+      page: () => ProfileView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: ratingsFeedback,
-      page: () => RatingsFeedback(),
+      name: ratingsFeedbackView,
+      page: () => RatingsFeedbackView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: serviceArea,
-      page: () => ServiceArea(),
+      name: serviceAreaView,
+      page: () => ServiceAreaView(),
       transition: Transition.noTransition,
+      binding: ServiceAreaBinding(),
     ),
     GetPage(
       name: noInternetScreen,
@@ -282,8 +284,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: myPropucts,
-      page: () => MyItems(),
+      name: myItemsView,
+      page: () => MyItemsView(),
       transition: Transition.noTransition,
     ),
 
@@ -298,8 +300,8 @@ class Routes {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: addNewVehicle,
-      page: () => AddNewVehicle(),
+      name: addNewVehicleView,
+      page: () => AddNewVehicleView(),
       transition: Transition.noTransition,
     ),
     GetPage(

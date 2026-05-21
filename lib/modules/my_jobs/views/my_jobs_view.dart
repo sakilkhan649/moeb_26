@@ -46,15 +46,15 @@ class VehicleTypeColors {
   }
 }
 
-class MyJobsScreen extends StatefulWidget {
-  const MyJobsScreen({super.key});
+class MyJobsView extends StatefulWidget {
+  const MyJobsView({super.key});
 
   @override
-  State<MyJobsScreen> createState() => _MyJobsScreenState();
+  State<MyJobsView> createState() => _MyJobsViewState();
 }
 
-class _MyJobsScreenState extends State<MyJobsScreen> {
-  final BookingController controller = Get.put(BookingController());
+class _MyJobsViewState extends State<MyJobsView> {
+  final BookingController controller = Get.find<BookingController>();
 
   @override
   void initState() {
@@ -659,7 +659,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                           onTap: () {
                             controller.myJobView.value = null;
                             Get.to(
-                              const RideProgressWayLocation(),
+                              const RideProgressWayLocationView(),
                               arguments: job,
                             );
                           },

@@ -21,10 +21,10 @@ import '../../../core/widgets/Custom_Card_Ditails.dart';
 import '../../../core/widgets/Custom_Driver_Card.dart';
 import '../controllers/ride_details_controller.dart';
 
-class RideDetailsPage extends StatelessWidget {
-  RideDetailsPage({super.key});
+class RideDetailsView extends StatelessWidget {
+  RideDetailsView({super.key});
 
-  final RideDetailsController controller = Get.put(RideDetailsController());
+  final RideDetailsController controller = Get.find<RideDetailsController>();
 
   @override
   Widget build(BuildContext context) {

@@ -16,8 +16,8 @@ import 'package:moeb_26/modules/notifications/controllers/notifications_controll
 import 'package:moeb_26/modules/notifications/views/notifications_view.dart';
 import 'package:moeb_26/core/widgets/Contact_support_popup.dart';
 
-class ProfileScreen extends StatelessWidget {
-  ProfileScreen({super.key});
+class ProfileView extends StatelessWidget {
+  ProfileView({super.key});
 
   final ProfileController controller = Get.find();
   final NotificationController _notificationController = Get.find();
@@ -79,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return CustomNotificationPopup();
+                                      return NotificationsView();
                                     },
                                   );
                                 },
@@ -140,10 +140,10 @@ class ProfileScreen extends StatelessWidget {
                               onSelected: (item) {
                                 switch (item) {
                                   case 0:
-                                    Get.offNamed(Routes.myJobsScreen);
+                                    Get.offNamed(Routes.myJobsView);
                                     break;
                                   case 1:
-                                    Get.toNamed(Routes.myPropucts);
+                                    Get.toNamed(Routes.myItemsView);
                                     break;
                                 }
                               },
@@ -329,7 +329,7 @@ class ProfileScreen extends StatelessWidget {
                                             );
                                             break;
                                           case 2:
-                                            Get.toNamed(Routes.serviceArea);
+                                            Get.toNamed(Routes.serviceAreaView);
                                             break;
                                           case 3:
                                             Get.toNamed(
@@ -337,10 +337,10 @@ class ProfileScreen extends StatelessWidget {
                                             );
                                             break;
                                           case 4:
-                                            Get.toNamed(Routes.myPropucts);
+                                            Get.toNamed(Routes.myItemsView);
                                             break;
                                           case 5:
-                                            Get.toNamed(Routes.myJobsScreen);
+                                            Get.toNamed(Routes.myJobsView);
                                             break;
                                         }
                                       },
@@ -596,7 +596,7 @@ class ProfileScreen extends StatelessWidget {
                             width: 24.sp,
                           ),
                           "Ratings & Feedback",
-                          onTap: () => Get.toNamed(Routes.ratingsFeedback),
+                          onTap: () => Get.toNamed(Routes.ratingsFeedbackView),
                         ),
 
                         Obx(
@@ -610,7 +610,7 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                                 legal['title'] ?? "",
                                 onTap: () => Get.toNamed(
-                                  Routes.termPolicy,
+                                  Routes.termPolicyView,
                                   arguments: {"slug": legal['slug']},
                                 ),
                               );

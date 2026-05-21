@@ -147,7 +147,7 @@ class BookingController extends GetxController {
         jobOffersList.removeWhere((job) => job.id == jobId);
 
         Helpers.showCustomSnackBar('Job applied successfully.', isError: false);
-        Get.toNamed(Routes.requestSubmitted, arguments: appliedJob);
+        Get.toNamed(Routes.requestSubmittedView, arguments: appliedJob);
       }
     } catch (e) {
       Helpers.showDebugLog("job application error:$e");

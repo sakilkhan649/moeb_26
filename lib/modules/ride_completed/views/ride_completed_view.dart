@@ -6,10 +6,11 @@ import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/ride_completed_controller.dart';
 
-class RideCompletedPage extends StatelessWidget {
-  RideCompletedPage({super.key});
+class RideCompletedView extends StatelessWidget {
+  RideCompletedView({super.key});
 
-  final RideCompletedController controller = Get.put(RideCompletedController());
+  final RideCompletedController controller =
+      Get.find<RideCompletedController>();
 
   @override
   Widget build(BuildContext context) {
