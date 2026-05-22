@@ -7,8 +7,10 @@ import 'package:moeb_26/modules/auth/Term_and_policy/views/term_policy_view.dart
 import 'package:moeb_26/modules/auth/authentication/bindings/auth_binding.dart';
 import 'package:moeb_26/modules/auth/vehicle/views/add_new_vehicle_view.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/bindings/bottom_nabbar_binding.dart';
+import 'package:moeb_26/modules/chat/bindings/chat_bindings.dart';
 import 'package:moeb_26/modules/chat_community/bindings/chat_community_detail_binding.dart';
 import 'package:moeb_26/modules/chat_detail/bindings/chat_detail_binding.dart';
+import 'package:moeb_26/modules/auth/profile/bindings/profile_binding.dart';
 import 'package:moeb_26/modules/job_edit/bindings/job_edit_binding.dart';
 import 'package:moeb_26/modules/my_jobs/bindings/my_jobs_binding.dart';
 import 'package:moeb_26/modules/ride_completed/bindings/ride_completed_binding.dart';
@@ -211,6 +213,7 @@ class Routes {
       name: chatView,
       page: () => ChatView(),
       transition: Transition.noTransition,
+      binding: ChatBinding(),
     ),
     GetPage(
       name: chatDetailView,
@@ -251,6 +254,7 @@ class Routes {
       name: profileView,
       page: () => ProfileView(),
       transition: Transition.noTransition,
+      binding: ProfileBinding(),
     ),
     GetPage(
       name: ratingsFeedbackView,
@@ -272,16 +276,19 @@ class Routes {
       name: otpVerificationView,
       page: () => OtpVerificationView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: forgetotpVerificationView,
       page: () => OtpVerificationView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: changePasswordView,
       page: () => ChangePasswordView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
     GetPage(
       name: myItemsView,
@@ -308,6 +315,7 @@ class Routes {
       name: personalDocumentView,
       page: () => PersonalDocumentView(),
       transition: Transition.noTransition,
+      binding: AuthBinding(),
     ),
   ];
 }
