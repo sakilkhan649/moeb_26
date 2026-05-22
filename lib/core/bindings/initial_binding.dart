@@ -4,7 +4,6 @@ import 'package:moeb_26/modules/auth/splash/controller/splash_controller.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/controllers/bottom_nabbar_controller.dart';
 import 'package:moeb_26/modules/chat/controllers/chat_controller.dart';
 import 'package:moeb_26/modules/my_jobs/controllers/my_jobs_controller.dart';
-import 'package:moeb_26/modules/rides/controllers/rides_controller.dart';
 import 'package:moeb_26/data/repositories/auth_reporitory.dart';
 import 'package:moeb_26/data/repositories/community_repository.dart';
 import 'package:moeb_26/data/repositories/job_repository.dart';

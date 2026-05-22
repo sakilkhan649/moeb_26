@@ -19,7 +19,7 @@ class RideProgressCard extends StatelessWidget {
   final double? padding;
 
   const RideProgressCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.statusLabel,
     required this.statusValue,
@@ -32,7 +32,7 @@ class RideProgressCard extends StatelessWidget {
     this.iconSize,
     this.borderRadius,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -182,7 +182,7 @@ class PersonalDocumentController extends GetxController {
                   loadingBuilder: (_, child, progress) => progress == null
                       ? child
                       : const Center(child: CircularProgressIndicator()),
-                  errorBuilder: (_, __, ___) => const Padding(
+                  errorBuilder: (_, _, _) => const Padding(
                     padding: EdgeInsets.all(20),
                     child: Text(
                       'Failed to load image',

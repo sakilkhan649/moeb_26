@@ -30,7 +30,7 @@ class CustomJobDetailsCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const CustomJobDetailsCard({
-    Key? key,
+    super.key,
     required this.pickupLocation,
     required this.dropoffLocation,
     required this.flightNumber,
@@ -46,7 +46,7 @@ class CustomJobDetailsCard extends StatelessWidget {
     this.valueColor,
     this.iconColor,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

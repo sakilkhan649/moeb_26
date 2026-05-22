@@ -26,7 +26,7 @@ void showContactSupportBottomSheet() {
 // MAIN WIDGET: Contact Support Bottom Sheet
 // ============================================
 class ContactSupportBottomSheet extends StatelessWidget {
-  ContactSupportBottomSheet({Key? key}) : super(key: key);
+  ContactSupportBottomSheet({super.key});
 
   final _formKey = GlobalKey<FormState>();
   final SupportController controller = Get.put(SupportController());

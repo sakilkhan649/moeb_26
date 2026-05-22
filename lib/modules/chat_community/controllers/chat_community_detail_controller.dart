@@ -61,7 +61,7 @@ class CommunityChatDetailController extends GetxController {
   }
 
   Future<void> pickImage() async {
-    final List<XFile>? images = await _picker.pickMultiImage();
+    final List<XFile> images = await _picker.pickMultiImage();
     if (images != null) {
       selectedImages.addAll(images.map((i) => File(i.path)));
     }

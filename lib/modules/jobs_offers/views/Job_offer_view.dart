@@ -291,14 +291,14 @@ class VehicleTypeBadge extends StatelessWidget {
   final FontWeight? fontWeight;
 
   const VehicleTypeBadge({
-    Key? key,
+    super.key,
     required this.vehicleType,
     this.backgroundColor,
     this.gradient,
     this.textColor = Colors.white,
     this.fontSize,
     this.fontWeight,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -340,7 +340,7 @@ class CustomJobCard extends StatefulWidget {
   final dynamic vehicleStyle;
 
   const CustomJobCard({
-    Key? key,
+    super.key,
     required this.dateTime,
     required this.vehicleType,
     required this.pickupLocation,
@@ -357,7 +357,7 @@ class CustomJobCard extends StatefulWidget {
     this.onArrowTap,
     this.onPriceTap,
     required this.vehicleStyle,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomJobCard> createState() => _CustomJobCardState();
@@ -659,7 +659,7 @@ class CustomTextFieldGold extends StatelessWidget {
   final bool readOnly;
 
   const CustomTextFieldGold({
-    Key? key,
+    super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
@@ -668,7 +668,7 @@ class CustomTextFieldGold extends StatelessWidget {
     required this.textInputType,
     this.validator,
     this.readOnly = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

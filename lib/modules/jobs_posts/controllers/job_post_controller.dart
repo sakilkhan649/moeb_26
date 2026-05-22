@@ -121,8 +121,4 @@ class PostJobController extends GetxController {
     }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }

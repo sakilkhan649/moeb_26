@@ -35,8 +35,9 @@ class JobEditController extends GetxController {
     if (type == null) return 'No Collect';
     final t = type.toUpperCase();
     if (t == 'COLLECT') return 'Collect';
-    if (t == 'NO_COLLECT' || t == 'NO COLLECT' || t == 'NOCOLLECT')
+    if (t == 'NO_COLLECT' || t == 'NO COLLECT' || t == 'NOCOLLECT') {
       return 'No Collect';
+    }
     return 'No Collect';
   }
 
@@ -236,8 +237,4 @@ class JobEditController extends GetxController {
     }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }
