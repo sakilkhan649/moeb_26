@@ -1,7 +1,8 @@
 class ApiConstants {
   // Base URL
   // static const String baseUrl = 'https://nayem5001.binarybards.online/api/v1';
-  static const String baseUrl = 'http://10.10.7.47:5001/api/v1';
+  //static const String baseUrl = 'http://10.10.7.47:5001/api/v1';
+  static const String baseUrl = 'http://10.10.7.47:5003/api/v1';
 
   // Auth Endpoints
   static const String login = '/auth/login';

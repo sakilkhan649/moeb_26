@@ -13,6 +13,7 @@ import 'package:moeb_26/modules/chat_detail/bindings/chat_detail_binding.dart';
 import 'package:moeb_26/modules/auth/profile/bindings/profile_binding.dart';
 import 'package:moeb_26/modules/job_edit/bindings/job_edit_binding.dart';
 import 'package:moeb_26/modules/my_jobs/bindings/my_jobs_binding.dart';
+import 'package:moeb_26/modules/my_items/bindings/my_items_binding.dart';
 import 'package:moeb_26/modules/ride_completed/bindings/ride_completed_binding.dart';
 import 'package:moeb_26/modules/ride_details/bindings/ride_details_binding.dart';
 import 'package:moeb_26/modules/service_Area/views/Service_Area_view.dart';
@@ -294,6 +295,7 @@ class Routes {
       name: myItemsView,
       page: () => MyItemsView(),
       transition: Transition.noTransition,
+      binding: MyItemsBinding(),
     ),
 
     GetPage(
