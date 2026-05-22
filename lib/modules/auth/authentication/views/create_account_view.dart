@@ -313,7 +313,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
     }
 
     if (isFormValid && dropdownsValid) {
-      Get.toNamed(Routes.vehicleinformation);
+      Get.toNamed(Routes.vehicleinformationView);
     }
   }
 }

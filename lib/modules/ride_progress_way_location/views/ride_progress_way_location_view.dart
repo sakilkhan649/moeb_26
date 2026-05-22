@@ -16,15 +16,16 @@ import 'package:moeb_26/data/repositories/socket_repository.dart';
 import '../../../core/widgets/RideProgressCard.dart';
 import '../../my_jobs/controllers/my_jobs_controller.dart';
 
-class RideProgressWayLocation extends StatefulWidget {
-  const RideProgressWayLocation({super.key});
+class RideProgressWayLocationView extends StatefulWidget {
+  const RideProgressWayLocationView({super.key});
 
   @override
-  State<RideProgressWayLocation> createState() =>
-      _RideProgressWayLocationState();
+  State<RideProgressWayLocationView> createState() =>
+      _RideProgressWayLocationViewState();
 }
 
-class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
+class _RideProgressWayLocationViewState
+    extends State<RideProgressWayLocationView> {
   final BookingController controller = Get.find<BookingController>();
   JobData? initialJob;
   String? jobId;
@@ -224,7 +225,7 @@ class _RideProgressWayLocationState extends State<RideProgressWayLocation> {
                               textColor: Colors.black,
                               onPressed: () {
                                 Get.toNamed(
-                                  Routes.rideCompletedPage,
+                                  Routes.rideCompletedView,
                                   arguments: job,
                                 );
                               },

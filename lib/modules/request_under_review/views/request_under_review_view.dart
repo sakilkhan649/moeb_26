@@ -12,8 +12,8 @@ import '../../../core/widgets/Custom_Card_Ditails.dart';
 
 /// Review Status Screen
 /// Shows application submission status with animated steps
-class RequestUnderReview extends StatelessWidget {
-  const RequestUnderReview({super.key});
+class RequestUnderReviewView extends StatelessWidget {
+  const RequestUnderReviewView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,7 @@ class RequestUnderReview extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     // Handle tap on the card
-                    Get.toNamed(Routes.rideDetailsPage, arguments: ride);
+                    Get.toNamed(Routes.rideDetailsView, arguments: ride);
                   },
                   child: Builder(
                     builder: (context) {

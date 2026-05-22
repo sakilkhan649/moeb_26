@@ -13,8 +13,8 @@ import '../../../core/widgets/CustomText.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/rides_controller.dart';
 
-class Ridespage extends StatelessWidget {
-  Ridespage({super.key});
+class RidesView extends StatelessWidget {
+  RidesView({super.key});
 
   final RidesController controller = Get.find<RidesController>();
   final List<String> _tabs = ["Upcoming", "Past", "Pending"];
@@ -173,7 +173,7 @@ class Ridespage extends StatelessWidget {
         final UpcomingRideData ride = controller.upcomingRides[index];
         return _buildRideCard(
           ride: ride,
-          onTap: () => Get.toNamed(Routes.rideDetailsPage, arguments: ride),
+          onTap: () => Get.toNamed(Routes.rideDetailsView, arguments: ride),
           date: ride.date,
           time: ride.time,
           pickup: ride.pickupLocation,
@@ -259,7 +259,8 @@ class Ridespage extends StatelessWidget {
         final Ride ride = controller.pendingRides[index];
         return _buildRideCard(
           ride: ride,
-          onTap: () => Get.toNamed(Routes.requestUnderReview, arguments: ride),
+          onTap: () =>
+              Get.toNamed(Routes.requestUnderReviewView, arguments: ride),
           date: ride.date?.toString(),
           time: ride.time,
           pickup: ride.pickupLocation,

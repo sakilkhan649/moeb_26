@@ -14,14 +14,14 @@ import '../../../core/widgets/CustomTextGary.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../../jobs_posts/views/job_post_sheet_tabbar_view.dart';
 
-class Jobofferpage extends StatefulWidget {
-  const Jobofferpage({super.key});
+class JobOfferView extends StatefulWidget {
+  const JobOfferView({super.key});
 
   @override
-  State<Jobofferpage> createState() => _JobofferpageState();
+  State<JobOfferView> createState() => _JobOfferViewState();
 }
 
-class _JobofferpageState extends State<Jobofferpage> {
+class _JobOfferViewState extends State<JobOfferView> {
   final TextEditingController flightNumberController = TextEditingController();
   final TextEditingController paymentMethodController = TextEditingController();
   final TextEditingController specialInstructionsController =
@@ -76,7 +76,7 @@ class _JobofferpageState extends State<Jobofferpage> {
                         text: "New Job",
                         onPressed: () {
                           Get.bottomSheet(
-                            PostJobBottomSheet(),
+                            JobPostSheetTabBarView(),
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
                           );

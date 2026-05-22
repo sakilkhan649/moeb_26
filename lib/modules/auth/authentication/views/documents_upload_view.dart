@@ -122,7 +122,7 @@ class DocumentsuploadView extends StatelessWidget {
                           controller.profilePictureFile.value != null &&
                           controller.headshotFile.value != null;
                       if (docsValid) {
-                        Get.toNamed(Routes.privacyPolicySignUp);
+                        Get.toNamed(Routes.privacyPolicySignUpView);
                       }
                     }
                   },

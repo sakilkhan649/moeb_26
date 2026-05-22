@@ -10,8 +10,8 @@ import '../../../core/widgets/Custom_Card_Ditails.dart';
 
 /// Review Status Screen
 /// Shows application submission status with animated steps
-class RequestSubmitted extends StatelessWidget {
-  const RequestSubmitted({super.key});
+class RequestSubmittedView extends StatelessWidget {
+  const RequestSubmittedView({super.key});
 
   @override
   Widget build(BuildContext context) {

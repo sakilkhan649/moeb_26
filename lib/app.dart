@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(scaffoldBackgroundColor: AppColors.black100),
         debugShowCheckedModeBanner: false,
         getPages: Routes.routes,
-        initialRoute: Routes.splashScreen,
+        initialRoute: Routes.splashView,
         initialBinding: InitialBinding(),
       ),
     );

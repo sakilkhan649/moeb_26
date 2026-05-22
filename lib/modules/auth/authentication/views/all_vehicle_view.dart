@@ -155,7 +155,7 @@ class AllVehicleView extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   Get.toNamed(
-                    Routes.addNewVehicle,
+                    Routes.addNewVehicleView,
                     arguments: {"isEdit": false},
                   );
                 },
@@ -238,7 +238,7 @@ class AllVehicleView extends StatelessWidget {
               onTap: () {
                 Get.back();
                 Get.toNamed(
-                  Routes.addNewVehicle,
+                  Routes.addNewVehicleView,
                   arguments: {"isEdit": true, "vehicle": vehicle},
                 );
               },

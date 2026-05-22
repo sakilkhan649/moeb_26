@@ -8,10 +8,10 @@ import 'package:moeb_26/data/models/Notifications_Model.dart';
 import 'package:moeb_26/modules/my_jobs/controllers/my_jobs_controller.dart';
 import '../controllers/notifications_controller.dart';
 
-class CustomNotificationPopup extends StatelessWidget {
-  CustomNotificationPopup({super.key});
+class NotificationsView extends StatelessWidget {
+  NotificationsView({super.key});
 
-  final NotificationController controller = Get.put(NotificationController());
+  final NotificationController controller = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,10 @@ class CustomNotificationPopup extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF0F0F0F),
           borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 0.5,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -175,7 +178,7 @@ class CustomNotificationPopup extends StatelessWidget {
               : Get.put(BookingController());
           bookingController.isJobAcceptanceView.value = true;
           Get.back(); // Close the popup
-          Get.toNamed(Routes.myJobsScreen);
+          Get.toNamed(Routes.myJobsView);
         }
       },
       child: Obx(() {

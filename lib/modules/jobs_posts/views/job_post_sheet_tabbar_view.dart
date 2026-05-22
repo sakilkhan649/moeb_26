@@ -6,12 +6,12 @@ import 'by_the_hour_view.dart';
 import '../controllers/job_post_controller.dart';
 import 'one_way_view.dart';
 
-class PostJobBottomSheet extends StatelessWidget {
-  const PostJobBottomSheet({super.key});
+class JobPostSheetTabBarView extends StatelessWidget {
+  const JobPostSheetTabBarView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final PostJobController controller = Get.put(PostJobController());
+    final PostJobController controller = Get.find<PostJobController>();
 
     return Container(
       height: 0.9.sh,

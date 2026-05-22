@@ -93,16 +93,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         Obx(
           () => GestureDetector(
-            onTap:
-                onNotificationTap ??
-                () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return CustomNotificationPopup();
-                    },
-                  );
-                },
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -138,6 +128,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
               ],
             ),
+            onTap:
+                onNotificationTap ??
+                () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return NotificationsView();
+                    },
+                  );
+                },
           ),
         ),
         SizedBox(width: 10.w),
@@ -305,7 +305,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (onAccountTap != null) {
           onAccountTap!();
         } else {
-          Get.toNamed(Routes.profileScreen);
+          Get.toNamed(Routes.profileView);
         }
         break;
       // case 1:
