@@ -4,7 +4,6 @@ import 'package:dio/dio.dart' as dio;
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/repositories/job_repository.dart';
-import 'package:moeb_26/modules/bottom_nab_bar/controllers/bottom_nabbar_controller.dart';
 
 class RideCompletedController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();
