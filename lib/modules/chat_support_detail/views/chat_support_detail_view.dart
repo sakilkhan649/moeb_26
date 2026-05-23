@@ -10,7 +10,7 @@ import '../../../data/models/chat_message_model.dart';
 class SupportChatDetailView extends StatelessWidget {
   SupportChatDetailView({super.key});
 
-  final SupportChatController controller = Get.find<SupportChatController>();
+  final SupportChatController controller = Get.put(SupportChatController());
 
   @override
   Widget build(BuildContext context) {

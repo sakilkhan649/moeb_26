@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/vehicle_model.dart';
-import 'package:moeb_26/modules/service_area/controllers/serviceController.dart';
+import 'package:moeb_26/modules/service_Area/controllers/serviceController.dart';
 import 'package:moeb_26/core/services/auth_service.dart';
 
 class SignupController extends GetxController {
@@ -29,7 +29,6 @@ class SignupController extends GetxController {
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
   final emailController = TextEditingController();
-  final homeAddressController = TextEditingController();
   final yearController = TextEditingController();
   final companyNameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -192,7 +191,6 @@ class SignupController extends GetxController {
         email: emailController.text,
         password: passwordController.text,
         phone: phoneController.text,
-        home: "Home",
         serviceArea: selectedArea.value,
         experience: int.tryParse(yearController.text) ?? 0,
         company: companyNameController.text,
@@ -236,7 +234,6 @@ class SignupController extends GetxController {
     nameController.dispose();
     phoneController.dispose();
     emailController.dispose();
-    homeAddressController.dispose();
     yearController.dispose();
     companyNameController.dispose();
     passwordController.dispose();

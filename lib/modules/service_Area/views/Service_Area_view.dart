@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
-import '../Controllers/serviceController.dart';
+import '../controllers/serviceController.dart';
 
 class ServiceAreaView extends StatefulWidget {
   const ServiceAreaView({super.key});
@@ -13,7 +13,7 @@ class ServiceAreaView extends StatefulWidget {
 }
 
 class _ServiceAreaViewState extends State<ServiceAreaView> {
-  final ServiceAreaController controller = Get.find<ServiceAreaController>();
+  final ServiceAreaController controller = Get.put(ServiceAreaController());
 
   @override
   Widget build(BuildContext context) {

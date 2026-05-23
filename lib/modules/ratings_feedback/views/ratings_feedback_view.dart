@@ -9,8 +9,9 @@ import '../../../core/widgets/Custom_AppBar.dart';
 class RatingsFeedbackView extends StatelessWidget {
   RatingsFeedbackView({super.key});
 
-  final RatingsFeedbackController controller =
-      Get.find<RatingsFeedbackController>();
+  final RatingsFeedbackController controller = Get.put(
+    RatingsFeedbackController(),
+  );
 
   @override
   Widget build(BuildContext context) {
