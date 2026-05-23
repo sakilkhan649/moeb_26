@@ -135,6 +135,7 @@ class _JobEditViewState extends State<JobEditView> {
                                     double.tryParse(payController.text) ?? 0.0,
                                 instruction: specialController.text,
                               );
+                              Get.back();
                             },
                           ),
                         ),

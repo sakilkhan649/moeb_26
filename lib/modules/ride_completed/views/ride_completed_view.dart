@@ -186,7 +186,7 @@ class RideCompletedView extends StatelessWidget {
                 textColor: Color(0xFFD08700),
                 borderColor: Color(0xFF364153),
                 onPressed: () {
-                  Get.back();
+                  controller.skipReview();
                 },
               ),
               SizedBox(height: 20.h),

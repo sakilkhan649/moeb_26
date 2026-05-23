@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/repositories/job_repository.dart';
+import 'package:moeb_26/modules/bottom_nab_bar/controllers/bottom_nabbar_controller.dart';
 
 class RideCompletedController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();
@@ -43,8 +45,8 @@ class RideCompletedController extends GetxController {
           "Review submitted successfully",
           isError: false,
         );
-        // Navigate back to HomeScreens with arguments for tab selection
-        Get.back();
+        // Navigate back to BottomNabbarView with index 1 (Rides tab)
+        Get.offAllNamed(Routes.bottomNabbarView, arguments: 1);
       } else {
         Helpers.showCustomSnackBar(
           response.data['message'] ?? "Failed to submit review",
@@ -64,7 +66,7 @@ class RideCompletedController extends GetxController {
   }
 
   void skipReview() {
-    Get.back();
+    Get.offAllNamed(Routes.bottomNabbarView, arguments: 1);
   }
 
   @override
