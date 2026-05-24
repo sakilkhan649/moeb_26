@@ -24,8 +24,6 @@ class ServiceAreaController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Get current user's service area from profile
-    final userProfile = Get.find<UserService>().userId;
     _initCurrentServiceArea();
     // Default load (initial fetch)
     fetchServiceAreas();
@@ -33,7 +31,6 @@ class ServiceAreaController extends GetxController {
   }
 
   void _initCurrentServiceArea() {
-    final userService = Get.find<UserService>();
     // If the UserService has the profile data, we could pre-select it
     // For now, it will be updated when the user selects one
   }
@@ -92,10 +89,10 @@ class ServiceAreaController extends GetxController {
     super.onClose();
   }
 
-  void _onScroll() {
+  Future<void> _onScroll() {
     if (!scrollController.hasClients ||
         scrollController.positions.length != 1) {
-      return;
+      return Future.value();
     }
     if (scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 200 &&
@@ -104,6 +101,7 @@ class ServiceAreaController extends GetxController {
         currentPage.value < totalPages.value) {
       loadMoreServiceAreas();
     }
+    return Future.value();
   }
 
   Future<void> fetchServiceAreas({bool isRefresh = false}) async {
@@ -112,7 +110,6 @@ class ServiceAreaController extends GetxController {
 
     if (isRefresh) {
       currentPage.value = 1;
-      // serviceAreas.clear(); // Don't clear immediately to avoid flicker, clear after success
     }
 
     try {
@@ -122,15 +119,14 @@ class ServiceAreaController extends GetxController {
         isMoreLoading.value = true;
       }
 
-      print("Service Areas Request: Page ${currentPage.value}, Limit $limit");
+      debugPrint("Service Areas Request: Page ${currentPage.value}, Limit $limit");
 
       final response = await _serviceAreasService.getAllServiceAreas(
         page: currentPage.value,
         limit: limit,
       );
 
-      print("Service Areas API Response Code: ${response.statusCode}");
-      // print("Service Areas API Response data: ${response.data}");
+      debugPrint("Service Areas API Response Code: ${response.statusCode}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         ServiceAreaResponseModel data;
@@ -157,7 +153,7 @@ class ServiceAreaController extends GetxController {
                 .toList(),
           );
         } else {
-          print("Service Areas API: Unknown data format: ${response.data}");
+          debugPrint("Service Areas API: Unknown data format: ${response.data}");
           return;
         }
 
@@ -166,23 +162,17 @@ class ServiceAreaController extends GetxController {
         if (currentPage.value == 1) {
           serviceAreas.assignAll(data.data);
           if (serviceAreas.isEmpty) {
-            print(
-              "Service Areas API: Response successful but data list is empty",
-            );
+            debugPrint("Service Areas API: Response successful but data list is empty");
           }
         } else {
           serviceAreas.addAll(data.data);
         }
-        print(
-          "Service Areas loaded: ${serviceAreas.length} items (Page ${currentPage.value}/${totalPages.value})",
-        );
+        debugPrint("Service Areas loaded: ${serviceAreas.length} items (Page ${currentPage.value}/${totalPages.value})");
       } else {
-        print(
-          "Service Areas API Error: ${response.statusCode} - ${response.statusMessage}",
-        );
+        debugPrint("Service Areas API Error: ${response.statusCode} - ${response.statusMessage}");
       }
     } catch (e) {
-      print("Error fetching service areas: $e");
+      debugPrint("Error fetching service areas: $e");
     } finally {
       isLoading.value = false;
       isMoreLoading.value = false;

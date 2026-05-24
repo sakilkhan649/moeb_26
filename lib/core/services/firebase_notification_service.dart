@@ -4,11 +4,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:moeb_26/config/constants/app_constants.dart';
 import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/core/services/storege_service.dart';
+import 'package:moeb_26/firebase_options.dart';
 
 // Background message handler (must be top-level function)
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   print('📬 Background Message: ${message.messageId}');
 }
 
@@ -80,7 +83,7 @@ class FirebaseNotificationService {
   // Initialize local notifications
   static Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('ic_notification');
 
     const DarwinInitializationSettings iosSettings =
         DarwinInitializationSettings(
@@ -135,7 +138,7 @@ class FirebaseNotificationService {
                 'This channel is used for important notifications.',
             importance: Importance.high,
             priority: Priority.high,
-            icon: '@mipmap/ic_launcher',
+            icon: 'ic_notification',
           ),
           iOS: DarwinNotificationDetails(
             presentAlert: true,

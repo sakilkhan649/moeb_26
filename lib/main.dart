@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moeb_26/app.dart';
 import 'package:moeb_26/core/services/firebase_notification_service.dart';
+import 'package:moeb_26/firebase_options.dart';
 
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  // Initialize Firebase
-  await Firebase.initializeApp();
+  // Initialize Firebase with options
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // Initialize Firebase Messaging
   await FirebaseNotificationService.initialize();
