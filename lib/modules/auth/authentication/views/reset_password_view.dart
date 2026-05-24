@@ -10,9 +10,11 @@ import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/forget_password_controller.dart';
 
 class ResetPasswordView extends StatelessWidget {
-  ResetPasswordView({super.key});
-
   final _controller = Get.find<ForgotPasswordController>();
+
+  ResetPasswordView({super.key}) {
+    _controller.formKey = GlobalKey<FormState>();
+  }
 
   @override
   Widget build(BuildContext context) {

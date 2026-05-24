@@ -10,9 +10,11 @@ import 'package:pinput/pinput.dart';
 import 'package:moeb_26/modules/auth/authentication/controllers/otp_verification_controller.dart';
 
 class OtpVerificationView extends StatelessWidget {
-  OtpVerificationView({super.key});
-
   final OtpController controller = Get.find<OtpController>();
+
+  OtpVerificationView({super.key}) {
+    controller.formKey = GlobalKey<FormState>();
+  }
 
   @override
   Widget build(BuildContext context) {

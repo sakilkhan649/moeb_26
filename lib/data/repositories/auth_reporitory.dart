@@ -185,10 +185,9 @@ class AuthRepo {
     required String confirmPassword,
   }) async {
     return await apiClient.postData(ApiConstants.resetPassword, {
-      "resetToken": resetToken, // 👈 যোগ করো
       "newPassword": newPassword,
       "confirmPassword": confirmPassword,
-    });
+    }, resetToken: resetToken);
   }
 
   /// ===================== LOGOUT =====================

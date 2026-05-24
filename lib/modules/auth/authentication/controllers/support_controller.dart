@@ -69,7 +69,7 @@ class SupportController extends GetxController {
   void handleTicketTap(dynamic ticket) {
     if (ticket['chat'] == null) {
       Helpers.showCustomSnackBar(
-        "Admin has not created a chat yet, please wait.",
+        "Admin has not yet created a chat, please wait.",
         isError: true,
       );
     } else {

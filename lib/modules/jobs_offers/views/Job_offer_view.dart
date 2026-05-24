@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -214,11 +215,15 @@ class _JobOfferViewState extends State<JobOfferView> {
                                       // Handle arrow tap
                                       controller.applyToJob(jobId: job.id);
 
-                                      print("Arrow tapped");
+                                      if (kDebugMode) {
+                                        print("Arrow tapped");
+                                      }
                                     },
                                     onPriceTap: () {
                                       // Handle price tap
-                                      print("Price tapped");
+                                      if (kDebugMode) {
+                                        print("Price tapped");
+                                      }
                                     },
                                   ),
                                 );

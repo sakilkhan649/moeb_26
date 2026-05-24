@@ -11,7 +11,7 @@ class SigninController extends GetxController {
   final isLoading = false.obs;
   final isPasswordVisible = false.obs;
   final errorMessage = ''.obs;
-  final formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 

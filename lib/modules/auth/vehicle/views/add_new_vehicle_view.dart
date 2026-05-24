@@ -15,7 +15,7 @@ class AddNewVehicleView extends StatelessWidget {
 
   AddNewVehicleView({super.key}) {
     // Inject a completely fresh and unique controller instance
-    Get.find<VehicleActionController>(tag: tag);
+    Get.put(VehicleActionController(), tag: tag);
   }
 
   // Find the exact instance using the unique tag

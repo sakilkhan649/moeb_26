@@ -7,7 +7,7 @@ import 'package:moeb_26/core/utils/helpers.dart';
 class ResetPasswordController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
 
-  final formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 

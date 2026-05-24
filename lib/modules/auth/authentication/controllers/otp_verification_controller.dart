@@ -9,7 +9,7 @@ class OtpController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
 
   final pinController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   var isLoading = false.obs;
   var remainingSeconds = 30.obs;
@@ -83,7 +83,11 @@ class OtpController extends GetxController {
     if (!canResend.value) return;
     try {
       isLoading.value = true;
-      await _authService.resendOtp(email);
+      if (isRegister) {
+        await _authService.resendOtp(email);
+      } else {
+        await _authService.forgotPassword(email);
+      }
       Helpers.showCustomSnackBar('OTP Resent Successfully', isError: false);
       pinController.clear();
       startTimer();

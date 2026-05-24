@@ -149,8 +149,12 @@ class BookingController extends GetxController {
         Helpers.showCustomSnackBar('Job applied successfully.', isError: false);
         Get.toNamed(Routes.requestSubmittedView, arguments: appliedJob);
       }
+    } on DioException catch (e) {
+      final message = e.response?.data['message'] ?? 'Failed to apply for job.';
+      Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
       Helpers.showDebugLog("job application error:$e");
+      Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
       isLoadingList.value = false;
     }

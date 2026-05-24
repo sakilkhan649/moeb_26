@@ -11,9 +11,11 @@ import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signin_controller.dart';
 
 class SignInView extends StatelessWidget {
-  SignInView({super.key});
-
   final _controller = Get.find<SigninController>();
+
+  SignInView({super.key}) {
+    _controller.formKey = GlobalKey<FormState>();
+  }
 
   @override
   Widget build(BuildContext context) {

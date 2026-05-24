@@ -230,7 +230,7 @@ class ApiClient extends GetxService {
           ? Options(
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer $resetToken',
+                'Authorization': resetToken,
               },
             )
           : null,

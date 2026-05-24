@@ -10,9 +10,13 @@ import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signup_controller.dart';
 
 class DocumentsuploadView extends StatelessWidget {
-  DocumentsuploadView({super.key});
-
   final controller = Get.find<SignupController>();
+
+  DocumentsuploadView({super.key}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.showErrors.value = false;
+    });
+  }
   final _formKey = GlobalKey<FormState>();
 
   @override

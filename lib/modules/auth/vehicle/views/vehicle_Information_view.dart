@@ -62,9 +62,8 @@ class VehicleInformationView extends StatelessWidget {
 
                       SizedBox(height: 25.h),
 
-                      // Add Another Vehicle Button
-                      CustomAddButton(onPressed: () => controller.addVehicle()),
-
+                      // // Add Another Vehicle Button
+                      // CustomAddButton(onPressed: () => controller.addVehicle()),
                       SizedBox(height: 30.h),
 
                       CustomButton(
