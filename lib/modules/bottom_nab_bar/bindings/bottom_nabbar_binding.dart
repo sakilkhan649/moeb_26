@@ -12,12 +12,12 @@ class BottomNabbarBinding extends Bindings {
   @override
   void dependencies() {
     Get.put(NavigationController());
-    Get.lazyPut(() => ChatController());
-    Get.lazyPut(() => RidesController());
-    Get.lazyPut(() => BookingController());
-    Get.lazyPut(() => MarketplaceController());
-    Get.lazyPut(() => DealsController());
-    Get.lazyPut(() => PostJobController());
-    Get.lazyPut(() => OnewayController());
+    Get.lazyPut(() => ChatController(), fenix: true);
+    Get.lazyPut(() => RidesController(), fenix: true);
+    Get.lazyPut(() => BookingController(), fenix: true);
+    Get.lazyPut(() => MarketplaceController(), fenix: true);
+    Get.lazyPut(() => DealsController(), fenix: true);
+    Get.lazyPut(() => PostJobController(), fenix: true);
+    Get.lazyPut(() => OnewayController(), fenix: true);
   }
 }

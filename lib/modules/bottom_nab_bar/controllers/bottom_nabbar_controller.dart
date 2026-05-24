@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../../rides/controllers/rides_controller.dart';
 import '../../my_jobs/controllers/my_jobs_controller.dart';
@@ -24,24 +25,32 @@ class NavigationController extends GetxController {
       // Index 0 is JobOfferPage
       try {
         Get.find<BookingController>().fetchJobOffers(isRefresh: true);
-      } catch (_) {}
+      } catch (e) {
+        debugPrint("NavigationController fetchJobOffers error: $e");
+      }
     } else if (index == 1) {
       // Index 1 is RidesPage
       try {
         Get.find<RidesController>().refreshCurrentTab();
-      } catch (_) {}
+      } catch (e) {
+        debugPrint("NavigationController refreshCurrentTab error: $e");
+      }
     } else if (index == 2) {
       // Index 2 is ChatPage
       try {
         Get.find<ChatController>().fetchChats();
-      } catch (_) {}
+      } catch (e) {
+        debugPrint("NavigationController fetchChats error: $e");
+      }
     } else if (index == 4) {
       // Index 4 is DealsPage
       try {
         if (Get.isRegistered<DealsController>()) {
           Get.find<DealsController>().fetchDeals();
         }
-      } catch (_) {}
+      } catch (e) {
+        debugPrint("NavigationController fetchDeals error: $e");
+      }
     }
   }
 }

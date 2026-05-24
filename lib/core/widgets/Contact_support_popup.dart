@@ -113,6 +113,7 @@ class ContactSupportBottomSheet extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: 20.h),
         ],
       ),
     );

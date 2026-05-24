@@ -8,9 +8,16 @@ import 'package:moeb_26/core/services/storege_service.dart';
 
 class SplashScreenController extends GetxController {
   RxInt currentIndex = 0.obs; // Reactive state for dot index
+  Timer? _periodicTimer;
+  Timer? _navigationTimer;
+
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
+    _initAsync();
+  }
+
+  Future<void> _initAsync() async {
     AppConstants.fcmToken = await StorageService.getString(
       StorageConstants.fcmToken,
     );
@@ -18,7 +25,7 @@ class SplashScreenController extends GetxController {
 
   // Start the timer and change the dot index over time
   void startTimer() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    _periodicTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (currentIndex.value < 2) {
         currentIndex.value++; // Update the current dot index
       } else {
@@ -27,7 +34,7 @@ class SplashScreenController extends GetxController {
     });
 
     // After 3 seconds, check login and navigate
-    Timer(const Duration(seconds: 3), () {
+    _navigationTimer = Timer(const Duration(seconds: 3), () {
       checkLogin();
     });
   }
@@ -41,5 +48,12 @@ class SplashScreenController extends GetxController {
     } else {
       Get.offAll(() => const AuthSelectionView());
     }
+  }
+
+  @override
+  void onClose() {
+    _periodicTimer?.cancel();
+    _navigationTimer?.cancel();
+    super.onClose();
   }
 }

@@ -1,93 +1,174 @@
-{
-    "success": true,
-    "message": "Profile data retrieved successfully",
-    "data": {
-        "_id": "69d2afcf2c74b5f393f64989",
-        "name": "Md Bayzid Hosen",
-        "role": "DRIVER",
-        "email": "mdbayazid131@gmail.com",
-        "phone": "01990641482",
-        "home": "Dhaka",
-        "serviceArea": "Manhattan",
-        "experience": 5,
-        "company": "STA",
-        "companyRole": "DRIVER",
-        "profilePicture": "https://i.ibb.co/z5YHLV9/profile.png",
-        "status": "ACTIVE",
-        "verified": true,
-        "deviceTokens": [
-            "optional-fcm-token",
-            "eAcF-muqQkSYTZ5roBEQA2:APA91bGQ7lbsz_Afxn6xKojvOiKl25k-FSOxV0rHJGYHdJ8dZh5LFdigP_m2GDHKkEE4w7p1tkGG9t7U7WsMwHbKh5wjLA-IyMtYqM1nF9WtT5VV2rBdFtM"
-        ],
-        "vehicles": [
-            {
-                "carType": "SUV",
-                "make": "Mercedes",
-                "model": "B",
-                "colorInside": "black",
-                "colorOutside": "black",
-                "year": 2005,
-                "licensePlate": "AB-123",
-                "vehicleRegistration": {
-                    "image": "http://10.10.7.47:5001/uploads/images/1775415247252-gjejvs.png",
-                    "expiryDate": "2026-04-29T18:00:00.000Z"
-                },
-                "commercialInsurance": {
-                    "image": "http://10.10.7.47:5001/uploads/images/1775415247270-9azkoj.png",
-                    "expiryDate": "2026-04-29T18:00:00.000Z"
-                },
-                "photos": {
-                    "frontView": "http://10.10.7.47:5001/uploads/images/1775415247288-9bzqme.png",
-                    "rearView": "http://10.10.7.47:5001/uploads/images/1775415247316-y7scq8.png",
-                    "interiorView": "http://10.10.7.47:5001/uploads/images/1775415247334-w04vz2.png"
-                },
-                "_id": "69d2afcf2c74b5f393f6498a"
-            },
-            {
-                "carType": "Bus",
-                "make": "alif",
-                "model": "s",
-                "colorInside": "yellow",
-                "colorOutside": "yellow",
-                "year": 2008,
-                "licensePlate": "1234",
-                "vehicleRegistration": {
-                    "image": "http://10.10.7.47:5001/uploads/images/1775421907186-kvp68x.png",
-                    "expiryDate": "2026-04-30T00:00:00.000Z"
-                },
-                "commercialInsurance": {
-                    "image": "http://10.10.7.47:5001/uploads/images/1775421907187-m60ym7.png",
-                    "expiryDate": "2026-04-30T00:00:00.000Z"
-                },
-                "photos": {
-                    "frontView": "http://10.10.7.47:5001/uploads/images/1775421907228-0kq73x.png",
-                    "rearView": "http://10.10.7.47:5001/uploads/images/1775421907276-zgeug4.png",
-                    "interiorView": "http://10.10.7.47:5001/uploads/images/1775421907305-6wfhal.png"
-                },
-                "_id": "69d2c9d3e74511d58b834dee"
-            }
-        ],
-        "drivingLicense": {
-            "image": "http://10.10.7.47:5001/uploads/images/1775421804782-yt78bk.jpg",
-            "expiryDate": "2026-04-30T00:00:00.000Z"
-        },
-        "hackLicense": {
-            "image": "http://10.10.7.47:5001/uploads/images/1775421804784-nd90uj.jpg",
-            "expiryDate": "2026-04-30T00:00:00.000Z"
-        },
-        "localPermit": {
-            "image": "http://10.10.7.47:5001/uploads/images/1775421804794-gaxiyl.jpg",
-            "expiryDate": "2026-04-30T00:00:00.000Z"
-        },
-        "uploadedHeadshot": "http://10.10.7.47:5001/uploads/images/1775421804808-v2q9op.jpg",
-        "blockReason": null,
-        "averageRating": 0,
-        "totalReviews": 0,
-        "createdAt": "2026-04-05T18:54:07.466Z",
-        "updatedAt": "2026-04-05T20:54:47.812Z",
-        "__v": 0,
-        "selectedVehicle": "69d2c9d3e74511d58b834dee",
-        "nickname": "bayzid",
-        "uid": "MAN-706571"
-    }
+Now I have a comprehensive understanding of the project. Let me provide the final response with all the key files referenced.
+
+আমি তোমার পুরো প্রজেক্ট রিভিউ করেছি। এটা একটা Flutter ride-sharing/driver app যেটা GetX ব্যবহার করছে। নিচে বিস্তারিত findings দিচ্ছি:
+
+---
+
+## 🔴 Critical Issues (Publishing এর আগে অবশ্যই Fix করতে হবে)
+
+### 1. Hardcoded Development URL — BLOCKER
+`api_constants.dart` এ local IP আছে:
+```dart
+static const String baseUrl = 'http://10.10.7.47:5003/api/v1';
+```
+Production URL দিতে হবে, অথবা environment-based config করতে হবে।
+
+### 2. AuthService এ Duplicate ApiClient তৈরি হচ্ছে
+`auth_service.dart` এ:
+```dart
+_authRepo = AuthRepo(apiClient: Get.put(ApiClient()));
+```
+এটা নতুন ApiClient তৈরি করছে, কিন্তু InitialBinding এ আগেই একটা registered আছে। এটা হওয়া উচিত:
+```dart
+_authRepo = AuthRepo(apiClient: Get.find<ApiClient>());
+```
+
+### 3. Signup এ Null Force-Unwrap — Crash হবে
+`signup_controller.dart` এর `submitAll()` এ:
+```dart
+drivingLicenseFile: licensePlateFile.value!,  // null হলে crash!
+hackLicenseFile: hackLicenseFile.value!,       // null হলে crash!
+headshotFile: headshotFile.value!,             // null হলে crash!
+```
+User যদি file select না করে submit করে, app crash করবে। Null check দরকার।
+
+### 4. SplashController এ async onInit — Wrong Pattern
+```dart
+@override
+void onInit() async {  // ❌ GetX onInit async হওয়া উচিত না
+  super.onInit();
+```
+সঠিক উপায়:
+```dart
+@override
+void onInit() {
+  super.onInit();
+  _initAsync();
 }
+Future<void> _initAsync() async { ... }
+```
+
+### 5. Timer Leak — SplashScreenController
+`Timer.periodic` কখনো cancel হচ্ছে না যদি controller early dispose হয়। `onClose()` এ cancel করতে হবে।
+
+---
+
+## 🟠 Architecture & Logic Issues
+
+### 6. StorageService — Performance Problem
+প্রতিটা call এ নতুন `SharedPreferences.getInstance()` করছে:
+```dart
+static Future<String> getString(String key) async {
+  final preferences = await SharedPreferences.getInstance(); // প্রতিবার!
+```
+Instance cache করা উচিত:
+```dart
+static SharedPreferences? _prefs;
+static Future<SharedPreferences> get _instance async {
+  _prefs ??= await SharedPreferences.getInstance();
+  return _prefs!;
+}
+```
+
+### 7. BottomNabbarBinding — `lazyPut` without `fenix: true`
+```dart
+Get.lazyPut(() => ChatController());
+Get.lazyPut(() => RidesController());
+```
+যদি controller dispose হয়ে আবার দরকার হয়, recreate হবে না। `fenix: true` দিতে হবে:
+```dart
+Get.lazyPut(() => ChatController(), fenix: true);
+```
+
+### 8. NavigationController — Silent Error Swallowing
+```dart
+void changeIndex(int index) {
+  try {
+    Get.find<BookingController>().fetchJobOffers(isRefresh: true);
+  } catch (_) {}  // ❌ সব error চুপচাপ ignore হচ্ছে
+}
+```
+অন্তত `debugPrint` করা উচিত catch block এ।
+
+### 9. Middleware সম্পূর্ণ Commented Out
+`middleware.dart` পুরোটাই commented — কোনো route protection নেই। Authenticated routes এ unauthorized access সম্ভব।
+
+### 10. Missing Bindings — অনেক Route এ
+`jobApproveView`, `rideProgressWayLocationView`, `ratingsFeedbackView`, `allVehicleView`, `addNewVehicleView` — এগুলোতে binding নেই। Controller manually manage করতে হচ্ছে।
+
+### 11. `postData()` Inconsistency — ApiClient
+`getData`, `putData`, `deleteData` সব try-catch এ wrapped, কিন্তু `postData()` নয়। Error handling inconsistent।
+
+---
+
+## 🟡 Code Quality & Clean Code Issues
+
+### 12. Naming Convention Violations
+| Problem | Example |
+|---------|---------|
+| Typo in filename | `storege_service.dart` (storage) |
+| Typo in filename | `my_items_serveice.dart` (service) |
+| PascalCase file | `ContactSellerPopup.dart`, `Custom_AppBar.dart` |
+| Mixed case | `Job_offer_view.dart`, `Service_Area_view.dart` |
+
+Dart convention: সব file name `snake_case` হওয়া উচিত।
+
+### 13. `print()` Statements — Production Code এ
+`rides_controller.dart`, `chat_controller.dart`, `auth_service.dart`, `firebase_notification_service.dart` — সবখানে `print()` আছে। Production build এ `debugPrint()` ব্যবহার করো অথবা সরিয়ে দাও।
+
+### 14. VehicleModel — UI + Data Mixed
+`VehicleModel` এ `TextEditingController` এবং `Rx<File?>` আছে — এটা data model, UI state এখানে থাকা উচিত না। আলাদা `VehicleFormState` class বানাও।
+
+### 15. Deprecated API Usage
+- `withOpacity()` → Flutter 3.27+ এ deprecated, `withValues()` ব্যবহার করো
+- `MaterialStateProperty` → `WidgetStateProperty` ব্যবহার করো
+
+### 16. Dead Code / Unnecessary Files
+- `analyze_out.txt` — project এ থাকা উচিত না
+- `response.txt` — project এ থাকা উচিত না
+- Commented out code blocks (middleware, snackbar helpers)
+
+---
+
+## 🟢 Security Recommendations
+
+### 17. Token Storage — Unencrypted
+SharedPreferences এ bearer token store হচ্ছে — এটা unencrypted। `flutter_secure_storage` ব্যবহার করো।
+
+### 18. google-services.json — Git এ আছে
+Public repo হলে এটা `.gitignore` এ add করো।
+
+### 19. No Certificate Pinning
+Dio client এ SSL pinning নেই — man-in-the-middle attack সম্ভব।
+
+---
+
+## 📋 Implementation Plan (Priority Order)
+
+| # | Task | Priority | Effort |
+|---|------|----------|--------|
+| 1 | Production URL setup (environment config) | 🔴 Critical | 1-2 hrs |
+| 2 | Fix AuthService duplicate ApiClient | 🔴 Critical | 5 min |
+| 3 | Add null checks in signup submitAll() | 🔴 Critical | 30 min |
+| 4 | Fix SplashController async onInit + Timer leak | 🔴 Critical | 15 min |
+| 5 | Cache SharedPreferences instance | 🟠 High | 30 min |
+| 6 | Add `fenix: true` to lazyPut bindings | 🟠 High | 15 min |
+| 7 | Add missing bindings to routes | 🟠 High | 1 hr |
+| 8 | Fix postData() error handling consistency | 🟠 High | 20 min |
+| 9 | Implement route middleware/auth guard | 🟠 High | 2 hrs |
+| 10 | Rename files to snake_case convention | 🟡 Medium | 1-2 hrs |
+| 11 | Replace print() with debugPrint() or remove | 🟡 Medium | 30 min |
+| 12 | Separate VehicleModel from form state | 🟡 Medium | 1 hr |
+| 13 | Fix deprecated API calls | 🟡 Medium | 1 hr |
+| 14 | Remove dead code & unnecessary files | 🟡 Medium | 30 min |
+| 15 | Switch to flutter_secure_storage | 🟢 Nice-to-have | 1-2 hrs |
+| 16 | Add SSL pinning | 🟢 Nice-to-have | 1 hr |
+| 17 | Update AppConstants.appName | 🟢 Nice-to-have | 1 min |
+
+---
+
+## Summary
+
+তোমার project structure overall ভালো — GetX pattern ঠিকমতো follow করা হয়েছে, service-repository separation আছে। কিন্তু publishing এর আগে **top 4 critical issues** অবশ্যই fix করতে হবে, নাহলে production এ crash বা security issue হবে। বাকিগুলো code quality improve করবে।
+
+কোনো specific issue নিয়ে detail এ জানতে চাইলে বলো!

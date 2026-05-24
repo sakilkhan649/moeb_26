@@ -170,6 +170,30 @@ class SignupController extends GetxController {
       return;
     }
 
+    if (licensePlateFile.value == null) {
+      Helpers.showCustomSnackBar(
+        'Please upload your driving license image',
+        isError: true,
+      );
+      return;
+    }
+
+    if (hackLicenseFile.value == null) {
+      Helpers.showCustomSnackBar(
+        'Please upload your hack license image',
+        isError: true,
+      );
+      return;
+    }
+
+    if (headshotFile.value == null) {
+      Helpers.showCustomSnackBar(
+        'Please upload your headshot image',
+        isError: true,
+      );
+      return;
+    }
+
     try {
       isLoading.value = true;
 

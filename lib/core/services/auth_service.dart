@@ -28,7 +28,7 @@ class AuthService extends GetxService {
   void onInit() {
     super.onInit();
     // Explicitly find ApiClient to ensure it's initialized before AuthRepo
-    _authRepo = AuthRepo(apiClient: Get.put(ApiClient()));
+    _authRepo = AuthRepo(apiClient: Get.find<ApiClient>());
 
     // Check initial login state
     _checkLoginStatus();
