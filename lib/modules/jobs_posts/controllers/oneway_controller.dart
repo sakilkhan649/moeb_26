@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class OnewayController extends GetxController {
-  var selectedRole = 'No Collect'.obs;
-  var roles = ['No Collect', 'Collect'].obs;
+  var selectedRole = 'Credit Card on File'.obs;
+  var roles = ['Credit Card on File', 'Collect Payment'].obs;
 
   var selectedDate = Rxn<DateTime>();
   var selectedTime = Rxn<TimeOfDay>();

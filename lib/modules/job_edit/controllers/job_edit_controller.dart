@@ -9,15 +9,15 @@ import '../../my_jobs/controllers/my_jobs_controller.dart';
 class JobEditController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();
 
-  var selectedRole = 'No Collect'.obs;
-  var roles = ['No Collect', 'Collect'].obs;
+  var selectedRole = 'Credit Card on File'.obs;
+  var roles = ['Credit Card on File', 'Collect Payment'].obs;
 
   var selectedDate = Rxn<DateTime>();
   var selectedTime = Rxn<TimeOfDay>();
   var formattedTime = "".obs;
 
   var selectedVehicle = ''.obs;
-  var paymentMethod = 'No Collect'.obs;
+  var paymentMethod = 'Credit Card on File'.obs;
 
   var isLoading = false.obs;
   JobData? job;
@@ -32,13 +32,13 @@ class JobEditController extends GetxController {
   }
 
   String _normalizePaymentType(String? type) {
-    if (type == null) return 'No Collect';
+    if (type == null) return 'Credit Card on File';
     final t = type.toUpperCase();
-    if (t == 'COLLECT') return 'Collect';
+    if (t == 'COLLECT') return 'Collect Payment';
     if (t == 'NO_COLLECT' || t == 'NO COLLECT' || t == 'NOCOLLECT') {
-      return 'No Collect';
+      return 'Credit Card on File';
     }
-    return 'No Collect';
+    return 'Credit Card on File';
   }
 
   String _normalizeVehicleType(String? type) {
@@ -208,7 +208,7 @@ class JobEditController extends GetxController {
         date: dateStr,
         time: timeStr,
         vehicleType: selectedVehicle.value.toUpperCase(), // Normalize for API
-        paymentType: paymentMethod.value == 'Collect'
+        paymentType: paymentMethod.value == 'Collect Payment'
             ? 'COLLECT'
             : 'NO_COLLECT', // Normalize for API
         jobType: job!.jobType ?? 'ONE_WAY',

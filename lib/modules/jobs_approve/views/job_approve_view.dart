@@ -55,7 +55,7 @@ class JobApproveView extends StatelessWidget {
                     vehicleType: "SEDAN",
                     jobPoster: "Khaled",
                     company: "Khaled Transportation",
-                    payment: "Collect",
+                    payment: "Collect Payment",
                     amount: "\$125",
 
                     // Optional: Custom colors

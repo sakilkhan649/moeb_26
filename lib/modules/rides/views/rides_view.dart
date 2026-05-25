@@ -328,9 +328,9 @@ class RidesView extends StatelessWidget {
       onTap: onTap,
       child: CustomJobCard(
         pickupPaymentType: (payment == 'NO_COLLECT' || payment == 'NO COLLECT')
-            ? 'No collect'
+            ? 'Credit Card on File'
             : (payment == 'COLLECT'
-                  ? 'Collect'
+                  ? 'Collect Payment'
                   : payment?.replaceAll('_', ' ') ?? 'N/A'),
         dateTime: displayDateTime,
         vehicleType: vehicleType.toUpperCase(),

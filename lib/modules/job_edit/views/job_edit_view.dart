@@ -368,7 +368,7 @@ class _JobEditViewState extends State<JobEditView> {
             child: DropdownButton2<String>(
               isExpanded: true,
               hint: Text(
-                'No Collect',
+                'Credit Card on File',
                 style: GoogleFonts.inter(
                   color: AppColors.gray100,
                   fontSize: 14.sp,

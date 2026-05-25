@@ -49,7 +49,9 @@ class PostJobController extends GetxController {
         asap: asap,
         vehicleType: selectedVehicle.value,
         paymentAmount: double.tryParse(paymentAmount) ?? 0,
-        paymentType: paymentType == 'No Collect' ? 'NO COLLECT' : 'COLLECT',
+        paymentType: paymentType == 'Credit Card on File'
+            ? 'NO COLLECT'
+            : 'COLLECT',
         instruction: instruction,
       );
 
@@ -97,7 +99,9 @@ class PostJobController extends GetxController {
         time: time.format(Get.context!),
         vehicleType: selectedVehicle.value,
         paymentAmount: double.tryParse(paymentAmount) ?? 0,
-        paymentType: paymentType == 'No Collect' ? 'NO COLLECT' : 'COLLECT',
+        paymentType: paymentType == 'Credit Card on File'
+            ? 'NO COLLECT'
+            : 'COLLECT',
         instruction: instruction,
       );
 
@@ -120,5 +124,4 @@ class PostJobController extends GetxController {
       isLoading.value = false;
     }
   }
-
 }

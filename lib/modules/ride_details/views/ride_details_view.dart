@@ -409,7 +409,11 @@ class _RideDetailsData {
       pickupLocation = r.pickupLocation ?? "N/A";
       dropoffLocation = r.dropoffLocation ?? "N/A";
       vehicleType = r.vehicleType ?? "N/A";
-      paymentType = r.paymentType ?? "N/A";
+      paymentType = (r.paymentType == 'NO_COLLECT' || r.paymentType == 'NO COLLECT')
+          ? 'Credit Card on File'
+          : (r.paymentType == 'COLLECT'
+                ? 'Collect Payment'
+                : r.paymentType?.replaceAll('_', ' ') ?? 'N/A');
       amount = r.paymentAmount != null ? "\$${r.paymentAmount}" : "N/A";
       flightNumber = r.flightNumber ?? "N/A";
 
@@ -438,7 +442,11 @@ class _RideDetailsData {
       pickupLocation = r.pickupLocation;
       dropoffLocation = r.dropoffLocation;
       vehicleType = r.vehicleType;
-      paymentType = r.paymentType;
+      paymentType = (r.paymentType == 'NO_COLLECT' || r.paymentType == 'NO COLLECT')
+          ? 'Credit Card on File'
+          : (r.paymentType == 'COLLECT'
+                ? 'Collect Payment'
+                : r.paymentType.replaceAll('_', ' '));
       amount = "\$${r.paymentAmount}";
 
       final driver = r.createdBy ?? r.assignedTo ?? r.applicant?.driver;

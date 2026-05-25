@@ -191,9 +191,9 @@ class _JobOfferViewState extends State<JobOfferView> {
                                     paymentMethodHint:
                                         (job.paymentType == 'NO_COLLECT' ||
                                             job.paymentType == 'NO COLLECT')
-                                        ? 'No collect'
+                                        ? 'Credit Card on File'
                                         : (job.paymentType == 'COLLECT'
-                                              ? 'Collect'
+                                              ? 'Collect Payment'
                                               : job.paymentType.replaceAll(
                                                   '_',
                                                   ' ',

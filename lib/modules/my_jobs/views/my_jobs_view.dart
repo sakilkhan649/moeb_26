@@ -232,9 +232,9 @@ class _MyJobsViewState extends State<MyJobsView> {
     final flight = job.flightNumber ?? 'N/A';
     final paymentType =
         (job.paymentType == 'NO_COLLECT' || job.paymentType == 'NO COLLECT')
-        ? 'No collect'
+        ? 'Credit Card on File'
         : (job.paymentType == 'COLLECT'
-              ? 'Collect'
+              ? 'Collect Payment'
               : job.paymentType?.replaceAll('_', ' '));
     final instruction = job.instruction ?? 'N/A';
     final company = job.companyName;
@@ -471,7 +471,7 @@ class _MyJobsViewState extends State<MyJobsView> {
                 CustomTextFieldGold(
                   readOnly: true,
                   controller: cardPaymentTypeController,
-                  hintText: "Collect",
+                  hintText: "Collect Payment",
                   obscureText: false,
                   textInputType: TextInputType.text,
                 ),
