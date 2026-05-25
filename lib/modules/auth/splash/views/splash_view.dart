@@ -15,7 +15,6 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    controller.startTimer();
     return Scaffold(
       body: Center(
         child: Column(

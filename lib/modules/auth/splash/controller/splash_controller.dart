@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:moeb_26/firebase_options.dart';
+import 'package:moeb_26/core/services/firebase_notification_service.dart';
 import 'package:moeb_26/config/constants/app_constants.dart';
 import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
@@ -15,6 +18,28 @@ class SplashScreenController extends GetxController {
   void onInit() {
     super.onInit();
     _initAsync();
+    startTimer();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _initFirebaseAndFCM();
+  }
+
+  Future<void> _initFirebaseAndFCM() async {
+    try {
+      // Initialize Firebase asynchronously after the first frame has rendered
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      }
+      // Initialize FCM token and permissions
+      await FirebaseNotificationService.initialize();
+    } catch (e) {
+      Get.log('❌ Firebase/FCM Initialization error: $e');
+    }
   }
 
   Future<void> _initAsync() async {
