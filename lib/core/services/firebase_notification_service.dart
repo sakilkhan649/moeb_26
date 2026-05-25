@@ -35,13 +35,42 @@ class FirebaseNotificationService {
       print('❌ User declined permission');
     }
 
-    // Get FCM token
-    String? token = await _messaging.getToken();
-    print('🔑 FCM Token: $token');
+    // On iOS, we need to wait for APNS token before getting FCM token
+    if (DefaultFirebaseOptions.currentPlatform == DefaultFirebaseOptions.ios) {
+      print('🍎 Waiting for APNS Token...');
+      String? apnsToken;
+      int retryCount = 0;
+      while (apnsToken == null && retryCount < 5) {
+        apnsToken = await _messaging.getAPNSToken();
+        if (apnsToken == null) {
+          await Future.delayed(const Duration(seconds: 2));
+          retryCount++;
+          print('🍎 Retrying APNS Token ($retryCount/5)...');
+        }
+      }
+      print('🍎 APNS Token: $apnsToken');
+      
+      if (apnsToken == null) {
+        print('⚠️ APNS Token is still null. FCM Token might fail on physical device.');
+        // If we are on a simulator, getToken() will throw an exception.
+        // We can skip getToken() here or let it fail gracefully in try-catch.
+      }
+    }
 
-    if (token != null) {
-      AppConstants.fcmToken = token;
-      await StorageService.setString(StorageConstants.fcmToken, token);
+    // Get FCM token
+    try {
+      String? token = await _messaging.getToken();
+      print('🔑 FCM Token: $token');
+
+      if (token != null) {
+        AppConstants.fcmToken = token;
+        await StorageService.setString(StorageConstants.fcmToken, token);
+      }
+    } catch (e) {
+      print('❌ Error getting FCM token: $e');
+      if (e.toString().contains('apns-token-not-set')) {
+        print('💡 Hint: If you are using a simulator, FCM will not work. Please use a physical device.');
+      }
     }
 
     // Listen to token refresh

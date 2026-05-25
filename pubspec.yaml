@@ -49,8 +49,8 @@ dependencies:
   pinput: ^6.0.0
   uuid: ^4.5.3
   socket_io_client: ^3.1.4
-  firebase_core: ^2.24.2
-  firebase_messaging: ^14.7.10
+  firebase_core: ^3.1.1
+  firebase_messaging: ^15.0.3
   flutter_local_notifications: ^17.1.1
   flutter_widget_from_html: ^0.17.1
 
@@ -65,7 +65,6 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.4.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -115,13 +114,4 @@ flutter_launcher_icons:
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/images/final_app_logo.png"
   remove_alpha_ios: true
-
-flutter_native_splash:
-  color: "#FFFFFF"
-  image: "assets/images/final_app_logo.png"
-  
-  android_12:
-    image: "assets/images/final_app_logo.png"
-    icon_background_color: "#FFFFFF"
-    color: "#FFFFFF"
 
