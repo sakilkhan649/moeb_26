@@ -55,14 +55,29 @@ class MyJobsView extends StatefulWidget {
 
 class _MyJobsViewState extends State<MyJobsView> {
   final BookingController controller = Get.find<BookingController>();
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     // Refresh jobs list every time the screen is entered
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchJobs();
+      controller.fetchJobs(isRefresh: true);
     });
+
+    scrollController.addListener(() {
+      if (scrollController.hasClients &&
+          scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 200) {
+        controller.loadMoreMyJobs();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,13 +87,14 @@ class _MyJobsViewState extends State<MyJobsView> {
       body: RefreshIndicator(
         color: AppColors.orange100,
         onRefresh: () async {
-          await controller.fetchJobs();
+          await controller.fetchJobs(isRefresh: true);
         },
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
+                controller: scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -111,7 +127,7 @@ class _MyJobsViewState extends State<MyJobsView> {
 
                       /// ================= JOB CARD =================
                       Obx(() {
-                        if (controller.isLoadingList.value &&
+                        if (controller.isJobsLoading.value &&
                             controller.myJobsList.isEmpty) {
                           return Center(
                             child: Padding(
@@ -138,17 +154,30 @@ class _MyJobsViewState extends State<MyJobsView> {
                           );
                         }
 
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: controller.myJobsList.length,
-                          itemBuilder: (context, index) {
-                            final job = controller.myJobsList[index];
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 16.h),
-                              child: _buildJobAcceptanceDetailCard(job),
-                            );
-                          },
+                        return Column(
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.myJobsList.length,
+                              itemBuilder: (context, index) {
+                                final job = controller.myJobsList[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  child: _buildJobAcceptanceDetailCard(job),
+                                );
+                              },
+                            ),
+                            if (controller.isMyJobsLoadMore.value)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20.h),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.orange100,
+                                  ),
+                                ),
+                              ),
+                          ],
                         );
                       }),
                     ],
@@ -617,7 +646,7 @@ class _MyJobsViewState extends State<MyJobsView> {
                                 'Failed to open chat.',
                                 isError: true,
                               );
-                              print("Error opening chat: $e");
+                              debugPrint("Error opening chat: $e");
                             }
                           }
                         },
@@ -854,10 +883,6 @@ class _MyJobsViewState extends State<MyJobsView> {
                       onPressed: () {
                         Get.back();
                         controller.deleteJob(jobId: jobId);
-                        Helpers.showCustomSnackBar(
-                          "Item deleted successfully",
-                          isError: false,
-                        );
                       },
                       child: Text(
                         "Yes",

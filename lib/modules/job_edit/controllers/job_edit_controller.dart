@@ -219,7 +219,7 @@ class JobEditController extends GetxController {
 
         // Refresh the list in BookingController
         if (Get.isRegistered<BookingController>()) {
-          Get.find<BookingController>().fetchJobs();
+          Get.find<BookingController>().fetchJobs(isRefresh: true);
         }
 
         Get.back();
@@ -230,11 +230,10 @@ class JobEditController extends GetxController {
         Helpers.showCustomSnackBar(message, isError: true);
       }
     } catch (e) {
-      print("Error updating job: $e");
+      debugPrint("Error updating job: $e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
       isLoading.value = false;
     }
   }
-
 }

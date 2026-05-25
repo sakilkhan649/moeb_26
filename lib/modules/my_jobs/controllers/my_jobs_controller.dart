@@ -16,10 +16,19 @@ class BookingController extends GetxController {
   var isDeleted = false.obs;
   var isJobAcceptanceView = false.obs;
 
-  var isLoadingList = false.obs;
+  var isJobsLoading = false.obs;
+  var isOffersLoading = false.obs;
+  var isActionLoading = false.obs;
+
+  // Job Offers Pagination
   var isLoadMore = false.obs;
   var page = 1;
   var hasNextPage = true.obs;
+
+  // My Jobs Pagination
+  var isMyJobsLoadMore = false.obs;
+  var myJobsPage = 1;
+  var hasNextMyJobsPage = true.obs;
 
   RxList<JobData> myJobsList = <JobData>[].obs;
   Rx<JobData?> myJobView = Rx<JobData?>(null);
@@ -37,14 +46,47 @@ class BookingController extends GetxController {
     fetchJobOffers();
   }
 
-  Future<void> fetchJobs() async {
+  Future<void> fetchJobs({bool isRefresh = false}) async {
+    if (isRefresh) {
+      myJobsPage = 1;
+      hasNextMyJobsPage.value = true;
+    }
+
+    if (!hasNextMyJobsPage.value) return;
+
     try {
-      isLoadingList.value = true;
-      final response = await _jobService.getJobs();
+      if (myJobsPage == 1) {
+        isJobsLoading.value = true;
+      } else {
+        isMyJobsLoadMore.value = true;
+      }
+
+      final response = await _jobService.getJobs(page: myJobsPage, limit: 10);
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null && response.data['data'] != null) {
           final jobResponse = MyJobsModel.fromJson(response.data);
-          myJobsList.assignAll(jobResponse.data!);
+          final newJobs = jobResponse.data ?? [];
+
+          if (myJobsPage == 1) {
+            myJobsList.assignAll(newJobs);
+          } else {
+            myJobsList.addAll(newJobs);
+          }
+
+          if (jobResponse.pagination != null) {
+            if (myJobsPage >= (jobResponse.pagination!.totalPage ?? 1)) {
+              hasNextMyJobsPage.value = false;
+            } else {
+              myJobsPage++;
+            }
+          } else {
+            // Fallback if pagination is null
+            if (newJobs.isEmpty || newJobs.length < 10) {
+              hasNextMyJobsPage.value = false;
+            } else {
+              myJobsPage++;
+            }
+          }
         }
       } else {
         final message = response.data is Map
@@ -56,10 +98,19 @@ class BookingController extends GetxController {
       final message = e.response?.data['message'] ?? 'Failed to fetch jobs.';
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
-      print("Error fetching jobs: $e");
+      debugPrint("Error fetching jobs: $e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
-      isLoadingList.value = false;
+      isJobsLoading.value = false;
+      isMyJobsLoadMore.value = false;
+    }
+  }
+
+  Future<void> loadMoreMyJobs() async {
+    if (!isJobsLoading.value &&
+        !isMyJobsLoadMore.value &&
+        hasNextMyJobsPage.value) {
+      await fetchJobs();
     }
   }
 
@@ -73,7 +124,7 @@ class BookingController extends GetxController {
 
     try {
       if (page == 1) {
-        isLoadingList.value = true;
+        isOffersLoading.value = true;
       } else {
         isLoadMore.value = true;
       }
@@ -116,16 +167,16 @@ class BookingController extends GetxController {
           e.response?.data['message'] ?? 'Failed to fetch job offers.';
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
-      print("Error fetching job offers: $e");
+      debugPrint("Error fetching job offers: $e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
-      isLoadingList.value = false;
+      isOffersLoading.value = false;
       isLoadMore.value = false;
     }
   }
 
   Future<void> loadMoreJobOffers() async {
-    if (!isLoadMore.value && hasNextPage.value) {
+    if (!isOffersLoading.value && !isLoadMore.value && hasNextPage.value) {
       await fetchJobOffers();
     }
   }
@@ -136,7 +187,7 @@ class BookingController extends GetxController {
 
   Future<void> applyToJob({required String jobId}) async {
     try {
-      isLoadingList.value = true;
+      isActionLoading.value = true;
       final response = await _jobService.applyToJob(jobId: jobId);
       ApiChecker.checkWriteApi(response);
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -156,18 +207,18 @@ class BookingController extends GetxController {
       Helpers.showDebugLog("job application error:$e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
-      isLoadingList.value = false;
+      isActionLoading.value = false;
     }
   }
 
   Future<void> rejectApplicant({required String jobId}) async {
     try {
-      isLoadingList.value = true;
+      isActionLoading.value = true;
       rejectLoading[jobId] = true;
       final response = await _jobRepo.rejectApplicant(jobId: jobId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Refresh the list after rejection
-        await fetchJobs();
+        await fetchJobs(isRefresh: true);
 
         Helpers.showCustomSnackBar(
           'Job rejected successfully.',
@@ -183,22 +234,22 @@ class BookingController extends GetxController {
       final message = e.response?.data['message'] ?? 'Failed to reject job.';
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
-      print("Error rejecting job: $e");
+      debugPrint("Error rejecting job: $e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
-      isLoadingList.value = false;
+      isActionLoading.value = false;
       rejectLoading[jobId] = false;
     }
   }
 
   Future<void> approveApplicant({required String jobId}) async {
     try {
-      isLoadingList.value = true;
+      isActionLoading.value = true;
       approveLoading[jobId] = true;
       final response = await _jobRepo.approveApplicant(jobId: jobId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Refresh the list after approval
-        await fetchJobs();
+        await fetchJobs(isRefresh: true);
 
         Helpers.showCustomSnackBar(
           'Job approved successfully.',
@@ -214,17 +265,17 @@ class BookingController extends GetxController {
       final message = e.response?.data['message'] ?? 'Failed to approve job.';
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
-      print("Error approving job: $e");
+      debugPrint("Error approving job: $e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
-      isLoadingList.value = false;
+      isActionLoading.value = false;
       approveLoading[jobId] = false;
     }
   }
 
   Future<void> deleteJob({required String jobId}) async {
     try {
-      isLoadingList.value = true;
+      isActionLoading.value = true;
       final response = await _jobRepo.deleteJob(jobId: jobId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Remove the job from both lists to update UI immediately
@@ -240,9 +291,9 @@ class BookingController extends GetxController {
       final message = e.response?.data['message'] ?? 'Failed to delete job.';
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
-      print("Error deleting job: $e");
+      debugPrint("Error deleting job: $e");
     } finally {
-      isLoadingList.value = false;
+      isActionLoading.value = false;
     }
   }
 
@@ -298,11 +349,11 @@ class BookingController extends GetxController {
 
   Future<void> cancelJobOffer({required String jobId}) async {
     try {
-      isLoadingList.value = true;
+      isActionLoading.value = true;
       final response = await _jobRepo.cancelJobOffer(jobId: jobId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Refresh the list after cancellation
-        await fetchJobs();
+        await fetchJobs(isRefresh: true);
         Helpers.showCustomSnackBar(
           'Job cancelled successfully.',
           isError: false,
@@ -317,10 +368,10 @@ class BookingController extends GetxController {
       final message = e.response?.data['message'] ?? 'Failed to cancel job.';
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
-      print("Error canceling job: $e");
+      debugPrint("Error canceling job: $e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
     } finally {
-      isLoadingList.value = false;
+      isActionLoading.value = false;
     }
   }
 
@@ -364,7 +415,7 @@ class BookingController extends GetxController {
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
       debugPrint("❌ BookingController: General Error: $e");
-      print("Error fetching job details: $e");
+      debugPrint("Error fetching job details: $e");
     } finally {
       viewLoading[jobId] = false;
     }

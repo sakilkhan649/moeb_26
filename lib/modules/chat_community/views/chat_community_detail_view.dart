@@ -19,38 +19,45 @@ class ChatCommunityDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          const Divider(color: Colors.white, height: 1),
-          // Messages List
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoading.value && controller.messages.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                itemCount: controller.messages.length,
-                reverse: true, // Show latest messages at the bottom
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final message = controller.messages[index];
-                  return _buildMessageBubble(message);
-                },
-              );
-            }),
-          ),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Column(
+          children: [
+            const Divider(color: Colors.white, height: 1),
+            // Messages List
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value && controller.messages.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 10.h,
+                  ),
+                  itemCount: controller.messages.length,
+                  reverse: true, // Show latest messages at the bottom
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final message = controller.messages[index];
+                    return _buildMessageBubble(message);
+                  },
+                );
+              }),
+            ),
 
-          // Image Previews (Before sending)
-          Obx(
-            () => controller.selectedImages.isEmpty
-                ? const SizedBox.shrink()
-                : _buildImagePreviews(),
-          ),
+            // Image Previews (Before sending)
+            Obx(
+              () => controller.selectedImages.isEmpty
+                  ? const SizedBox.shrink()
+                  : _buildImagePreviews(),
+            ),
 
-          // Bottom Input Field
-          _buildMessageInput(),
-        ],
+            // Bottom Input Field
+            _buildMessageInput(),
+          ],
+        ),
       ),
     );
   }
@@ -250,7 +257,7 @@ class ChatCommunityDetailView extends StatelessWidget {
       padding: EdgeInsets.only(
         left: 20.w,
         right: 20.w,
-        bottom: 30.h,
+        bottom: 10.h,
         top: 10.h,
       ),
       decoration: const BoxDecoration(

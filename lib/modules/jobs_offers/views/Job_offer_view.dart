@@ -85,7 +85,7 @@ class _JobOfferViewState extends State<JobOfferView> {
                       ),
                       SizedBox(height: 15.h),
                       Obx(() {
-                        if (controller.isLoadingList.value &&
+                        if (controller.isOffersLoading.value &&
                             controller.jobOffersList.isEmpty) {
                           return Center(
                             child: Padding(

@@ -1,11 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/core/services/notifications_service.dart';
 import 'package:moeb_26/data/models/Notifications_Model.dart';
 
 class NotificationController extends GetxController {
-  final NotificationsService _notificationsService = Get.put(
-    NotificationsService(),
-  );
+  final NotificationsService _notificationsService = Get.find<NotificationsService>();
 
   var notifications = <NotificationItem>[].obs;
   var isLoading = false.obs;
@@ -34,7 +33,7 @@ class NotificationController extends GetxController {
         }
       }
     } catch (e) {
-      print("Error fetching notifications: $e");
+      debugPrint("Error fetching notifications: $e");
     } finally {
       isLoading.value = false;
     }
@@ -60,7 +59,7 @@ class NotificationController extends GetxController {
         notifications.refresh();
       }
     } catch (e) {
-      print("Error marking all as read: $e");
+      debugPrint("Error marking all as read: $e");
     }
   }
 
@@ -85,7 +84,7 @@ class NotificationController extends GetxController {
         }
       }
     } catch (e) {
-      print("Error marking notification as read: $e");
+      debugPrint("Error marking notification as read: $e");
     }
   }
 

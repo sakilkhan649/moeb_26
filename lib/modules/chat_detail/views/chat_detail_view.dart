@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/data/models/chat_model.dart';
 import '../controllers/chat_detail_controller.dart';
 import '../../../data/models/chat_message_model.dart';
 
@@ -12,41 +11,47 @@ class ChatDetailView extends StatelessWidget {
   ChatDetailView({super.key});
 
   final ChatDetailController controller = Get.find<ChatDetailController>();
-  final ChatPreview chat = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          const Divider(color: Color(0xffDADADA), height: 1),
-          // Messages List
-          Expanded(
-            child: Obx(() {
-              return ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                itemCount: controller.messages.length,
-                reverse: true, // চ্যাটের জন্য লিস্টটি উল্টো দিক থেকে শুরু হবে
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final message = controller.messages[index];
-                  return _buildMessageBubble(message);
-                },
-              );
-            }),
-          ),
-          // Bottom Input Field
-          _buildMessageInput(),
-        ],
+      body: SafeArea(
+        bottom: true,
+        top: false,
+        child: Column(
+          children: [
+            const Divider(color: Color(0xffDADADA), height: 1),
+            // Messages List
+            Expanded(
+              child: Obx(() {
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 10.h,
+                  ),
+                  itemCount: controller.messages.length,
+                  reverse: true, // চ্যাটের জন্য লিস্টটি উল্টো দিক থেকে শুরু হবে
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final message = controller.messages[index];
+                    return _buildMessageBubble(message);
+                  },
+                );
+              }),
+            ),
+            // Bottom Input Field
+            _buildMessageInput(),
+          ],
+        ),
       ),
     );
   }
 
   PreferredSizeWidget _buildAppBar() {
     final currentUserId = controller.userService.userId;
-    final other = chat.getOtherParticipant(currentUserId);
+    final other = controller.chat.getOtherParticipant(currentUserId);
 
     return AppBar(
       backgroundColor: Colors.black,
@@ -167,7 +172,7 @@ class ChatDetailView extends StatelessWidget {
       padding: EdgeInsets.only(
         left: 20.w,
         right: 20.w,
-        bottom: 30.h,
+        bottom: 10.h,
         top: 10.h,
       ),
       decoration: const BoxDecoration(
