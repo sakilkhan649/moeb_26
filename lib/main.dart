@@ -14,8 +14,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Initialize Firebase Messaging
-  await FirebaseNotificationService.initialize();
+  // Initialize Firebase Messaging asynchronously so it doesn't block app launch/splash screen
+  FirebaseNotificationService.initialize();
   runApp(const MyApp());
 }
 
