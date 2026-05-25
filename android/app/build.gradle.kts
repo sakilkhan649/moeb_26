@@ -45,7 +45,7 @@ android {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"] as String?
             keyPassword = keystoreProperties["keyPassword"] as String?
-            storeFile = keystoreProperties["storeFile"]?.let { rootProject.projectDir.resolve(it as String) }
+            storeFile = keystoreProperties["storeFile"]?.let { projectDir.resolve(it as String) }
             storePassword = keystoreProperties["storePassword"] as String?
         }
     }
@@ -54,7 +54,7 @@ android {
         release {
             val hasKeystore = keystorePropertiesFile.exists() &&
                 keystoreProperties.containsKey("storeFile") &&
-                rootProject.projectDir.resolve(keystoreProperties["storeFile"] as String).exists()
+                projectDir.resolve(keystoreProperties["storeFile"] as String).exists()
 
             signingConfig = if (hasKeystore) {
                 signingConfigs.getByName("release")
