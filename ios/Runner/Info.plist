@@ -73,5 +73,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to your photo library to let you upload profile pictures and images for marketplace items.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to your camera to let you take photos for your profile and marketplace listings.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to your microphone to let you record videos for your listings.</string>
 </dict>
 </plist>
