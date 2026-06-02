@@ -1,381 +1,352 @@
+import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 import 'dart:io';
+import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:moeb_26/config/constants/api_constants.dart';
 import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
-import 'package:moeb_26/core/controllers/internet_controller.dart';
 import 'package:moeb_26/core/services/storege_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/core/utils/logger.dart';
+
+/// ===================== API CLIENT =====================
+/// Centralized HTTP client built on Dio with:
+/// - Automatic token injection via interceptors (supports temporaryToken)
+/// - Token refresh on 401 with retry
+/// - Structured request/response logging
+/// - Multipart upload support with progress
+/// - Single-presentation error routing
 
 class ApiClient extends GetxService {
-  static late Dio dio;
-  static String bearerToken = "";
+  static late Dio _dio;
+  static String _bearerToken = '';
+  static Future<bool>? _refreshFuture;
+
+  static const String _fallbackMessage = 'Something went wrong, please try again';
+  static const int _timeoutSeconds = 30;
+
+  /// Expose static temporaryToken for specialized authentication override (e.g. Socket/Auth Service)
   static String? temporaryToken;
 
-  static const String noInternetMessage =
-      "Sorry! Something went wrong, please try again";
-  static const int timeoutInSeconds = 30;
-  static DateTime? _lastErrorTime;
+  /// Expose dio only for edge-case direct usage (avoid if possible).
+  Dio get dio => _dio;
 
-  // Future<void> fakeLogout() async {
-  //   try {
-  //     // Clear tokens from StorageService
-  //     await StorageService.setString(StorageConstants.bearerToken, "");
-  //     await StorageService.setString(StorageConstants.refreshToken, "");
-
-  //     // Optional: Clear other user-related data if needed
-  //     // await PrefsHelper.clearAll();
-
-  //     // Show success message
-
-  //     // Navigate to login screen
-  //   } catch (e) {
-  //     showCustomSnackBar(" failed: $e", isError: true);
-  //   }
-  // }
-
-  // void handleTokenExpired() {
-  //   fakeLogout();
-
-  //   showCustomSnackBar("Session expired. Please login again.", isError: true);
-
-  //   Get.offAllNamed(AppRoutes.LOGIN);
-  // }
+  // ─────────────────────────── LIFECYCLE ───────────────────────────
 
   @override
   void onInit() {
     super.onInit();
-    dio = Dio(
+    _dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
-        connectTimeout: const Duration(seconds: timeoutInSeconds),
-        receiveTimeout: const Duration(seconds: timeoutInSeconds),
+        connectTimeout: const Duration(seconds: _timeoutSeconds),
+        receiveTimeout: const Duration(seconds: _timeoutSeconds),
         headers: {'Content-Type': 'application/json'},
       ),
     );
+    _dio.interceptors.add(_buildInterceptor());
+  }
 
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          String? tokenToUse;
+  // ──────────────────────── INTERCEPTOR ────────────────────────
 
-          if (temporaryToken != null && temporaryToken!.isNotEmpty) {
-            tokenToUse = temporaryToken;
-          } else {
-            tokenToUse = await StorageService.getString(
-              StorageConstants.bearerToken,
-            );
-          }
-
-          if (tokenToUse != null && tokenToUse.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $tokenToUse';
-          }
-          debugPrint("➡️ ====> API REQUEST==========================");
-          debugPrint("➡️ ====> API Request: ${options.method} ${options.uri}");
-          debugPrint("➡️ ====> API Headers: ${options.headers}");
-          debugPrint(
-            "➡️ ====> API Query Parameters: ${options.queryParameters}",
-          );
-          debugPrint("➡️ ====> API data: ${options.data}");
-          return handler.next(options);
-        },
-        onResponse: (response, handler) {
-          debugPrint("✅ ====> API RESPONSE==========================");
-          debugPrint("✅ ====> API Response: [${response.statusCode}]");
-          debugPrint("✅ ====> API URI: ${response.requestOptions.uri}");
-          debugPrint("✅ ====> API data: ${response.data}");
-
-          return handler.next(response);
-        },
-
-        onError: (DioException e, handler) async {
-          final internet = Get.find<InternetController>();
-
-          // 1️⃣ Connection Error
-          if (e.type == DioExceptionType.connectionError) {
-            // Check if we actually have internet access
-            bool hasInternet = await InternetConnection().hasInternetAccess;
-
-            if (hasInternet) {
-              // Internet is available, but connection failed -> Server likely down
-              if (_lastErrorTime == null ||
-                  DateTime.now().difference(_lastErrorTime!) >
-                      const Duration(seconds: 3)) {
-                _lastErrorTime = DateTime.now();
-                Helpers.showCustomSnackBar(
-                  'Unable to connect to server. Please try again later.',
-                  isError: true,
-                );
-              }
-            } else {
-              // Genuine No Internet
-              if (!internet.isShowingNoInternet.value) {
-                internet.setOffline();
-                Get.offAllNamed(Routes.noInternetScreen);
-              }
-            }
-            return handler.next(e);
-          }
-
-          // 2️⃣ Token expired → try refresh FIRST
-          if (e.response?.statusCode == 401 &&
-              !e.requestOptions.path.contains(ApiConstants.refreshToken) &&
-              !e.requestOptions.path.contains(ApiConstants.resetPassword) &&
-              !e.requestOptions.path.contains(ApiConstants.login) &&
-              !e.requestOptions.path.contains(ApiConstants.signup) &&
-              !e.requestOptions.path.contains(ApiConstants.verifyEmail)) {
-            final refreshed = await refreshToken();
-
-            if (refreshed) {
-              final newToken = await StorageService.getString(
-                StorageConstants.bearerToken,
-              );
-
-              e.requestOptions.headers['Authorization'] = 'Bearer $newToken';
-
-              final response = await dio.fetch(e.requestOptions);
-              return handler.resolve(response);
-            } else {
-              logoutUser();
-              return handler.reject(e);
-            }
-          }
-
-          // 3️⃣ Timeout
-          if (e.type == DioExceptionType.connectionTimeout ||
-              e.type == DioExceptionType.receiveTimeout) {
-            if (_lastErrorTime == null ||
-                DateTime.now().difference(_lastErrorTime!) >
-                    const Duration(seconds: 3)) {
-              _lastErrorTime = DateTime.now();
-              Helpers.showCustomSnackBar(
-                'Request timeout. Please try again.',
-                isError: true,
-              );
-            }
-          }
-          // // 4️⃣ Server error
-
-          // else if (e.type == DioExceptionType.badResponse) {
-          //   if (_lastErrorTime == null ||
-          //       DateTime.now().difference(_lastErrorTime!) >
-          //           const Duration(seconds: 3)) {
-          //     _lastErrorTime = DateTime.now();
-          //     Helpers.showCustomSnackBar(
-          //       'Server error (${e.response?.statusCode})',
-          //       isError: true,
-          //     );
-          //   }
-          // }
-          // 5️⃣ Unknown error
-          // else {
-          //   if (_lastErrorTime == null ||
-          //       DateTime.now().difference(_lastErrorTime!) >
-          //           const Duration(seconds: 3)) {
-          //     _lastErrorTime = DateTime.now();
-          //     Helpers.showCustomSnackBar('Something went wrong', isError: true);
-          //   }
-          // }
-          debugPrint("❌ ====> API ERROR:==========================");
-          debugPrint("❌ ====> API MESSAGE: ${e.message}");
-          debugPrint('❌ ====> API URL: ${e.requestOptions.uri}');
-          debugPrint("❌ ====> API DATA: ${e.response?.data}");
-          debugPrint("❌ ====> API STATUS CODE: ${e.response?.statusCode}");
-          debugPrint(
-            "❌ ====> API STATUS MESSAGE: ${e.response?.statusMessage}",
-          );
-
-          return handler.next(e);
-        },
-      ),
+  InterceptorsWrapper _buildInterceptor() {
+    return InterceptorsWrapper(
+      onRequest: _onRequest,
+      onResponse: _onResponse,
+      onError: _onError,
     );
   }
 
-  /// GET
+  Future<void> _onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    String? tokenToUse;
+
+    if (temporaryToken != null && temporaryToken!.isNotEmpty) {
+      tokenToUse = temporaryToken;
+    } else {
+      tokenToUse = await StorageService.getString(
+        StorageConstants.bearerToken,
+      );
+    }
+
+    if (tokenToUse != null &&
+        tokenToUse.isNotEmpty &&
+        !options.path.contains(ApiConstants.refreshToken)) {
+      options.headers['Authorization'] = 'Bearer $tokenToUse';
+    }
+
+    AppLogger.request(options);
+    return handler.next(options);
+  }
+
+  void _onResponse(Response response, ResponseInterceptorHandler handler) {
+    AppLogger.response(response);
+    return handler.next(response);
+  }
+
+  Future<void> _onError(DioException e, ErrorInterceptorHandler handler) async {
+    // 1️⃣ Connection Error → pass connection error down to response builder
+    final isConnectionError =
+        e.type == DioExceptionType.connectionError ||
+        (e.type == DioExceptionType.unknown && e.error is SocketException) ||
+        e.message?.contains('SocketException') == true ||
+        e.error?.toString().contains('SocketException') == true;
+
+    if (isConnectionError) {
+      return handler.next(e);
+    }
+
+    // 2️⃣ Token expired → refresh & retry
+    if (e.response?.statusCode == 401 &&
+        !e.requestOptions.path.contains(ApiConstants.refreshToken) &&
+        !e.requestOptions.path.contains(ApiConstants.resetPassword) &&
+        !e.requestOptions.path.contains(ApiConstants.login) &&
+        !e.requestOptions.path.contains(ApiConstants.signup) &&
+        !e.requestOptions.path.contains(ApiConstants.verifyEmail)) {
+      final refreshToken = await StorageService.getString(
+        StorageConstants.refreshToken,
+      );
+      if (refreshToken.isEmpty) {
+        _forceLogout();
+        return handler.next(e);
+      }
+
+      final refreshed = await _refreshToken();
+
+      if (refreshed) {
+        final retryResponse = await _retryRequest(e.requestOptions);
+        return handler.resolve(retryResponse);
+      } else {
+        _forceLogout();
+        return handler.next(e);
+      }
+    }
+
+    AppLogger.error(e);
+    return handler.next(e);
+  }
+
+  // ──────────────────────── HTTP METHODS ────────────────────────
+
+  /// GET request
   Future<Response> getData(
     String uri, {
     Map<String, dynamic>? query,
     CancelToken? cancelToken,
+    Map<String, dynamic>? extraHeaders,
   }) async {
     try {
-      return await dio.get(
+      return await _dio.get(
         uri,
         queryParameters: query,
         cancelToken: cancelToken,
+        options: extraHeaders != null ? Options(headers: extraHeaders) : null,
       );
     } on DioException catch (e) {
-      return _handleError(e);
+      return _buildErrorResponse(e);
     }
   }
 
-  /// POST
+  /// POST request
   Future<Response> postData(
     String uri,
     dynamic body, {
     CancelToken? cancelToken,
+    Map<String, dynamic>? extraHeaders,
     String? resetToken,
   }) async {
-    // 👇 try-catch সরাও, rethrow হবে
-    return await dio.post(
-      uri,
-      data: body,
-      cancelToken: cancelToken,
-      options: resetToken != null
-          ? Options(
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': resetToken,
-              },
-            )
-          : null,
-    );
+    try {
+      Options? options;
+      if (resetToken != null) {
+        options = Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': resetToken,
+        });
+      } else if (extraHeaders != null) {
+        options = Options(headers: extraHeaders);
+      }
+
+      return await _dio.post(
+        uri,
+        data: body,
+        cancelToken: cancelToken,
+        options: options,
+      );
+    } on DioException catch (e) {
+      return _buildErrorResponse(e);
+    }
   }
 
-  /// PUT
+  /// PUT request
   Future<Response> putData(
     String uri,
     dynamic body, {
     CancelToken? cancelToken,
+    Map<String, dynamic>? extraHeaders,
   }) async {
     try {
-      return await dio.put(uri, data: body, cancelToken: cancelToken);
+      return await _dio.put(
+        uri,
+        data: body,
+        cancelToken: cancelToken,
+        options: extraHeaders != null ? Options(headers: extraHeaders) : null,
+      );
     } on DioException catch (e) {
-      return _handleError(e);
+      return _buildErrorResponse(e);
     }
   }
 
-  /// PATCH (missing before)
+  /// PATCH request
   Future<Response> patchData(
     String uri,
     dynamic body, {
     CancelToken? cancelToken,
+    Map<String, dynamic>? extraHeaders,
   }) async {
     try {
-      // If the body is FormData, ensure the correct content type is used.
-      Options? options;
-      if (body is FormData) {
-        options = Options(contentType: 'multipart/form-data');
-      }
-      return await dio.patch(
+      return await _dio.patch(
         uri,
         data: body,
-        options: options,
         cancelToken: cancelToken,
+        options: extraHeaders != null ? Options(headers: extraHeaders) : null,
       );
     } on DioException catch (e) {
-      return _handleError(e);
+      return _buildErrorResponse(e);
     }
   }
 
-  /// DELETE
+  /// DELETE request
   Future<Response> deleteData(
     String uri, {
     dynamic body,
     CancelToken? cancelToken,
+    Map<String, dynamic>? extraHeaders,
   }) async {
     try {
-      return await dio.delete(uri, data: body, cancelToken: cancelToken);
+      return await _dio.delete(
+        uri,
+        data: body,
+        cancelToken: cancelToken,
+        options: extraHeaders != null ? Options(headers: extraHeaders) : null,
+      );
     } on DioException catch (e) {
-      return _handleError(e);
+      return _buildErrorResponse(e);
     }
   }
 
-  /// Multipart POST with progress
+  /// Multipart POST with progress tracking
   Future<Response> postMultipartData(
     String uri,
     Map<String, dynamic> body, {
     required List<MultipartBody> multipartBody,
-    Function(int, int)? onSendProgress,
+    ProgressCallback? onSendProgress,
     CancelToken? cancelToken,
   }) async {
     try {
-      FormData formData = FormData.fromMap(body);
-      for (MultipartBody element in multipartBody) {
-        formData.files.add(
-          MapEntry(
-            element.key,
-            await MultipartFile.fromFile(element.file.path),
-          ),
-        );
-      }
-      return await dio.post(
+      final formData = await _buildFormData(body, multipartBody);
+      return await _dio.post(
         uri,
         data: formData,
         onSendProgress: onSendProgress,
         cancelToken: cancelToken,
       );
     } on DioException catch (e) {
-      return _handleError(e);
+      return _buildErrorResponse(e);
     }
   }
 
-  /// Multipart PUT with progress
+  /// Multipart PATCH with progress tracking
   Future<Response> patchMultipartData(
     String uri,
     Map<String, dynamic> body, {
     required List<MultipartBody> multipartBody,
-    Function(int, int)? onSendProgress,
+    ProgressCallback? onSendProgress,
     CancelToken? cancelToken,
   }) async {
     try {
-      FormData formData = FormData.fromMap(body);
-      for (MultipartBody element in multipartBody) {
-        formData.files.add(
-          MapEntry(
-            element.key,
-            await MultipartFile.fromFile(element.file.path),
-          ),
-        );
-      }
-      return await dio.patch(
+      final formData = await _buildFormData(body, multipartBody);
+      return await _dio.patch(
         uri,
         data: formData,
         onSendProgress: onSendProgress,
         cancelToken: cancelToken,
       );
     } on DioException catch (e) {
-      return _handleError(e);
+      return _buildErrorResponse(e);
     }
   }
 
-  /// File Download
+  /// File download with progress tracking
   Future<Response> downloadFile(
     String url,
     String savePath, {
-    Function(int, int)? onReceiveProgress,
+    ProgressCallback? onReceiveProgress,
     CancelToken? cancelToken,
   }) async {
     try {
-      return await dio.download(
+      return await _dio.download(
         url,
         savePath,
         onReceiveProgress: onReceiveProgress,
         cancelToken: cancelToken,
       );
     } on DioException catch (e) {
-      return _handleError(e);
+      return _buildErrorResponse(e);
     }
   }
 
-  /// Error handler
-  Response _handleError(DioException e) {
-    String message = noInternetMessage;
-    if (e.type == DioExceptionType.connectionTimeout) {
-      message = "Connection timed out";
-    } else if (e.type == DioExceptionType.receiveTimeout) {
-      message = "Server took too long to respond";
-    } else if (e.type == DioExceptionType.badResponse) {
-      message = "Bad response: ${e.response?.statusMessage ?? 'Unknown'}";
-    } else if (e.type == DioExceptionType.cancel) {
-      message = "Request cancelled";
-    } else if (e.type == DioExceptionType.unknown) {
-      message = "Unexpected error: ${e.message}";
+  // ──────────────────── PRIVATE HELPERS ────────────────────
+
+  /// Build FormData from body map and multipart files
+  Future<FormData> _buildFormData(
+    Map<String, dynamic> body,
+    List<MultipartBody> multipartBody,
+  ) async {
+    final formData = FormData.fromMap(body);
+    for (final part in multipartBody) {
+      formData.files.add(
+        MapEntry(part.key, await MultipartFile.fromFile(part.file.path)),
+      );
+    }
+    return formData;
+  }
+
+  /// Create a fallback Response from a DioException
+  Response _buildErrorResponse(DioException e) {
+    final String message;
+    final isConnectionError =
+        e.type == DioExceptionType.connectionError ||
+        (e.type == DioExceptionType.unknown && e.error is SocketException) ||
+        e.message?.contains('SocketException') == true ||
+        e.error?.toString().contains('SocketException') == true;
+
+    if (isConnectionError) {
+      message =
+          'Unable to connect to server. Please check your internet connection.';
+    } else {
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+          message = 'Connection timed out';
+          break;
+        case DioExceptionType.receiveTimeout:
+          message = 'Server took too long to respond';
+          break;
+        case DioExceptionType.badResponse:
+          final data = e.response?.data;
+          if (data is Map && data['message'] != null) {
+            message = data['message'].toString();
+          } else {
+            message = 'Bad response: ${e.response?.statusMessage ?? 'Unknown'}';
+          }
+          break;
+        case DioExceptionType.cancel:
+          message = 'Request cancelled';
+          break;
+        default:
+          message = _fallbackMessage;
+      }
     }
 
     return Response(
@@ -386,44 +357,85 @@ class ApiClient extends GetxService {
     );
   }
 
-  /// token Expired
+  /// Refresh the access token using stored refresh token with strict locking
+  Future<bool> _refreshToken() async {
+    if (_refreshFuture != null) {
+      return _refreshFuture!;
+    }
 
-  Future<bool> refreshToken() async {
+    final completer = Completer<bool>();
+    _refreshFuture = completer.future;
+
     try {
-      final refreshToken = await StorageService.getString(
+      final refreshTokenValue = await StorageService.getString(
         StorageConstants.refreshToken,
       );
+      if (refreshTokenValue.isEmpty) {
+        completer.complete(false);
+        return false;
+      }
 
-      final response = await postData(ApiConstants.refreshToken, {
-        'refreshToken': refreshToken,
-      });
+      // Separate clean Dio instance to completely bypass our main client's interceptor chain
+      final refreshDio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl));
+      final response = await refreshDio.post(
+        ApiConstants.refreshToken,
+        data: {'refreshToken': refreshTokenValue},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
 
-      if (response.statusCode == 200) {
-        final data = response.data['data'];
-        await StorageService.setString(
-          StorageConstants.bearerToken,
-          data['accessToken'],
-        );
-        await StorageService.setString(
-          StorageConstants.refreshToken,
-          data['refreshToken'],
-        );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final authData = response.data['data'] ?? response.data;
+        final newAccessToken = authData['accessToken'] ?? authData['token'];
+        final newRefreshToken = authData['refreshToken'];
+
+        if (newAccessToken != null) {
+          await StorageService.setString(
+            StorageConstants.bearerToken,
+            newAccessToken,
+          );
+        }
+        if (newRefreshToken != null) {
+          await StorageService.setString(
+            StorageConstants.refreshToken,
+            newRefreshToken,
+          );
+        }
+        completer.complete(true);
         return true;
       }
-    } catch (_) {}
+    } catch (e) {
+      Helpers.debug('Error refreshing token: $e');
+    } finally {
+      _refreshFuture = null; // Always unlock after completion/error
+    }
+
+    completer.complete(false);
     return false;
   }
 
-  void logoutUser() {
+  /// Retry the original failed request with new token
+  Future<Response> _retryRequest(RequestOptions requestOptions) async {
+    final newToken = await StorageService.getString(
+      StorageConstants.bearerToken,
+    );
+    requestOptions.headers['Authorization'] = 'Bearer $newToken';
+
+    return await _dio.fetch(requestOptions);
+  }
+
+  /// Force logout when refresh fails
+  void _forceLogout() {
     StorageService.clearAll();
     Get.offAllNamed(Routes.signinView);
+    Helpers.showError('Please login again.', title: 'Session Expired');
   }
 }
 
-/// Multipart Body
+/// ===================== MULTIPART BODY =====================
+/// Wraps a file with its form-data key for multipart uploads.
 class MultipartBody {
-  String key;
-  File file;
+  final String key;
+  final File file;
 
-  MultipartBody(this.key, this.file);
+  const MultipartBody(this.key, this.file);
 }
