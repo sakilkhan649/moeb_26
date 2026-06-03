@@ -15,7 +15,8 @@ class AppImages {
   // ignore: constant_identifier_names
   static const String sadat_image = "$buseurl/sadat_image.jpg";
   // ignore: constant_identifier_names
-  static const String final_app_logo = "$buseurl/app_logo_m.png";
+  // static const String final_app_logo = "$buseurl/final_app_logo.png";
   // ignore: constant_identifier_names
-  static const String moeb26_community_chat_pp = "$buseurl/moeb26_community_chat_pp.png";
+  static const String moeb26_community_chat_pp =
+      "$buseurl/moeb26_community_chat_pp.png";
 }

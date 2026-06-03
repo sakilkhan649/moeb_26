@@ -69,4 +69,5 @@ class ApiConstants {
 
   // Driver Endpoints
   static const String deleteVehicle = '/user/vehicles/{{vehicleId}}';
+  static const String deleteAccount = '/user/delete-account';
 }

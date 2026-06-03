@@ -34,4 +34,11 @@ class UserProfileRepo {
       ApiConstants.deleteVehicle.replaceFirst('{{vehicleId}}', vehicleId),
     );
   }
+
+  Future<Response> deleteAccount(String password) {
+    return apiClient.deleteData(
+      ApiConstants.deleteAccount,
+      body: {'password': password},
+    );
+  }
 }
