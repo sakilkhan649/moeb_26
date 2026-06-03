@@ -19,7 +19,7 @@ import 'package:moeb_26/core/utils/logger.dart';
 
 class ApiClient extends GetxService {
   static late Dio _dio;
-  static String _bearerToken = '';
+  static final String _bearerToken = '';
   static Future<bool>? _refreshFuture;
 
   static const String _fallbackMessage = 'Something went wrong, please try again';
