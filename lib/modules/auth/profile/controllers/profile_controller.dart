@@ -266,4 +266,29 @@ class ProfileController extends GetxController {
     nickNameController.dispose();
     super.onClose();
   }
+
+  Future<bool> deleteAccount(String password) async {
+    isUpdating.value = true;
+    try {
+      var response = await _profileService.deleteAccount(password);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        Helpers.showCustomSnackBar(
+          response.data['message'] ?? "Failed to delete account",
+          isError: true,
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Error deleting account: $e");
+      Helpers.showCustomSnackBar(
+        "Something went wrong while deleting account",
+        isError: true,
+      );
+      return false;
+    } finally {
+      isUpdating.value = false;
+    }
+  }
 }

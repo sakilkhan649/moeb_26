@@ -29,4 +29,8 @@ class UserProfileService {
   Future<Response> deleteVehicle(String vehicleId) {
     return userProfileRepo.deleteVehicle(vehicleId);
   }
+
+  Future<Response> deleteAccount(String password) {
+    return userProfileRepo.deleteAccount(password);
+  }
 }

@@ -68,6 +68,12 @@ class SigninController extends GetxController {
 
         Helpers.showCustomSnackBar('Login successful', isError: false);
         Get.offAllNamed(Routes.bottomNabbarView);
+      } else {
+        final data = response.data;
+        final String errorMsg = (data is Map && data['message'] != null)
+            ? data['message'].toString()
+            : (response.statusMessage ?? 'Invalid email or password');
+        Helpers.showCustomSnackBar(errorMsg, isError: true);
       }
     } catch (e) {
       if (e is DioException) {

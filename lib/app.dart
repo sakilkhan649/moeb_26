@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
@@ -16,7 +17,17 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: GetMaterialApp(
-        theme: ThemeData(scaffoldBackgroundColor: AppColors.black100),
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: AppColors.black100,
+          appBarTheme: const AppBarTheme(
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.light, // For Android (light icons)
+              statusBarBrightness: Brightness.dark, // For iOS (light icons)
+            ),
+          ),
+        ),
         debugShowCheckedModeBanner: false,
         getPages: Routes.routes,
         initialRoute: Routes.splashView,

@@ -15,6 +15,7 @@ import 'package:moeb_26/modules/jobs_offers/views/Job_offer_view.dart';
 import 'package:moeb_26/modules/notifications/controllers/notifications_controller.dart';
 import 'package:moeb_26/modules/notifications/views/notifications_view.dart';
 import 'package:moeb_26/core/widgets/Contact_support_popup.dart';
+import 'package:moeb_26/core/widgets/DeleteAccountBottomSheet.dart';
 
 class ProfileView extends StatelessWidget {
   ProfileView({super.key});
@@ -664,6 +665,45 @@ class ProfileView extends StatelessWidget {
                             SizedBox(width: 8.w),
                             Text(
                               "Log Out",
+                              style: GoogleFonts.inter(
+                                color: Colors.red,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Delete Account Button
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.bottomSheet(
+                          DeleteAccountBottomSheet(),
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(
+                            color: Colors.red.withValues(alpha: 0.5),
+                            width: 1.w,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.delete_forever_outlined, color: Colors.red, size: 20.sp),
+                            SizedBox(width: 8.w),
+                            Text(
+                              "Delete Account",
                               style: GoogleFonts.inter(
                                 color: Colors.red,
                                 fontSize: 16.sp,

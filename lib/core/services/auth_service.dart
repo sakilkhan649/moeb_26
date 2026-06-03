@@ -312,6 +312,11 @@ class AuthService extends GetxService {
     isLoggedIn.value = false;
   }
 
+  /// Public method to clear local authentication credentials
+  Future<void> clearLocalAuth() async {
+    await _clearLocalAuth();
+  }
+
   /// Check if user is authenticated
   bool get isAuthenticated => isLoggedIn.value;
 }

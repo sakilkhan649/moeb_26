@@ -24,7 +24,7 @@ class SplashView extends StatelessWidget {
             SizedBox(
               width: 150.w,
               height: 70.w,
-              child: Image.asset(AppImages.final_app_logo, fit: BoxFit.fill),
+              child: Image.asset(AppImages.app_logo, fit: BoxFit.fill),
             ),
 
             SizedBox(height: 12.h),
