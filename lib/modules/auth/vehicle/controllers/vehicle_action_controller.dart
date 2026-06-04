@@ -152,8 +152,20 @@ class VehicleActionController extends GetxController {
       ),
     );
     if (picked != null) {
-      controller.text = DateFormat('yyyy-MM-dd').format(picked);
+      controller.text =
+          "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
     }
+  }
+
+  String _cleanPath(String path) {
+    if (path.startsWith('file://')) {
+      try {
+        return Uri.parse(path).toFilePath();
+      } catch (_) {
+        return path.replaceFirst('file://', '');
+      }
+    }
+    return path;
   }
 
   Future<void> pickFromCamera(Rx<File?> target) async {
@@ -161,7 +173,7 @@ class VehicleActionController extends GetxController {
       source: ImageSource.camera,
       imageQuality: 80,
     );
-    if (image != null) target.value = File(image.path);
+    if (image != null) target.value = File(_cleanPath(image.path));
   }
 
   Future<void> pickFromFile(Rx<File?> target) async {
@@ -170,7 +182,7 @@ class VehicleActionController extends GetxController {
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
     if (result != null && result.files.single.path != null) {
-      target.value = File(result.files.single.path!);
+      target.value = File(_cleanPath(result.files.single.path!));
     }
   }
 

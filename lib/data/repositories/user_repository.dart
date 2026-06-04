@@ -64,32 +64,59 @@ class UserRepo {
     formData.files.addAll([
       MapEntry(
         'drivingLicense[image]',
-        await MultipartFile.fromFile(drivingLicense.path),
+        await MultipartFile.fromFile(
+          drivingLicense.path,
+          filename: drivingLicense.path.split('/').last.split('\\').last,
+        ),
       ),
       MapEntry(
         'hackLicense[image]',
-        await MultipartFile.fromFile(hackLicense.path),
+        await MultipartFile.fromFile(
+          hackLicense.path,
+          filename: hackLicense.path.split('/').last.split('\\').last,
+        ),
       ),
       MapEntry(
         'commercialInsurance[image]',
-        await MultipartFile.fromFile(commercialInsurance.path),
+        await MultipartFile.fromFile(
+          commercialInsurance.path,
+          filename: commercialInsurance.path.split('/').last.split('\\').last,
+        ),
       ),
       MapEntry(
         'vehicleRegistration[image]',
-        await MultipartFile.fromFile(vehicleRegistration.path),
+        await MultipartFile.fromFile(
+          vehicleRegistration.path,
+          filename: vehicleRegistration.path.split('/').last.split('\\').last,
+        ),
       ),
-      MapEntry('headshot', await MultipartFile.fromFile(headshot.path)),
+      MapEntry(
+        'headshot',
+        await MultipartFile.fromFile(
+          headshot.path,
+          filename: headshot.path.split('/').last.split('\\').last,
+        ),
+      ),
       MapEntry(
         'vehiclePhotos[frontView]',
-        await MultipartFile.fromFile(frontView.path),
+        await MultipartFile.fromFile(
+          frontView.path,
+          filename: frontView.path.split('/').last.split('\\').last,
+        ),
       ),
       MapEntry(
         'vehiclePhotos[rearView]',
-        await MultipartFile.fromFile(rearView.path),
+        await MultipartFile.fromFile(
+          rearView.path,
+          filename: rearView.path.split('/').last.split('\\').last,
+        ),
       ),
       MapEntry(
         'vehiclePhotos[interiorView]',
-        await MultipartFile.fromFile(interiorView.path),
+        await MultipartFile.fromFile(
+          interiorView.path,
+          filename: interiorView.path.split('/').last.split('\\').last,
+        ),
       ),
     ]);
 
@@ -97,7 +124,10 @@ class UserRepo {
       formData.files.add(
         MapEntry(
           'localPermit[image]',
-          await MultipartFile.fromFile(localPermit.path),
+          await MultipartFile.fromFile(
+            localPermit.path,
+            filename: localPermit.path.split('/').last.split('\\').last,
+          ),
         ),
       );
     }
