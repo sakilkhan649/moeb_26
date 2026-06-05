@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 import 'dart:ui';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image/image.dart' as img;
 
 enum SnackBarType { success, error, info, warning, secondary }
 
@@ -140,7 +142,8 @@ class Helpers {
     if (message == null || message.isEmpty) return;
 
     // Map parameters to new style
-    final SnackBarType resolvedType = type ?? (isError ? SnackBarType.error : SnackBarType.success);
+    final SnackBarType resolvedType =
+        type ?? (isError ? SnackBarType.error : SnackBarType.success);
     final bool resolvedUseGetx = useGetxSnackbar && getXSnackBar;
 
     final Map<String, dynamic> config = _getSnackBarConfig(resolvedType);
@@ -357,5 +360,45 @@ class Helpers {
       _debounceTimers.remove(tag);
       callback();
     });
+  }
+
+  /// Compress image file by resizing it to a maximum width of 1024 pixels.
+  /// If the file is not an image (e.g. PDF), it returns the original file.
+  static Future<File> compressImage(File file) async {
+    final path = file.path.toLowerCase();
+    if (path.endsWith('.jpg') ||
+        path.endsWith('.jpeg') ||
+        path.endsWith('.png')) {
+      try {
+        final bytes = await file.readAsBytes();
+
+        // Decode using pure Dart 'image' package
+        final img.Image? decoded = img.decodeImage(bytes);
+        if (decoded != null) {
+          // Resize if width is larger than 1024 pixels
+          img.Image resized = decoded;
+          if (decoded.width > 1024) {
+            resized = img.copyResize(decoded, width: 1024);
+          }
+
+          // Encode as JPEG with 70% quality (extremely high compression with good visual quality)
+          final jpegBytes = img.encodeJpg(resized, quality: 70);
+
+          final tempDir = Directory.systemTemp;
+          final tempPath =
+              '${tempDir.path}/compressed_${DateTime.now().microsecondsSinceEpoch}.jpg';
+          final compressedFile = File(tempPath);
+          await compressedFile.writeAsBytes(jpegBytes);
+
+          Helpers.debug(
+            'Compressed image: ${file.path} (${bytes.length} bytes) -> $tempPath (${jpegBytes.length} bytes)',
+          );
+          return compressedFile;
+        }
+      } catch (e) {
+        Helpers.error('Error compressing image: $e');
+      }
+    }
+    return file;
   }
 }

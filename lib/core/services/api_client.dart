@@ -334,11 +334,15 @@ class ApiClient extends GetxService {
           message = 'Server took too long to respond';
           break;
         case DioExceptionType.badResponse:
-          final data = e.response?.data;
-          if (data is Map && data['message'] != null) {
-            message = data['message'].toString();
+          if (e.response?.statusCode == 413) {
+            message = 'Your uploaded file is too large!';
           } else {
-            message = 'Bad response: ${e.response?.statusMessage ?? 'Unknown'}';
+            final data = e.response?.data;
+            if (data is Map && data['message'] != null) {
+              message = data['message'].toString();
+            } else {
+              message = 'Bad response: ${e.response?.statusMessage ?? 'Unknown'}';
+            }
           }
           break;
         case DioExceptionType.cancel:

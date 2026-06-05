@@ -137,7 +137,8 @@ class ProfileController extends GetxController {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      pickedImage.value = File(image.path);
+      final compressed = await Helpers.compressImage(File(image.path));
+      pickedImage.value = compressed;
     }
   }
 

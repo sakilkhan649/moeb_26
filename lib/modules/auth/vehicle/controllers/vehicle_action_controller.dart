@@ -156,21 +156,76 @@ class VehicleActionController extends GetxController {
     }
   }
 
+  bool _isPicking = false;
+
   Future<void> pickFromCamera(Rx<File?> target) async {
-    final XFile? image = await _imagePicker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 80,
-    );
-    if (image != null) target.value = File(image.path);
+    if (_isPicking) return;
+    _isPicking = true;
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+      if (image != null) {
+        final file = File(image.path);
+        final compressed = await Helpers.compressImage(file);
+        final fileSize = await compressed.length();
+        if (fileSize > 1024 * 1024) {
+          Helpers.showCustomSnackBar(
+            'Maximum file size allowed is 1MB',
+            isError: true,
+          );
+          return;
+        }
+        target.value = compressed;
+      }
+    } catch (e) {
+      Helpers.error('Error picking from camera: $e');
+    } finally {
+      _isPicking = false;
+    }
   }
 
   Future<void> pickFromFile(Rx<File?> target) async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-    );
-    if (result != null && result.files.single.path != null) {
-      target.value = File(result.files.single.path!);
+    if (_isPicking) return;
+    _isPicking = true;
+    try {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+      );
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        final path = file.path.toLowerCase();
+        final isImage = path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png');
+
+        if (isImage) {
+          final compressed = await Helpers.compressImage(file);
+          final fileSize = await compressed.length();
+          if (fileSize > 1024 * 1024) {
+            Helpers.showCustomSnackBar(
+              'Maximum file size allowed is 1MB',
+              isError: true,
+            );
+            return;
+          }
+          target.value = compressed;
+        } else {
+          final fileSize = await file.length();
+          if (fileSize > 1024 * 1024) {
+            Helpers.showCustomSnackBar(
+              'Maximum file size allowed is 1MB',
+              isError: true,
+            );
+            return;
+          }
+          target.value = file;
+        }
+      }
+    } catch (e) {
+      Helpers.error('Error picking from file: $e');
+    } finally {
+      _isPicking = false;
     }
   }
 

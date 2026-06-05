@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:moeb_26/core/services/community_service.dart';
 import 'package:moeb_26/core/services/socket_service.dart';
 import 'package:moeb_26/core/services/user_service.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 
 class CommunityChatDetailController extends GetxController {
@@ -63,7 +64,10 @@ class CommunityChatDetailController extends GetxController {
   Future<void> pickImage() async {
     final List<XFile> images = await _picker.pickMultiImage();
     if (images.isNotEmpty) {
-      selectedImages.addAll(images.map((i) => File(i.path)));
+      for (var image in images) {
+        final compressed = await Helpers.compressImage(File(image.path));
+        selectedImages.add(compressed);
+      }
     }
   }
 

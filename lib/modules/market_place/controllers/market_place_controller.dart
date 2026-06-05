@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:moeb_26/core/services/marketplace_service.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/market_place_model.dart';
 import 'package:moeb_26/modules/my_items/controllers/my_items_controller.dart'
     as my_items;
@@ -128,7 +129,8 @@ class MarketplaceController extends GetxController {
   Future<void> pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      selectedImage.value = File(image.path);
+      final compressed = await Helpers.compressImage(File(image.path));
+      selectedImage.value = compressed;
     }
   }
 
