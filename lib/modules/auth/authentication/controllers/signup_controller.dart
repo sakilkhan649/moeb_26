@@ -238,19 +238,89 @@ class SignupController extends GetxController {
           arguments: {'email': emailController.text, 'isRegister': true},
         );
       } else {
-        final message = response.data is Map
-            ? (response.data['message'] ?? 'Registration failed.')
-            : 'Registration failed.';
+        final message = _extractErrorMessage(response);
         Helpers.showCustomSnackBar(message, isError: true);
       }
     } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Registration failed.';
+      final message = _extractErrorMessage(e);
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
-      Helpers.showCustomSnackBar('Something went wrong.', isError: true);
+      Helpers.showCustomSnackBar(
+        e.toString().contains('SocketException')
+            ? 'No internet connection. Please check your network.'
+            : 'Something went wrong.',
+        isError: true,
+      );
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Extracts error message dynamically from a Dio response or exception
+  String _extractErrorMessage(dynamic errorOrResponse) {
+    if (errorOrResponse == null) return 'Registration failed.';
+
+    if (errorOrResponse is DioException) {
+      final data = errorOrResponse.response?.data;
+      return _parseData(data) ??
+          errorOrResponse.message ??
+          'Registration failed.';
+    }
+
+    if (errorOrResponse is Response) {
+      final data = errorOrResponse.data;
+      return _parseData(data) ??
+          errorOrResponse.statusMessage ??
+          'Registration failed.';
+    }
+
+    return 'Registration failed.';
+  }
+
+  /// Parses various error formats from the API response
+  String? _parseData(dynamic data) {
+    if (data == null) return null;
+    if (data is Map) {
+      // 1. Check 'message' key
+      final message = data['message'];
+      if (message != null) {
+        if (message is List) {
+          return message.join('\n');
+        }
+        return message.toString();
+      }
+
+      // 2. Check 'error' key
+      final error = data['error'];
+      if (error != null) {
+        if (error is List) {
+          return error.join('\n');
+        }
+        return error.toString();
+      }
+
+      // 3. Check 'errors' key
+      final errors = data['errors'];
+      if (errors != null) {
+        if (errors is Map) {
+          final messages = <String>[];
+          errors.forEach((key, value) {
+            if (value is List) {
+              messages.add("$key: ${value.join(', ')}");
+            } else {
+              messages.add("$key: $value");
+            }
+          });
+          return messages.join('\n');
+        } else if (errors is List) {
+          return errors.join('\n');
+        }
+        return errors.toString();
+      }
+    } else if (data is String && data.isNotEmpty) {
+      return data;
+    }
+    return null;
   }
 
   @override
