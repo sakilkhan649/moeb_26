@@ -299,6 +299,7 @@ class ApiClient extends GetxService {
 
   // ──────────────────── PRIVATE HELPERS ────────────────────
 
+  /// Build FormData from body map and multipart files
   Future<FormData> _buildFormData(
     Map<String, dynamic> body,
     List<MultipartBody> multipartBody,
@@ -306,13 +307,7 @@ class ApiClient extends GetxService {
     final formData = FormData.fromMap(body);
     for (final part in multipartBody) {
       formData.files.add(
-        MapEntry(
-          part.key,
-          await MultipartFile.fromFile(
-            part.file.path,
-            filename: part.file.path.split('/').last.split('\\').last,
-          ),
-        ),
+        MapEntry(part.key, await MultipartFile.fromFile(part.file.path)),
       );
     }
     return formData;

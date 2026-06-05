@@ -70,24 +70,15 @@ class AuthRepo {
     formData.files.addAll([
       MapEntry(
         'drivingLicenseImage',
-        await MultipartFile.fromFile(
-          drivingLicenseFile.path,
-          filename: drivingLicenseFile.path.split('/').last.split('\\').last,
-        ),
+        await MultipartFile.fromFile(drivingLicenseFile.path),
       ),
       MapEntry(
         'hackLicenseImage',
-        await MultipartFile.fromFile(
-          hackLicenseFile.path,
-          filename: hackLicenseFile.path.split('/').last.split('\\').last,
-        ),
+        await MultipartFile.fromFile(hackLicenseFile.path),
       ),
       MapEntry(
         'uploadedHeadshot',
-        await MultipartFile.fromFile(
-          headshotFile.path,
-          filename: headshotFile.path.split('/').last.split('\\').last,
-        ),
+        await MultipartFile.fromFile(headshotFile.path),
       ),
     ]);
 
@@ -95,10 +86,7 @@ class AuthRepo {
       formData.files.add(
         MapEntry(
           'localPermitImage',
-          await MultipartFile.fromFile(
-            localPermitFile.path,
-            filename: localPermitFile.path.split('/').last.split('\\').last,
-          ),
+          await MultipartFile.fromFile(localPermitFile.path),
         ),
       );
     }
@@ -111,10 +99,7 @@ class AuthRepo {
         formData.files.add(
           MapEntry(
             'vehicleRegistrationImage',
-            await MultipartFile.fromFile(
-              v.vehicleRegistrationFile.value!.path,
-              filename: v.vehicleRegistrationFile.value!.path.split('/').last.split('\\').last,
-            ),
+            await MultipartFile.fromFile(v.vehicleRegistrationFile.value!.path),
           ),
         );
       }
@@ -122,10 +107,7 @@ class AuthRepo {
         formData.files.add(
           MapEntry(
             'commercialInsuranceImage',
-            await MultipartFile.fromFile(
-              v.commercialInsuranceFile.value!.path,
-              filename: v.commercialInsuranceFile.value!.path.split('/').last.split('\\').last,
-            ),
+            await MultipartFile.fromFile(v.commercialInsuranceFile.value!.path),
           ),
         );
       }
@@ -133,10 +115,7 @@ class AuthRepo {
         formData.files.add(
           MapEntry(
             'vehiclePhotoFront',
-            await MultipartFile.fromFile(
-              v.frontViewFile.value!.path,
-              filename: v.frontViewFile.value!.path.split('/').last.split('\\').last,
-            ),
+            await MultipartFile.fromFile(v.frontViewFile.value!.path),
           ),
         );
       }
@@ -144,10 +123,7 @@ class AuthRepo {
         formData.files.add(
           MapEntry(
             'vehiclePhotoRear',
-            await MultipartFile.fromFile(
-              v.rearViewFile.value!.path,
-              filename: v.rearViewFile.value!.path.split('/').last.split('\\').last,
-            ),
+            await MultipartFile.fromFile(v.rearViewFile.value!.path),
           ),
         );
       }
@@ -155,10 +131,7 @@ class AuthRepo {
         formData.files.add(
           MapEntry(
             'vehiclePhotoInterior',
-            await MultipartFile.fromFile(
-              v.interiorViewFile.value!.path,
-              filename: v.interiorViewFile.value!.path.split('/').last.split('\\').last,
-            ),
+            await MultipartFile.fromFile(v.interiorViewFile.value!.path),
           ),
         );
       }
