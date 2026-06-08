@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import '../../../../core/widgets/CustomButton.dart';
@@ -23,9 +22,10 @@ class AuthSelectionView extends StatelessWidget {
               children: [
                 // The logo (use an image asset or network image)
                 SizedBox(
-                  width: 150.w,
-                  height: 70.w,
-                  child: Image.asset(AppImages.app_logo, fit: BoxFit.fill),
+                  child: Image.asset(
+                    "assets/images/auth_select_page_logo.png",
+                    fit: BoxFit.fill,
+                  ),
                 ),
                 SizedBox(height: 12.h),
                 // Title Text
