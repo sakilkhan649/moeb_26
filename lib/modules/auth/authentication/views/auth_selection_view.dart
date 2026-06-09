@@ -58,10 +58,13 @@ class AuthSelectionView extends StatelessWidget {
                 // Subtitle Text
                 GestureDetector(
                   onTap: () {},
-                  child: CustomTextgray(
-                    text:
-                        "By continuing, you agree to our Terms & Privacy Policy",
-                    fontSize: 12.sp,
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    "By continuing, you agree to our Terms & Privacy Policy",
+                    style: TextStyle(
+                      color: Color(0xFF999999),
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ),
               ],

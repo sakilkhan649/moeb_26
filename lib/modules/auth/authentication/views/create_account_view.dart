@@ -4,6 +4,7 @@ import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/modules/auth/authentication/controllers/signup_controller.dart';
 import 'package:moeb_26/core/widgets/Custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../../core/widgets/CustomButton.dart';
@@ -49,8 +50,10 @@ class _CreateAccountViewState extends State<CreateAccountView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Form(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Form(
         key: _formKey,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -59,7 +62,16 @@ class _CreateAccountViewState extends State<CreateAccountView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 100.h),
+                SizedBox(height: 50.h),
+                IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                    size: 22.sp,
+                  ),
+                ),
+                SizedBox(height: 20.h),
                  CustomText(
                   text: "Account Create",
                   fontSize: 28.sp,
@@ -96,6 +108,9 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                     obscureText: false,
                     textInputType: TextInputType.phone,
                     validator: (value) => Validators.phone(value),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9+()\s-]')),
+                    ],
                   ),
                 ),
 
@@ -209,7 +224,13 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                       hintText: "Enter password",
                       obscureText: !controller.showPassword.value,
                       textInputType: TextInputType.visiblePassword,
-                      validator: (value) => Validators.password(value),
+                      validator: (value) => Validators.password(
+                        value,
+                        minLength: 8,
+                        requireDigit: true,
+                        requireUppercase: true,
+                        requireSpecialChar: true,
+                      ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           controller.showPassword.value
@@ -258,7 +279,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
             ),
           ),
         ),
-      ),
+      ),)
     );
   }
 
@@ -325,6 +346,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
   // --- Logic ---
 
   void _handleSubmit() {
+    FocusScope.of(context).unfocus();
     final isFormValid = _formKey.currentState!.validate();
 
     bool dropdownsValid = true;

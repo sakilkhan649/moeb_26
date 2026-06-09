@@ -27,7 +27,7 @@ class MyItemsCard extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Get.dialog(
-                ImagePreviewPopup(imagePath: item.imagePath, title: item.name),
+                ImagePreviewPopup(imageUrl: item.imagePath, title: item.name),
               );
             },
             child: ClipRRect(child: _buildImage()),

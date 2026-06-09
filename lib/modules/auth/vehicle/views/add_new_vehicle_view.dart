@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
@@ -199,10 +200,11 @@ class AddNewVehicleView extends StatelessWidget {
                     controller: controller.yearController,
                     hintText: "2023",
                     keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return "Enter Year";
-                      return null;
-                    },
+                    validator: (value) => Validators.year(
+                      value,
+                      min: DateTime.now().year - 5,
+                      max: DateTime.now().year,
+                    ),
                   ),
                 ],
               ),
@@ -479,8 +481,12 @@ class AddNewVehicleView extends StatelessWidget {
                 ),
                 if (canPreview)
                   IconButton(
-                    onPressed: () =>
-                        controller.previewImage(context, fileRx, urlRx),
+                    onPressed: () => controller.previewImage(
+                      context,
+                      fileRx,
+                      urlRx,
+                      title: title,
+                    ),
                     icon: Icon(
                       Icons.remove_red_eye_outlined,
                       color: Colors.blue,
@@ -577,8 +583,12 @@ class AddNewVehicleView extends StatelessWidget {
                 ),
                 if (canPreview)
                   IconButton(
-                    onPressed: () =>
-                        controller.previewImage(context, fileRx, urlRx),
+                    onPressed: () => controller.previewImage(
+                      context,
+                      fileRx,
+                      urlRx,
+                      title: title,
+                    ),
                     icon: Icon(
                       Icons.remove_red_eye_outlined,
                       color: Colors.blue,
@@ -590,14 +600,6 @@ class AddNewVehicleView extends StatelessWidget {
                   onPressed: () => controller.pickFromCamera(fileRx),
                   icon: Icon(
                     Icons.camera_alt_outlined,
-                    color: Colors.white,
-                    size: 20.sp,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => controller.pickFromFile(fileRx),
-                  icon: Icon(
-                    Icons.file_upload_outlined,
                     color: Colors.white,
                     size: 20.sp,
                   ),
@@ -633,6 +635,8 @@ class AddNewVehicleView extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
+        errorStyle: TextStyle(color: Colors.red, fontSize: 11.sp),
+        errorMaxLines: 2,
         suffixIcon: Icon(
           Icons.calendar_today_outlined,
           color: Colors.white,
@@ -650,6 +654,14 @@ class AddNewVehicleView extends StatelessWidget {
           borderSide: BorderSide(color: AppColors.black200),
         ),
         focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: BorderSide(color: AppColors.black200),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: BorderSide(color: AppColors.black200),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: BorderSide(color: AppColors.black200),
         ),
@@ -735,6 +747,8 @@ class AddNewVehicleView extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
+          errorStyle: TextStyle(color: Colors.red, fontSize: 11.sp),
+          errorMaxLines: 2,
           contentPadding: EdgeInsets.symmetric(
             vertical: 12.h,
             horizontal: 12.w,
@@ -748,6 +762,14 @@ class AddNewVehicleView extends StatelessWidget {
             borderSide: BorderSide(color: AppColors.black200),
           ),
           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: AppColors.black200),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: AppColors.black200),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.r),
             borderSide: BorderSide(color: AppColors.black200),
           ),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/app_const.dart';
+import 'package:moeb_26/core/utils/validators.dart';
 import '../../../../core/widgets/CustomButton.dart';
 import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextField.dart';
@@ -19,8 +20,10 @@ class SignInView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Form(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Form(
         key: _controller.formKey,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -72,15 +75,7 @@ class SignInView extends StatelessWidget {
                     hintText: "Enter your password",
                     obscureText: !_controller.isPasswordVisible.value,
                     textInputType: TextInputType.visiblePassword,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter your Password";
-                      }
-                      if (!AppString.passRegexp.hasMatch(value)) {
-                        return "Invalid password";
-                      }
-                      return null;
-                    },
+                    validator: (value) => Validators.password(value),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _controller.isPasswordVisible.value
@@ -150,7 +145,7 @@ class SignInView extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      ),)
     );
   }
 }

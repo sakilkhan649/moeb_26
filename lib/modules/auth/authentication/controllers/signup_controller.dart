@@ -91,7 +91,7 @@ class SignupController extends GetxController {
   // ===========================================================================
   // STEP 4: TERMS & POLICY
   // ===========================================================================
-  final RxList<bool> termChecks = List.generate(63, (_) => false).obs;
+  final RxList<bool> termChecks = List.generate(64, (_) => false).obs;
   final RxBool showTermError = false.obs;
 
   void toggleTermCheck(int index) {
@@ -168,6 +168,10 @@ class SignupController extends GetxController {
       }
     } catch (e) {
       Helpers.error('Error picking from camera: $e');
+      Helpers.showCustomSnackBar(
+        'Could not open camera. Please check app permissions in settings.',
+        isError: true,
+      );
     } finally {
       _isPicking = false;
     }
@@ -262,9 +266,9 @@ class SignupController extends GetxController {
       return;
     }
 
-    if (headshotFile.value == null) {
+    if (profilePictureFile.value == null) {
       Helpers.showCustomSnackBar(
-        'Please upload your headshot image',
+        'Please upload your profile picture',
         isError: true,
       );
       return;
@@ -304,7 +308,7 @@ class SignupController extends GetxController {
         localPermitExpiry: localPermitExpireController.text.isEmpty
             ? null
             : localPermitExpireController.text,
-        headshotFile: headshotFile.value!,
+        headshotFile: profilePictureFile.value!,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

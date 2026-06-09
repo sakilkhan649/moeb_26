@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
 import 'package:moeb_26/core/services/user_profile_service.dart';
+import 'package:moeb_26/core/widgets/ImagePreviewPopup.dart';
 
 class VehicleActionController extends GetxController {
   final UserProfileService _profileService = Get.find<UserProfileService>();
@@ -90,7 +91,12 @@ class VehicleActionController extends GetxController {
   }
 
   /// Shows the existing server image or the newly picked local file in a dialog.
-  void previewImage(BuildContext context, Rx<File?> fileRx, RxnString urlRx) {
+  void previewImage(
+    BuildContext context,
+    Rx<File?> fileRx,
+    RxnString urlRx, {
+    String title = "Image Preview",
+  }) {
     final localFile = fileRx.value;
     final serverUrl = urlRx.value;
 
@@ -102,31 +108,8 @@ class VehicleActionController extends GetxController {
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (_) => Dialog(
-        backgroundColor: Colors.black,
-        insetPadding: const EdgeInsets.all(16),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: localFile != null
-              ? Image.file(localFile, fit: BoxFit.contain)
-              : Image.network(
-                  serverUrl!,
-                  fit: BoxFit.contain,
-                  loadingBuilder: (_, child, progress) => progress == null
-                      ? child
-                      : const Center(child: CircularProgressIndicator()),
-                  errorBuilder: (_, _, _) => const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Text(
-                      'Failed to load image',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-        ),
-      ),
+    Get.dialog(
+      ImagePreviewPopup(file: localFile, imageUrl: serverUrl, title: title),
     );
   }
 
@@ -181,6 +164,10 @@ class VehicleActionController extends GetxController {
       }
     } catch (e) {
       Helpers.error('Error picking from camera: $e');
+      Helpers.showCustomSnackBar(
+        'Could not open camera. Please check app permissions in settings.',
+        isError: true,
+      );
     } finally {
       _isPicking = false;
     }

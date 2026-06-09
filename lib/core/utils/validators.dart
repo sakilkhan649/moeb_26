@@ -106,18 +106,26 @@ class Validators {
     return null;
   }
 
-  /// Validates phone number (digits only, length check).
+  /// Validates phone number (allows digits, +, (, ), -, and spaces).
   static String? phone(String? value, {String? message}) {
     if (value == null || value.trim().isEmpty) {
       return message ?? 'Phone number is required';
     }
     final phone = value.trim();
-    if (!GetUtils.isPhoneNumber(phone)) {
+
+    // Regular expression to allow digits, +, (, ), -, and spaces
+    final phoneRegex = RegExp(r'^[+0-9()-\s]+$');
+
+    if (!phoneRegex.hasMatch(phone)) {
       return 'Enter a valid phone number';
     }
-    if (phone.length < 10 || phone.length > 15) {
-      return 'Phone number must be between 10 and 15 digits';
+
+    // Count digits only for length validation (usually 8-15 digits)
+    final digitsOnly = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digitsOnly.length < 7 || digitsOnly.length > 15) {
+      return 'Phone number must be between 7 and 15 digits';
     }
+
     return null;
   }
 
@@ -202,6 +210,24 @@ class Validators {
     }
     if (!GetUtils.isPhoneNumber(value.trim())) {
       return message ?? 'Enter a valid number';
+    }
+    return null;
+  }
+
+  /// Validates year within a range (e.g., last 5 years).
+  static String? year(String? value, {int? min, int? max, String? message}) {
+    if (value == null || value.trim().isEmpty) {
+      return message ?? 'Year is required';
+    }
+    final yearValue = int.tryParse(value.trim());
+    if (yearValue == null) {
+      return 'Enter a valid year';
+    }
+    if (min != null && yearValue < min) {
+      return 'Year must be $min or later';
+    }
+    if (max != null && yearValue > max) {
+      return 'Year cannot be after $max';
     }
     return null;
   }

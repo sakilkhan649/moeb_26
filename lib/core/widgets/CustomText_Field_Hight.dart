@@ -40,6 +40,7 @@ class CustomtextFieldHight extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.gray100),
+          errorStyle: TextStyle(color: Colors.red, fontSize: 12.sp),
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
           contentPadding: EdgeInsets.symmetric(
@@ -55,11 +56,18 @@ class CustomtextFieldHight extends StatelessWidget {
             borderSide: BorderSide(color: AppColors.black200),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: AppColors.black200),
-          ),
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: BorderSide(color: AppColors.black200),
         ),
-      ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: BorderSide(color: AppColors.black200),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: BorderSide(color: AppColors.black200),
+        ),
+      ),)
     );
   }
 }

@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
 import 'package:moeb_26/core/services/user_profile_service.dart';
+import 'package:moeb_26/core/widgets/ImagePreviewPopup.dart';
 
 class PersonalDocumentController extends GetxController {
   final UserProfileService _profileService = Get.find<UserProfileService>();
@@ -216,7 +217,12 @@ class PersonalDocumentController extends GetxController {
   }
 
   /// Shows the existing server image or the newly picked local file in a dialog.
-  void previewImage(BuildContext context, Rx<File?> fileRx, RxnString urlRx) {
+  void previewImage(
+    BuildContext context,
+    Rx<File?> fileRx,
+    RxnString urlRx, {
+    String title = "Document Preview",
+  }) {
     final localFile = fileRx.value;
     final serverUrl = urlRx.value;
 
@@ -228,31 +234,8 @@ class PersonalDocumentController extends GetxController {
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (_) => Dialog(
-        backgroundColor: Colors.black,
-        insetPadding: EdgeInsets.all(16),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: localFile != null
-              ? Image.file(localFile, fit: BoxFit.contain)
-              : Image.network(
-                  serverUrl!,
-                  fit: BoxFit.contain,
-                  loadingBuilder: (_, child, progress) => progress == null
-                      ? child
-                      : const Center(child: CircularProgressIndicator()),
-                  errorBuilder: (_, _, _) => const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Text(
-                      'Failed to load image',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-        ),
-      ),
+    Get.dialog(
+      ImagePreviewPopup(file: localFile, imageUrl: serverUrl, title: title),
     );
   }
 

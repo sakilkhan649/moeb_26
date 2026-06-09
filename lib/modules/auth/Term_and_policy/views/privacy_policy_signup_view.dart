@@ -126,6 +126,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
         _buildSection(
           title: "APPEARANCE & DRESS CODE",
           items: [
+            "I confirm that I speak and understand English sufficiently to communicate professionally with passengers and follow trip instructions.",
             "Chauffeurs must wear a full business suit with tie at all times while on duty.",
             "Approved suit colors: Black, Navy Blue, or Dark Grey only.",
             "Shirts must be clean, pressed, and neutral in color (white, black or light blue).",
@@ -141,7 +142,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Strong colognes, perfumes, or scented products are strictly prohibited.",
             "Breath must be clean and neutral. Smoking, vaping, or strong food odors prior to service are not permitted.",
           ],
-          startIndex: 5,
+          startIndex: 6,
         ),
         _buildSection(
           title: "VEHICLE STANDARDS",
@@ -152,7 +153,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Vehicle must be mechanically sound and fully fueled prior to pickup.",
             "No warning or service lights may be displayed during service.",
           ],
-          startIndex: 8,
+          startIndex: 9,
         ),
         _buildSection(
           title: "CLIENT AMENITIES",
@@ -163,7 +164,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Climate control must be set to a comfortable temperature.",
             "Music only upon client request (default setting: silence).",
           ],
-          startIndex: 13,
+          startIndex: 14,
         ),
         _buildSection(
           title: "SERVICE & PROFESSIONAL BEHAVIOR",
@@ -174,7 +175,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Confirm destination quietly and professionally.",
             "Maintain a calm, discreet, and respectful demeanor at all times.",
           ],
-          startIndex: 18,
+          startIndex: 19,
         ),
         _buildSection(
           title: "STRICT PROFESSIONAL BOUNDARIES",
@@ -185,7 +186,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Never solicit future business from a client.",
             "Always act as a representative exclusively of the assigning company.",
           ],
-          startIndex: 23,
+          startIndex: 24,
         ),
         _buildSection(
           title: "SAFETY & COMMUNICATION",
@@ -195,7 +196,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Obey all traffic laws and drive smoothly at all times.",
             "Aggressive driving, speeding, or sudden braking is prohibited.",
           ],
-          startIndex: 28,
+          startIndex: 29,
         ),
         _buildSection(
           title: "PUNCTUALITY & RELIABILITY",
@@ -205,7 +206,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Never cancel last-minute except in a true emergency.",
             "Immediately inform the company of any delays or issues.",
           ],
-          startIndex: 32,
+          startIndex: 33,
         ),
         _buildSection(
           title: "CONFIDENTIALITY & RESPECT",
@@ -215,7 +216,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Respect client privacy at all times.",
             "Treat all clients with equal respect, regardless of status or appearance.",
           ],
-          startIndex: 36,
+          startIndex: 37,
         ),
         _buildSection(
           title: "JOB ACCEPTANCE & RESPONSIBILITY",
@@ -230,7 +231,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "The chauffeur who accepts the job is personally responsible for its completion.",
             "Unauthorized job swapping or replacement may result in immediate suspension or permanent removal from the Elite Chauffeur Network.",
           ],
-          startIndex: 40,
+          startIndex: 41,
         ),
         _buildSection(
           title: "ASAP Jobs",
@@ -238,14 +239,14 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "\u201CASAP\u201D means immediate service.",
             "Chauffeurs must be on location or within 10 minutes, verified by GPS, to accept the job.",
           ],
-          startIndex: 49,
+          startIndex: 50,
         ),
         _buildSection(
           title: "PAYMENT",
           items: [
             "Once a job is completed, the job poster must pay the driver within a maximum of 48 hours.",
           ],
-          startIndex: 51,
+          startIndex: 52,
         ),
         _buildSection(
           title: "ENFORCEMENT",
@@ -255,14 +256,14 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Permanent removal from the Elite Chauffeur Network.",
             "Repeated low ratings or client complaints will trigger an automatic review.",
           ],
-          startIndex: 52,
+          startIndex: 53,
         ),
         _buildSection(
           title: "DRIVER AGREEMENT",
           items: [
             "By accepting jobs through the platform, the chauffeur agrees to fully comply with this Ekkali Code of Conduct.",
           ],
-          startIndex: 56,
+          startIndex: 57,
         ),
         _buildSection(
           title: "INDEPENDENT PAYMENT RESPONSIBILITY",
@@ -274,7 +275,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "I acknowledge and agree that Ekkali Inc. bears no responsibility or liability for payment disputes, non-payment, delays, chargebacks, or financial losses.",
             "I understand that failure to meet payment or professional obligations may result in temporary suspension or permanent removal from the Ekkali platform.",
           ],
-          startIndex: 57,
+          startIndex: 58,
         ),
       ],
     );

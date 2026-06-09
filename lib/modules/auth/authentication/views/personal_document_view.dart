@@ -171,8 +171,12 @@ class PersonalDocumentView extends StatelessWidget {
                 // 👁 Eye preview icon — shows if local file or server URL exists
                 if (canPreview)
                   IconButton(
-                    onPressed: () =>
-                        controller.previewImage(context, fileRx, urlRx),
+                    onPressed: () => controller.previewImage(
+                      context,
+                      fileRx,
+                      urlRx,
+                      title: title,
+                    ),
                     icon: const Icon(
                       Icons.remove_red_eye_outlined,
                       color: Colors.blue,
@@ -278,14 +282,14 @@ class PersonalDocumentView extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                IconButton(
-                  onPressed: () =>
-                      controller.pickFromFile(controller.headshotFile),
-                  icon: const Icon(
-                    Icons.file_upload_outlined,
-                    color: Colors.white,
-                  ),
-                ),
+               // IconButton(
+                //   onPressed: () =>
+                //       controller.pickFromFile(controller.headshotFile),
+                //   icon: const Icon(
+                //     Icons.file_upload_outlined,
+                //     color: Colors.white,
+                //   ),
+                // ),
               ],
             ),
           ),

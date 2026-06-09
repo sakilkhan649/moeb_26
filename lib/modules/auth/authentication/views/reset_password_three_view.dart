@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/app_const.dart';
+import 'package:moeb_26/core/utils/validators.dart';
 import '../../../../core/widgets/CustomButton.dart';
 import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextField.dart';
@@ -49,15 +50,13 @@ class ResetPasswordThreeView extends StatelessWidget {
                       hintText: "New Password",
                       obscureText: !_controller.isPasswordVisible.value,
                       textInputType: TextInputType.visiblePassword,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Enter your New Password";
-                        }
-                        if (!AppString.passRegexp.hasMatch(value)) {
-                          return "Invalid New Password";
-                        }
-                        return null;
-                      },
+                      validator: (value) => Validators.password(
+                        value,
+                        minLength: 8,
+                        requireDigit: true,
+                        requireUppercase: true,
+                        requireSpecialChar: true,
+                      ),
                       prefixIcon: IconButton(
                         icon: Icon(
                           _controller.isPasswordVisible.value

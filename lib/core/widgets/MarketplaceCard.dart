@@ -29,7 +29,7 @@ class MarketplaceCard extends StatelessWidget {
           // Item Image with rounded top corners
           GestureDetector(
             onTap: () {
-              Get.dialog(ImagePreviewPopup(imagePath: imagePath, title: title));
+              Get.dialog(ImagePreviewPopup(imageUrl: imagePath, title: title));
             },
             child: ClipRRect(child: _buildImage(imagePath)),
           ),

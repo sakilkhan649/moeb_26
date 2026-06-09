@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/modules/auth/authentication/controllers/signup_controller.dart';
 import 'package:moeb_26/data/models/vehicle_model.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
@@ -19,8 +20,10 @@ class VehicleInformationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Form(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Form(
         key: _formKey,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -69,6 +72,7 @@ class VehicleInformationView extends StatelessWidget {
                       CustomButton(
                         text: "Continue",
                         onPressed: () {
+                          FocusScope.of(context).unfocus();
                           controller.showErrors.value = true;
                           final isFormValid = _formKey.currentState!.validate();
 
@@ -99,7 +103,7 @@ class VehicleInformationView extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      ),)
     );
   }
 
@@ -218,9 +222,11 @@ class VehicleInformationView extends StatelessWidget {
                       controller: model.yearController,
                       hintText: "2023",
                       keyboardType: TextInputType.number,
-                      validator: (value) => (value == null || value.isEmpty)
-                          ? "Enter Year"
-                          : null,
+                      validator: (value) => Validators.year(
+                        value,
+                        min: DateTime.now().year - 5,
+                        max: DateTime.now().year,
+                      ),
                     ),
                   ],
                 ),
@@ -349,6 +355,8 @@ class VehicleInformationView extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
+        errorStyle: TextStyle(color: Colors.red, fontSize: 11.sp),
+        errorMaxLines: 2,
         contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
@@ -359,6 +367,14 @@ class VehicleInformationView extends StatelessWidget {
           borderSide: const BorderSide(color: AppColors.black200),
         ),
         focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: const BorderSide(color: AppColors.black200),
         ),
@@ -380,6 +396,8 @@ class VehicleInformationView extends StatelessWidget {
       decoration: InputDecoration(
         hintText: "Select Date",
         hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
+        errorStyle: TextStyle(color: Colors.red, fontSize: 11.sp),
+        errorMaxLines: 2,
         suffixIcon: Icon(
           Icons.calendar_today_outlined,
           color: Colors.white,
@@ -394,6 +412,14 @@ class VehicleInformationView extends StatelessWidget {
           borderSide: const BorderSide(color: AppColors.black200),
         ),
         focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: AppColors.black200),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: const BorderSide(color: AppColors.black200),
         ),
@@ -524,13 +550,6 @@ class VehicleInformationView extends StatelessWidget {
                   onPressed: () => controller.pickFromCamera(fileRx),
                   icon: const Icon(
                     Icons.camera_alt_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => controller.pickFromFile(fileRx),
-                  icon: const Icon(
-                    Icons.file_upload_outlined,
                     color: Colors.white,
                   ),
                 ),

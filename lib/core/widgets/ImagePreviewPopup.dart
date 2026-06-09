@@ -1,14 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class ImagePreviewPopup extends StatelessWidget {
-  final String imagePath;
+  final File? file;
+  final String? imageUrl;
   final String title;
 
   const ImagePreviewPopup({
     super.key,
-    required this.imagePath,
+    this.file,
+    this.imageUrl,
     required this.title,
   });
 
@@ -42,29 +46,36 @@ class ImagePreviewPopup extends StatelessWidget {
                   panEnabled: true,
                   minScale: 0.5,
                   maxScale: 4.0,
-                  child: imagePath.isEmpty
-                      ? _buildPlaceholder()
-                      : imagePath.startsWith('http')
-                      ? Image.network(
-                          imagePath,
+                  child: file != null
+                      ? Image.file(
+                          file!,
                           fit: BoxFit.contain,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                color: Color(0xFFF1A107),
-                              ),
-                            );
-                          },
                           errorBuilder: (context, error, stackTrace) =>
                               _buildPlaceholder(),
                         )
-                      : Image.asset(
-                          imagePath,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) =>
-                              _buildPlaceholder(),
-                        ),
+                      : (imageUrl != null && imageUrl!.isNotEmpty)
+                      ? (imageUrl!.startsWith('http')
+                          ? Image.network(
+                              imageUrl!,
+                              fit: BoxFit.contain,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xFFF1A107),
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) =>
+                                  _buildPlaceholder(),
+                            )
+                          : Image.asset(
+                              imageUrl!,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  _buildPlaceholder(),
+                            ))
+                      : _buildPlaceholder(),
                 ),
               ),
             ),

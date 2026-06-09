@@ -22,6 +22,7 @@ class SigninController extends GetxController {
 
   // ─── Login ───────────────────────────────────────────────────
   Future<void> login() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (!formKey.currentState!.validate()) return;
 
     isLoading.value = true;

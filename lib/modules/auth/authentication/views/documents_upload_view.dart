@@ -94,10 +94,8 @@ class DocumentsuploadView extends StatelessWidget {
                   title: "Profile Picture",
                   isRequired: true,
                   fileRx: controller.profilePictureFile,
+                  onlyCamera: true,
                 ),
-
-                SizedBox(height: 24.h),
-                _buildHeadshotSection(),
 
                 SizedBox(height: 30.h),
                 Container(
@@ -123,8 +121,7 @@ class DocumentsuploadView extends StatelessWidget {
                           controller.licensePlateFile.value != null &&
                           controller.hackLicenseFile.value != null &&
                           controller.localPermitFile.value != null &&
-                          controller.profilePictureFile.value != null &&
-                          controller.headshotFile.value != null;
+                          controller.profilePictureFile.value != null;
                       if (docsValid) {
                         Get.toNamed(Routes.privacyPolicySignUpView);
                       }
@@ -157,6 +154,7 @@ class DocumentsuploadView extends StatelessWidget {
     required String title,
     required bool isRequired,
     required Rx<File?> fileRx,
+    bool onlyCamera = false,
   }) {
     return Obx(() {
       final hasFile = fileRx.value != null;
@@ -171,7 +169,9 @@ class DocumentsuploadView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                _buildIcon(Icons.description_outlined),
+                _buildIcon(title == "Profile Picture"
+                    ? Icons.image_outlined
+                    : Icons.description_outlined),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
@@ -198,6 +198,11 @@ class DocumentsuploadView extends StatelessWidget {
                             color: Colors.green,
                             fontSize: 11.sp,
                           ),
+                        )
+                      else if (title == "Profile Picture")
+                        CustomTextgray(
+                          text: "BLACK SUIT TIE WITH WHITE BACKGROUND",
+                          fontSize: 8.sp,
                         ),
                     ],
                   ),
@@ -209,13 +214,14 @@ class DocumentsuploadView extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                IconButton(
-                  onPressed: () => controller.pickFromFile(fileRx),
-                  icon: const Icon(
-                    Icons.file_upload_outlined,
-                    color: Colors.white,
+                if (!onlyCamera)
+                  IconButton(
+                    onPressed: () => controller.pickFromFile(fileRx),
+                    icon: const Icon(
+                      Icons.file_upload_outlined,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -232,83 +238,6 @@ class DocumentsuploadView extends StatelessWidget {
     });
   }
 
-  Widget _buildHeadshotSection() {
-    return Obx(() {
-      final hasFile = controller.headshotFile.value != null;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: AppColors.black200),
-            ),
-            child: Row(
-              children: [
-                _buildIcon(Icons.image_outlined),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          CustomText(
-                            text: "Upload Headshot",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13.sp,
-                          ),
-                          Text(" *", style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                      if (hasFile)
-                        Text(
-                          controller.getFileName(controller.headshotFile),
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 11.sp,
-                          ),
-                        )
-                      else
-                        CustomTextgray(
-                          text: "BLACK SUIT TIE WITH WHITE BACKGROUND",
-                          fontSize: 8.sp,
-                        ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () =>
-                      controller.pickFromCamera(controller.headshotFile),
-                  icon: const Icon(
-                    Icons.camera_alt_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () =>
-                      controller.pickFromFile(controller.headshotFile),
-                  icon: const Icon(
-                    Icons.file_upload_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (controller.showErrors.value && !hasFile)
-            Padding(
-              padding: EdgeInsets.only(top: 4.h),
-              child: Text(
-                "Please upload Headshot",
-                style: TextStyle(color: Colors.red, fontSize: 12.sp),
-              ),
-            ),
-        ],
-      );
-    });
-  }
 
   Widget _buildIcon(IconData icon) {
     return Container(
