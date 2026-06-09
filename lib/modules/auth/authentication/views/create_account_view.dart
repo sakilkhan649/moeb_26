@@ -13,7 +13,6 @@ import '../../../../core/widgets/CustomTextGary.dart';
 
 class CreateAccountView extends StatefulWidget {
   const CreateAccountView({super.key});
-
   @override
   State<CreateAccountView> createState() => _CreateAccountViewState();
 }
@@ -56,188 +55,201 @@ class _CreateAccountViewState extends State<CreateAccountView> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 100.h),
-                const CustomText(text: "Account Create"),
-                SizedBox(height: 7.h),
+                 CustomText(
+                  text: "Account Create",
+                  fontSize: 28.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+                SizedBox(height: 8.h),
                 CustomTextgray(
                   text: "Tell us about yourself to get started",
-                  fontSize: 15.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 32.h),
 
                 // ========== Full Name ==========
-                _buildLabel("Full Name", isRequired: true),
-                Customtextfield(
-                  controller: controller.nameController,
-                  hintText: "Monirul Islam",
-                  obscureText: false,
-                  textInputType: TextInputType.name,
-                  validator: (value) => Validators.name(value),
+                _buildInputField(
+                  label: "Full Name",
+                  isRequired: true,
+                  child: Customtextfield(
+                    controller: controller.nameController,
+                    hintText: "John Smith",
+                    obscureText: false,
+                    textInputType: TextInputType.name,
+                    validator: (value) => Validators.name(value),
+                  ),
                 ),
-                SizedBox(height: 20.h),
 
                 // ========== Phone Number ==========
-                _buildLabel("Phone Number", isRequired: true),
-                Customtextfield(
-                  controller: controller.phoneController,
-                  hintText: "01744114084",
-                  obscureText: false,
-                  textInputType: TextInputType.phone,
-                  validator: (value) => Validators.phone(value),
+                _buildInputField(
+                  label: "Phone Number",
+                  isRequired: true,
+                  child: Customtextfield(
+                    controller: controller.phoneController,
+                    hintText: "Enter your phone number",
+                    obscureText: false,
+                    textInputType: TextInputType.phone,
+                    validator: (value) => Validators.phone(value),
+                  ),
                 ),
-                SizedBox(height: 20.h),
 
                 // ========== Email Address ==========
-                _buildLabel("Email Address", isRequired: true),
-                Customtextfield(
-                  controller: controller.emailController,
-                  hintText: "your.email@example.com",
-                  obscureText: false,
-                  textInputType: TextInputType.emailAddress,
-                  validator: (value) => Validators.email(value),
+                _buildInputField(
+                  label: "Email Address",
+                  isRequired: true,
+                  child: Customtextfield(
+                    controller: controller.emailController,
+                    hintText: "Enter your email address",
+                    obscureText: false,
+                    textInputType: TextInputType.emailAddress,
+                    validator: (value) => Validators.email(value),
+                  ),
                 ),
-                SizedBox(height: 20.h),
-
-                // // ========== Home Address ==========
-                // _buildLabel("Home Address", isRequired: true),
-                // Customtextfield(
-                //   controller: controller.homeAddressController,
-                //   hintText: "Enter your home address",
-                //   obscureText: false,
-                //   textInputType: TextInputType.streetAddress,
-                //   validator: (value) => Validators.required(value, message: "Enter your Home Address"),
-                // ),
-                // SizedBox(height: 20.h),
 
                 // ========== Service Area ==========
-                _buildLabel("Service Area", isRequired: true),
-                Obx(
-                  () => _buildDropdownField(
-                    error: areaError.value,
-                    isLoading: controller.isCitiesLoading,
-                    child: CustomDropdown(
-                      hintText: 'Select Service Area',
-                      value: controller.selectedArea.value.isEmpty
-                          ? null
-                          : controller.selectedArea.value,
-                      items: controller.cities,
-                      scrollController: dropdownScrollController,
-                      isLoadingMore: controller.isMoreCitiesLoading,
-                      hasNextPage: controller.hasNextCitiesPage,
-                      onLoadMore: () => controller.loadMoreCities(),
-                      onChanged: (value) {
-                        if (value != null &&
-                            value != 'loading' &&
-                            value != 'loadMore') {
-                          controller.pickArea(value);
-                          areaError.value = '';
-                        }
-                      },
+                _buildInputField(
+                  label: "Service Area",
+                  isRequired: true,
+                  child: Obx(
+                    () => _buildDropdownField(
+                      error: areaError.value,
+                      isLoading: controller.isCitiesLoading,
+                      child: CustomDropdown(
+                        hintText: 'Select service area',
+                        value: controller.selectedArea.value.isEmpty
+                            ? null
+                            : controller.selectedArea.value,
+                        items: controller.cities,
+                        scrollController: dropdownScrollController,
+                        isLoadingMore: controller.isMoreCitiesLoading,
+                        hasNextPage: controller.hasNextCitiesPage,
+                        onLoadMore: () => controller.loadMoreCities(),
+                        onChanged: (value) {
+                          if (value != null &&
+                              value != 'loading' &&
+                              value != 'loadMore') {
+                            controller.pickArea(value);
+                            areaError.value = '';
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(height: 20.h),
 
                 // ========== Years of Experience ==========
-                _buildLabel("Years of Experience", isRequired: false),
-                Customtextfield(
-                  controller: controller.yearController,
-                  hintText: "7",
-                  obscureText: false,
-                  textInputType: TextInputType.number,
-                  validator: (value) => Validators.required(
-                    value,
-                    message: "Enter your Years of Experience",
+                _buildInputField(
+                  label: "Years of Experience",
+                  isRequired: false,
+                  child: Customtextfield(
+                    controller: controller.yearController,
+                    hintText: "0",
+                    obscureText: false,
+                    textInputType: TextInputType.number,
+                    validator: (value) => Validators.required(
+                      value,
+                      message: "Enter your years of experience",
+                    ),
                   ),
                 ),
-                SizedBox(height: 20.h),
 
                 // ========== Company Name ==========
-                _buildLabel("Company Name", isRequired: true),
-                Customtextfield(
-                  controller: controller.companyNameController,
-                  hintText: "SADRTX",
-                  obscureText: false,
-                  textInputType: TextInputType.name,
-                  validator: (value) => Validators.required(
-                    value,
-                    message: "Enter your Company Name",
+                _buildInputField(
+                  label: "Company Name",
+                  isRequired: true,
+                  child: Customtextfield(
+                    controller: controller.companyNameController,
+                    hintText: "Example Limo Company LLC",
+                    obscureText: false,
+                    textInputType: TextInputType.name,
+                    validator: (value) => Validators.required(
+                      value,
+                      message: "Enter your company name",
+                    ),
                   ),
                 ),
-                SizedBox(height: 20.h),
 
                 // ========== Company Role ==========
-                _buildLabel("COMPANY ROLE", isRequired: true),
-                Obx(
-                  () => _buildDropdownField(
-                    error: roleError.value,
-                    child: CustomDropdown(
-                      hintText: 'Select Company Role',
-                      value: controller.selectedRole.value.isEmpty
-                          ? null
-                          : controller.selectedRole.value,
-                      items: controller.roles,
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.pickRole(value);
-                          roleError.value = '';
-                        }
-                      },
+                _buildInputField(
+                  label: "Company Role",
+                  isRequired: true,
+                  child: Obx(
+                    () => _buildDropdownField(
+                      error: roleError.value,
+                      child: CustomDropdown(
+                        hintText: 'Select company role',
+                        value: controller.selectedRole.value.isEmpty
+                            ? null
+                            : controller.selectedRole.value,
+                        items: controller.roles,
+                        onChanged: (value) {
+                          if (value != null) {
+                            controller.pickRole(value);
+                            roleError.value = '';
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(height: 20.h),
 
                 // ========== Password ==========
-                _buildLabel("Create Password", isRequired: false),
-                Obx(
-                  () => Customtextfield(
-                    controller: controller.passwordController,
-                    hintText: "Enter your password",
-                    obscureText: !controller.showPassword.value,
-                    textInputType: TextInputType.visiblePassword,
-                    validator: (value) => Validators.password(value),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        controller.showPassword.value
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        color: AppColors.gray100,
+                _buildInputField(
+                  label: "Create Password",
+                  isRequired: true,
+                  child: Obx(
+                    () => Customtextfield(
+                      controller: controller.passwordController,
+                      hintText: "Enter password",
+                      obscureText: !controller.showPassword.value,
+                      textInputType: TextInputType.visiblePassword,
+                      validator: (value) => Validators.password(value),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          controller.showPassword.value
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.gray100,
+                        ),
+                        onPressed: controller.togglePassword,
                       ),
-                      onPressed: controller.togglePassword,
                     ),
                   ),
                 ),
-                SizedBox(height: 20.h),
 
                 // ========== Confirm Password ==========
-                _buildLabel("Confirm Password", isRequired: false),
-                Obx(
-                  () => Customtextfield(
-                    controller: controller.confirmPasswordController,
-                    hintText: "Enter your password",
-                    obscureText: !controller.showConfirmPassword.value,
-                    textInputType: TextInputType.visiblePassword,
-                    validator: (value) => Validators.confirmPassword(
-                      value,
-                      controller.passwordController.text,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        controller.showConfirmPassword.value
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        color: AppColors.gray100,
+                _buildInputField(
+                  label: "Confirm Password",
+                  isRequired: true,
+                  child: Obx(
+                    () => Customtextfield(
+                      controller: controller.confirmPasswordController,
+                      hintText: "Re-enter password",
+                      obscureText: !controller.showConfirmPassword.value,
+                      textInputType: TextInputType.visiblePassword,
+                      validator: (value) => Validators.confirmPassword(
+                        value,
+                        controller.passwordController.text,
                       ),
-                      onPressed: controller.toggleConfirmPassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          controller.showConfirmPassword.value
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.gray100,
+                        ),
+                        onPressed: controller.toggleConfirmPassword,
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 32.h),
 
                 // ========== Submit Button ==========
                 CustomButton(text: "Continue", onPressed: _handleSubmit),
@@ -252,19 +264,32 @@ class _CreateAccountViewState extends State<CreateAccountView> {
 
   // --- Helper Widgets ---
 
-  Widget _buildLabel(String text, {bool isRequired = false}) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Row(
-        children: [
-          CustomText(text: text, fontWeight: FontWeight.w500, fontSize: 14.sp),
-          if (isRequired)
-            Text(
-              " *",
-              style: TextStyle(color: Colors.red, fontSize: 14.sp),
+  Widget _buildInputField({
+    required String label,
+    required Widget child,
+    bool isRequired = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            CustomText(
+              text: label,
+              fontWeight: FontWeight.w500,
+              fontSize: 14.sp,
             ),
-        ],
-      ),
+            if (isRequired)
+              Text(
+                " *",
+                style: TextStyle(color: Colors.red, fontSize: 14.sp),
+              ),
+          ],
+        ),
+        SizedBox(height: 10.h),
+        child,
+        SizedBox(height: 20.h),
+      ],
     );
   }
 
@@ -304,11 +329,11 @@ class _CreateAccountViewState extends State<CreateAccountView> {
 
     bool dropdownsValid = true;
     if (controller.selectedArea.value.isEmpty) {
-      areaError.value = 'Select a Service Area';
+      areaError.value = 'Select a service area';
       dropdownsValid = false;
     }
     if (controller.selectedRole.value.isEmpty) {
-      roleError.value = 'Select a Company Role';
+      roleError.value = 'Select a company role';
       dropdownsValid = false;
     }
 
