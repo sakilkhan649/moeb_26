@@ -242,7 +242,7 @@ class AddNewVehicleView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _buildTextField(
                     controller: controller.colorInsideController,
-                    hintText: "Black(Fix)",
+                    hintText: "Black",
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Enter Color (Inside)";
@@ -270,7 +270,7 @@ class AddNewVehicleView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _buildTextField(
                     controller: controller.colorOutsideController,
-                    hintText: "Black(Fix)",
+                    hintText: "Black",
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Enter Color (Outside)";

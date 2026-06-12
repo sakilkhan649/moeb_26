@@ -253,7 +253,7 @@ class VehicleInformationView extends StatelessWidget {
                     _buildFieldLabel("Color (Inside)", isRequired: false),
                     _buildTextField(
                       controller: model.colorInsideController,
-                      hintText: "Black(Fix)",
+                      hintText: "Black",
                       validator: (value) => (value == null || value.isEmpty)
                           ? "Enter Color (Inside)"
                           : null,
@@ -269,7 +269,7 @@ class VehicleInformationView extends StatelessWidget {
                     _buildFieldLabel("Color (Outside)", isRequired: false),
                     _buildTextField(
                       controller: model.colorOutsideController,
-                      hintText: "Black(Fix)",
+                      hintText: "Black",
                       validator: (value) => (value == null || value.isEmpty)
                           ? "Enter Color (Outside)"
                           : null,

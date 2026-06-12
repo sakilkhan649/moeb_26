@@ -103,7 +103,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                           ),
 
                         CustomButton(
-                          text: "Continue",
+                          text: "Submit Application",
                           loading: controller.isLoading.value,
                           onPressed: () => controller.submitAll(),
                         ),
@@ -229,7 +229,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Once accepted, a job may not be canceled, returned, or declined, except in a true emergency and only with company approval.",
             "Job transfers, substitutions, or subcontracting are strictly forbidden without written authorization.",
             "The chauffeur who accepts the job is personally responsible for its completion.",
-            "Unauthorized job swapping or replacement may result in immediate suspension or permanent removal from the Elite Chauffeur Network.",
+            "Unauthorized job swapping or replacement may result in immediate suspension or permanent removal from the Elite Chauffeur Network. EKKALI.",
           ],
           startIndex: 41,
         ),

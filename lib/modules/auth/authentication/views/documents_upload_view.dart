@@ -113,7 +113,7 @@ class DocumentsuploadView extends StatelessWidget {
                 SizedBox(height: 40.h),
 
                 CustomButton(
-                  text: "Submit Application",
+                  text: "Continue",
                   onPressed: () {
                     controller.showErrors.value = true;
                     if (_formKey.currentState!.validate()) {
@@ -169,9 +169,11 @@ class DocumentsuploadView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                _buildIcon(title == "Profile Picture"
-                    ? Icons.image_outlined
-                    : Icons.description_outlined),
+                _buildIcon(
+                  title == "Profile Picture"
+                      ? Icons.image_outlined
+                      : Icons.description_outlined,
+                ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
@@ -201,8 +203,9 @@ class DocumentsuploadView extends StatelessWidget {
                         )
                       else if (title == "Profile Picture")
                         CustomTextgray(
-                          text: "BLACK SUIT TIE WITH WHITE BACKGROUND",
-                          fontSize: 8.sp,
+                          text:
+                              "Black suit, white shirt, tie, white background",
+                          fontSize: 10.sp,
                         ),
                     ],
                   ),
@@ -237,7 +240,6 @@ class DocumentsuploadView extends StatelessWidget {
       );
     });
   }
-
 
   Widget _buildIcon(IconData icon) {
     return Container(

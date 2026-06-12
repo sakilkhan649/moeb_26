@@ -255,8 +255,9 @@ class PersonalDocumentView extends StatelessWidget {
                         )
                       else
                         CustomTextgray(
-                          text: "BLACK SUIT TIE WITH WHITE BACKGROUND",
-                          fontSize: 8.sp,
+                          text:
+                              "Black suit, white shirt, tie, white background",
+                          fontSize: 10.sp,
                         ),
                     ],
                   ),
@@ -282,7 +283,7 @@ class PersonalDocumentView extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-               // IconButton(
+                // IconButton(
                 //   onPressed: () =>
                 //       controller.pickFromFile(controller.headshotFile),
                 //   icon: const Icon(
