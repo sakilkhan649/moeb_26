@@ -19,7 +19,8 @@ class VehicleActionController extends GetxController {
   final makeController = TextEditingController();
   final modelController = TextEditingController();
   final yearController = TextEditingController();
-  final colorController = TextEditingController();
+  final colorInsideController = TextEditingController();
+  final colorOutsideController = TextEditingController();
   final licensePlateController = TextEditingController();
   final commercialInsuranceExpireController = TextEditingController();
   final vehicleRegistrationExpireController = TextEditingController();
@@ -55,7 +56,8 @@ class VehicleActionController extends GetxController {
       makeController.text = v.make ?? "";
       modelController.text = v.model ?? "";
       yearController.text = (v.year ?? "").toString();
-      colorController.text = v.colorInside ?? "";
+      colorInsideController.text = v.colorInside ?? "";
+      colorOutsideController.text = v.colorOutside ?? "";
       licensePlateController.text = v.licensePlate ?? "";
       if (v.commercialInsuranceExpiryDate != null &&
           v.commercialInsuranceExpiryDate!.isNotEmpty) {
@@ -233,8 +235,8 @@ class VehicleActionController extends GetxController {
         "make": makeController.text,
         "model": modelController.text,
         "year": int.tryParse(yearController.text) ?? 2024,
-        "colorInside": colorController.text,
-        "colorOutside": colorController.text,
+        "colorInside": colorInsideController.text,
+        "colorOutside": colorOutsideController.text,
         "licensePlate": licensePlateController.text,
         "vehicleRegistrationExpiryDate":
             vehicleRegistrationExpireController.text,
@@ -325,7 +327,8 @@ class VehicleActionController extends GetxController {
     makeController.dispose();
     modelController.dispose();
     yearController.dispose();
-    colorController.dispose();
+    colorInsideController.dispose();
+    colorOutsideController.dispose();
     licensePlateController.dispose();
     commercialInsuranceExpireController.dispose();
     vehicleRegistrationExpireController.dispose();

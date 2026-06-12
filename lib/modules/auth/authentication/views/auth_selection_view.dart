@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import '../../../../core/widgets/CustomButton.dart';
-import '../../../../core/widgets/CustomText.dart';
-import '../../../../core/widgets/CustomTextGary.dart';
 
 class AuthSelectionView extends StatelessWidget {
   const AuthSelectionView({super.key});
@@ -22,21 +20,14 @@ class AuthSelectionView extends StatelessWidget {
               children: [
                 // The logo (use an image asset or network image)
                 SizedBox(
+                  width: 320.w,
+                  height: 320.w,
                   child: Image.asset(
                     "assets/images/auth_select_page_logo.png",
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 12.h),
-                // Title Text
-                CustomText(text: "Elite Chauffeur Network"),
-                SizedBox(height: 11.h),
-                // Subtitle Text
-                CustomTextgray(
-                  text: "Where Excellence Connects",
-                  fontSize: 16.sp,
-                ),
-                SizedBox(height: 240.h),
+                SizedBox(height: 60.h),
                 // Dots for the indicator (if needed)
                 CustomButton(
                   text: "Create Account",
@@ -61,10 +52,7 @@ class AuthSelectionView extends StatelessWidget {
                   child: Text(
                     textAlign: TextAlign.center,
                     "By continuing, you agree to our Terms & Privacy Policy",
-                    style: TextStyle(
-                      color: Color(0xFF999999),
-                      fontSize: 12.sp,
-                    ),
+                    style: TextStyle(color: Color(0xFF999999), fontSize: 12.sp),
                   ),
                 ),
               ],

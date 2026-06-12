@@ -7,7 +7,8 @@ class VehicleModel {
   final TextEditingController makeController;
   final TextEditingController modelController;
   final TextEditingController yearController;
-  final TextEditingController colorController;
+  final TextEditingController colorInsideController;
+  final TextEditingController colorOutsideController;
   final TextEditingController licensePlateController;
 
   // New Fields from DocumentsUpload
@@ -26,7 +27,8 @@ class VehicleModel {
       makeController = TextEditingController(),
       modelController = TextEditingController(),
       yearController = TextEditingController(),
-      colorController = TextEditingController(),
+      colorInsideController = TextEditingController(),
+      colorOutsideController = TextEditingController(),
       licensePlateController = TextEditingController();
 
   factory VehicleModel.fromVehicle(dynamic vehicle) {
@@ -34,7 +36,8 @@ class VehicleModel {
     model.makeController.text = vehicle.make;
     model.modelController.text = vehicle.model;
     model.yearController.text = vehicle.year.toString();
-    model.colorController.text = vehicle.colorInside;
+    model.colorInsideController.text = vehicle.colorInside ?? '';
+    model.colorOutsideController.text = vehicle.colorOutside ?? '';
     model.licensePlateController.text = vehicle.licensePlate;
     return model;
   }
@@ -45,8 +48,8 @@ class VehicleModel {
       "make": makeController.text,
       "model": modelController.text,
       "year": int.tryParse(yearController.text) ?? 0,
-      "colorInside": colorController.text,
-      "colorOutside": colorController.text,
+      "colorInside": colorInsideController.text,
+      "colorOutside": colorOutsideController.text,
       "licensePlate": licensePlateController.text,
       "vehicleRegistrationExpiryDate": vehicleRegistrationExpireController.text,
       "commercialInsuranceExpiryDate": commercialInsuranceExpireController.text,
@@ -57,7 +60,8 @@ class VehicleModel {
     makeController.dispose();
     modelController.dispose();
     yearController.dispose();
-    colorController.dispose();
+    colorInsideController.dispose();
+    colorOutsideController.dispose();
     licensePlateController.dispose();
     commercialInsuranceExpireController.dispose();
     vehicleRegistrationExpireController.dispose();

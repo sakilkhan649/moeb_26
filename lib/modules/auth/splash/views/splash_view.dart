@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
-import '../../../../core/widgets/CustomText.dart';
-import '../../../../core/widgets/CustomTextGary.dart';
 import '../controller/splash_controller.dart';
 
 class SplashView extends StatelessWidget {
@@ -22,17 +19,13 @@ class SplashView extends StatelessWidget {
           children: [
             // The logo (use an image asset or network image)
             SizedBox(
-              width: 150.w,
-              height: 70.w,
-              child: Image.asset(AppImages.app_logo, fit: BoxFit.fill),
+              width: 320.w,
+              height: 320.w,
+              child: Image.asset(
+                "assets/images/auth_select_page_logo.png",
+                fit: BoxFit.cover,
+              ),
             ),
-
-            SizedBox(height: 12.h),
-            // Title Text
-            CustomText(text: "Elite Chauffeur Network"),
-            SizedBox(height: 10.h),
-            // Subtitle Text
-            CustomTextgray(text: "Where Excellence Connects"),
             SizedBox(height: 20.h),
             // Dots for the indicator (if needed)
             Obx(

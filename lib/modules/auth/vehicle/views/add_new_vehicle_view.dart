@@ -150,11 +150,12 @@ class AddNewVehicleView extends StatelessWidget {
         }),
 
         SizedBox(height: 20.h),
+        // Row 1: Make & Model
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Column for Make and Year
+            // Column for Make
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,36 +182,11 @@ class AddNewVehicleView extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 15.h),
-                  Row(
-                    children: [
-                      CustomText(
-                        text: "Year",
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
-                      ),
-                      Text(
-                        " *",
-                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                  _buildTextField(
-                    controller: controller.yearController,
-                    hintText: "2023",
-                    keyboardType: TextInputType.number,
-                    validator: (value) => Validators.year(
-                      value,
-                      min: DateTime.now().year - 5,
-                      max: DateTime.now().year,
-                    ),
-                  ),
                 ],
               ),
             ),
             SizedBox(width: 15.w),
-            // Column for Model and Color
+            // Column for Model
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,11 +215,88 @@ class AddNewVehicleView extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 15.h),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 15.h),
+        // Row 2: Color (Inside) & Color (Outside)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Row(
                     children: [
                       CustomText(
-                        text: "Color",
+                        text: "Color (Inside)",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14.sp,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  _buildTextField(
+                    controller: controller.colorInsideController,
+                    hintText: "Black(Fix)",
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Enter Color (Inside)";
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 15.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CustomText(
+                        text: "Color (Outside)",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14.sp,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  _buildTextField(
+                    controller: controller.colorOutsideController,
+                    hintText: "Black(Fix)",
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Enter Color (Outside)";
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 15.h),
+        // Row 3: Year & License Plate
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CustomText(
+                        text: "Year",
                         fontWeight: FontWeight.w500,
                         fontSize: 14.sp,
                       ),
@@ -255,12 +308,42 @@ class AddNewVehicleView extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   _buildTextField(
-                    controller: controller.colorController,
-                    hintText: "Black",
+                    controller: controller.yearController,
+                    hintText: "2021",
+                    keyboardType: TextInputType.number,
+                    validator: (value) => Validators.year(
+                      value,
+                      min: DateTime.now().year - 5,
+                      max: DateTime.now().year,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 15.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CustomText(
+                        text: "License Plate",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14.sp,
+                      ),
+                      Text(
+                        " *",
+                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  _buildTextField(
+                    controller: controller.licensePlateController,
+                    hintText: "ABC-1234",
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter Color";
-                      }
+                      if (value == null || value.isEmpty) return "Enter License Plate";
                       return null;
                     },
                   ),
@@ -268,30 +351,6 @@ class AddNewVehicleView extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        SizedBox(height: 20.h),
-
-        Row(
-          children: [
-            CustomText(
-              text: "License Plate",
-              fontWeight: FontWeight.w500,
-              fontSize: 14.sp,
-            ),
-            Text(
-              " *",
-              style: TextStyle(color: Colors.white, fontSize: 14.sp),
-            ),
-          ],
-        ),
-        SizedBox(height: 8.h),
-        _buildTextField(
-          controller: controller.licensePlateController,
-          hintText: "ABC-1234",
-          validator: (value) {
-            if (value == null || value.isEmpty) return "Enter License Plate";
-            return null;
-          },
         ),
         SizedBox(height: 24.h),
 

@@ -31,7 +31,8 @@ class SplashScreenController extends GetxController {
     try {
       // Initialize Firebase asynchronously after the first frame has rendered
       if (Firebase.apps.isEmpty) {
-        await Firebase.initializeApp(
+        await Firebase.
+        initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
         );
       }

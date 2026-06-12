@@ -24,86 +24,88 @@ class VehicleInformationView extends StatelessWidget {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 50.w),
-              IconButton(
-                onPressed: () => Get.back(),
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 22.sp,
-                ),
-              ),
-              SizedBox(height: 50.w),
-              CustomText(text: "Vehicle Information", fontSize: 20.sp),
-              SizedBox(height: 7.h),
-              CustomTextgray(
-                text: "Add your professional vehicles",
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w400,
-              ),
-              SizedBox(height: 30.h),
-
-              // Vehicle list
-              Expanded(
-                child: Obx(
-                  () => ListView(
-                    children: [
-                      ...List.generate(
-                        controller.vehiclesList.length,
-                        (index) => _buildVehicleCard(
-                          context,
-                          index,
-                          controller.vehiclesList[index],
-                        ),
-                      ),
-
-                      SizedBox(height: 25.h),
-
-                      // // Add Another Vehicle Button
-                      // CustomAddButton(onPressed: () => controller.addVehicle()),
-                      SizedBox(height: 30.h),
-
-                      CustomButton(
-                        text: "Continue",
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          controller.showErrors.value = true;
-                          final isFormValid = _formKey.currentState!.validate();
-
-                          bool allValid = true;
-                          for (var v in controller.vehiclesList) {
-                            if (v.selectedVehicleType.value.isEmpty ||
-                                v.commercialInsuranceFile.value == null ||
-                                v.vehicleRegistrationFile.value == null ||
-                                v.frontViewFile.value == null ||
-                                v.rearViewFile.value == null ||
-                                v.interiorViewFile.value == null) {
-                              allValid = false;
-                              break;
-                            }
-                          }
-
-                          if (isFormValid && allValid) {
-                            // Just navigate to the next page
-                            Get.toNamed(Routes.documentsuploadView);
-                          }
-                        },
-                      ),
-                      SizedBox(height: 60.h),
-                    ],
+          key: _formKey,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 50.w),
+                IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                    size: 22.sp,
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 50.w),
+                CustomText(text: "Vehicle Information", fontSize: 20.sp),
+                SizedBox(height: 7.h),
+                CustomTextgray(
+                  text: "Add your professional vehicles",
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w400,
+                ),
+                SizedBox(height: 30.h),
+
+                // Vehicle list
+                Expanded(
+                  child: Obx(
+                    () => ListView(
+                      children: [
+                        ...List.generate(
+                          controller.vehiclesList.length,
+                          (index) => _buildVehicleCard(
+                            context,
+                            index,
+                            controller.vehiclesList[index],
+                          ),
+                        ),
+
+                        SizedBox(height: 25.h),
+                        CustomAddButton(
+                          onPressed: () => controller.addVehicle(),
+                        ),
+                        SizedBox(height: 30.h),
+
+                        CustomButton(
+                          text: "Continue",
+                          onPressed: () {
+                            FocusScope.of(context).unfocus();
+                            controller.showErrors.value = true;
+                            final isFormValid = _formKey.currentState!
+                                .validate();
+
+                            bool allValid = true;
+                            for (var v in controller.vehiclesList) {
+                              if (v.selectedVehicleType.value.isEmpty ||
+                                  v.commercialInsuranceFile.value == null ||
+                                  v.vehicleRegistrationFile.value == null ||
+                                  v.frontViewFile.value == null ||
+                                  v.rearViewFile.value == null ||
+                                  v.interiorViewFile.value == null) {
+                                allValid = false;
+                                break;
+                              }
+                            }
+
+                            if (isFormValid && allValid) {
+                              // Just navigate to the next page
+                              Get.toNamed(Routes.documentsuploadView);
+                            }
+                          },
+                        ),
+                        SizedBox(height: 60.h),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),)
+      ),
     );
   }
 
@@ -200,6 +202,7 @@ class VehicleInformationView extends StatelessWidget {
           }),
 
           SizedBox(height: 20.h),
+          // Row 1: Make & Model
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,18 +218,6 @@ class VehicleInformationView extends StatelessWidget {
                       validator: (value) => (value == null || value.isEmpty)
                           ? "Enter Make"
                           : null,
-                    ),
-                    SizedBox(height: 15.h),
-                    _buildFieldLabel("Year"),
-                    _buildTextField(
-                      controller: model.yearController,
-                      hintText: "2023",
-                      keyboardType: TextInputType.number,
-                      validator: (value) => Validators.year(
-                        value,
-                        min: DateTime.now().year - 5,
-                        max: DateTime.now().year,
-                      ),
                     ),
                   ],
                 ),
@@ -244,13 +235,43 @@ class VehicleInformationView extends StatelessWidget {
                           ? "Enter Model"
                           : null,
                     ),
-                    SizedBox(height: 15.h),
-                    _buildFieldLabel("Color"),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 15.h),
+          // Row 2: Color (Inside) & Color (Outside)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFieldLabel("Color (Inside)", isRequired: false),
                     _buildTextField(
-                      controller: model.colorController,
-                      hintText: "Black",
+                      controller: model.colorInsideController,
+                      hintText: "Black(Fix)",
                       validator: (value) => (value == null || value.isEmpty)
-                          ? "Enter Color"
+                          ? "Enter Color (Inside)"
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 15.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFieldLabel("Color (Outside)", isRequired: false),
+                    _buildTextField(
+                      controller: model.colorOutsideController,
+                      hintText: "Black(Fix)",
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Enter Color (Outside)"
                           : null,
                     ),
                   ],
@@ -258,14 +279,47 @@ class VehicleInformationView extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
-
-          _buildFieldLabel("License Plate"),
-          _buildTextField(
-            controller: model.licensePlateController,
-            hintText: "ABC-1234",
-            validator: (value) =>
-                (value == null || value.isEmpty) ? "Enter License Plate" : null,
+          SizedBox(height: 15.h),
+          // Row 3: Year & License Plate
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFieldLabel("Year"),
+                    _buildTextField(
+                      controller: model.yearController,
+                      hintText: "2021",
+                      keyboardType: TextInputType.number,
+                      validator: (value) => Validators.year(
+                        value,
+                        min: DateTime.now().year - 5,
+                        max: DateTime.now().year,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 15.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFieldLabel("License Plate"),
+                    _buildTextField(
+                      controller: model.licensePlateController,
+                      hintText: "ABC-1234",
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Enter License Plate"
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 24.h),
 
@@ -326,16 +380,17 @@ class VehicleInformationView extends StatelessWidget {
 
   // --- UI Helpers ---
 
-  Widget _buildFieldLabel(String text) {
+  Widget _buildFieldLabel(String text, {bool isRequired = true}) {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
       child: Row(
         children: [
           CustomText(text: text, fontWeight: FontWeight.w500, fontSize: 13.sp),
-          Text(
-            " *",
-            style: TextStyle(color: Colors.white, fontSize: 14.sp),
-          ),
+          if (isRequired)
+            Text(
+              " *",
+              style: TextStyle(color: Colors.white, fontSize: 14.sp),
+            ),
         ],
       ),
     );
