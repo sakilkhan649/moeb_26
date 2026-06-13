@@ -147,6 +147,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
         _buildSection(
           title: "VEHICLE STANDARDS",
           items: [
+            "I confirm that my Sedan, SUV, or Sprinter vehicle is 5 years old or newer and meets Ekkali’s quality standards.",
             "Vehicle must be thoroughly cleaned inside and out before every assignment.",
             "Interior must be free of odors, trash, stains, or personal items.",
             "Windows must be clean; dashboard and seats wiped and presentable.",
@@ -164,7 +165,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Climate control must be set to a comfortable temperature.",
             "Music only upon client request (default setting: silence).",
           ],
-          startIndex: 14,
+          startIndex: 15,
         ),
         _buildSection(
           title: "SERVICE & PROFESSIONAL BEHAVIOR",
@@ -175,7 +176,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Confirm destination quietly and professionally.",
             "Maintain a calm, discreet, and respectful demeanor at all times.",
           ],
-          startIndex: 19,
+          startIndex: 20,
         ),
         _buildSection(
           title: "STRICT PROFESSIONAL BOUNDARIES",
@@ -186,7 +187,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Never solicit future business from a client.",
             "Always act as a representative exclusively of the assigning company.",
           ],
-          startIndex: 24,
+          startIndex: 25,
         ),
         _buildSection(
           title: "SAFETY & COMMUNICATION",
@@ -196,7 +197,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Obey all traffic laws and drive smoothly at all times.",
             "Aggressive driving, speeding, or sudden braking is prohibited.",
           ],
-          startIndex: 29,
+          startIndex: 30,
         ),
         _buildSection(
           title: "PUNCTUALITY & RELIABILITY",
@@ -206,7 +207,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Never cancel last-minute except in a true emergency.",
             "Immediately inform the company of any delays or issues.",
           ],
-          startIndex: 33,
+          startIndex: 34,
         ),
         _buildSection(
           title: "CONFIDENTIALITY & RESPECT",
@@ -216,7 +217,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Respect client privacy at all times.",
             "Treat all clients with equal respect, regardless of status or appearance.",
           ],
-          startIndex: 37,
+          startIndex: 38,
         ),
         _buildSection(
           title: "JOB ACCEPTANCE & RESPONSIBILITY",
@@ -231,7 +232,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "The chauffeur who accepts the job is personally responsible for its completion.",
             "Unauthorized job swapping or replacement may result in immediate suspension or permanent removal from the Elite Chauffeur Network. EKKALI.",
           ],
-          startIndex: 41,
+          startIndex: 42,
         ),
         _buildSection(
           title: "ASAP Jobs",
@@ -239,14 +240,14 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "\u201CASAP\u201D means immediate service.",
             "Chauffeurs must be on location or within 10 minutes, verified by GPS, to accept the job.",
           ],
-          startIndex: 50,
+          startIndex: 51,
         ),
         _buildSection(
           title: "PAYMENT",
           items: [
             "Once a job is completed, the job poster must pay the driver within a maximum of 48 hours.",
           ],
-          startIndex: 52,
+          startIndex: 53,
         ),
         _buildSection(
           title: "ENFORCEMENT",
@@ -256,14 +257,14 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "Permanent removal from the Elite Chauffeur Network.",
             "Repeated low ratings or client complaints will trigger an automatic review.",
           ],
-          startIndex: 53,
+          startIndex: 54,
         ),
         _buildSection(
           title: "DRIVER AGREEMENT",
           items: [
             "By accepting jobs through the platform, the chauffeur agrees to fully comply with this Ekkali Code of Conduct.",
           ],
-          startIndex: 57,
+          startIndex: 58,
         ),
         _buildSection(
           title: "INDEPENDENT PAYMENT RESPONSIBILITY",
@@ -275,7 +276,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
             "I acknowledge and agree that Ekkali Inc. bears no responsibility or liability for payment disputes, non-payment, delays, chargebacks, or financial losses.",
             "I understand that failure to meet payment or professional obligations may result in temporary suspension or permanent removal from the Ekkali platform.",
           ],
-          startIndex: 58,
+          startIndex: 59,
         ),
       ],
     );

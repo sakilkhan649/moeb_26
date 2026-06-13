@@ -91,7 +91,7 @@ class SignupController extends GetxController {
   // ===========================================================================
   // STEP 4: TERMS & POLICY
   // ===========================================================================
-  final RxList<bool> termChecks = List.generate(64, (_) => false).obs;
+  final RxList<bool> termChecks = List.generate(65, (_) => false).obs;
   final RxBool showTermError = false.obs;
 
   void toggleTermCheck(int index) {

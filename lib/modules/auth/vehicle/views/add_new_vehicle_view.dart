@@ -343,7 +343,8 @@ class AddNewVehicleView extends StatelessWidget {
                     controller: controller.licensePlateController,
                     hintText: "ABC-1234",
                     validator: (value) {
-                      if (value == null || value.isEmpty) return "Enter License Plate";
+                      if (value == null || value.isEmpty)
+                        return "Enter License Plate";
                       return null;
                     },
                   ),

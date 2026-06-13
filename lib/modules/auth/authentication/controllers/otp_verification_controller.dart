@@ -22,15 +22,7 @@ class OtpController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    email = Get.arguments?['email'] ?? ''; // 👈 onInit এ assign
-    isRegister = Get.arguments?['isRegister'] ?? false;
-    print('=====> EMAIL: $email');
-    startTimer();
-  }
-
-  void startTimer() {
-    remainingSeconds.value = 180;
-    canResend.value = false;
+    email = Get.arguments?['email'] ?? ''; // 👈 onInit এ assig
     _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (remainingSeconds.value == 0) {
@@ -94,7 +86,6 @@ class OtpController extends GetxController {
       }
       Helpers.showCustomSnackBar('OTP Resent Successfully', isError: false);
       pinController.clear();
-      startTimer();
     } catch (e) {
       Helpers.showCustomSnackBar(e.toString());
     } finally {
