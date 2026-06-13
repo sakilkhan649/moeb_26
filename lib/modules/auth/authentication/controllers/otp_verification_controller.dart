@@ -71,6 +71,10 @@ class OtpController extends GetxController {
             arguments: {'resetToken': resetToken}, // ✅ pass করো
           );
         }
+      } else {
+        Helpers.showCustomSnackBar(
+          response.statusMessage ?? 'You provided wrong OTP',
+        );
       }
     } catch (e) {
       Helpers.showCustomSnackBar('You provided wrong OTP');
