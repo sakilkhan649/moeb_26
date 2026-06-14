@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -22,7 +23,26 @@ class AppLogger {
       debugPrint('│ Query: ${options.queryParameters}');
     }
     if (options.data != null) {
-      debugPrint('│ Body: ${options.data}');
+      final data = options.data;
+      if (data is Map || data is List) {
+        final formatted = _prettyJson(data);
+        final lines = formatted.split('\n');
+        for (final line in lines) {
+          debugPrint('│ Body: $line');
+        }
+      } else if (data is FormData) {
+        debugPrint('│ Body: [FormData]');
+        for (final field in data.fields) {
+          debugPrint('│   ${field.key}: ${field.value}');
+        }
+        for (final file in data.files) {
+          debugPrint(
+            '│   ${file.key}: File (name: ${file.value.filename}, size: ${file.value.length} bytes)',
+          );
+        }
+      } else {
+        debugPrint('│ Body: ${data.toString()}');
+      }
     }
     debugPrint('└ ➡️➡️➡️➡️ REQUEST $_divider ➡️➡️➡️➡️');
     debugPrint('');
@@ -37,9 +57,18 @@ class AppLogger {
     debugPrint(
       '│ [ ${response.requestOptions.method} ${response.statusCode}] ${response.requestOptions.uri}',
     );
-    debugPrint(
-      '│ Data: ${_truncate(response.data?.toString(), showAll: true)}',
-    );
+
+    final data = response.data;
+    if (data != null) {
+      final formatted = _prettyJson(data);
+      final lines = formatted.split('\n');
+      for (final line in lines) {
+        debugPrint('│ $line');
+      }
+    } else {
+      debugPrint('│ Data: null');
+    }
+
     debugPrint('└ ✅✅✅✅ RESPONSE $_divider ✅✅✅│');
     debugPrint('');
   }
@@ -54,9 +83,16 @@ class AppLogger {
     debugPrint('│  ${e.requestOptions.method} : ${e.requestOptions.uri}');
     if (e.response != null) {
       debugPrint('│ Status: ${e.response?.statusCode}');
-      debugPrint(
-        '│ Data: ${_truncate(e.response?.data?.toString(), showAll: true)}',
-      );
+      final data = e.response?.data;
+      if (data != null) {
+        final formatted = _prettyJson(data);
+        final lines = formatted.split('\n');
+        for (final line in lines) {
+          debugPrint('│ $line');
+        }
+      } else {
+        debugPrint('│ Data: null');
+      }
     }
     debugPrint('└ ❌❌❌❌ ERROR $_divider ❌❌❌❌ ');
     debugPrint('');
@@ -73,17 +109,14 @@ class AppLogger {
     return sanitized;
   }
 
-  /// Truncate long strings to keep logs readable
-  static String _truncate(
-    String? text, {
-    int maxLength = 500,
-    bool showAll = false,
-  }) {
-    if (text == null) return 'null';
-    if (showAll) {
-      return text;
+  /// Pretty print JSON objects
+  static String _prettyJson(dynamic data) {
+    if (data == null) return 'null';
+    try {
+      const encoder = JsonEncoder.withIndent('  ');
+      return encoder.convert(data);
+    } catch (_) {
+      return data.toString();
     }
-    if (text.length <= maxLength) return text;
-    return '${text.substring(0, maxLength)}... [truncated]';
   }
 }
