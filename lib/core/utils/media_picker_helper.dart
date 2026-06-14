@@ -23,11 +23,15 @@ class MediaPickerHelper {
   }
 
   /// Show settings dialog for permissions
-  static Future<void> _showPermissionSettingsDialog(BuildContext context) async {
+  static Future<void> _showPermissionSettingsDialog(
+    BuildContext context,
+  ) async {
     await Get.dialog(
       AlertDialog(
         backgroundColor: const Color(0xFF1E2632),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         title: Text(
           "Permission Required",
           style: GoogleFonts.inter(
@@ -38,17 +42,17 @@ class MediaPickerHelper {
         ),
         content: Text(
           "We need access to your photo library to let you select and upload images. Please enable it in Settings.",
-          style: GoogleFonts.inter(
-            color: Colors.grey,
-            fontSize: 14.sp,
-          ),
+          style: GoogleFonts.inter(color: Colors.grey, fontSize: 14.sp),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
               "Cancel",
-              style: GoogleFonts.inter(color: Colors.grey, fontWeight: FontWeight.w600),
+              style: GoogleFonts.inter(
+                color: Colors.grey,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           ElevatedButton(
@@ -58,11 +62,16 @@ class MediaPickerHelper {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF6C63FF),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
             ),
             child: Text(
               "Open Settings",
-              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w600),
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -97,7 +106,10 @@ class MediaPickerHelper {
   }
 
   /// Picks multiple images from the gallery and returns a list of Files.
-  static Future<List<File>?> pickMultiImages(BuildContext context, {int maxImages = 9}) async {
+  static Future<List<File>?> pickMultiImages(
+    BuildContext context, {
+    int maxImages = 9,
+  }) async {
     final hasPermission = await checkPermission(context);
     if (!hasPermission) return null;
 
@@ -128,45 +140,65 @@ class MediaPickerHelper {
     return null;
   }
 
-  /// Shows a premium sheet to choose between picking an image from WeChat Picker or a PDF document.
+  /// Shows a premium dialog popup to choose between picking an image from WeChat Picker or a PDF document.
   static Future<File?> showImageOrPdfPicker(BuildContext context) async {
-    final File? selectedFile = await Get.bottomSheet<File?>(
-      Container(
-        padding: EdgeInsets.all(20.w),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1E2632),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-        ),
-        child: SafeArea(
+    final File? selectedFile = await Get.dialog<File?>(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(20.w),
+          decoration: BoxDecoration(
+            color:
+                Colors.black, // Black background matching application dialogs
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: const Color(0xFF374151),
+              width: 1.w,
+            ), // Light grey border
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Select Upload Source",
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Select Upload Source",
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Get.back(result: null),
+                    child: Icon(Icons.close, color: Colors.grey, size: 20.sp),
+                  ),
+                ],
               ),
               SizedBox(height: 20.h),
               ListTile(
+                contentPadding: EdgeInsets.zero,
                 leading: Container(
                   padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6C63FF).withAlpha(51), // 20% opacity (0.2 * 255 = 51)
+                    color: Colors.grey.withAlpha(51), // 20% opacity
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.image_outlined, color: Color(0xFF6C63FF)),
+                  child: const Icon(Icons.image_outlined, color: Colors.grey),
                 ),
                 title: Text(
                   "Image Gallery",
-                  style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14.sp,
+                  ),
                 ),
                 subtitle: Text(
                   "Choose a photo from your library",
-                  style: GoogleFonts.inter(color: Colors.grey, fontSize: 12.sp),
+                  style: GoogleFonts.inter(color: Colors.grey, fontSize: 11.sp),
                 ),
                 onTap: () async {
                   final File? file = await pickSingleImage(context);
@@ -175,28 +207,37 @@ class MediaPickerHelper {
               ),
               const Divider(color: Colors.white12),
               ListTile(
+                contentPadding: EdgeInsets.zero,
                 leading: Container(
                   padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    color: Colors.green.withAlpha(51), // 20% opacity
+                    color: Colors.grey.withAlpha(51), // 20% opacity
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.picture_as_pdf_outlined, color: Colors.green),
+                  child: const Icon(
+                    Icons.picture_as_pdf_outlined,
+                    color: Colors.grey,
+                  ),
                 ),
                 title: Text(
                   "PDF Document",
-                  style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14.sp,
+                  ),
                 ),
                 subtitle: Text(
                   "Choose a PDF file from storage",
-                  style: GoogleFonts.inter(color: Colors.grey, fontSize: 12.sp),
+                  style: GoogleFonts.inter(color: Colors.grey, fontSize: 11.sp),
                 ),
                 onTap: () async {
                   try {
-                    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-                      type: FileType.custom,
-                      allowedExtensions: ['pdf'],
-                    );
+                    final FilePickerResult? result = await FilePicker.platform
+                        .pickFiles(
+                          type: FileType.custom,
+                          allowedExtensions: ['pdf'],
+                        );
                     if (result != null && result.files.single.path != null) {
                       Get.back(result: File(result.files.single.path!));
                     } else {
@@ -212,7 +253,7 @@ class MediaPickerHelper {
           ),
         ),
       ),
-      barrierColor: Colors.black54,
+      barrierColor: Colors.black.withOpacity(0.74),
     );
 
     return selectedFile;
