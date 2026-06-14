@@ -7,8 +7,75 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class MediaPickerHelper {
+  /// Check photo library permissions and redirect to settings if denied
+  static Future<bool> checkPermission(BuildContext context) async {
+    try {
+      final PermissionState ps = await PhotoManager.requestPermissionExtend();
+      if (ps == PermissionState.denied || ps == PermissionState.restricted) {
+        await _showPermissionSettingsDialog(context);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      debugPrint("Error checking permission: $e");
+      return false;
+    }
+  }
+
+  /// Show settings dialog for permissions
+  static Future<void> _showPermissionSettingsDialog(BuildContext context) async {
+    await Get.dialog(
+      AlertDialog(
+        backgroundColor: const Color(0xFF1E2632),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        title: Text(
+          "Permission Required",
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16.sp,
+          ),
+        ),
+        content: Text(
+          "We need access to your photo library to let you select and upload images. Please enable it in Settings.",
+          style: GoogleFonts.inter(
+            color: Colors.grey,
+            fontSize: 14.sp,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "Cancel",
+              style: GoogleFonts.inter(color: Colors.grey, fontWeight: FontWeight.w600),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              PhotoManager.openSetting();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6C63FF),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+            ),
+            child: Text(
+              "Open Settings",
+              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+      barrierColor: Colors.black54,
+    );
+  }
+
   /// Picks a single image from the gallery and returns a File.
   static Future<File?> pickSingleImage(BuildContext context) async {
+    final hasPermission = await checkPermission(context);
+    if (!hasPermission) return null;
+
     try {
       final List<AssetEntity>? result = await AssetPicker.pickAssets(
         context,
@@ -31,6 +98,9 @@ class MediaPickerHelper {
 
   /// Picks multiple images from the gallery and returns a list of Files.
   static Future<List<File>?> pickMultiImages(BuildContext context, {int maxImages = 9}) async {
+    final hasPermission = await checkPermission(context);
+    if (!hasPermission) return null;
+
     try {
       final List<AssetEntity>? result = await AssetPicker.pickAssets(
         context,
