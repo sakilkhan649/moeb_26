@@ -175,7 +175,7 @@ class SellItemBottomSheet extends StatelessWidget {
                       _buildLabel("Photos (Optional)"),
                       Obx(
                         () => GestureDetector(
-                          onTap: () => controller.pickImage(),
+                          onTap: () => controller.pickImage(context),
                           child: Container(
                             width: double.infinity,
                             padding:

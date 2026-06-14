@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
@@ -176,35 +176,42 @@ class SignupController extends GetxController {
       _isPicking = false;
     }
   }
-
-  Future<void> pickFromFile(Rx<File?> target) async {
+  Future<void> pickFromGallery(BuildContext context, Rx<File?> target) async {
     if (_isPicking) return;
     _isPicking = true;
     try {
-      final FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-      );
-      if (result != null && result.files.single.path != null) {
-        final file = File(result.files.single.path!);
-        final originalSize = await file.length();
-        Helpers.debug(
-          'Original Picked File Size: ${(originalSize / 1024).toStringAsFixed(2)} KB',
-        );
+      final File? file = await MediaPickerHelper.pickSingleImage(context);
+      if (file != null) {
+        final compressed = await Helpers.compressImage(file);
+        final fileSize = await compressed.length();
+        if (fileSize > 1024 * 1024) {
+          Helpers.showCustomSnackBar(
+            'Maximum file size allowed is 1MB',
+            isError: true,
+          );
+          return;
+        }
+        target.value = compressed;
+      }
+    } catch (e) {
+      Helpers.error('Error picking from gallery: $e');
+    } finally {
+      _isPicking = false;
+    }
+  }
 
+  Future<void> pickFromFile(BuildContext context, Rx<File?> target) async {
+    if (_isPicking) return;
+    _isPicking = true;
+    try {
+      final File? file = await MediaPickerHelper.showImageOrPdfPicker(context);
+      if (file != null) {
         final path = file.path.toLowerCase();
-        final isImage =
-            path.endsWith('.jpg') ||
-            path.endsWith('.jpeg') ||
-            path.endsWith('.png');
+        final isImage = !path.endsWith('.pdf');
 
         if (isImage) {
           final compressed = await Helpers.compressImage(file);
           final fileSize = await compressed.length();
-          Helpers.debug(
-            'Compressed Picked Image Size: ${(fileSize / 1024).toStringAsFixed(2)} KB',
-          );
-
           if (fileSize > 1024 * 1024) {
             Helpers.showCustomSnackBar(
               'Maximum file size allowed is 1MB',
@@ -231,10 +238,18 @@ class SignupController extends GetxController {
       _isPicking = false;
     }
   }
-
   String getFileName(Rx<File?> file) {
     if (file.value == null) return '';
-    return file.value!.path.split(Platform.pathSeparator).last;
+    final name = file.value!.path.split('/').last.split('\\').last;
+    if (name.length > 20) {
+      final extIndex = name.lastIndexOf('.');
+      final ext = extIndex != -1 ? name.substring(extIndex) : '';
+      final base = extIndex != -1 ? name.substring(0, extIndex) : name;
+      if (base.length > 12) {
+        return '${base.substring(0, 7)}...${base.substring(base.length - 4)}$ext';
+      }
+    }
+    return name;
   }
 
   // ===========================================================================

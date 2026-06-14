@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:moeb_26/core/services/marketplace_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/market_place_model.dart';
@@ -36,7 +36,6 @@ class MarketplaceController extends GetxController {
 
   final Rxn<File> selectedImage = Rxn<File>();
   final RxString existingImagePath = "".obs;
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void onInit() {
@@ -126,10 +125,10 @@ class MarketplaceController extends GetxController {
     fetchItems(query: query);
   }
 
-  Future<void> pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  Future<void> pickImage(BuildContext context) async {
+    final File? image = await MediaPickerHelper.pickSingleImage(context);
     if (image != null) {
-      final compressed = await Helpers.compressImage(File(image.path));
+      final compressed = await Helpers.compressImage(image);
       selectedImage.value = compressed;
     }
   }

@@ -366,38 +366,47 @@ class Helpers {
   /// If the file is not an image (e.g. PDF), it returns the original file.
   static Future<File> compressImage(File file) async {
     final path = file.path.toLowerCase();
-    if (path.endsWith('.jpg') ||
-        path.endsWith('.jpeg') ||
-        path.endsWith('.png')) {
-      try {
-        final bytes = await file.readAsBytes();
+    if (path.endsWith('.pdf')) {
+      return file;
+    }
+    try {
+      final bytes = await file.readAsBytes();
 
-        // Decode using pure Dart 'image' package
-        final img.Image? decoded = img.decodeImage(bytes);
-        if (decoded != null) {
-          // Resize if width is larger than 1024 pixels
-          img.Image resized = decoded;
-          if (decoded.width > 1024) {
-            resized = img.copyResize(decoded, width: 1024);
-          }
-
-          // Encode as JPEG with 70% quality (extremely high compression with good visual quality)
-          final jpegBytes = img.encodeJpg(resized, quality: 70);
-
-          final tempDir = Directory.systemTemp;
-          final tempPath =
-              '${tempDir.path}/compressed_${DateTime.now().microsecondsSinceEpoch}.jpg';
-          final compressedFile = File(tempPath);
-          await compressedFile.writeAsBytes(jpegBytes);
-
-          Helpers.debug(
-            'Compressed image: ${file.path} (${bytes.length} bytes) -> $tempPath (${jpegBytes.length} bytes)',
-          );
-          return compressedFile;
+      // Decode using pure Dart 'image' package
+      final img.Image? decoded = img.decodeImage(bytes);
+      if (decoded != null) {
+        // Resize if width is larger than 1024 pixels
+        img.Image resized = decoded;
+        if (decoded.width > 1024) {
+          resized = img.copyResize(decoded, width: 1024);
         }
-      } catch (e) {
-        Helpers.error('Error compressing image: $e');
+
+        // Encode as JPEG with 70% quality (extremely high compression with good visual quality)
+        final jpegBytes = img.encodeJpg(resized, quality: 70);
+
+        final tempDir = Directory.systemTemp;
+        
+        // Extract original file name supporting both / and \ separators
+        final originalFileName = file.path.split('/').last.split('\\').last;
+        final baseName = originalFileName.contains('.')
+            ? originalFileName.substring(0, originalFileName.lastIndexOf('.'))
+            : originalFileName;
+
+        // Create a unique subdirectory to prevent name collisions while keeping the filename clean
+        final sessionDir = Directory('${tempDir.path}/compressed_${DateTime.now().microsecondsSinceEpoch}');
+        await sessionDir.create(recursive: true);
+
+        final tempPath = '${sessionDir.path}/$baseName.jpg';
+        final compressedFile = File(tempPath);
+        await compressedFile.writeAsBytes(jpegBytes);
+
+        Helpers.debug(
+          'Compressed image: ${file.path} (${bytes.length} bytes) -> $tempPath (${jpegBytes.length} bytes)',
+        );
+        return compressedFile;
       }
+    } catch (e) {
+      Helpers.error('Error compressing image: $e');
     }
     return file;
   }

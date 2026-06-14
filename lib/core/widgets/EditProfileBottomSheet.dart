@@ -110,7 +110,7 @@ class EditProfileBottomSheet extends StatelessWidget {
                               bottom: 0,
                               right: 0,
                               child: GestureDetector(
-                                onTap: () => controller.pickImage(),
+                                onTap: () => controller.pickImage(context),
                                 child: Container(
                                   padding: EdgeInsets.all(8.h),
                                   decoration: const BoxDecoration(

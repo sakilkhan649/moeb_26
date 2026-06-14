@@ -324,6 +324,7 @@ class VehicleInformationView extends StatelessWidget {
           SizedBox(height: 24.h),
 
           _buildFileSection(
+            context: context,
             title: "Commercial Insurance",
             fileRx: model.commercialInsuranceFile,
             isRequired: true,
@@ -338,6 +339,7 @@ class VehicleInformationView extends StatelessWidget {
           SizedBox(height: 24.h),
 
           _buildFileSection(
+            context: context,
             title: "Vehicle Registration",
             fileRx: model.vehicleRegistrationFile,
             isRequired: true,
@@ -357,18 +359,21 @@ class VehicleInformationView extends StatelessWidget {
           ),
           SizedBox(height: 10.h),
           _buildPhotoSection(
+            context: context,
             title: "Front View",
             fileRx: model.frontViewFile,
             isRequired: true,
           ),
           SizedBox(height: 12.h),
           _buildPhotoSection(
+            context: context,
             title: "Rear View",
             fileRx: model.rearViewFile,
             isRequired: true,
           ),
           SizedBox(height: 12.h),
           _buildPhotoSection(
+            context: context,
             title: "Interior View",
             fileRx: model.interiorViewFile,
             isRequired: true,
@@ -483,6 +488,7 @@ class VehicleInformationView extends StatelessWidget {
   }
 
   Widget _buildFileSection({
+    required BuildContext context,
     required String title,
     required Rx<File?> fileRx,
     bool isRequired = false,
@@ -530,7 +536,7 @@ class VehicleInformationView extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => controller.pickFromFile(fileRx),
+                  onPressed: () => controller.pickFromFile(context, fileRx),
                   icon: const Icon(
                     Icons.file_upload_outlined,
                     color: Colors.white,
@@ -553,6 +559,7 @@ class VehicleInformationView extends StatelessWidget {
   }
 
   Widget _buildPhotoSection({
+    required BuildContext context,
     required String title,
     required Rx<File?> fileRx,
     bool isRequired = false,

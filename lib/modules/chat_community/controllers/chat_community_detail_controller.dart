@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:moeb_26/core/services/community_service.dart';
 import 'package:moeb_26/core/services/socket_service.dart';
 import 'package:moeb_26/core/services/user_service.dart';
@@ -18,7 +18,6 @@ class CommunityChatDetailController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isSending = false.obs;
   final RxList<File> selectedImages = <File>[].obs;
-  final ImagePicker _picker = ImagePicker();
 
   late CommunityRoom room;
 
@@ -61,11 +60,11 @@ class CommunityChatDetailController extends GetxController {
     }
   }
 
-  Future<void> pickImage() async {
-    final List<XFile> images = await _picker.pickMultiImage();
-    if (images.isNotEmpty) {
+  Future<void> pickImage(BuildContext context) async {
+    final List<File>? images = await MediaPickerHelper.pickMultiImages(context);
+    if (images != null && images.isNotEmpty) {
       for (var image in images) {
-        final compressed = await Helpers.compressImage(File(image.path));
+        final compressed = await Helpers.compressImage(image);
         selectedImages.add(compressed);
       }
     }

@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:moeb_26/core/services/user_profile_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import '../../../../data/models/user_profile_model.dart';
 
 class ProfileController extends GetxController {
@@ -132,12 +132,11 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+  Future<void> pickImage(BuildContext context) async {
+    final File? image = await MediaPickerHelper.pickSingleImage(context);
 
     if (image != null) {
-      final compressed = await Helpers.compressImage(File(image.path));
+      final compressed = await Helpers.compressImage(image);
       pickedImage.value = compressed;
     }
   }

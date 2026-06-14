@@ -191,7 +191,7 @@ class PersonalDocumentView extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => controller.pickFromFile(fileRx),
+                  onPressed: () => controller.pickFromFile(context, fileRx),
                   icon: const Icon(
                     Icons.file_upload_outlined,
                     color: Colors.white,
@@ -283,14 +283,7 @@ class PersonalDocumentView extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                // IconButton(
-                //   onPressed: () =>
-                //       controller.pickFromFile(controller.headshotFile),
-                //   icon: const Icon(
-                //     Icons.file_upload_outlined,
-                //     color: Colors.white,
-                //   ),
-                // ),
+
               ],
             ),
           ),

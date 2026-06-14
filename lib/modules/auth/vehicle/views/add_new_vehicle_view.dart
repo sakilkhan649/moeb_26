@@ -563,7 +563,7 @@ class AddNewVehicleView extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => controller.pickFromFile(fileRx),
+                  onPressed: () => controller.pickFromFile(context, fileRx),
                   icon: Icon(
                     Icons.file_upload_outlined,
                     color: Colors.white,

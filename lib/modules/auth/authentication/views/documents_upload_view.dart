@@ -51,6 +51,7 @@ class DocumentsuploadView extends StatelessWidget {
                 SizedBox(height: 30.h),
 
                 _buildDocumentSection(
+                  context: context,
                   title: "Driving License",
                   isRequired: true,
                   fileRx: controller.licensePlateFile,
@@ -64,6 +65,7 @@ class DocumentsuploadView extends StatelessWidget {
 
                 SizedBox(height: 24.h),
                 _buildDocumentSection(
+                  context: context,
                   title: "Hack License",
                   isRequired: true,
                   fileRx: controller.hackLicenseFile,
@@ -77,6 +79,7 @@ class DocumentsuploadView extends StatelessWidget {
 
                 SizedBox(height: 24.h),
                 _buildDocumentSection(
+                  context: context,
                   title: "Local Permit",
                   isRequired: true,
                   fileRx: controller.localPermitFile,
@@ -91,6 +94,7 @@ class DocumentsuploadView extends StatelessWidget {
 
                 SizedBox(height: 24.h),
                 _buildDocumentSection(
+                  context: context,
                   title: "Profile Picture",
                   isRequired: true,
                   fileRx: controller.profilePictureFile,
@@ -151,6 +155,7 @@ class DocumentsuploadView extends StatelessWidget {
   }
 
   Widget _buildDocumentSection({
+    required BuildContext context,
     required String title,
     required bool isRequired,
     required Rx<File?> fileRx,
@@ -217,9 +222,10 @@ class DocumentsuploadView extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
+
                 if (!onlyCamera)
                   IconButton(
-                    onPressed: () => controller.pickFromFile(fileRx),
+                    onPressed: () => controller.pickFromFile(context, fileRx),
                     icon: const Icon(
                       Icons.file_upload_outlined,
                       color: Colors.white,

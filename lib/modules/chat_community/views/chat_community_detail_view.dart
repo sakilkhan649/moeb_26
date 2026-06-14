@@ -55,7 +55,7 @@ class ChatCommunityDetailView extends StatelessWidget {
             ),
 
             // Bottom Input Field
-            _buildMessageInput(),
+            _buildMessageInput(context),
           ],
         ),
       ),
@@ -252,7 +252,7 @@ class ChatCommunityDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageInput() {
+  Widget _buildMessageInput(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
         left: 20.w,
@@ -267,7 +267,7 @@ class ChatCommunityDetailView extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => controller.pickImage(),
+            onPressed: () => controller.pickImage(context),
             icon: Icon(Icons.image, color: Colors.grey, size: 24.sp),
           ),
           Expanded(
