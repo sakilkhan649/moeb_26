@@ -44,11 +44,61 @@ class AllVehicleView extends StatelessWidget {
         final vehicles = controller.userProfile.value?.vehicles ?? [];
 
         if (vehicles.isEmpty) {
-          return Center(
-            child: Text(
-              "No vehicles added",
-              style: GoogleFonts.inter(color: Colors.grey),
-            ),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Center(
+                  child: Text(
+                    "No vehicles added",
+                    style: GoogleFonts.inter(color: Colors.grey),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(20.w),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.toNamed(
+                      Routes.addNewVehicleView,
+                      arguments: {"isEdit": false},
+                    );
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(16.r),
+                      color: Colors.transparent,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add,
+                          color: const Color(0xFFFAC0C0),
+                          size: 20.sp,
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          "Add New Vehicle",
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFFFAC0C0),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+            ],
           );
         }
 
