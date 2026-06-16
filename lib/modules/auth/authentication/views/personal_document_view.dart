@@ -68,9 +68,6 @@ class PersonalDocumentView extends StatelessWidget {
                 expireController: controller.localPermitExpireController,
               ),
 
-              SizedBox(height: 24.h),
-              _buildHeadshotSection(context),
-
               SizedBox(height: 30.h),
               Container(
                 width: double.infinity,
@@ -205,88 +202,6 @@ class PersonalDocumentView extends StatelessWidget {
           SizedBox(height: 12.h),
           _buildFieldLabel("Expiration Date"),
           _buildExpireDateField(context, expireController),
-        ],
-      );
-    });
-  }
-
-  Widget _buildHeadshotSection(BuildContext context) {
-    return Obx(() {
-      final hasLocalFile = controller.headshotFile.value != null;
-      final hasServerUrl =
-          controller.headshotUrl.value != null &&
-          controller.headshotUrl.value!.isNotEmpty;
-      final canPreview = hasLocalFile || hasServerUrl;
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: AppColors.black200),
-            ),
-            child: Row(
-              children: [
-                _buildIcon(Icons.image_outlined),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        text: "Upload Headshot",
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13.sp,
-                      ),
-                      if (hasLocalFile)
-                        Text(
-                          controller.getFileName(controller.headshotFile),
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 11.sp,
-                          ),
-                        )
-                      else if (hasServerUrl)
-                        Text(
-                          "Current headshot on file",
-                          style: TextStyle(color: Colors.grey, fontSize: 11.sp),
-                        )
-                      else
-                        CustomTextgray(
-                          text:
-                              "Black suit, white shirt, tie, white background",
-                          fontSize: 10.sp,
-                        ),
-                    ],
-                  ),
-                ),
-                if (canPreview)
-                  IconButton(
-                    onPressed: () => controller.previewImage(
-                      context,
-                      controller.headshotFile,
-                      controller.headshotUrl,
-                    ),
-                    icon: const Icon(
-                      Icons.remove_red_eye_outlined,
-                      color: Colors.blue,
-                    ),
-                    tooltip: "Preview current headshot",
-                  ),
-                IconButton(
-                  onPressed: () =>
-                      controller.pickFromCamera(controller.headshotFile),
-                  icon: const Icon(
-                    Icons.camera_alt_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-
-              ],
-            ),
-          ),
         ],
       );
     });

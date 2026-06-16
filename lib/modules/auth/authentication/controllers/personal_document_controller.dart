@@ -20,13 +20,11 @@ class PersonalDocumentController extends GetxController {
   var drivingLicenseFile = Rx<File?>(null);
   var hackLicenseFile = Rx<File?>(null);
   var localPermitFile = Rx<File?>(null);
-  var headshotFile = Rx<File?>(null);
 
   // Existing image URLs from server (for eye-preview)
   var drivingLicenseUrl = RxnString();
   var hackLicenseUrl = RxnString();
   var localPermitUrl = RxnString();
-  var headshotUrl = RxnString();
 
   // Controllers for Expiry Dates
   final drivingLicenseExpireController = TextEditingController();
@@ -97,9 +95,6 @@ class PersonalDocumentController extends GetxController {
             }
           }
         }
-
-        // Headshot
-        headshotUrl.value = data['uploadedHeadshot']?.toString();
       }
     } catch (e) {
       debugPrint('Error loading existing documents: $e');
@@ -164,6 +159,7 @@ class PersonalDocumentController extends GetxController {
       _isPicking = false;
     }
   }
+
   Future<void> pickFromGallery(BuildContext context, Rx<File?> target) async {
     if (_isPicking) return;
     _isPicking = true;
@@ -226,6 +222,7 @@ class PersonalDocumentController extends GetxController {
       _isPicking = false;
     }
   }
+
   String getFileName(Rx<File?> file) {
     if (file.value == null) return '';
     final name = file.value!.path.split('/').last.split('\\').last;
@@ -311,14 +308,6 @@ class PersonalDocumentController extends GetxController {
           ),
         );
       }
-      if (headshotFile.value != null) {
-        formData.files.add(
-          MapEntry(
-            'uploadedHeadshot',
-            await dio.MultipartFile.fromFile(headshotFile.value!.path),
-          ),
-        );
-      }
 
       if (formData.fields.isEmpty && formData.files.isEmpty) {
         Helpers.showCustomSnackBar(
@@ -331,6 +320,7 @@ class PersonalDocumentController extends GetxController {
 
       var response = await _profileService.patchProfile(formData);
       if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.back();
         Helpers.showCustomSnackBar(
           'Documents updated successfully',
           isError: false,
@@ -340,7 +330,6 @@ class PersonalDocumentController extends GetxController {
         } catch (e) {
           debugPrint('Failed to update profile silently');
         }
-        Get.back();
       } else {
         Helpers.showCustomSnackBar(
           response.data['message'] ?? 'Failed to update documents',

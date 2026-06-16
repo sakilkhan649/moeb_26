@@ -55,6 +55,7 @@ dependencies:
   firebase_messaging: ^15.0.3
   flutter_local_notifications: ^17.1.1
   flutter_widget_from_html: ^0.17.1
+  flutter_cached_pdfview: ^0.4.4
 
 dev_dependencies:
   flutter_test:
@@ -114,5 +115,5 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/images/final_app_logo.png"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/final_app_logo.png"
+  adaptive_icon_foreground: "assets/images/final_app_logo_android.png"
   remove_alpha_ios: true
