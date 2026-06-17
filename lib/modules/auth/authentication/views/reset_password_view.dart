@@ -9,18 +9,14 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/forget_password_controller.dart';
 
-class ResetPasswordView extends StatelessWidget {
-  final _controller = Get.find<ForgotPasswordController>();
-
-  ResetPasswordView({super.key}) {
-    _controller.formKey = GlobalKey<FormState>();
-  }
+class ResetPasswordView extends GetView<ForgotPasswordController> {
+  const ResetPasswordView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
-        key: _controller.formKey,
+        key: controller.formKey,
         child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
@@ -72,7 +68,7 @@ class ResetPasswordView extends StatelessWidget {
                         ),
                         SizedBox(height: 8.h),
                         TextFormField(
-                          controller: _controller.emailController,
+                          controller: controller.emailController,
                           obscureText: false,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
@@ -111,12 +107,12 @@ class ResetPasswordView extends StatelessWidget {
                         // ── Send Button ──
                         Obx(
                           () => CustomButton(
-                            text: _controller.isLoading.value
+                            text: controller.isLoading.value
                                 ? "Sending..."
                                 : "Send Reset Link",
                             onPressed: () {
-                              if (!_controller.isLoading.value) {
-                                _controller.forgotPassword();
+                              if (!controller.isLoading.value) {
+                                controller.forgotPassword();
                               }
                             },
                             backgroundColor: Colors.white,

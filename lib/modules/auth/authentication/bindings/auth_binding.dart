@@ -10,12 +10,12 @@ import 'package:moeb_26/modules/auth/authentication/controllers/signup_controlle
 class AuthBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => ChangePasswordController());
-    Get.lazyPut(() => SignupController());
-    Get.lazyPut(() => OtpController());
-    Get.lazyPut(() => PersonalDocumentController());
-    Get.lazyPut(() => ResetPasswordController());
-    Get.lazyPut(() => ForgotPasswordController());
-    Get.lazyPut(() => SigninController());
+    Get.lazyPut(() => ChangePasswordController(), fenix: true);
+    Get.lazyPut(() => SignupController(), fenix: true);
+    Get.lazyPut(() => OtpController(), fenix: true);
+    Get.lazyPut(() => PersonalDocumentController(), fenix: true);
+    Get.lazyPut(() => ResetPasswordController(), fenix: true);
+    Get.lazyPut(() => ForgotPasswordController(), fenix: true);
+    Get.lazyPut(() => SigninController(), fenix: true);
   }
 }

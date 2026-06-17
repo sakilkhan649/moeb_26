@@ -9,18 +9,15 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signup_controller.dart';
 
-class DocumentsuploadView extends StatelessWidget {
-  final controller = Get.find<SignupController>();
-
-  DocumentsuploadView({super.key}) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.showErrors.value = false;
-    });
-  }
+class DocumentsuploadView extends GetView<SignupController> {
+  DocumentsuploadView({super.key});
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.showErrors.value = false;
+    });
     return Scaffold(
       backgroundColor: Colors.black,
       body: Form(

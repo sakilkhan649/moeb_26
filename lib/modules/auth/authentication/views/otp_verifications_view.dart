@@ -9,12 +9,8 @@ import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:pinput/pinput.dart';
 import 'package:moeb_26/modules/auth/authentication/controllers/otp_verification_controller.dart';
 
-class OtpVerificationView extends StatelessWidget {
-  final OtpController controller = Get.find<OtpController>();
-
-  OtpVerificationView({super.key}) {
-    controller.formKey = GlobalKey<FormState>();
-  }
+class OtpVerificationView extends GetView<OtpController> {
+  const OtpVerificationView({super.key});
 
   @override
   Widget build(BuildContext context) {

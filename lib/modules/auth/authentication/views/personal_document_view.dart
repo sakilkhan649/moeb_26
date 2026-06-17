@@ -8,10 +8,8 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/personal_document_controller.dart';
 
-class PersonalDocumentView extends StatelessWidget {
-  PersonalDocumentView({super.key});
-
-  final controller = Get.find<PersonalDocumentController>();
+class PersonalDocumentView extends GetView<PersonalDocumentController> {
+  const PersonalDocumentView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -11,12 +11,8 @@ import '../../../../core/widgets/CustomTextField.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signin_controller.dart';
 
-class SignInView extends StatelessWidget {
-  final _controller = Get.find<SigninController>();
-
-  SignInView({super.key}) {
-    _controller.formKey = GlobalKey<FormState>();
-  }
+class SignInView extends GetView<SigninController> {
+  const SignInView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +20,7 @@ class SignInView extends StatelessWidget {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         body: Form(
-        key: _controller.formKey,
+        key: controller.formKey,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
@@ -48,7 +44,7 @@ class SignInView extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Customtextfield(
-                  controller: _controller.emailController,
+                  controller: controller.emailController,
                   hintText: "your.email@example.com",
                   obscureText: false,
                   textInputType: TextInputType.emailAddress,
@@ -71,19 +67,19 @@ class SignInView extends StatelessWidget {
                 SizedBox(height: 8.h),
                 Obx(
                   () => Customtextfield(
-                    controller: _controller.passwordController,
+                    controller: controller.passwordController,
                     hintText: "Enter your password",
-                    obscureText: !_controller.isPasswordVisible.value,
+                    obscureText: !controller.isPasswordVisible.value,
                     textInputType: TextInputType.visiblePassword,
                     validator: (value) => Validators.password(value),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _controller.isPasswordVisible.value
+                        controller.isPasswordVisible.value
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                         color: AppColors.gray100,
                       ),
-                      onPressed: _controller.togglePasswordVisibility,
+                      onPressed: controller.togglePasswordVisibility,
                     ),
                   ),
                 ),
@@ -104,13 +100,13 @@ class SignInView extends StatelessWidget {
 
                 // ── Error Message ──
                 Obx(() {
-                  if (_controller.errorMessage.value.isEmpty) {
+                  if (controller.errorMessage.value.isEmpty) {
                     return const SizedBox.shrink();
                   }
                   return Padding(
                     padding: EdgeInsets.only(bottom: 12.h),
                     child: Text(
-                      _controller.errorMessage.value,
+                      controller.errorMessage.value,
                       style: TextStyle(color: Colors.red, fontSize: 13.sp),
                     ),
                   );
@@ -118,12 +114,12 @@ class SignInView extends StatelessWidget {
                 // ── Sign In Button ──
                 Obx(
                   () => CustomButton(
-                    text: _controller.isLoading.value
+                    text: controller.isLoading.value
                         ? "Signing In..."
                         : "Sign In",
                     onPressed: () {
-                      if (!_controller.isLoading.value) {
-                        _controller.login();
+                      if (!controller.isLoading.value) {
+                        controller.login();
                       }
                     },
                   ),
