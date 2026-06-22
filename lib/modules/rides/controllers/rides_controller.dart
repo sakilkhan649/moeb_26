@@ -51,12 +51,14 @@ class RidesController extends GetxController {
             scrollController.position.maxScrollExtent - 200 &&
         !isLoadingList.value &&
         !isLoadMore.value) {
-      if (selectedTab.value == 0 && upcomingPage < upcomingTotalPage) {
-        loadMoreUpcomingJobs();
+      if (selectedTab.value == 0) {
+        if (upcomingPage < upcomingTotalPage) {
+          loadMoreUpcomingJobs();
+        } else if (pendingPage < pendingTotalPage) {
+          loadMorePendingJobs();
+        }
       } else if (selectedTab.value == 1 && pastPage < pastTotalPage) {
         loadMorePastJobs();
-      } else if (selectedTab.value == 2 && pendingPage < pendingTotalPage) {
-        loadMorePendingJobs();
       }
     }
   }
@@ -216,10 +218,9 @@ class RidesController extends GetxController {
   Future<void> refreshCurrentTab() async {
     if (selectedTab.value == 0) {
       await fetchUpcomingJobs();
+      await fetchPendingJobs();
     } else if (selectedTab.value == 1) {
       await fetchPastJobs();
-    } else {
-      await fetchPendingJobs();
     }
   }
 }

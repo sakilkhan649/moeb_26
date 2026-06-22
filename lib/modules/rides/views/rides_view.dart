@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/Data/models/finish_rides_model.dart';
-import 'package:moeb_26/Data/models/my_rides_model.dart';
-import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
@@ -17,7 +15,7 @@ class RidesView extends StatelessWidget {
   RidesView({super.key});
 
   final RidesController controller = Get.find<RidesController>();
-  final List<String> _tabs = ["Upcoming", "Past", "Pending"];
+  final List<String> _tabs = ["Upcoming", "Past"];
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +28,7 @@ class RidesView extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: CustomText(text: "MY Jobs", fontSize: 22.sp),
+                  child: CustomText(text: "MY Rides", fontSize: 22.sp),
                 ),
                 // Expanded(
                 //   child: CustomJobButton(
@@ -68,8 +66,6 @@ class RidesView extends StatelessWidget {
                       return _buildUpcomingList();
                     case 1:
                       return _buildPastList();
-                    case 2:
-                      return _buildPendingList();
                     default:
                       return const SizedBox.shrink();
                   }
@@ -148,15 +144,60 @@ class RidesView extends StatelessWidget {
 
   // --- UPCOMING LIST ---
   Widget _buildUpcomingList() {
-    if (controller.upcomingRides.isEmpty) return _buildEmptyState();
+    if (controller.upcomingRides.isEmpty && controller.pendingRides.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    final List<Widget> cards = [];
+
+    // Add upcoming rides
+    for (final ride in controller.upcomingRides) {
+      cards.add(
+        _buildRideCard(
+          ride: ride,
+          onTap: () => Get.toNamed(Routes.rideDetailsView, arguments: ride),
+          date: ride.date,
+          time: ride.time,
+          pickup: ride.pickupLocation,
+          dropoff: ride.dropoffLocation,
+          vehicle: ride.vehicleType,
+          payment: ride.paymentType,
+          amount: ride.paymentAmount?.toString(),
+          name: ride.createdBy?.name,
+          company: ride.createdBy?.company,
+          isAsap: ride.asap,
+        ),
+      );
+    }
+
+    // Add pending rides
+    for (final ride in controller.pendingRides) {
+      cards.add(
+        _buildRideCard(
+          ride: ride,
+          onTap: () =>
+              Get.toNamed(Routes.requestUnderReviewView, arguments: ride),
+          date: ride.date?.toString(),
+          time: ride.time,
+          pickup: ride.pickupLocation,
+          dropoff: ride.dropoffLocation,
+          vehicle: ride.vehicleType,
+          payment: ride.paymentType,
+          amount: ride.paymentAmount.toString(),
+          name: ride.applicant?.driver?.name,
+          company: ride.applicant?.driver?.company,
+          isAsap: ride.asap,
+        ),
+      );
+    }
 
     return ListView.builder(
       controller: controller.scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: controller.upcomingRides.length + 1,
+      itemCount: cards.length + 1,
       padding: EdgeInsets.only(bottom: 20.h),
       itemBuilder: (context, index) {
-        if (index == controller.upcomingRides.length) {
+        if (index == cards.length) {
           return Obx(
             () => controller.isLoadMore.value
                 ? Padding(
@@ -170,21 +211,7 @@ class RidesView extends StatelessWidget {
                 : const SizedBox.shrink(),
           );
         }
-        final UpcomingRideData ride = controller.upcomingRides[index];
-        return _buildRideCard(
-          ride: ride,
-          onTap: () => Get.toNamed(Routes.rideDetailsView, arguments: ride),
-          date: ride.date,
-          time: ride.time,
-          pickup: ride.pickupLocation,
-          dropoff: ride.dropoffLocation,
-          vehicle: ride.vehicleType,
-          payment: ride.paymentType,
-          amount: ride.paymentAmount?.toString(),
-          name: ride.createdBy?.name,
-          company: ride.createdBy?.company,
-          isAsap: ride.asap,
-        );
+        return cards[index];
       },
     );
   }
@@ -226,50 +253,6 @@ class RidesView extends StatelessWidget {
           amount: ride.paymentAmount?.toString(),
           name: ride.createdBy?.name,
           company: ride.createdBy?.company,
-          isAsap: ride.asap,
-        );
-      },
-    );
-  }
-
-  // --- PENDING LIST ---
-  Widget _buildPendingList() {
-    if (controller.pendingRides.isEmpty) return _buildEmptyState();
-
-    return ListView.builder(
-      controller: controller.scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: controller.pendingRides.length + 1,
-      padding: EdgeInsets.only(bottom: 20.h),
-      itemBuilder: (context, index) {
-        if (index == controller.pendingRides.length) {
-          return Obx(
-            () => controller.isLoadMore.value
-                ? Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.h),
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.orange100,
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          );
-        }
-        final Ride ride = controller.pendingRides[index];
-        return _buildRideCard(
-          ride: ride,
-          onTap: () =>
-              Get.toNamed(Routes.requestUnderReviewView, arguments: ride),
-          date: ride.date?.toString(),
-          time: ride.time,
-          pickup: ride.pickupLocation,
-          dropoff: ride.dropoffLocation,
-          vehicle: ride.vehicleType,
-          payment: ride.paymentType,
-          amount: ride.paymentAmount.toString(),
-          name: ride.applicant?.driver?.name,
-          company: ride.applicant?.driver?.company,
           isAsap: ride.asap,
         );
       },

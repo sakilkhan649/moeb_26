@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
 import '../../../core/widgets/Custom_Job_Button.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/market_place_controller.dart';
@@ -30,17 +31,41 @@ class MarketPlaceView extends StatelessWidget {
             children: [
               SizedBox(height: 5.h),
 
-              // "List Item for Sale" Button
-              CustomJobButton(
-                text: "List Item for Sale",
-                onPressed: () {
-                  controller.clearFields();
-                  Get.bottomSheet(
-                    SellItemBottomSheet(),
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                  );
-                },
+              // "List Item for Sale" & "My Items" Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomJobButton(
+                      text: "List Item",
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16.h,
+                        horizontal: 8.w,
+                      ),
+                      onPressed: () {
+                        controller.clearFields();
+                        Get.bottomSheet(
+                          SellItemBottomSheet(),
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: CustomJobButton(
+                      text: "My Items",
+                      icon: Icons.shopping_bag_outlined,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16.h,
+                        horizontal: 8.w,
+                      ),
+                      onPressed: () {
+                        Get.toNamed(Routes.myItemsView);
+                      },
+                    ),
+                  ),
+                ],
               ),
 
               SizedBox(height: 15.h),

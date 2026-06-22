@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/modules/my_jobs/controllers/my_jobs_controller.dart';
 import 'package:moeb_26/core/widgets/Custom_Job_Button.dart';
@@ -73,15 +74,31 @@ class _JobOfferViewState extends State<JobOfferView> {
                   child: Column(
                     children: [
                       SizedBox(height: 2.w),
-                      CustomJobButton(
-                        text: "New Job",
-                        onPressed: () {
-                          Get.bottomSheet(
-                            JobPostSheetTabBarView(),
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                          );
-                        },
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomJobButton(
+                              text: "New Job",
+                              onPressed: () {
+                                Get.bottomSheet(
+                                  JobPostSheetTabBarView(),
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: CustomJobButton(
+                              text: "My Jobs",
+                              icon: Icons.work_outline,
+                              onPressed: () {
+                                Get.toNamed(Routes.myJobsView);
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 15.h),
                       Obx(() {
