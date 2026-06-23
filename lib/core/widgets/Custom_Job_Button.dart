@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 
 class CustomJobButton extends StatelessWidget {
@@ -15,6 +16,7 @@ class CustomJobButton extends StatelessWidget {
   final double? fontSize;
   final FontWeight? fontWeight;
   final IconData? icon; // Added icon parameter
+  final String? iconPath; // Added iconPath parameter for SVG support
 
   const CustomJobButton({
     super.key,
@@ -28,7 +30,8 @@ class CustomJobButton extends StatelessWidget {
     this.borderColor,
     this.fontSize,
     this.fontWeight,
-    this.icon = Icons.add, // Default icon is "+" (add icon)
+    this.icon,
+    this.iconPath,
   });
 
   @override
@@ -59,11 +62,22 @@ class CustomJobButton extends StatelessWidget {
           mainAxisAlignment:
               MainAxisAlignment.center, // Align content in the center
           children: [
-            Icon(
-              icon,
-              color: textColor ?? Colors.black, // Icon color
-              size: 24.sp, // Set the icon size
-            ),
+            if (iconPath != null)
+              SvgPicture.asset(
+                iconPath!,
+                width: 24.w,
+                height: 24.w,
+                colorFilter: ColorFilter.mode(
+                  textColor ?? Colors.black,
+                  BlendMode.srcIn,
+                ),
+              )
+            else
+              Icon(
+                icon ?? Icons.add,
+                color: textColor ?? Colors.black, // Icon color
+                size: 24.sp, // Set the icon size
+              ),
             SizedBox(width: 8.w), // Space between icon and text
             Flexible(
               child: Text(

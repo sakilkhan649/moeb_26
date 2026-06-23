@@ -79,6 +79,10 @@ class _JobOfferViewState extends State<JobOfferView> {
                           Expanded(
                             child: CustomJobButton(
                               text: "New Job",
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12.h,
+                                horizontal: 8.w,
+                              ),
                               onPressed: () {
                                 Get.bottomSheet(
                                   JobPostSheetTabBarView(),
@@ -92,7 +96,11 @@ class _JobOfferViewState extends State<JobOfferView> {
                           Expanded(
                             child: CustomJobButton(
                               text: "My Jobs",
-                              icon: Icons.work_outline,
+                              iconPath: AppIcons.job_offer_icon,
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12.h,
+                                horizontal: 8.w,
+                              ),
                               onPressed: () {
                                 Get.toNamed(Routes.myJobsView);
                               },

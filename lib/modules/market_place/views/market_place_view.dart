@@ -38,7 +38,7 @@ class MarketPlaceView extends StatelessWidget {
                     child: CustomJobButton(
                       text: "List Item",
                       padding: EdgeInsets.symmetric(
-                        vertical: 16.h,
+                        vertical: 12.h,
                         horizontal: 8.w,
                       ),
                       onPressed: () {
@@ -57,7 +57,7 @@ class MarketPlaceView extends StatelessWidget {
                       text: "My Items",
                       icon: Icons.shopping_bag_outlined,
                       padding: EdgeInsets.symmetric(
-                        vertical: 16.h,
+                        vertical: 12.h,
                         horizontal: 8.w,
                       ),
                       onPressed: () {
