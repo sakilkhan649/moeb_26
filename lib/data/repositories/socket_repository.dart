@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:moeb_26/config/constants/api_constants.dart';
 import 'package:moeb_26/data/models/chat_message_model.dart';
@@ -136,10 +137,29 @@ class SocketRepository {
   }
 
   /// Send a message
-  Future<ChatMessage?> sendMessage(String chatId, String text) async {
+  Future<ChatMessage?> sendMessage(String chatId, String text, {List<File>? attachments}) async {
     try {
       final url = ApiConstants.messages.replaceAll('{{chatId}}', chatId);
-      final response = await apiClient.postData(url, {'text': text});
+      Response response;
+      if (attachments != null && attachments.isNotEmpty) {
+        final formData = FormData();
+        formData.fields.add(MapEntry('text', text));
+        for (var file in attachments) {
+          formData.files.add(
+            MapEntry(
+              'attachments',
+              await MultipartFile.fromFile(
+                file.path,
+                filename: file.path.split('/').last,
+              ),
+            ),
+          );
+        }
+        response = await apiClient.postData(url, formData);
+      } else {
+        response = await apiClient.postData(url, {'text': text});
+      }
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ChatMessage.fromJson(response.data['data']);
       }

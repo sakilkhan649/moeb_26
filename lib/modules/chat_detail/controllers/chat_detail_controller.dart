@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/core/utils/media_picker_helper.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/data/models/chat_message_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
@@ -14,6 +18,7 @@ class ChatDetailController extends GetxController {
   final RxList<ChatMessage> messages = <ChatMessage>[].obs;
   final TextEditingController messageController = TextEditingController();
   final RxBool isLoading = false.obs;
+  final RxList<File> selectedImages = <File>[].obs;
   Worker? _messageWorker;
 
   late ChatPreview chat;
@@ -72,10 +77,47 @@ class ChatDetailController extends GetxController {
     }
   }
 
+  Future<void> pickImage(BuildContext context) async {
+    final List<File>? images = await MediaPickerHelper.pickMultiImages(context);
+    if (images != null && images.isNotEmpty) {
+      for (var image in images) {
+        final compressed = await Helpers.compressImage(image);
+        selectedImages.add(compressed);
+      }
+    }
+  }
+
+  Future<void> takePhoto() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+      if (image != null) {
+        final compressed = await Helpers.compressImage(File(image.path));
+        selectedImages.add(compressed);
+      }
+    } catch (e) {
+      Helpers.error('Error picking from camera: $e');
+      Helpers.showCustomSnackBar(
+        'Could not open camera. Please check app permissions in settings.',
+        isError: true,
+      );
+    }
+  }
+
+  void removeImage(int index) {
+    selectedImages.removeAt(index);
+  }
+
   Future<void> sendMessage() async {
     final text = messageController.text.trim();
-    if (text.isNotEmpty) {
+    if (text.isNotEmpty || selectedImages.isNotEmpty) {
       final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
+
+      final List<File> imagesToSend = selectedImages.toList();
+      selectedImages.clear();
 
       // sender object সহ tempMessage বানাও
       final tempMessage = ChatMessage(
@@ -92,7 +134,11 @@ class ChatDetailController extends GetxController {
       messageController.clear();
 
       try {
-        final sentMessage = await socketRepo.sendMessage(chat.id, text);
+        final sentMessage = await socketRepo.sendMessage(
+          chat.id,
+          text,
+          attachments: imagesToSend,
+        );
         if (sentMessage != null) {
           // tempId দিয়ে খুঁজে replace করো
           int index = messages.indexWhere((m) => m.id == tempId);
@@ -102,6 +148,7 @@ class ChatDetailController extends GetxController {
         }
       } catch (e) {
         messages.removeWhere((m) => m.id == tempId);
+        selectedImages.addAll(imagesToSend);
         Get.snackbar('Error', 'Failed to send message');
       }
     }

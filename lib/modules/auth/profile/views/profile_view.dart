@@ -337,12 +337,6 @@ class ProfileView extends StatelessWidget {
                                               Routes.personalDocumentView,
                                             );
                                             break;
-                                          case 4:
-                                            Get.toNamed(Routes.myItemsView);
-                                            break;
-                                          case 5:
-                                            Get.toNamed(Routes.myJobsView);
-                                            break;
                                         }
                                       },
                                       itemBuilder: (context) => [
@@ -365,16 +359,6 @@ class ProfileView extends StatelessWidget {
                                           3,
                                           Icons.document_scanner_outlined,
                                           "Personal doc",
-                                        ),
-                                        _buildPopupItem(
-                                          4,
-                                          Icons.shopping_bag_outlined,
-                                          "My Items",
-                                        ),
-                                        _buildPopupItem(
-                                          5,
-                                          Icons.business_center_outlined,
-                                          "My Jobs",
                                         ),
                                       ],
                                       child: Container(
@@ -678,7 +662,10 @@ class ProfileView extends StatelessWidget {
                   ),
                   // Delete Account Button
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 8.h,
+                    ),
                     child: GestureDetector(
                       onTap: () {
                         Get.bottomSheet(
@@ -700,7 +687,11 @@ class ProfileView extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.delete_forever_outlined, color: Colors.red, size: 20.sp),
+                            Icon(
+                              Icons.delete_forever_outlined,
+                              color: Colors.red,
+                              size: 20.sp,
+                            ),
                             SizedBox(width: 8.w),
                             Text(
                               "Delete Account",

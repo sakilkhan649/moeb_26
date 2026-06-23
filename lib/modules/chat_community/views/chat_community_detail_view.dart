@@ -1,9 +1,8 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
@@ -254,38 +253,106 @@ class ChatCommunityDetailView extends StatelessWidget {
 
   Widget _buildMessageInput(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        left: 20.w,
-        right: 20.w,
-        bottom: 10.h,
-        top: 10.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: const BoxDecoration(
         color: Colors.black,
-        border: Border(top: BorderSide(color: Colors.white)),
+        border: Border(
+          top: BorderSide(color: Color(0xFF1A1A1A), width: 1),
+        ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end, // Align items to bottom for multiline support
         children: [
-          IconButton(
-            onPressed: () => controller.pickImage(context),
-            icon: Icon(Icons.image, color: Colors.grey, size: 24.sp),
+          // Attachment Button
+          PopupMenuButton<int>(
+            offset: Offset(0, -110.h),
+            color: const Color(0xFF121212),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
+              side: const BorderSide(color: Color(0xFF262626), width: 1),
+            ),
+            elevation: 8,
+            onSelected: (value) {
+              if (value == 1) {
+                controller.takePhoto();
+              } else if (value == 2) {
+                controller.pickImage(context);
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(
+                value: 1,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  children: [
+                    Icon(Icons.camera_alt_outlined, color: Colors.white, size: 20.sp),
+                    SizedBox(width: 12.w),
+                    Text(
+                      "Camera",
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(
+                height: 1,
+              ),
+              PopupMenuItem<int>(
+                value: 2,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  children: [
+                    Icon(Icons.photo_library_outlined, color: Colors.white, size: 20.sp),
+                    SizedBox(width: 12.w),
+                    Text(
+                      "Gallery",
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            child: Container(
+              margin: EdgeInsets.only(bottom: 6.h), // align with bottom of textfield
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E1E1E),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF333333), width: 1),
+              ),
+              child: Icon(Icons.add, color: Colors.white, size: 20.sp),
+            ),
           ),
+          SizedBox(width: 10.w),
+          // Input field container
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xff1A1A1A),
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: Colors.white),
+                color: const Color(0xFF121212),
+                borderRadius: BorderRadius.circular(24.r),
+                border: Border.all(color: const Color(0xFF262626), width: 1),
               ),
               child: TextField(
                 controller: controller.messageController,
-                style: GoogleFonts.inter(color: Colors.white),
-                maxLines: null,
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 15.sp,
+                ),
+                maxLines: 5,
+                minLines: 1,
                 decoration: InputDecoration(
                   hintText: "Type a message...",
                   hintStyle: GoogleFonts.inter(
-                    color: Colors.grey,
-                    fontSize: 14.sp,
+                    color: const Color(0xFF666666),
+                    fontSize: 15.sp,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
@@ -296,21 +363,25 @@ class ChatCommunityDetailView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 12.w),
-          Obx(
-            () => controller.isSending.value
-                ? const CircularProgressIndicator(color: Color(0xffD4A843))
-                : GestureDetector(
-                    onTap: () => controller.sendMessage(),
-                    child: SvgPicture.asset(
-                      AppIcons.send_message_icon,
-                      height: 24.sp,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
+          SizedBox(width: 10.w),
+          // Send Button with loader support
+          Padding(
+            padding: EdgeInsets.only(bottom: 10.h),
+            child: Obx(
+              () => controller.isSending.value
+                  ? const CircularProgressIndicator(color: Color(0xffD4A843))
+                  : GestureDetector(
+                      onTap: () => controller.sendMessage(),
+                      child: SvgPicture.asset(
+                        AppIcons.send_message_icon,
+                        height: 24.sp,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
-                  ),
+            ),
           ),
         ],
       ),

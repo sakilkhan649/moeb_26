@@ -6,6 +6,7 @@ class ChatMessage {
   final ChatParticipant? sender;
   final String? senderId; // fallback when sender is just an ID string
   final String text;
+  final List<String> attachments;
   final String createdAt;
   final String updatedAt;
 
@@ -15,6 +16,7 @@ class ChatMessage {
     this.sender,
     this.senderId,
     required this.text,
+    this.attachments = const [],
     required this.createdAt,
     required this.updatedAt,
   });
@@ -49,6 +51,7 @@ class ChatMessage {
         json['content']?.toString() ??
         '';
 
+    final List<String> attachments = List<String>.from(json['attachments'] ?? []);
     final String createdAt = json['createdAt']?.toString() ?? '';
     final String updatedAt = json['updatedAt']?.toString() ?? '';
 
@@ -58,6 +61,7 @@ class ChatMessage {
       sender: senderObj,
       senderId: senderIdStr ?? senderObj?.id,
       text: text,
+      attachments: attachments,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );

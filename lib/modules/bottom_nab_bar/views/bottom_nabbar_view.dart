@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/controllers/bottom_nabbar_controller.dart';
 import 'package:moeb_26/modules/chat/views/chat_view.dart';
-import 'package:moeb_26/modules/deals/views/deals_view.dart';
 import 'package:moeb_26/modules/jobs_offers/views/Job_offer_view.dart';
 import 'package:moeb_26/modules/market_place/views/market_place_view.dart';
 import 'package:moeb_26/modules/rides/views/rides_view.dart';
@@ -18,7 +17,6 @@ class BottomNabbarView extends StatelessWidget {
     RidesView(),
     ChatView(),
     MarketPlaceView(),
-    DealsView(),
   ];
 
   @override
@@ -41,7 +39,7 @@ class BottomNabbarView extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(
-                5,
+                4,
                 (index) => _buildCustomIcon(index, navController),
               ),
             ),
@@ -101,8 +99,6 @@ class BottomNabbarView extends StatelessWidget {
         return AppIcons.chats_icon;
       case 3:
         return AppIcons.marketplace_icon;
-      case 4:
-        return AppIcons.deals_icon;
       default:
         return '';
     }
@@ -118,8 +114,6 @@ class BottomNabbarView extends StatelessWidget {
         return 'Chat';
       case 3:
         return 'Marketplace';
-      case 4:
-        return 'Deals';
       default:
         return '';
     }

@@ -51,6 +51,8 @@ import 'package:moeb_26/modules/my_items/views/my_Items_view.dart';
 import 'package:moeb_26/modules/request_under_review/views/request_under_review_view.dart';
 import 'package:moeb_26/modules/ride_completed/views/ride_completed_view.dart';
 import 'package:moeb_26/modules/ride_details/views/ride_details_view.dart';
+import 'package:moeb_26/modules/deals/views/deals_view.dart';
+import 'package:moeb_26/modules/deals/bindings/deals_binding.dart';
 
 class Routes {
   static const String splashView = "/SplashView";
@@ -97,6 +99,7 @@ class Routes {
   static const String allVehicleView = "/AllVehicleView";
   static const String addNewVehicleView = "/AddNewVehicleView";
   static const String personalDocumentView = "/PersonalDocumentView";
+  static const String dealsView = "/DealsView";
 
   static List<GetPage> routes = [
     GetPage(
@@ -318,6 +321,12 @@ class Routes {
       page: () => PersonalDocumentView(),
       transition: Transition.noTransition,
       binding: AuthBinding(),
+    ),
+    GetPage(
+      name: dealsView,
+      page: () => DealsView(),
+      transition: Transition.noTransition,
+      binding: DealsBinding(),
     ),
   ];
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:moeb_26/core/services/community_service.dart';
 import 'package:moeb_26/core/services/socket_service.dart';
@@ -67,6 +68,26 @@ class CommunityChatDetailController extends GetxController {
         final compressed = await Helpers.compressImage(image);
         selectedImages.add(compressed);
       }
+    }
+  }
+
+  Future<void> takePhoto() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+      if (image != null) {
+        final compressed = await Helpers.compressImage(File(image.path));
+        selectedImages.add(compressed);
+      }
+    } catch (e) {
+      Helpers.error('Error picking from camera: $e');
+      Helpers.showCustomSnackBar(
+        'Could not open camera. Please check app permissions in settings.',
+        isError: true,
+      );
     }
   }
 

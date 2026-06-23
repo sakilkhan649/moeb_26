@@ -41,8 +41,14 @@ class ChatDetailView extends StatelessWidget {
                 );
               }),
             ),
+            // Image Previews (Before sending)
+            Obx(
+              () => controller.selectedImages.isEmpty
+                  ? const SizedBox.shrink()
+                  : _buildImagePreviews(),
+            ),
             // Bottom Input Field
-            _buildMessageInput(),
+            _buildMessageInput(context),
           ],
         ),
       ),
@@ -109,7 +115,9 @@ class ChatDetailView extends StatelessWidget {
   }
 
   Widget _buildMessageBubble(ChatMessage message) {
-    if (message.text.trim().isEmpty) return const SizedBox.shrink();
+    if (message.text.trim().isEmpty && message.attachments.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Obx(() {
       final String currentUserId = controller.userService.userId;
@@ -139,14 +147,34 @@ class ChatDetailView extends StatelessWidget {
                   ),
                   border: Border.all(color: const Color(0xff333333)),
                 ),
-                child: Text(
-                  message.text,
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 14.sp,
-                    height: 1.4,
-                    fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (message.attachments.isNotEmpty)
+                      Column(
+                        children: message.attachments
+                            .map(
+                              (url) => Padding(
+                                padding: EdgeInsets.only(bottom: 8.h),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  child: Image.network(url, fit: BoxFit.cover),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    if (message.text.trim().isNotEmpty)
+                      Text(
+                        message.text,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          height: 1.4,
+                          fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
+                        ),
+                      ),
+                  ],
                 ),
               ),
               SizedBox(height: 4.h),
@@ -167,58 +195,182 @@ class ChatDetailView extends StatelessWidget {
     });
   }
 
-  Widget _buildMessageInput() {
+  Widget _buildMessageInput(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        left: 20.w,
-        right: 20.w,
-        bottom: 10.h,
-        top: 10.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: const BoxDecoration(
         color: Colors.black,
-        border: Border(top: BorderSide(color: Color(0xffDADADA))),
+        border: Border(top: BorderSide(color: Color(0xFF1A1A1A), width: 1)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment
+            .end, // Align items to bottom for multiline support
         children: [
+          // Attachment Button
+          PopupMenuButton<int>(
+            offset: Offset(0, -110.h),
+            color: const Color(0xFF121212),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
+              side: const BorderSide(color: Color(0xFF262626), width: 1),
+            ),
+            elevation: 8,
+            onSelected: (value) {
+              if (value == 1) {
+                controller.takePhoto();
+              } else if (value == 2) {
+                controller.pickImage(context);
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(
+                value: 1,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.camera_alt_outlined,
+                      color: Colors.white,
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 12.w),
+                    Text(
+                      "Camera",
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(height: 1),
+              PopupMenuItem<int>(
+                value: 2,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.photo_library_outlined,
+                      color: Colors.white,
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 12.w),
+                    Text(
+                      "Gallery",
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            child: Container(
+              margin: EdgeInsets.only(
+                bottom: 6.h,
+              ), // align with bottom of textfield
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E1E1E),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF333333), width: 1),
+              ),
+              child: Icon(Icons.add, color: Colors.white, size: 20.sp),
+            ),
+          ),
+          SizedBox(width: 10.w),
+          // Input field container
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xff1A1A1A),
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: const Color(0xffDADADA)),
+                color: const Color(0xFF121212),
+                borderRadius: BorderRadius.circular(24.r),
+                border: Border.all(color: const Color(0xFF262626), width: 1),
               ),
               child: TextField(
                 controller: controller.messageController,
-                style: GoogleFonts.inter(color: Colors.white),
+                style: GoogleFonts.inter(color: Colors.white, fontSize: 15.sp),
+                maxLines: 5,
+                minLines: 1,
                 decoration: InputDecoration(
                   hintText: "Type a message...",
                   hintStyle: GoogleFonts.inter(
-                    color: Colors.grey,
-                    fontSize: 16.sp,
+                    color: const Color(0xFF666666),
+                    fontSize: 15.sp,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 16.w,
-                    vertical: 12.h,
+                    vertical: 10.h,
                   ),
                 ),
               ),
             ),
           ),
-          SizedBox(width: 12.w),
-          GestureDetector(
-            onTap: () => controller.sendMessage(),
-            child: SvgPicture.asset(
-              AppIcons.send_message_icon,
-              height: 24.sp,
-              colorFilter: const ColorFilter.mode(
-                Colors.white,
-                BlendMode.srcIn,
+          SizedBox(width: 10.w),
+          // Send Button
+          Padding(
+            padding: EdgeInsets.only(bottom: 10.h),
+            child: GestureDetector(
+              onTap: () => controller.sendMessage(),
+              child: SvgPicture.asset(
+                AppIcons.send_message_icon,
+                height: 24.sp,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildImagePreviews() {
+    return Container(
+      height: 80.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: controller.selectedImages.length,
+        itemBuilder: (context, index) {
+          return Stack(
+            children: [
+              Container(
+                width: 80.w,
+                margin: EdgeInsets.only(right: 8.w),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  image: DecorationImage(
+                    image: FileImage(controller.selectedImages[index]),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                right: 8.w,
+                child: GestureDetector(
+                  onTap: () => controller.removeImage(index),
+                  child: Container(
+                    padding: EdgeInsets.all(2.w),
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.close, color: Colors.white, size: 14.sp),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
