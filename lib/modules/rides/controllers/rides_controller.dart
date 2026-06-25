@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:moeb_26/Data/models/finish_rides_model.dart';
-import 'package:moeb_26/Data/models/my_rides_model.dart';
 import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/repositories/job_repository.dart';
@@ -19,8 +18,6 @@ class RidesController extends GetxController {
   int upcomingTotalPage = 1;
   int pastPage = 1;
   int pastTotalPage = 1;
-  int pendingPage = 1;
-  int pendingTotalPage = 1;
 
   final ScrollController scrollController = ScrollController();
 
@@ -30,9 +27,11 @@ class RidesController extends GetxController {
     if (Get.arguments is Map && Get.arguments.containsKey('ridesTab')) {
       selectedTab.value = Get.arguments['ridesTab'];
     }
-    fetchPendingJobs();
-    fetchUpcomingJobs();
-    fetchPastJobs();
+    if (selectedTab.value == 0) {
+      fetchUpcomingJobs();
+    } else if (selectedTab.value == 1) {
+      fetchPastJobs();
+    }
     scrollController.addListener(_onScroll);
   }
 
@@ -54,8 +53,6 @@ class RidesController extends GetxController {
       if (selectedTab.value == 0) {
         if (upcomingPage < upcomingTotalPage) {
           loadMoreUpcomingJobs();
-        } else if (pendingPage < pendingTotalPage) {
-          loadMorePendingJobs();
         }
       } else if (selectedTab.value == 1 && pastPage < pastTotalPage) {
         loadMorePastJobs();
@@ -65,55 +62,6 @@ class RidesController extends GetxController {
 
   RxList<UpcomingRideData> upcomingRides = <UpcomingRideData>[].obs;
   RxList<FinishRideData> pastRides = <FinishRideData>[].obs;
-  RxList<Ride> pendingRides = <Ride>[].obs;
-
-  Future<void> fetchPendingJobs() async {
-    try {
-      isLoadingList.value = true;
-      pendingPage = 1;
-      final response = await _jobRepo.getPendingJobs(page: pendingPage);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data != null && response.data['data'] != null) {
-          final jobResponse = MyRidesResponse.fromJson(response.data);
-          pendingRides.assignAll(jobResponse.data);
-          pendingTotalPage = jobResponse.pagination?.totalPage ?? 1;
-        }
-      } else {
-        final message = response.data is Map
-            ? (response.data['message'] ?? 'Failed to fetch pending jobs.')
-            : 'Failed to fetch pending jobs.';
-        Helpers.showCustomSnackBar(message, isError: true);
-      }
-    } on DioException catch (e) {
-      final message =
-          e.response?.data['message'] ?? 'Failed to fetch pending jobs.';
-      Helpers.showCustomSnackBar(message, isError: true);
-    } catch (e) {
-      print("Error fetching pending jobs: $e");
-      Helpers.showCustomSnackBar('Something went wrong.', isError: true);
-    } finally {
-      isLoadingList.value = false;
-    }
-  }
-
-  Future<void> loadMorePendingJobs() async {
-    try {
-      isLoadMore.value = true;
-      pendingPage++;
-      final response = await _jobRepo.getPendingJobs(page: pendingPage);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data != null && response.data['data'] != null) {
-          final jobResponse = MyRidesResponse.fromJson(response.data);
-          pendingRides.addAll(jobResponse.data);
-        }
-      }
-    } catch (e) {
-      print("Error loading more pending jobs: $e");
-      pendingPage--;
-    } finally {
-      isLoadMore.value = false;
-    }
-  }
 
   Future<void> fetchUpcomingJobs() async {
     try {
@@ -213,12 +161,16 @@ class RidesController extends GetxController {
 
   void changeTab(int index) {
     selectedTab.value = index;
+    if (index == 0) {
+      fetchUpcomingJobs();
+    } else if (index == 1) {
+      fetchPastJobs();
+    }
   }
 
   Future<void> refreshCurrentTab() async {
     if (selectedTab.value == 0) {
       await fetchUpcomingJobs();
-      await fetchPendingJobs();
     } else if (selectedTab.value == 1) {
       await fetchPastJobs();
     }

@@ -138,6 +138,7 @@ class RequestUnderReviewView extends StatelessWidget {
                     },
                   ),
                 ),
+              SizedBox(height: 80.h),
             ],
           ),
         ),

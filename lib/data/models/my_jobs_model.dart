@@ -57,6 +57,7 @@ class JobData {
   dynamic createdBy;
   String? createdAt;
   String? updatedAt;
+  bool? hasReview;
 
   Review? reviewByDriver;
   Review? reviewByCreator;
@@ -86,6 +87,7 @@ class JobData {
     this.reviewByCreator,
     this.assignedTo,
     this.applicant,
+    this.hasReview,
   });
 
   JobData.fromJson(Map<String, dynamic> json) {
@@ -104,6 +106,7 @@ class JobData {
     instruction = json['instruction'];
     status = json['status'];
     rideStatus = json['rideStatus'];
+    hasReview = json['hasReview'];
 
     // Handle createdBy as either String or Driver Object
     if (json['createdBy'] is Map<String, dynamic>) {

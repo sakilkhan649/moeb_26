@@ -208,7 +208,7 @@ class _RideProgressWayLocationViewState
                                   job!.createdBy!.nickname!.isNotEmpty)
                               ? job.createdBy!.nickname!
                               : (job?.createdBy?.name ?? "Unknown"),
-                          company: job?.applicant?.driver?.company ?? "N/A",
+                          company: driver?.company ?? "N/A",
                           payment: job?.paymentType ?? "N/A",
                           amount: job != null
                               ? "\$${job.paymentAmount}"
@@ -234,6 +234,9 @@ class _RideProgressWayLocationViewState
 
                             if (rideStatus == "FINISHED" ||
                                 status == "COMPLETED") {
+                              if (job?.hasReview == true) {
+                                return const SizedBox.shrink();
+                              }
                               // Ride is either in final stage or finished, show Review button
                               return CustomButton(
                                 text: "Review Driver",

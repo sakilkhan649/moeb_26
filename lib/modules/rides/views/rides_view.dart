@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/Data/models/finish_rides_model.dart';
+import 'package:moeb_26/Data/models/my_rides_model.dart' as my_rides;
+import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
@@ -144,7 +146,7 @@ class RidesView extends StatelessWidget {
 
   // --- UPCOMING LIST ---
   Widget _buildUpcomingList() {
-    if (controller.upcomingRides.isEmpty && controller.pendingRides.isEmpty) {
+    if (controller.upcomingRides.isEmpty) {
       return _buildEmptyState();
     }
 
@@ -155,7 +157,16 @@ class RidesView extends StatelessWidget {
       cards.add(
         _buildRideCard(
           ride: ride,
-          onTap: () => Get.toNamed(Routes.rideDetailsView, arguments: ride),
+          onTap: () {
+            if (ride.status == "PENDING") {
+              Get.toNamed(
+                Routes.requestUnderReviewView,
+                arguments: _convertToRide(ride),
+              );
+            } else {
+              Get.toNamed(Routes.rideDetailsView, arguments: ride);
+            }
+          },
           date: ride.date,
           time: ride.time,
           pickup: ride.pickupLocation,
@@ -165,27 +176,6 @@ class RidesView extends StatelessWidget {
           amount: ride.paymentAmount?.toString(),
           name: ride.createdBy?.name,
           company: ride.createdBy?.company,
-          isAsap: ride.asap,
-        ),
-      );
-    }
-
-    // Add pending rides
-    for (final ride in controller.pendingRides) {
-      cards.add(
-        _buildRideCard(
-          ride: ride,
-          onTap: () =>
-              Get.toNamed(Routes.requestUnderReviewView, arguments: ride),
-          date: ride.date?.toString(),
-          time: ride.time,
-          pickup: ride.pickupLocation,
-          dropoff: ride.dropoffLocation,
-          vehicle: ride.vehicleType,
-          payment: ride.paymentType,
-          amount: ride.paymentAmount.toString(),
-          name: ride.applicant?.driver?.name,
-          company: ride.applicant?.driver?.company,
           isAsap: ride.asap,
         ),
       );
@@ -324,6 +314,34 @@ class RidesView extends StatelessWidget {
         companyName: company ?? 'N/A',
         vehicleStyle: VehicleTypeColors.getVehicleStyle(vehicleType),
       ),
+    );
+  }
+
+  my_rides.Ride _convertToRide(UpcomingRideData upcoming) {
+    return my_rides.Ride(
+      id: upcoming.id ?? '',
+      pickupLocation: upcoming.pickupLocation ?? '',
+      dropoffLocation: upcoming.dropoffLocation ?? '',
+      vehicleType: upcoming.vehicleType ?? '',
+      asap: upcoming.asap,
+      paymentAmount: upcoming.paymentAmount ?? 0,
+      paymentType: upcoming.paymentType ?? '',
+      status: upcoming.status ?? '',
+      date: upcoming.date != null ? DateTime.tryParse(upcoming.date!) : null,
+      time: upcoming.time ?? '',
+      rideStatus: upcoming.rideStatus,
+      createdBy: upcoming.createdBy != null
+          ? my_rides.Driver(
+              id: upcoming.createdBy!.id ?? '',
+              name: upcoming.createdBy!.name ?? '',
+              email: upcoming.createdBy!.email ?? '',
+              phone: upcoming.createdBy!.phone ?? '',
+              profilePicture: upcoming.createdBy!.profilePicture ?? '',
+              company: upcoming.createdBy!.company,
+              nickname: upcoming.createdBy!.nickname,
+            )
+          : null,
+      flightNumber: upcoming.flightNumber,
     );
   }
 }
