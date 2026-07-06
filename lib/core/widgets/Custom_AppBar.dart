@@ -178,6 +178,35 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             PopupMenuItem<int>(
+              value: 3,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.receipt_long_outlined,
+                    color: Colors.white,
+                    size: 24.sp,
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      'Create Invoice',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.chevron_forward,
+                    size: 20.sp,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<int>(
               value: 1,
               child: Row(
                 children: [
@@ -251,6 +280,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         } else {
           Get.toNamed(Routes.profileView);
         }
+        break;
+      case 3:
+        Get.toNamed(Routes.invoiceHistoryView);
         break;
       case 1:
         Get.toNamed(Routes.dealsView);

@@ -53,6 +53,9 @@ import 'package:moeb_26/modules/ride_completed/views/ride_completed_view.dart';
 import 'package:moeb_26/modules/ride_details/views/ride_details_view.dart';
 import 'package:moeb_26/modules/deals/views/deals_view.dart';
 import 'package:moeb_26/modules/deals/bindings/deals_binding.dart';
+import 'package:moeb_26/modules/invoice/bindings/invoice_binding.dart';
+import 'package:moeb_26/modules/invoice/views/create_invoice_view.dart';
+import 'package:moeb_26/modules/invoice/views/invoice_history_view.dart';
 
 class Routes {
   static const String splashView = "/SplashView";
@@ -100,6 +103,8 @@ class Routes {
   static const String addNewVehicleView = "/AddNewVehicleView";
   static const String personalDocumentView = "/PersonalDocumentView";
   static const String dealsView = "/DealsView";
+  static const String createInvoiceView = "/CreateInvoiceView";
+  static const String invoiceHistoryView = "/InvoiceHistoryView";
 
   static List<GetPage> routes = [
     GetPage(
@@ -327,6 +332,18 @@ class Routes {
       page: () => DealsView(),
       transition: Transition.noTransition,
       binding: DealsBinding(),
+    ),
+    GetPage(
+      name: createInvoiceView,
+      page: () => const CreateInvoiceView(),
+      transition: Transition.noTransition,
+      binding: InvoiceBinding(),
+    ),
+    GetPage(
+      name: invoiceHistoryView,
+      page: () => const InvoiceHistoryView(),
+      transition: Transition.noTransition,
+      binding: InvoiceBinding(),
     ),
   ];
 }
