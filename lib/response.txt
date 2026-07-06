@@ -1,93 +1,222 @@
 {
     "success": true,
-    "message": "Profile data retrieved successfully",
-    "data": {
-        "_id": "69d2afcf2c74b5f393f64989",
-        "name": "Md Bayzid Hosen",
-        "role": "DRIVER",
-        "email": "mdbayazid131@gmail.com",
-        "phone": "01990641482",
-        "home": "Dhaka",
-        "serviceArea": "Manhattan",
-        "experience": 5,
-        "company": "STA",
-        "companyRole": "DRIVER",
-        "profilePicture": "https://i.ibb.co/z5YHLV9/profile.png",
-        "status": "ACTIVE",
-        "verified": true,
-        "deviceTokens": [
-            "optional-fcm-token",
-            "eAcF-muqQkSYTZ5roBEQA2:APA91bGQ7lbsz_Afxn6xKojvOiKl25k-FSOxV0rHJGYHdJ8dZh5LFdigP_m2GDHKkEE4w7p1tkGG9t7U7WsMwHbKh5wjLA-IyMtYqM1nF9WtT5VV2rBdFtM"
-        ],
-        "vehicles": [
-            {
-                "carType": "SUV",
-                "make": "Mercedes",
-                "model": "B",
-                "colorInside": "black",
-                "colorOutside": "black",
-                "year": 2005,
-                "licensePlate": "AB-123",
-                "vehicleRegistration": {
-                    "image": "http://10.10.7.47:5001/uploads/images/1775415247252-gjejvs.png",
-                    "expiryDate": "2026-04-29T18:00:00.000Z"
-                },
-                "commercialInsurance": {
-                    "image": "http://10.10.7.47:5001/uploads/images/1775415247270-9azkoj.png",
-                    "expiryDate": "2026-04-29T18:00:00.000Z"
-                },
-                "photos": {
-                    "frontView": "http://10.10.7.47:5001/uploads/images/1775415247288-9bzqme.png",
-                    "rearView": "http://10.10.7.47:5001/uploads/images/1775415247316-y7scq8.png",
-                    "interiorView": "http://10.10.7.47:5001/uploads/images/1775415247334-w04vz2.png"
-                },
-                "_id": "69d2afcf2c74b5f393f6498a"
+    "message": "My jobs retrieved successfully",
+    "pagination": {
+        "total": 3,
+        "limit": 10,
+        "page": 1,
+        "totalPage": 1
+    },
+    "data": [
+        {
+            "_id": "6a13976f4355bbc64e8d71d1",
+            "jobType": "ONE WAY",
+            "pickupLocation": "Dhaka",
+            "dropoffLocation": "Mohakhali",
+            "flightNumber": "56yge",
+            "asap": true,
+            "vehicleType": "SPRINTER",
+            "paymentAmount": 2585,
+            "paymentType": "NO COLLECT",
+            "serviceArea": "Manhattan1",
+            "companyName": "BMSN",
+            "status": "PENDING",
+            "rideStatus": null,
+            "createdBy": {
+                "_id": "6a136733fd4684081f15c344",
+                "name": "Sakil",
+                "email": "mdsakilkhan649@gmail.com",
+                "phone": "01835404469",
+                "company": "BMSN",
+                "companyRole": "MANAGER",
+                "profilePicture": "https://i.ibb.co/z5YHLV9/profile.png",
+                "vehicles": [
+                    {
+                        "carType": "Bus",
+                        "make": "ttut544",
+                        "model": "654tyrr",
+                        "colorInside": "black",
+                        "colorOutside": "black",
+                        "year": 2009,
+                        "licensePlate": "3564tyg",
+                        "vehicleRegistration": {
+                            "image": "http://10.10.7.47:5003/uploads/images/1779656499078-uvt534.png",
+                            "expiryDate": "2026-05-26T18:00:00.000Z"
+                        },
+                        "commercialInsurance": {
+                            "image": "http://10.10.7.47:5003/uploads/images/1779656499082-g87otb.png",
+                            "expiryDate": "2026-05-29T18:00:00.000Z"
+                        },
+                        "photos": {
+                            "frontView": "http://10.10.7.47:5003/uploads/images/1779656499142-6wpwa3.png",
+                            "rearView": "http://10.10.7.47:5003/uploads/images/1779656499193-7javgo.jpg",
+                            "interiorView": "http://10.10.7.47:5003/uploads/images/1779656499193-1wwqc0.png"
+                        },
+                        "_id": "6a136733fd4684081f15c345"
+                    }
+                ],
+                "averageRating": 4.5,
+                "totalReviews": 2,
+                "selectedVehicle": "6a136733fd4684081f15c345"
             },
-            {
-                "carType": "Bus",
-                "make": "alif",
-                "model": "s",
-                "colorInside": "yellow",
-                "colorOutside": "yellow",
-                "year": 2008,
-                "licensePlate": "1234",
-                "vehicleRegistration": {
-                    "image": "http://10.10.7.47:5001/uploads/images/1775421907186-kvp68x.png",
-                    "expiryDate": "2026-04-30T00:00:00.000Z"
-                },
-                "commercialInsurance": {
-                    "image": "http://10.10.7.47:5001/uploads/images/1775421907187-m60ym7.png",
-                    "expiryDate": "2026-04-30T00:00:00.000Z"
-                },
-                "photos": {
-                    "frontView": "http://10.10.7.47:5001/uploads/images/1775421907228-0kq73x.png",
-                    "rearView": "http://10.10.7.47:5001/uploads/images/1775421907276-zgeug4.png",
-                    "interiorView": "http://10.10.7.47:5001/uploads/images/1775421907305-6wfhal.png"
-                },
-                "_id": "69d2c9d3e74511d58b834dee"
+            "createdAt": "2026-05-25T00:27:27.565Z",
+            "updatedAt": "2026-05-25T00:27:27.565Z"
+        },
+        {
+            "_id": "6a13900f4355bbc64e8d6a7d",
+            "jobType": "ONE WAY",
+            "pickupLocation": "Chottogram",
+            "dropoffLocation": "Rampura",
+            "flightNumber": "5664thgf",
+            "asap": true,
+            "vehicleType": "SEDAN/SUV",
+            "paymentAmount": 49875,
+            "paymentType": "NO COLLECT",
+            "serviceArea": "Manhattan1",
+            "companyName": "BMSN",
+            "status": "CANCELLED",
+            "rideStatus": null,
+            "createdBy": {
+                "_id": "6a136733fd4684081f15c344",
+                "name": "Sakil",
+                "email": "mdsakilkhan649@gmail.com",
+                "phone": "01835404469",
+                "company": "BMSN",
+                "companyRole": "MANAGER",
+                "profilePicture": "https://i.ibb.co/z5YHLV9/profile.png",
+                "vehicles": [
+                    {
+                        "carType": "Bus",
+                        "make": "ttut544",
+                        "model": "654tyrr",
+                        "colorInside": "black",
+                        "colorOutside": "black",
+                        "year": 2009,
+                        "licensePlate": "3564tyg",
+                        "vehicleRegistration": {
+                            "image": "http://10.10.7.47:5003/uploads/images/1779656499078-uvt534.png",
+                            "expiryDate": "2026-05-26T18:00:00.000Z"
+                        },
+                        "commercialInsurance": {
+                            "image": "http://10.10.7.47:5003/uploads/images/1779656499082-g87otb.png",
+                            "expiryDate": "2026-05-29T18:00:00.000Z"
+                        },
+                        "photos": {
+                            "frontView": "http://10.10.7.47:5003/uploads/images/1779656499142-6wpwa3.png",
+                            "rearView": "http://10.10.7.47:5003/uploads/images/1779656499193-7javgo.jpg",
+                            "interiorView": "http://10.10.7.47:5003/uploads/images/1779656499193-1wwqc0.png"
+                        },
+                        "_id": "6a136733fd4684081f15c345"
+                    }
+                ],
+                "averageRating": 4.5,
+                "totalReviews": 2,
+                "selectedVehicle": "6a136733fd4684081f15c345"
+            },
+            "createdAt": "2026-05-24T23:55:59.899Z",
+            "updatedAt": "2026-05-25T00:05:34.856Z"
+        },
+        {
+            "reviewByDriver": {
+                "rating": 4,
+                "comment": "okay good",
+                "reviewedAt": "2026-05-24T23:52:01.599Z"
+            },
+            "reviewByCreator": {
+                "rating": 5,
+                "comment": "kxhdh",
+                "reviewedAt": "2026-05-25T00:00:56.505Z"
+            },
+            "_id": "6a138666fd4684081f15c5ff",
+            "jobType": "ONE WAY",
+            "pickupLocation": "Bangladesh",
+            "dropoffLocation": "India",
+            "flightNumber": "577efgdg",
+            "asap": true,
+            "vehicleType": "SEDAN",
+            "paymentAmount": 28896,
+            "paymentType": "NO COLLECT",
+            "serviceArea": "Manhattan1",
+            "companyName": "BMSN",
+            "status": "COMPLETED",
+            "rideStatus": "FINISHED",
+            "createdBy": {
+                "_id": "6a136733fd4684081f15c344",
+                "name": "Sakil",
+                "email": "mdsakilkhan649@gmail.com",
+                "phone": "01835404469",
+                "company": "BMSN",
+                "companyRole": "MANAGER",
+                "profilePicture": "https://i.ibb.co/z5YHLV9/profile.png",
+                "vehicles": [
+                    {
+                        "carType": "Bus",
+                        "make": "ttut544",
+                        "model": "654tyrr",
+                        "colorInside": "black",
+                        "colorOutside": "black",
+                        "year": 2009,
+                        "licensePlate": "3564tyg",
+                        "vehicleRegistration": {
+                            "image": "http://10.10.7.47:5003/uploads/images/1779656499078-uvt534.png",
+                            "expiryDate": "2026-05-26T18:00:00.000Z"
+                        },
+                        "commercialInsurance": {
+                            "image": "http://10.10.7.47:5003/uploads/images/1779656499082-g87otb.png",
+                            "expiryDate": "2026-05-29T18:00:00.000Z"
+                        },
+                        "photos": {
+                            "frontView": "http://10.10.7.47:5003/uploads/images/1779656499142-6wpwa3.png",
+                            "rearView": "http://10.10.7.47:5003/uploads/images/1779656499193-7javgo.jpg",
+                            "interiorView": "http://10.10.7.47:5003/uploads/images/1779656499193-1wwqc0.png"
+                        },
+                        "_id": "6a136733fd4684081f15c345"
+                    }
+                ],
+                "averageRating": 4.5,
+                "totalReviews": 2,
+                "selectedVehicle": "6a136733fd4684081f15c345"
+            },
+            "createdAt": "2026-05-24T23:14:46.563Z",
+            "updatedAt": "2026-05-25T00:00:56.506Z",
+            "assignedTo": {
+                "_id": "6a135efefd4684081f15c15d",
+                "name": "Md Bayzid",
+                "email": "mdbayazid131@gmail.com",
+                "phone": "018468484664",
+                "company": "STA",
+                "companyRole": "DRIVER",
+                "profilePicture": "https://i.ibb.co/z5YHLV9/profile.png",
+                "vehicles": [
+                    {
+                        "carType": "Sedan",
+                        "make": "matc",
+                        "model": "S",
+                        "colorInside": "black",
+                        "colorOutside": "black",
+                        "year": 2205,
+                        "licensePlate": "1356",
+                        "vehicleRegistration": {
+                            "image": "http://10.10.7.47:5003/uploads/images/1779654398130-9w8cn5.png",
+                            "expiryDate": "2026-05-30T18:00:00.000Z"
+                        },
+                        "commercialInsurance": {
+                            "image": "http://10.10.7.47:5003/uploads/images/1779654398134-upeg3t.png",
+                            "expiryDate": "2026-05-30T18:00:00.000Z"
+                        },
+                        "photos": {
+                            "frontView": "http://10.10.7.47:5003/uploads/images/1779654398145-yjd8cj.png",
+                            "rearView": "http://10.10.7.47:5003/uploads/images/1779654398167-o0oo8l.png",
+                            "interiorView": "http://10.10.7.47:5003/uploads/images/1779654398179-kuny86.png"
+                        },
+                        "_id": "6a135efefd4684081f15c15e"
+                    }
+                ],
+                "averageRating": 3.5,
+                "totalReviews": 2,
+                "selectedVehicle": "6a135efefd4684081f15c15e"
             }
-        ],
-        "drivingLicense": {
-            "image": "http://10.10.7.47:5001/uploads/images/1775421804782-yt78bk.jpg",
-            "expiryDate": "2026-04-30T00:00:00.000Z"
-        },
-        "hackLicense": {
-            "image": "http://10.10.7.47:5001/uploads/images/1775421804784-nd90uj.jpg",
-            "expiryDate": "2026-04-30T00:00:00.000Z"
-        },
-        "localPermit": {
-            "image": "http://10.10.7.47:5001/uploads/images/1775421804794-gaxiyl.jpg",
-            "expiryDate": "2026-04-30T00:00:00.000Z"
-        },
-        "uploadedHeadshot": "http://10.10.7.47:5001/uploads/images/1775421804808-v2q9op.jpg",
-        "blockReason": null,
-        "averageRating": 0,
-        "totalReviews": 0,
-        "createdAt": "2026-04-05T18:54:07.466Z",
-        "updatedAt": "2026-04-05T20:54:47.812Z",
-        "__v": 0,
-        "selectedVehicle": "69d2c9d3e74511d58b834dee",
-        "nickname": "bayzid",
-        "uid": "MAN-706571"
-    }
+        }
+    ]
 }
+
