@@ -56,6 +56,9 @@ import 'package:moeb_26/modules/deals/bindings/deals_binding.dart';
 import 'package:moeb_26/modules/invoice/bindings/invoice_binding.dart';
 import 'package:moeb_26/modules/invoice/views/create_invoice_view.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_history_view.dart';
+import 'package:moeb_26/modules/preferred_drivers/bindings/preferred_drivers_binding.dart';
+import 'package:moeb_26/modules/preferred_drivers/views/preferred_drivers_view.dart';
+import 'package:moeb_26/modules/preferred_drivers/views/preferred_driver_profile_view.dart';
 
 class Routes {
   static const String splashView = "/SplashView";
@@ -105,6 +108,8 @@ class Routes {
   static const String dealsView = "/DealsView";
   static const String createInvoiceView = "/CreateInvoiceView";
   static const String invoiceHistoryView = "/InvoiceHistoryView";
+  static const String preferredDriversView = "/PreferredDriversView";
+  static const String preferredDriverProfileView = "/PreferredDriverProfileView";
 
   static List<GetPage> routes = [
     GetPage(
@@ -344,6 +349,18 @@ class Routes {
       page: () => const InvoiceHistoryView(),
       transition: Transition.noTransition,
       binding: InvoiceBinding(),
+    ),
+    GetPage(
+      name: preferredDriversView,
+      page: () => const PreferredDriversView(),
+      transition: Transition.noTransition,
+      binding: PreferredDriversBinding(),
+    ),
+    GetPage(
+      name: preferredDriverProfileView,
+      page: () => const PreferredDriverProfileView(),
+      transition: Transition.noTransition,
+      binding: PreferredDriversBinding(),
     ),
   ];
 }

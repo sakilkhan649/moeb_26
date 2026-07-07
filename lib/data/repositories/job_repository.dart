@@ -19,6 +19,7 @@ class JobRepo {
     required double paymentAmount,
     required String paymentType,
     String? instruction,
+    String? driverSelection,
   }) async {
     final Map<String, dynamic> body = {
       "jobType": jobType,
@@ -48,6 +49,9 @@ class JobRepo {
     }
     if (instruction != null && instruction.isNotEmpty) {
       body["instruction"] = instruction;
+    }
+    if (driverSelection != null && driverSelection.isNotEmpty) {
+      body["driverSelection"] = driverSelection;
     }
 
     return await apiClient.postData(ApiConstants.createJob, body);

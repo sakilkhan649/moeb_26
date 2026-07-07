@@ -10,7 +10,6 @@ import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomText_Field_Hight.dart';
 import 'package:moeb_26/core/widgets/Custom_Job_Button.dart';
 import '../controllers/job_post_controller.dart';
-import '../controllers/oneway_controller.dart';
 
 class OnewayScreen extends StatelessWidget {
   OnewayScreen({super.key});
@@ -24,12 +23,10 @@ class OnewayScreen extends StatelessWidget {
   final specialController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  final OnewayController onewayControllerInstance =
-      Get.find<OnewayController>();
+  final PostJobController postJobController = Get.find<PostJobController>();
 
   @override
   Widget build(BuildContext context) {
-    final PostJobController postJobController = Get.find<PostJobController>();
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
@@ -86,9 +83,9 @@ class OnewayScreen extends StatelessWidget {
                           height: 24.h,
                           width: 24.w,
                           child: Checkbox(
-                            value: onewayControllerInstance.isAsap.value,
+                            value: postJobController.isAsap.value,
                             onChanged: (val) {
-                              onewayControllerInstance.toggleAsap(val);
+                              postJobController.toggleAsap(val);
                             },
                             activeColor: AppColors.black200,
                             checkColor: Colors.white,
@@ -105,8 +102,8 @@ class OnewayScreen extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             final newVal =
-                                !onewayControllerInstance.isAsap.value;
-                            onewayControllerInstance.toggleAsap(newVal);
+                                !postJobController.isAsap.value;
+                            postJobController.toggleAsap(newVal);
                           },
                           child: Text(
                             "ASAP",
@@ -120,7 +117,7 @@ class OnewayScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (onewayControllerInstance.showAsapError.value)
+                  if (postJobController.showAsapError.value)
                     Padding(
                       padding: EdgeInsets.only(bottom: 10.h),
                       child: Text(
@@ -133,7 +130,7 @@ class OnewayScreen extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             Obx(
-              () => onewayControllerInstance.isAsap.value
+              () => postJobController.isAsap.value
                   ? const SizedBox.shrink()
                   : _buildDateTimeRow(context),
             ),
@@ -179,9 +176,9 @@ class OnewayScreen extends StatelessWidget {
             CustomText(text: "Payment *", fontSize: 13.sp),
             SizedBox(height: 8.h),
             FormField<String>(
-              initialValue: onewayControllerInstance.selectedRole.value,
+              initialValue: postJobController.selectedRole.value,
               validator: (value) {
-                if (onewayControllerInstance.selectedRole.value.isEmpty) {
+                if (postJobController.selectedRole.value.isEmpty) {
                   return "Select payment";
                 }
                 return null;
@@ -203,13 +200,13 @@ class OnewayScreen extends StatelessWidget {
                             ),
                           ),
                           value:
-                              onewayControllerInstance
+                              postJobController
                                   .selectedRole
                                   .value
                                   .isEmpty
                               ? null
-                              : onewayControllerInstance.selectedRole.value,
-                          items: onewayControllerInstance.roles
+                              : postJobController.selectedRole.value,
+                          items: postJobController.roles
                               .map(
                                 (role) => DropdownMenuItem(
                                   value: role,
@@ -226,7 +223,7 @@ class OnewayScreen extends StatelessWidget {
                               .toList(),
                           onChanged: (value) {
                             if (value != null) {
-                              onewayControllerInstance.pickRole(value);
+                              postJobController.pickRole(value);
                               state.didChange(value);
                             }
                           },
@@ -266,7 +263,7 @@ class OnewayScreen extends StatelessWidget {
                             padding: EdgeInsets.only(left: 14.w, right: 14.w),
                           ),
                           selectedItemBuilder: (context) {
-                            return onewayControllerInstance.roles.map((
+                            return postJobController.roles.map((
                               String value,
                             ) {
                               return Align(
@@ -311,21 +308,21 @@ class OnewayScreen extends StatelessWidget {
               text: "New Job",
               onPressed: () {
                 final isFormValid = _formKey.currentState!.validate();
-                onewayControllerInstance.showAsapError.value = false;
+                postJobController.showAsapError.value = false;
                 if (isFormValid) {
                   postJobController.submitOneWayJob(
                     pickupLocation: pickupController.text,
                     dropoffLocation: dropoffController.text,
                     flightNumber: flightController.text,
-                    date: onewayControllerInstance.isAsap.value
+                    date: postJobController.isAsap.value
                         ? null
-                        : onewayControllerInstance.selectedDate.value,
-                    time: onewayControllerInstance.isAsap.value
+                        : postJobController.selectedDate.value,
+                    time: postJobController.isAsap.value
                         ? null
-                        : onewayControllerInstance.selectedTime.value,
-                    asap: onewayControllerInstance.isAsap.value,
+                        : postJobController.selectedTime.value,
+                    asap: postJobController.isAsap.value,
                     paymentAmount: payController.text,
-                    paymentType: onewayControllerInstance.selectedRole.value,
+                    paymentType: postJobController.selectedRole.value,
                     instruction: specialController.text.isEmpty
                         ? null
                         : specialController.text,
@@ -389,15 +386,15 @@ class OnewayScreen extends StatelessWidget {
             dateController,
             "Select Date",
             () async {
-              await onewayControllerInstance.chooseDate(context);
-              final date = onewayControllerInstance.selectedDate.value;
+              await postJobController.chooseDate(context);
+              final date = postJobController.selectedDate.value;
               if (date != null) {
                 dateController.text =
                     "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
               }
             },
             validator: (val) {
-              if (onewayControllerInstance.isAsap.value) return null;
+              if (postJobController.isAsap.value) return null;
               return (val == null || val.isEmpty) ? "Date is required" : null;
             },
           ),
@@ -414,15 +411,15 @@ class OnewayScreen extends StatelessWidget {
             timeController,
             "Select Time",
             () async {
-              await onewayControllerInstance.chooseTime(context);
-              final time = onewayControllerInstance.selectedTime.value;
+              await postJobController.chooseTime(context);
+              final time = postJobController.selectedTime.value;
               if (time != null) {
                 timeController.text =
-                    onewayControllerInstance.formattedTime.value;
+                    postJobController.formattedTime.value;
               }
             },
             validator: (val) {
-              if (onewayControllerInstance.isAsap.value) return null;
+              if (postJobController.isAsap.value) return null;
               return (val == null || val.isEmpty) ? "Time is required" : null;
             },
           ),

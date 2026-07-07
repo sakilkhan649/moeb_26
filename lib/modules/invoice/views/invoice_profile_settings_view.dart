@@ -220,7 +220,7 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                 child: ElevatedButton(
                   onPressed: () => controller.saveProfileSettings(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFB800), // Bright orange-yellow
+                    backgroundColor: const Color(0xFFD08700), // Bright orange-yellow
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),

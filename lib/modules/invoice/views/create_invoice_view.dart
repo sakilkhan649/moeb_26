@@ -122,7 +122,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                 child: Container(
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFB800), // Bright orange-yellow
+                    color: const Color(0xFFD08700), // Bright orange-yellow
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
@@ -644,11 +644,11 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: 16.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFB800), // Bright orange-yellow
+                  color: const Color(0xFFD08700), // Bright orange-yellow
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFFB800).withValues(alpha: 0.15),
+                      color: const Color(0xFFD08700).withValues(alpha: 0.15),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),

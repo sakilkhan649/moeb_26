@@ -126,7 +126,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                     canDebug: false,
                     loadingWidget: const Center(
                       child: CircularProgressIndicator(
-                        color: Color(0xFFFFB800),
+                        color: Color(0xFFD08700),
                       ),
                     ),
                   ),
@@ -166,11 +166,11 @@ class InvoicePreviewView extends GetView<InvoiceController> {
             child: Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFB800), // Bright orange-yellow
+                color: const Color(0xFFD08700), // Bright orange-yellow
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFFB800).withValues(alpha: 0.15),
+                    color: const Color(0xFFD08700).withValues(alpha: 0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -228,7 +228,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFFFFB800) // Bright orange-yellow
+                        ? const Color(0xFFD08700) // Bright orange-yellow
                         : const Color(0xFF27272A),
                     width: isSelected ? 1.w : .5.w,
                   ),
@@ -358,7 +358,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   borderRadius: BorderRadius.circular(8.r),
                   border: isSelected
                       ? Border.all(
-                          color: const Color(0xFFFFB800),
+                          color: const Color(0xFFD08700),
                           width: 1.w,
                         ) // Bright orange-yellow
                       : Border.all(color: const Color(0xFF374151), width: .5.w),

@@ -240,6 +240,35 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             PopupMenuItem<int>(
+              value: 4,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.directions_car_outlined,
+                    color: Colors.white,
+                    size: 24.sp,
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      'Preferred Driver',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.chevron_forward,
+                    size: 20.sp,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<int>(
               value: 2,
               child: Row(
                 children: [
@@ -286,6 +315,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         break;
       case 1:
         Get.toNamed(Routes.dealsView);
+        break;
+      case 4:
+        Get.toNamed(Routes.preferredDriversView);
         break;
       case 2:
         if (onLogoutTap != null) {

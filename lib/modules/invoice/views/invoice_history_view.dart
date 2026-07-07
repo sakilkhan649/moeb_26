@@ -128,11 +128,11 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
             child: Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFB800), // Bright orange-yellow
+                color: const Color(0xFFD08700), // Bright orange-yellow
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFFB800).withValues(alpha: 0.15),
+                    color: const Color(0xFFD08700).withValues(alpha: 0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),

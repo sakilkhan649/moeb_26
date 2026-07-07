@@ -28,6 +28,7 @@ class JobService extends GetxService {
     required double paymentAmount,
     required String paymentType,
     String? instruction,
+    String? driverSelection,
   }) async {
     try {
       return await _jobRepo.createJob(
@@ -43,6 +44,7 @@ class JobService extends GetxService {
         paymentAmount: paymentAmount,
         paymentType: paymentType,
         instruction: instruction,
+        driverSelection: driverSelection,
       );
     } catch (e) {
       rethrow;

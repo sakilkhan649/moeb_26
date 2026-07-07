@@ -439,7 +439,7 @@ class InvoiceController extends GetxController {
                 width: 70,
                 height: 70,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFFB800), // Bright orange-yellow
+                  color: Color(0xFFD08700), // Bright orange-yellow
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -489,7 +489,7 @@ class InvoiceController extends GetxController {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(
-                      0xFFFFB800,
+                      0xFFD08700,
                     ), // Bright orange-yellow
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(

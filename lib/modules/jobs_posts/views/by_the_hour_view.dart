@@ -10,7 +10,6 @@ import 'package:moeb_26/core/widgets/CustomText_Field_Hight.dart';
 import 'package:moeb_26/core/widgets/Custom_Job_Button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import '../controllers/job_post_controller.dart';
-import '../controllers/oneway_controller.dart';
 
 class ByTheHour extends StatelessWidget {
   ByTheHour({super.key});
@@ -22,8 +21,6 @@ class ByTheHour extends StatelessWidget {
   final payController = TextEditingController();
   final specialController = TextEditingController();
 
-  final OnewayController onewayControllerInstance =
-      Get.find<OnewayController>();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -66,8 +63,8 @@ class ByTheHour extends StatelessWidget {
               dateController,
               "Select Date",
               () async {
-                await onewayControllerInstance.chooseDate(context);
-                final date = onewayControllerInstance.selectedDate.value;
+                await controller.chooseDate(context);
+                final date = controller.selectedDate.value;
                 if (date != null) {
                   dateController.text =
                       "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
@@ -86,11 +83,11 @@ class ByTheHour extends StatelessWidget {
               pickupTimeController,
               "Select Time",
               () async {
-                await onewayControllerInstance.chooseTime(context);
-                final time = onewayControllerInstance.selectedTime.value;
+                await controller.chooseTime(context);
+                final time = controller.selectedTime.value;
                 if (time != null) {
                   pickupTimeController.text =
-                      onewayControllerInstance.formattedTime.value;
+                      controller.formattedTime.value;
                 }
               },
               validator: (val) =>
@@ -138,9 +135,9 @@ class ByTheHour extends StatelessWidget {
             CustomText(text: "Payment *", fontSize: 13.sp),
             SizedBox(height: 8.h),
             FormField<String>(
-              initialValue: onewayControllerInstance.selectedRole.value,
+              initialValue: controller.selectedRole.value,
               validator: (value) {
-                if (onewayControllerInstance.selectedRole.value.isEmpty) {
+                if (controller.selectedRole.value.isEmpty) {
                   return "Select payment";
                 }
                 return null;
@@ -162,13 +159,13 @@ class ByTheHour extends StatelessWidget {
                             ),
                           ),
                           value:
-                              onewayControllerInstance
+                              controller
                                   .selectedRole
                                   .value
                                   .isEmpty
                               ? null
-                              : onewayControllerInstance.selectedRole.value,
-                          items: onewayControllerInstance.roles
+                              : controller.selectedRole.value,
+                          items: controller.roles
                               .map(
                                 (role) => DropdownMenuItem(
                                   value: role,
@@ -185,7 +182,7 @@ class ByTheHour extends StatelessWidget {
                               .toList(),
                           onChanged: (value) {
                             if (value != null) {
-                              onewayControllerInstance.pickRole(value);
+                              controller.pickRole(value);
                               state.didChange(value);
                             }
                           },
@@ -225,7 +222,7 @@ class ByTheHour extends StatelessWidget {
                             padding: EdgeInsets.only(left: 14.w, right: 14.w),
                           ),
                           selectedItemBuilder: (context) {
-                            return onewayControllerInstance.roles.map((
+                            return controller.roles.map((
                               String value,
                             ) {
                               return Align(
@@ -275,10 +272,10 @@ class ByTheHour extends StatelessWidget {
                     duration: durationController.text.isEmpty
                         ? "Not specified"
                         : durationController.text,
-                    date: onewayControllerInstance.selectedDate.value!,
-                    time: onewayControllerInstance.selectedTime.value!,
+                    date: controller.selectedDate.value!,
+                    time: controller.selectedTime.value!,
                     paymentAmount: payController.text,
-                    paymentType: onewayControllerInstance.selectedRole.value,
+                    paymentType: controller.selectedRole.value,
                     instruction: specialController.text.isEmpty
                         ? null
                         : specialController.text,
