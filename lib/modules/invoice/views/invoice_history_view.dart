@@ -85,7 +85,7 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                       Text(
                         'No invoices found',
                         style: GoogleFonts.inter(
-                          color: const Color(0xFFA1A1A1),
+                          color: const Color(0xFFD5C4AB),
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
                         ),
@@ -128,11 +128,11 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
             child: Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFFFBBF24), // Amber/Yellow
+                color: const Color(0xFFFFB800), // Bright orange-yellow
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFBBF24).withValues(alpha: 0.15),
+                    color: const Color(0xFFFFB800).withValues(alpha: 0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -159,9 +159,9 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
       child: Container(
         padding: EdgeInsets.all(4.w),
         decoration: BoxDecoration(
-          color: const Color(0xFF111111),
+          color: const Color(0xFF1A1A1A),
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
+          border: Border.all(color: const Color(0xFF2C2C2C), width: 1),
         ),
         child: Row(
           children: ['All', 'Paid', 'Unpaid'].map((filter) {
@@ -175,16 +175,18 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                     padding: EdgeInsets.symmetric(vertical: 10.h),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFFFBBF24)
+                          ? const Color(0xFFFFDCA1) // Soft peach-yellow
                           : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(
+                        12.r,
+                      ), // More rounded corners
                     ),
                     child: Text(
                       filter,
                       style: GoogleFonts.inter(
                         color: isSelected
                             ? Colors.black
-                            : const Color(0xFFA1A1A1),
+                            : const Color(0xFFD5C4AB),
                         fontSize: 13.sp,
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -268,23 +270,42 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: const Color(0xFF111111), // Dark premium card background
+          color: const Color(
+            0xFF1A1A1A,
+          ), // Dark premium card background matching rides_view
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
+          border: Border.all(color: const Color(0xFF2C2C2C), width: 1),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Left: Client Avatar/Initials
-            CircleAvatar(
-              radius: 24.r,
-              backgroundColor: const Color(0xFF27272A),
-              child: Text(
-                initials,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF2C2C2C), width: 0.98),
+              ),
+              child: CircleAvatar(
+                radius: 26.r,
+                backgroundColor: const Color(0xFF27272A),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(26.r),
+                  child: Image.network(
+                    record.clientName.toLowerCase().contains('elena')
+                        ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150' // Woman
+                        : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150', // Man (default)
+                    fit: BoxFit.cover,
+                    width: 56.r,
+                    height: 56.r,
+                    errorBuilder: (context, error, stackTrace) => Text(
+                      initials,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -300,7 +321,8 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight:
+                          FontWeight.w600, // Sleeker semi-bold font weight
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -308,8 +330,8 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                   Text(
                     record.invoiceNumber,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFFA1A1A1),
-                      fontSize: 12.sp,
+                      color: const Color(0xFFD5C4AB), // Warm beige
+                      fontSize: 13.sp, // Slightly larger font size
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -317,15 +339,17 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                   Row(
                     children: [
                       Icon(
-                        Icons.calendar_today_outlined,
-                        color: const Color(0xFFA1A1A1),
+                        dueDateDisplay.toLowerCase().contains('no due date')
+                            ? Icons.event_busy_outlined
+                            : Icons.calendar_today_outlined,
+                        color: const Color(0xFFD5C4AB), // Warm beige
                         size: 14.sp,
                       ),
                       SizedBox(width: 6.w),
                       Text(
                         dueDateDisplay,
                         style: GoogleFonts.inter(
-                          color: const Color(0xFFA1A1A1),
+                          color: const Color(0xFFD5C4AB), // Warm beige
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                         ),
@@ -343,30 +367,34 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                 // Status Badge
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 4.h,
+                    horizontal: 14.w,
+                    vertical: 5.h,
                   ),
                   decoration: BoxDecoration(
-                    color: badgeColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12.r),
+                    color: badgeColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20.r), // Pill shape
+                    border: Border.all(
+                      color: badgeColor.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     record.status.toUpperCase(),
                     style: GoogleFonts.inter(
                       color: badgeColor,
-                      fontSize: 10.sp,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
                     ),
                   ),
                 ),
                 SizedBox(height: 22.h),
-                // Amount
+                // Amount (Paid is highlighted in peach-yellow, Unpaid is white)
                 Text(
                   '${record.currency == 'USD' ? '\$' : '${record.currency} '}${record.totalAmount.toStringAsFixed(2)}',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFFFBBF24), // Amber/Yellow
-                    fontSize: 16.sp,
+                    color: isPaid ? const Color(0xFFFEDB9B) : Colors.white,
+                    fontSize: 17.sp, // Sleeker bold font size
                     fontWeight: FontWeight.bold,
                   ),
                 ),

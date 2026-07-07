@@ -80,7 +80,7 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                                         children: [
                                           Icon(
                                             Icons.directions_car_filled_outlined,
-                                            color: const Color(0xFFFBBF24),
+                                            color: const Color(0xFFFEDB9B), // Soft peach-yellow
                                             size: 32.sp,
                                           ),
                                           SizedBox(height: 6.h),
@@ -96,7 +96,7 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                                           Text(
                                             'LLC',
                                             style: GoogleFonts.inter(
-                                              color: const Color(0xFFA1A1A1),
+                                              color: const Color(0xFFD5C4AB),
                                               fontSize: 10.sp,
                                             ),
                                           ),
@@ -111,21 +111,21 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
-                                  Icons.edit_outlined,
-                                  color: const Color(0xFFA1A1A1),
-                                  size: 14.sp,
-                                ),
-                                SizedBox(width: 4.w),
-                                Text(
-                                  'TAP TO CHANGE',
-                                  style: GoogleFonts.inter(
-                                    color: const Color(0xFFA1A1A1),
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.5,
+                                  Icon(
+                                    Icons.edit_outlined,
+                                    color: const Color(0xFFD5C4AB),
+                                    size: 14.sp,
                                   ),
-                                ),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    'TAP TO CHANGE',
+                                    style: GoogleFonts.inter(
+                                      color: const Color(0xFFD5C4AB),
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -138,7 +138,7 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                     Text(
                       'PROFILE',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFFA1A1A1),
+                        color: const Color(0xFFD5C4AB),
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
                       ),
@@ -147,7 +147,7 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                     Text(
                       controller.savedBusinessName.value,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFFFBBF24),
+                        color: const Color(0xFFFEDB9B), // Soft peach-yellow
                         fontSize: 22.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -220,7 +220,7 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                 child: ElevatedButton(
                   onPressed: () => controller.saveProfileSettings(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFBBF24),
+                    backgroundColor: const Color(0xFFFFB800), // Bright orange-yellow
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),
@@ -266,7 +266,7 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
               Text(
                 title,
                 style: GoogleFonts.inter(
-                  color: const Color(0xFFA1A1A1),
+                  color: const Color(0xFFD5C4AB),
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
                 ),

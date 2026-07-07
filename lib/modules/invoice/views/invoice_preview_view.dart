@@ -126,7 +126,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                     canDebug: false,
                     loadingWidget: const Center(
                       child: CircularProgressIndicator(
-                        color: Color(0xFF2563EB),
+                        color: Color(0xFFFFB800),
                       ),
                     ),
                   ),
@@ -135,6 +135,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
             ),
 
             // Template Selector Row Label
+            SizedBox(height: 12.h),
             _buildSectionHeader('Template Options'),
             SizedBox(height: 12.h),
 
@@ -165,11 +166,11 @@ class InvoicePreviewView extends GetView<InvoiceController> {
             child: Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFF2563EB), // Premium Blue
+                color: const Color(0xFFFFB800), // Bright orange-yellow
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.15),
+                    color: const Color(0xFFFFB800).withValues(alpha: 0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -178,7 +179,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
               child: Text(
                 'Save',
                 style: GoogleFonts.inter(
-                  color: Colors.white,
+                  color: Colors.black, // Dark text for contrast
                   fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -227,9 +228,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFF2563EB)
+                        ? const Color(0xFFFFB800) // Bright orange-yellow
                         : const Color(0xFF27272A),
-                    width: isSelected ? 2.w : 1.w,
+                    width: isSelected ? 1.w : .5.w,
                   ),
                 ),
                 child: Stack(
@@ -246,7 +247,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                         style: GoogleFonts.inter(
                           color: isSelected
                               ? Colors.white
-                              : const Color(0xFFA1A1A1),
+                              : const Color(0xFFD5C4AB),
                           fontSize: 13.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -356,8 +357,11 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   color: color == Colors.black ? Colors.white : color,
                   borderRadius: BorderRadius.circular(8.r),
                   border: isSelected
-                      ? Border.all(color: const Color(0xFF2563EB), width: 2.5.w)
-                      : Border.all(color: const Color(0xFF374151), width: 1.w),
+                      ? Border.all(
+                          color: const Color(0xFFFFB800),
+                          width: 1.w,
+                        ) // Bright orange-yellow
+                      : Border.all(color: const Color(0xFF374151), width: .5.w),
                 ),
               ),
             );

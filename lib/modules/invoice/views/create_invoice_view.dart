@@ -91,7 +91,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
               Text(
                 'Step ${controller.currentStep.value} of 3 - $stepTitle',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFFA1A1A1),
+                  color: const Color(0xFFD5C4AB),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
@@ -99,7 +99,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
               Text(
                 '$percentage%',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFFA1A1A1),
+                  color: const Color(0xFFD5C4AB),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
                 ),
@@ -122,7 +122,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                 child: Container(
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFBBF24), // Amber/Yellow
+                    color: const Color(0xFFFFB800), // Bright orange-yellow
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
@@ -160,7 +160,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
           hint: 'e.g. Invoice 001',
           suffixIcon: Icon(
             Icons.notes,
-            color: const Color(0xFFA1A1A1),
+            color: const Color(0xFFD5C4AB),
             size: 20.sp,
           ),
         ),
@@ -187,7 +187,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
               hint: 'Select Date',
               suffixIcon: Icon(
                 Icons.calendar_today_outlined,
-                color: const Color(0xFFA1A1A1),
+                color: const Color(0xFFD5C4AB),
                 size: 20.sp,
               ),
             ),
@@ -217,7 +217,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         Text(
           'CLIENT INFORMATION',
           style: GoogleFonts.inter(
-            color: const Color(0xFFA1A1A1),
+            color: const Color(0xFFD5C4AB),
             fontSize: 13.sp,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -266,7 +266,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
             Text(
               'BILLING ADDRESS',
               style: GoogleFonts.inter(
-                color: const Color(0xFFA1A1A1),
+                color: const Color(0xFFD5C4AB),
                 fontSize: 13.sp,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
@@ -274,7 +274,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
             ),
             Icon(
               Icons.map_outlined,
-              color: const Color(0xFFA1A1A1),
+              color: const Color(0xFFD5C4AB),
               size: 20.sp,
             ),
           ],
@@ -383,7 +383,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                   Text(
                     'Optional',
                     style: GoogleFonts.inter(
-                      color: const Color(0xFFA1A1A1),
+                      color: const Color(0xFFD5C4AB),
                       fontSize: 12.sp,
                     ),
                   ),
@@ -431,7 +431,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
       child: Text(
         label,
         style: GoogleFonts.inter(
-          color: const Color(0xFFA1A1A1),
+          color: const Color(0xFFD5C4AB),
           fontSize: 14.sp,
           fontWeight: FontWeight.w400,
         ),
@@ -497,11 +497,11 @@ class CreateInvoiceView extends GetView<InvoiceController> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFFBBF24) : Colors.transparent,
+              color: isSelected ? const Color(0xFFFEDB9B) : Colors.transparent,
               borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
                 color: isSelected
-                    ? const Color(0xFFFBBF24)
+                    ? const Color(0xFFFEDB9B)
                     : const Color(0xFF1E1E1E),
                 width: 1.5,
               ),
@@ -534,7 +534,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
           dropdownColor: const Color(0xFF111111),
           icon: Icon(
             Icons.keyboard_arrow_down,
-            color: const Color(0xFFA1A1A1),
+            color: const Color(0xFFD5C4AB),
             size: 24.sp,
           ),
           isExpanded: true,
@@ -572,7 +572,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
           dropdownColor: const Color(0xFF111111),
           icon: Icon(
             Icons.keyboard_arrow_down,
-            color: const Color(0xFFA1A1A1),
+            color: const Color(0xFFD5C4AB),
             size: 24.sp,
           ),
           isExpanded: true,
@@ -644,11 +644,11 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: 16.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFBBF24), // Amber/Yellow
+                  color: const Color(0xFFFFB800), // Bright orange-yellow
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFBBF24).withValues(alpha: 0.15),
+                      color: const Color(0xFFFFB800).withValues(alpha: 0.15),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),

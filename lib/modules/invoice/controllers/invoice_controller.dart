@@ -10,7 +10,7 @@ class InvoiceHistoryRecord {
   final String clientEmail;
   final DateTime issuedDate;
   final String currency;
-  final String status; // 'Paid', 'Pending'
+  final String status; // 'Paid', 'Unpaid'
   final double totalAmount;
 
   // New fields to preserve full invoice details
@@ -271,7 +271,7 @@ class InvoiceController extends GetxController {
           return Theme(
             data: Theme.of(context).copyWith(
               colorScheme: const ColorScheme.dark(
-                primary: Color(0xFFFBBF24),
+                primary: Color(0xFFFEDB9B), // Soft peach-yellow
                 onPrimary: Colors.black,
                 surface: Color(0xFF1E1E1E),
                 onSurface: Colors.white,
@@ -303,7 +303,7 @@ class InvoiceController extends GetxController {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.dark(
-              primary: Color(0xFFFBBF24),
+              primary: Color(0xFFFEDB9B), // Soft peach-yellow
               onPrimary: Colors.black,
               surface: Color(0xFF1E1E1E),
               onSurface: Colors.white,
@@ -383,7 +383,7 @@ class InvoiceController extends GetxController {
       'Success',
       'Profile settings saved successfully.',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFFFBBF24),
+      backgroundColor: const Color(0xFFFEDB9B), // Soft peach-yellow
       colorText: Colors.black,
       duration: const Duration(seconds: 2),
     );
@@ -403,7 +403,7 @@ class InvoiceController extends GetxController {
         clientEmail: clientEmailController.text.trim(),
         issuedDate: issuedDate.value,
         currency: selectedCurrency.value.split(' ')[0],
-        status: 'Pending',
+        status: 'Unpaid',
         totalAmount: amount,
         clientBusinessName: clientBusinessNameController.text.trim(),
         clientPhone: clientPhoneController.text.trim(),
@@ -439,7 +439,7 @@ class InvoiceController extends GetxController {
                 width: 70,
                 height: 70,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFBBF24),
+                  color: Color(0xFFFFB800), // Bright orange-yellow
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -488,7 +488,9 @@ class InvoiceController extends GetxController {
                     Get.back(); // close create screen (returns to history screen)
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFBBF24),
+                    backgroundColor: const Color(
+                      0xFFFFB800,
+                    ), // Bright orange-yellow
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

@@ -87,7 +87,7 @@ class InvoiceSettingsView extends StatelessWidget {
                 color: const Color(0xFF1E1E1E),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: const Color(0xFFFBBF24), size: 24.sp),
+              child: Icon(icon, color: const Color(0xFFFEDB9B), size: 24.sp),
             ),
             SizedBox(width: 16.w),
             Expanded(
@@ -106,7 +106,7 @@ class InvoiceSettingsView extends StatelessWidget {
                   Text(
                     subtitle,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFFA1A1A1),
+                      color: const Color(0xFFD5C4AB),
                       fontSize: 12.sp,
                     ),
                   ),
@@ -115,7 +115,7 @@ class InvoiceSettingsView extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right,
-              color: const Color(0xFFA1A1A1),
+              color: const Color(0xFFD5C4AB),
               size: 24.sp,
             ),
           ],
