@@ -61,7 +61,10 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                 return Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(color: const Color(0xFF27272A), width: 1),
+                    border: Border.all(
+                      color: const Color(0xFF27272A),
+                      width: 1,
+                    ),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: PdfPreview(
@@ -75,16 +78,19 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                           logoPath.isNotEmpty &&
                           File(logoPath).existsSync()) {
                         try {
-                          logoImage =
-                              pw.MemoryImage(File(logoPath).readAsBytesSync());
+                          logoImage = pw.MemoryImage(
+                            File(logoPath).readAsBytesSync(),
+                          );
                         } catch (e) {
                           debugPrint('Error loading logo: $e');
                         }
                       }
 
-                      final selectedColor = controller.templateColors[colorIndex];
-                      final pdfAccentColor =
-                          PdfColor.fromInt(selectedColor.toARGB32());
+                      final selectedColor =
+                          controller.templateColors[colorIndex];
+                      final pdfAccentColor = PdfColor.fromInt(
+                        selectedColor.toARGB32(),
+                      );
 
                       doc.addPage(
                         pw.Page(
@@ -92,11 +98,20 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                           margin: const pw.EdgeInsets.all(40),
                           build: (pw.Context context) {
                             if (templateIndex == 0) {
-                              return _buildDeltaPdfLayout(logoImage, pdfAccentColor);
+                              return _buildDeltaPdfLayout(
+                                logoImage,
+                                pdfAccentColor,
+                              );
                             } else if (templateIndex == 1) {
-                              return _buildModernPdfLayout(logoImage, pdfAccentColor);
+                              return _buildModernPdfLayout(
+                                logoImage,
+                                pdfAccentColor,
+                              );
                             } else {
-                              return _buildSplitPdfLayout(logoImage, pdfAccentColor);
+                              return _buildSplitPdfLayout(
+                                logoImage,
+                                pdfAccentColor,
+                              );
                             }
                           },
                         ),
@@ -229,7 +244,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                       child: Text(
                         name,
                         style: GoogleFonts.inter(
-                          color: isSelected ? Colors.white : const Color(0xFFA1A1A1),
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFFA1A1A1),
                           fontSize: 13.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -349,6 +366,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
       ),
     );
   }
+
   // --- DYNAMIC PDF GENERATOR ENGINE ---
   void _downloadPdf(BuildContext context) async {
     final doc = pw.Document();
@@ -356,7 +374,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
     // Prepare logo image if available
     pw.ImageProvider? logoImage;
     final logoPath = controller.businessLogoPath.value;
-    if (logoPath != null && logoPath.isNotEmpty && File(logoPath).existsSync()) {
+    if (logoPath != null &&
+        logoPath.isNotEmpty &&
+        File(logoPath).existsSync()) {
       try {
         logoImage = pw.MemoryImage(File(logoPath).readAsBytesSync());
       } catch (e) {
@@ -385,16 +405,24 @@ class InvoicePreviewView extends GetView<InvoiceController> {
       ),
     );
 
-    // Show native printing / sharing layout
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => doc.save(),
-      name:
-          'invoice_${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text : "999"}',
+    final pdfBytes = await doc.save();
+
+    // Open direct native share dialog (which includes download, share, print options)
+    await Printing.sharePdf(
+      bytes: pdfBytes,
+      filename:
+          'invoice_${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text.replaceAll(RegExp(r'\s+'), '_') : "999"}.pdf',
     );
+
+    // Save to history and display success
+    controller.submitInvoice();
   }
 
   // PDF LAYOUT 0: Delta (Classic)
-  pw.Widget _buildDeltaPdfLayout(pw.ImageProvider? logoImage, PdfColor accentColor) {
+  pw.Widget _buildDeltaPdfLayout(
+    pw.ImageProvider? logoImage,
+    PdfColor accentColor,
+  ) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -409,20 +437,29 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   _buildPdfLogo(logoImage),
                   pw.Text(
                     controller.savedBusinessName.value,
-                    style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
                   pw.SizedBox(height: 2),
                   pw.Text(
                     controller.businessEmailController.text.isNotEmpty
                         ? controller.businessEmailController.text
                         : 'info@business.com',
-                    style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey700,
+                    ),
                   ),
                   pw.Text(
                     controller.businessPhoneController.text.isNotEmpty
                         ? controller.businessPhoneController.text
                         : '+1 000 000 0000',
-                    style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey700,
+                    ),
                   ),
                 ],
               ),
@@ -463,13 +500,23 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                 children: [
                   _buildPdfMetadataLabel('DATE ISSUED'),
                   pw.SizedBox(height: 4),
-                  pw.Text(controller.formattedIssuedDate,
-                      style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold)),
+                  pw.Text(
+                    controller.formattedIssuedDate,
+                    style: pw.TextStyle(
+                      fontSize: 11,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
                   pw.SizedBox(height: 16),
                   _buildPdfMetadataLabel('DUE DATE'),
                   pw.SizedBox(height: 4),
-                  pw.Text(controller.formattedDueDate,
-                      style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold)),
+                  pw.Text(
+                    controller.formattedDueDate,
+                    style: pw.TextStyle(
+                      fontSize: 11,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -483,9 +530,14 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                     controller.clientNameController.text.isNotEmpty
                         ? controller.clientNameController.text
                         : 'Client Name',
-                    style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+                    style: pw.TextStyle(
+                      fontSize: 12,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
-                  _buildPdfOptionalText(controller.clientBusinessNameController.text),
+                  _buildPdfOptionalText(
+                    controller.clientBusinessNameController.text,
+                  ),
                   _buildPdfOptionalText(controller.clientEmailController.text),
                   _buildPdfOptionalText(controller.clientPhoneController.text),
                 ],
@@ -509,7 +561,10 @@ class InvoicePreviewView extends GetView<InvoiceController> {
             children: [
               pw.Text(
                 'Total Amount Due',
-                style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 14,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.Text(
                 '${controller.selectedCurrency.value.split(" ")[0]} ${controller.invoiceAmountController.text}',
@@ -533,30 +588,33 @@ class InvoicePreviewView extends GetView<InvoiceController> {
   }
 
   // PDF LAYOUT 1: Modern
-  pw.Widget _buildModernPdfLayout(pw.ImageProvider? logoImage, PdfColor accentColor) {
+  // PDF LAYOUT 1: Modern Minimalist
+  pw.Widget _buildModernPdfLayout(
+    pw.ImageProvider? logoImage,
+    PdfColor accentColor,
+  ) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Container(
-          width: double.infinity,
-          padding: const pw.EdgeInsets.all(16),
-          decoration: pw.BoxDecoration(
-            color: accentColor,
-            borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
-          ),
-          child: pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            children: [
-              pw.Expanded(
-                child: pw.Column(
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                _buildPdfLogo(logoImage),
+                pw.SizedBox(width: 10),
+                pw.Container(width: 3, height: 40, color: accentColor),
+                pw.SizedBox(width: 8),
+                pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      controller.savedBusinessName.value.toUpperCase(),
+                      controller.savedBusinessName.value,
                       style: pw.TextStyle(
                         fontSize: 14,
                         fontWeight: pw.FontWeight.bold,
-                        color: PdfColors.white,
                       ),
                     ),
                     pw.SizedBox(height: 2),
@@ -564,32 +622,41 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                       controller.businessEmailController.text.isNotEmpty
                           ? controller.businessEmailController.text
                           : 'info@business.com',
-                      style: const pw.TextStyle(fontSize: 10, color: PdfColors.white),
+                      style: const pw.TextStyle(
+                        fontSize: 9,
+                        color: PdfColors.grey700,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.end,
-                children: [
-                  pw.Text(
-                    'INVOICE',
-                    style: pw.TextStyle(
-                      fontSize: 18,
-                      fontWeight: pw.FontWeight.bold,
-                      color: PdfColors.white,
-                    ),
+              ],
+            ),
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Text(
+                  'INVOICE',
+                  style: pw.TextStyle(
+                    fontSize: 20,
+                    fontWeight: pw.FontWeight.bold,
+                    color: accentColor,
                   ),
-                  pw.Text(
-                    'Receipt ${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text : "999"}',
-                    style: const pw.TextStyle(fontSize: 11, color: PdfColors.white),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Text(
+                  'Receipt ${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text : "999"}',
+                  style: const pw.TextStyle(
+                    fontSize: 10,
+                    color: PdfColors.grey700,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
-        pw.SizedBox(height: 30),
+        pw.SizedBox(height: 24),
+        pw.Container(height: 0.5, color: PdfColors.grey400),
+        pw.SizedBox(height: 20),
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
@@ -601,16 +668,31 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   pw.SizedBox(height: 4),
                   pw.Text(
                     controller.savedBusinessName.value,
-                    style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold),
+                    style: pw.TextStyle(
+                      fontSize: 11,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
-                  _buildPdfOptionalText(controller.businessPhoneController.text),
+                  _buildPdfOptionalText(
+                    controller.businessPhoneController.text,
+                  ),
                   pw.SizedBox(height: 12),
                   _buildPdfMetadataLabel('DATES'),
                   pw.SizedBox(height: 4),
-                  pw.Text('Issued: ${controller.formattedIssuedDate}',
-                      style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
-                  pw.Text('Due: ${controller.formattedDueDate}',
-                      style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
+                  pw.Text(
+                    'Issued: ${controller.formattedIssuedDate}',
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey700,
+                    ),
+                  ),
+                  pw.Text(
+                    'Due: ${controller.formattedDueDate}',
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey700,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -618,15 +700,20 @@ class InvoicePreviewView extends GetView<InvoiceController> {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  _buildPdfMetadataLabel('TO'),
+                  _buildPdfMetadataLabel('BILLED TO'),
                   pw.SizedBox(height: 4),
                   pw.Text(
                     controller.clientNameController.text.isNotEmpty
                         ? controller.clientNameController.text
                         : 'Client Name',
-                    style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold),
+                    style: pw.TextStyle(
+                      fontSize: 11,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
-                  _buildPdfOptionalText(controller.clientBusinessNameController.text),
+                  _buildPdfOptionalText(
+                    controller.clientBusinessNameController.text,
+                  ),
                   _buildPdfOptionalText(controller.clientEmailController.text),
                   _buildPdfOptionalText(controller.clientPhoneController.text),
                 ],
@@ -638,29 +725,29 @@ class InvoicePreviewView extends GetView<InvoiceController> {
         _buildPdfBillingAddress(),
         pw.Spacer(flex: 1),
         pw.Container(
-          width: double.infinity,
-          padding: const pw.EdgeInsets.all(12),
           decoration: pw.BoxDecoration(
-            color: accentColor,
-            borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+            border: pw.Border(
+              left: pw.BorderSide(color: accentColor, width: 3),
+            ),
+            color: PdfColors.grey100,
           ),
+          padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
                 'Total Amount Due',
                 style: pw.TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.white,
                 ),
               ),
               pw.Text(
                 '${controller.selectedCurrency.value.split(" ")[0]} ${controller.invoiceAmountController.text}',
                 style: pw.TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.white,
+                  color: accentColor,
                 ),
               ),
             ],
@@ -676,8 +763,11 @@ class InvoicePreviewView extends GetView<InvoiceController> {
     );
   }
 
-  // PDF LAYOUT 2: Split
-  pw.Widget _buildSplitPdfLayout(pw.ImageProvider? logoImage, PdfColor accentColor) {
+  // PDF LAYOUT 2: Centered Classic
+  pw.Widget _buildSplitPdfLayout(
+    pw.ImageProvider? logoImage,
+    PdfColor accentColor,
+  ) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -687,40 +777,56 @@ class InvoicePreviewView extends GetView<InvoiceController> {
               _buildPdfLogo(logoImage),
               pw.Text(
                 controller.savedBusinessName.value.toUpperCase(),
-                style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 14,
+                  fontWeight: pw.FontWeight.bold,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              pw.SizedBox(height: 4),
+              pw.Text(
+                'INVOICE',
+                style: pw.TextStyle(
+                  fontSize: 22,
+                  fontWeight: pw.FontWeight.bold,
+                  color: accentColor,
+                ),
+              ),
+              pw.SizedBox(height: 2),
+              pw.Text(
+                'Receipt ${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text : "999"}',
+                style: const pw.TextStyle(
+                  fontSize: 10,
+                  color: PdfColors.grey700,
+                ),
               ),
             ],
           ),
         ),
-        pw.SizedBox(height: 10),
-        pw.Container(height: 2, color: accentColor),
-        pw.SizedBox(height: 24),
+        pw.SizedBox(height: 16),
+        pw.Container(height: 1, color: accentColor),
+        pw.SizedBox(height: 20),
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Expanded(
-              flex: 6,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  _buildPdfMetadataLabel('FROM'),
-                  pw.SizedBox(height: 4),
-                  pw.Text(
-                    controller.savedBusinessName.value,
-                    style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold),
-                  ),
-                  _buildPdfOptionalText(controller.businessEmailController.text),
-                  _buildPdfOptionalText(controller.businessPhoneController.text),
-                  pw.SizedBox(height: 16),
                   _buildPdfMetadataLabel('BILLED TO'),
                   pw.SizedBox(height: 4),
                   pw.Text(
                     controller.clientNameController.text.isNotEmpty
                         ? controller.clientNameController.text
                         : 'Client Name',
-                    style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold),
+                    style: pw.TextStyle(
+                      fontSize: 11,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
-                  _buildPdfOptionalText(controller.clientBusinessNameController.text),
+                  _buildPdfOptionalText(
+                    controller.clientBusinessNameController.text,
+                  ),
                   _buildPdfOptionalText(controller.clientEmailController.text),
                   _buildPdfOptionalText(controller.clientPhoneController.text),
                   pw.SizedBox(height: 12),
@@ -728,60 +834,40 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                 ],
               ),
             ),
-            pw.SizedBox(width: 14),
-            pw.Container(width: 1, height: 160, color: PdfColors.grey300),
-            pw.SizedBox(width: 14),
             pw.Expanded(
-              flex: 5,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text(
-                    'INVOICE',
-                    style: pw.TextStyle(
-                      fontSize: 20,
-                      fontWeight: pw.FontWeight.bold,
-                      color: accentColor,
-                    ),
-                  ),
+                  _buildPdfMetadataLabel('INVOICE DETAILS'),
                   pw.SizedBox(height: 4),
                   pw.Text(
-                    'Receipt ${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text : "999"}',
-                    style: const pw.TextStyle(fontSize: 11, color: PdfColors.grey700),
+                    'Issued: ${controller.formattedIssuedDate}',
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey700,
+                    ),
                   ),
-                  pw.SizedBox(height: 16),
-                  _buildPdfMetadataLabel('DATES'),
+                  pw.Text(
+                    'Due: ${controller.formattedDueDate}',
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey700,
+                    ),
+                  ),
+                  pw.SizedBox(height: 12),
+                  _buildPdfMetadataLabel('CONTACT INFO'),
                   pw.SizedBox(height: 4),
-                  pw.Text('Issued: ${controller.formattedIssuedDate}',
-                      style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
-                  pw.Text('Due: ${controller.formattedDueDate}',
-                      style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
-                  pw.SizedBox(height: 24),
-                  pw.Container(
-                    width: double.infinity,
-                    padding: const pw.EdgeInsets.all(10),
-                    decoration: pw.BoxDecoration(
-                      border: pw.Border.all(color: accentColor, width: 1.5),
-                      borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+                  pw.Text(
+                    controller.businessEmailController.text.isNotEmpty
+                        ? controller.businessEmailController.text
+                        : 'info@business.com',
+                    style: const pw.TextStyle(
+                      fontSize: 9,
+                      color: PdfColors.grey700,
                     ),
-                    child: pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          'TOTAL DUE',
-                          style: pw.TextStyle(
-                            fontSize: 9,
-                            fontWeight: pw.FontWeight.bold,
-                            color: PdfColors.grey600,
-                          ),
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Text(
-                          '${controller.selectedCurrency.value.split(" ")[0]} ${controller.invoiceAmountController.text}',
-                          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                  ),
+                  _buildPdfOptionalText(
+                    controller.businessPhoneController.text,
                   ),
                 ],
               ),
@@ -789,6 +875,36 @@ class InvoicePreviewView extends GetView<InvoiceController> {
           ],
         ),
         pw.Spacer(flex: 1),
+        pw.Container(
+          width: double.infinity,
+          padding: const pw.EdgeInsets.all(12),
+          decoration: pw.BoxDecoration(
+            border: pw.Border.all(color: accentColor, width: 1),
+            borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+          ),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(
+                'TOTAL AMOUNT DUE',
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.grey700,
+                ),
+              ),
+              pw.Text(
+                '${controller.selectedCurrency.value.split(" ")[0]} ${controller.invoiceAmountController.text}',
+                style: pw.TextStyle(
+                  fontSize: 14,
+                  fontWeight: pw.FontWeight.bold,
+                  color: accentColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+        pw.SizedBox(height: 20),
         _buildPdfNotes(),
         pw.Spacer(flex: 2),
         _buildPdfSignatureSection(),
@@ -869,7 +985,11 @@ class InvoicePreviewView extends GetView<InvoiceController> {
         pw.SizedBox(height: 4),
         pw.Text(
           '$street${street.isNotEmpty ? ", " : ""}$city${city.isNotEmpty ? ", " : ""}$state${state.isNotEmpty ? " " : ""}$zip\n$country',
-          style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700, lineSpacing: 1.4),
+          style: const pw.TextStyle(
+            fontSize: 10,
+            color: PdfColors.grey700,
+            lineSpacing: 1.4,
+          ),
         ),
       ],
     );
@@ -918,10 +1038,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
           ),
           pw.Text(
             'Authorized Signature',
-            style: const pw.TextStyle(
-              fontSize: 9,
-              color: PdfColors.grey700,
-            ),
+            style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
           ),
         ],
       ),

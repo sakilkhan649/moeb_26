@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_preview_view.dart';
-import 'package:moeb_26/modules/invoice/views/invoice_settings_view.dart';
 
 class InvoiceHistoryRecord {
   final String invoiceNumber;
@@ -484,9 +483,9 @@ class InvoiceController extends GetxController {
                     invoiceNumberController.text =
                         'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
                     currentStep.value = 1;
-
                     Get.back(); // close dialog
-                    Get.back(); // return to previous screen
+                    Get.back(); // close preview screen
+                    Get.back(); // close create screen (returns to history screen)
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFBBF24),
