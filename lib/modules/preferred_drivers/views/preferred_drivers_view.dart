@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
 import '../controllers/preferred_drivers_controller.dart';
 
 class PreferredDriversView extends StatelessWidget {
@@ -15,34 +16,10 @@ class PreferredDriversView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-            size: 20.sp,
-          ),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          'Preffered Drivers',
-          style: GoogleFonts.inter(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.5.h),
-          child: Divider(
-            color: const Color(0xFF1E1E1E),
-            height: 1.5.h,
-            thickness: 1.5.h,
-          ),
-        ),
+      appBar: CustomAppBar(
+        title: 'Favorite Driver',
+        subtitle: 'YOUR FAVORITE LIST OF DRIVERS',
+        notificationCount: 3,
       ),
       body: Column(
         children: [
@@ -52,7 +29,7 @@ class PreferredDriversView extends StatelessWidget {
               if (controller.driversList.isEmpty) {
                 return Center(
                   child: Text(
-                    'No preferred drivers added yet.',
+                    'No favorite drivers added yet.',
                     style: GoogleFonts.inter(
                       color: const Color(0xFFD5C4AB),
                       fontSize: 16.sp,

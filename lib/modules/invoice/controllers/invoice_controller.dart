@@ -52,17 +52,46 @@ class InvoiceHistoryRecord {
     required this.businessAddress,
     required this.businessLogoPath,
   });
+
+  InvoiceHistoryRecord copyWith({
+    String? status,
+  }) {
+    return InvoiceHistoryRecord(
+      invoiceNumber: invoiceNumber,
+      clientName: clientName,
+      clientEmail: clientEmail,
+      issuedDate: issuedDate,
+      currency: currency,
+      status: status ?? this.status,
+      totalAmount: totalAmount,
+      clientBusinessName: clientBusinessName,
+      clientPhone: clientPhone,
+      clientStreetAddress: clientStreetAddress,
+      clientCity: clientCity,
+      clientState: clientState,
+      clientZip: clientZip,
+      clientCountry: clientCountry,
+      messageToClient: messageToClient,
+      dueDate: dueDate,
+      businessName: businessName,
+      businessEmail: businessEmail,
+      businessPhone: businessPhone,
+      businessAddress: businessAddress,
+      businessLogoPath: businessLogoPath,
+    );
+  }
 }
 
 class InvoiceController extends GetxController {
   // Navigation / Page Step
   var currentStep = 1.obs;
+  var editingRecordIndex = (-1).obs;
 
   // Step 1: Basic Information
   late TextEditingController invoiceNumberController;
   late TextEditingController invoiceAmountController;
   var issuedDate = DateTime.now().obs;
-  var selectedDueDateOption = 'No Due Date'.obs;
+  var selectedDueDateOption = 'On Receipt'.obs;
   var customDueDate = Rxn<DateTime>();
   var selectedCurrency = 'USD - US Dollar'.obs;
 
@@ -107,23 +136,9 @@ class InvoiceController extends GetxController {
   ];
 
   // Available options
-  final List<String> dueDateOptions = [
-    'No Due Date',
-    'On Receipt',
-    '10 days',
-    '15 days',
-    '30 days',
-    'Custom Due Date',
-  ];
+  final List<String> dueDateOptions = ['On Receipt', 'Custom Due Date'];
 
-  final List<String> currencyOptions = [
-    'USD - US Dollar',
-    'EUR - Euro',
-    'GBP - British Pound',
-    'BDT - Bangladeshi Taka',
-    'INR - Indian Rupee',
-    'AED - UAE Dirham',
-  ];
+  final List<String> currencyOptions = ['USD - US Dollar'];
 
   final List<String> countryOptions = [
     'United States',
@@ -288,7 +303,7 @@ class InvoiceController extends GetxController {
         customDueDate.value = picked;
       } else {
         // Fallback if cancelled
-        selectedDueDateOption.value = 'No Due Date';
+        selectedDueDateOption.value = 'On Receipt';
       }
     }
   }
@@ -322,7 +337,7 @@ class InvoiceController extends GetxController {
       if (customDueDate.value != null &&
           customDueDate.value!.isBefore(issuedDate.value)) {
         customDueDate.value = null;
-        selectedDueDateOption.value = 'No Due Date';
+        selectedDueDateOption.value = 'On Receipt';
       }
     }
   }
@@ -391,36 +406,91 @@ class InvoiceController extends GetxController {
     Get.back(); // Return to settings page
   }
 
+  void populateFromRecord(InvoiceHistoryRecord record) {
+    invoiceNumberController.text = record.invoiceNumber;
+    invoiceAmountController.text = record.totalAmount.toStringAsFixed(2);
+    clientNameController.text = record.clientName;
+    clientEmailController.text = record.clientEmail;
+    issuedDate.value = record.issuedDate;
+    final matchingCurrency = currencyOptions.firstWhere(
+      (opt) => opt.startsWith(record.currency),
+      orElse: () => currencyOptions.first,
+    );
+    selectedCurrency.value = matchingCurrency;
+
+    clientBusinessNameController.text = record.clientBusinessName;
+    clientPhoneController.text = record.clientPhone;
+    clientStreetAddressController.text = record.clientStreetAddress;
+    clientCityController.text = record.clientCity;
+    clientStateController.text = record.clientState;
+    clientZipController.text = record.clientZip;
+    clientCountry.value = record.clientCountry;
+    messageToClientController.text = record.messageToClient;
+    selectedDueDateOption.value = record.dueDate;
+
+    businessNameController.text = record.businessName;
+    businessEmailController.text = record.businessEmail;
+    businessPhoneController.text = record.businessPhone;
+    businessAddressController.text = record.businessAddress;
+    businessLogoPath.value = record.businessLogoPath;
+  }
+
+  void prepareNewInvoice() {
+    editingRecordIndex.value = -1;
+    invoiceAmountController.text = '0.00';
+    clientNameController.clear();
+    clientBusinessNameController.clear();
+    clientEmailController.clear();
+    clientPhoneController.clear();
+    clientStreetAddressController.clear();
+    clientCityController.clear();
+    clientStateController.clear();
+    clientZipController.clear();
+    messageToClientController.clear();
+
+    // Generate next invoice number based on history count
+    final nextNum = invoiceHistory.isEmpty ? 1 : (invoiceHistory.length + 1);
+    invoiceNumberController.text = 'Invoice ${nextNum.toString().padLeft(3, '0')}';
+
+    issuedDate.value = DateTime.now();
+    selectedDueDateOption.value = 'On Receipt';
+    customDueDate.value = null;
+    currentStep.value = 1;
+  }
+
   void submitInvoice() {
+    final wasEditing = editingRecordIndex.value != -1;
     final double amount = double.tryParse(invoiceAmountController.text) ?? 0.0;
 
-    // Add newly created invoice to history
-    invoiceHistory.insert(
-      0,
-      InvoiceHistoryRecord(
-        invoiceNumber: invoiceNumberController.text.trim(),
-        clientName: clientNameController.text.trim(),
-        clientEmail: clientEmailController.text.trim(),
-        issuedDate: issuedDate.value,
-        currency: selectedCurrency.value.split(' ')[0],
-        status: 'Unpaid',
-        totalAmount: amount,
-        clientBusinessName: clientBusinessNameController.text.trim(),
-        clientPhone: clientPhoneController.text.trim(),
-        clientStreetAddress: clientStreetAddressController.text.trim(),
-        clientCity: clientCityController.text.trim(),
-        clientState: clientStateController.text.trim(),
-        clientZip: clientZipController.text.trim(),
-        clientCountry: clientCountry.value,
-        messageToClient: messageToClientController.text.trim(),
-        dueDate: selectedDueDateOption.value,
-        businessName: businessNameController.text.trim(),
-        businessEmail: businessEmailController.text.trim(),
-        businessPhone: businessPhoneController.text.trim(),
-        businessAddress: businessAddressController.text.trim(),
-        businessLogoPath: businessLogoPath.value ?? '',
-      ),
+    final record = InvoiceHistoryRecord(
+      invoiceNumber: invoiceNumberController.text.trim(),
+      clientName: clientNameController.text.trim(),
+      clientEmail: clientEmailController.text.trim(),
+      issuedDate: issuedDate.value,
+      currency: selectedCurrency.value.split(' ')[0],
+      status: wasEditing ? invoiceHistory[editingRecordIndex.value].status : 'Unpaid',
+      totalAmount: amount,
+      clientBusinessName: clientBusinessNameController.text.trim(),
+      clientPhone: clientPhoneController.text.trim(),
+      clientStreetAddress: clientStreetAddressController.text.trim(),
+      clientCity: clientCityController.text.trim(),
+      clientState: clientStateController.text.trim(),
+      clientZip: clientZipController.text.trim(),
+      clientCountry: clientCountry.value,
+      messageToClient: messageToClientController.text.trim(),
+      dueDate: selectedDueDateOption.value,
+      businessName: businessNameController.text.trim(),
+      businessEmail: businessEmailController.text.trim(),
+      businessPhone: businessPhoneController.text.trim(),
+      businessAddress: businessAddressController.text.trim(),
+      businessLogoPath: businessLogoPath.value ?? '',
     );
+
+    if (wasEditing) {
+      invoiceHistory[editingRecordIndex.value] = record;
+    } else {
+      invoiceHistory.insert(0, record);
+    }
 
     // Success dialog
     Get.dialog(
@@ -449,9 +519,9 @@ class InvoiceController extends GetxController {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Invoice Created!',
-                style: TextStyle(
+              Text(
+                wasEditing ? 'Invoice Updated!' : 'Invoice Created!',
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -459,7 +529,9 @@ class InvoiceController extends GetxController {
               ),
               const SizedBox(height: 12),
               Text(
-                '${invoiceNumberController.text} has been successfully created for ${clientNameController.text}.',
+                wasEditing
+                    ? '${invoiceNumberController.text} has been successfully updated for ${clientNameController.text}.'
+                    : '${invoiceNumberController.text} has been successfully created for ${clientNameController.text}.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
@@ -483,9 +555,14 @@ class InvoiceController extends GetxController {
                     invoiceNumberController.text =
                         'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
                     currentStep.value = 1;
+                    editingRecordIndex.value = -1;
+
                     Get.back(); // close dialog
                     Get.back(); // close preview screen
-                    Get.back(); // close create screen (returns to history screen)
+                    Get.back(); // close create screen (returns to history/detail screen)
+                    if (wasEditing) {
+                      Get.back(); // close details view screen
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(

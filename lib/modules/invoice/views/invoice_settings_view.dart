@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'invoice_profile_settings_view.dart';
-import 'invoice_history_view.dart';
 
 class InvoiceSettingsView extends StatelessWidget {
   const InvoiceSettingsView({super.key});
@@ -51,13 +50,6 @@ class InvoiceSettingsView extends StatelessWidget {
             title: 'Profile Settings',
             subtitle: 'Update business logo, name, email and address',
             onTap: () => Get.to(() => const InvoiceProfileSettingsView()),
-          ),
-          SizedBox(height: 16.h),
-          _buildSettingsItem(
-            icon: Icons.history_toggle_off,
-            title: 'Invoice History',
-            subtitle: 'View, search and manage all created invoices',
-            onTap: () => Get.to(() => const InvoiceHistoryView()),
           ),
         ],
       ),

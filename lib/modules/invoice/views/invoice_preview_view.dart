@@ -177,7 +177,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                 ],
               ),
               child: Text(
-                'Save',
+                'Send Invoice',
                 style: GoogleFonts.inter(
                   color: Colors.black, // Dark text for contrast
                   fontSize: 15.sp,
@@ -459,7 +459,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   pw.Text(
                     controller.businessPhoneController.text.isNotEmpty
                         ? controller.businessPhoneController.text
-                        : '+1 000 000 0000',
+                        : '000 000 0000',
                     style: const pw.TextStyle(
                       fontSize: 10,
                       color: PdfColors.grey700,
@@ -472,18 +472,11 @@ class InvoicePreviewView extends GetView<InvoiceController> {
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
                 pw.Text(
-                  'INVOICE',
+                  controller.invoiceNumberController.text.isNotEmpty
+                      ? controller.invoiceNumberController.text.toUpperCase()
+                      : 'INVOICE',
                   style: pw.TextStyle(
-                    fontSize: 22,
-                    fontWeight: pw.FontWeight.bold,
-                    color: accentColor,
-                  ),
-                ),
-                pw.SizedBox(height: 6),
-                pw.Text(
-                  'Receipt ${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text : "999"}',
-                  style: pw.TextStyle(
-                    fontSize: 12,
+                    fontSize: 20,
                     fontWeight: pw.FontWeight.bold,
                     color: accentColor,
                   ),
@@ -511,16 +504,18 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                       fontWeight: pw.FontWeight.bold,
                     ),
                   ),
-                  pw.SizedBox(height: 16),
-                  _buildPdfMetadataLabel('DUE DATE'),
-                  pw.SizedBox(height: 4),
-                  pw.Text(
-                    controller.formattedDueDate,
-                    style: pw.TextStyle(
-                      fontSize: 11,
-                      fontWeight: pw.FontWeight.bold,
+                  if (controller.selectedDueDateOption.value != 'No Due Date') ...[
+                    pw.SizedBox(height: 16),
+                    _buildPdfMetadataLabel('DUE DATE'),
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      controller.formattedDueDate,
+                      style: pw.TextStyle(
+                        fontSize: 11,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -639,19 +634,13 @@ class InvoicePreviewView extends GetView<InvoiceController> {
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
                 pw.Text(
-                  'INVOICE',
+                  controller.invoiceNumberController.text.isNotEmpty
+                      ? controller.invoiceNumberController.text.toUpperCase()
+                      : 'INVOICE',
                   style: pw.TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: pw.FontWeight.bold,
                     color: accentColor,
-                  ),
-                ),
-                pw.SizedBox(height: 4),
-                pw.Text(
-                  'Receipt ${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text : "999"}',
-                  style: const pw.TextStyle(
-                    fontSize: 10,
-                    color: PdfColors.grey700,
                   ),
                 ),
               ],
@@ -690,13 +679,14 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                       color: PdfColors.grey700,
                     ),
                   ),
-                  pw.Text(
-                    'Due: ${controller.formattedDueDate}',
-                    style: const pw.TextStyle(
-                      fontSize: 10,
-                      color: PdfColors.grey700,
+                  if (controller.selectedDueDateOption.value != 'No Due Date')
+                    pw.Text(
+                      'Due: ${controller.formattedDueDate}',
+                      style: const pw.TextStyle(
+                        fontSize: 10,
+                        color: PdfColors.grey700,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -789,19 +779,13 @@ class InvoicePreviewView extends GetView<InvoiceController> {
               ),
               pw.SizedBox(height: 4),
               pw.Text(
-                'INVOICE',
+                controller.invoiceNumberController.text.isNotEmpty
+                    ? controller.invoiceNumberController.text.toUpperCase()
+                    : 'INVOICE',
                 style: pw.TextStyle(
                   fontSize: 22,
                   fontWeight: pw.FontWeight.bold,
                   color: accentColor,
-                ),
-              ),
-              pw.SizedBox(height: 2),
-              pw.Text(
-                'Receipt ${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text : "999"}',
-                style: const pw.TextStyle(
-                  fontSize: 10,
-                  color: PdfColors.grey700,
                 ),
               ),
             ],
@@ -851,13 +835,14 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                       color: PdfColors.grey700,
                     ),
                   ),
-                  pw.Text(
-                    'Due: ${controller.formattedDueDate}',
-                    style: const pw.TextStyle(
-                      fontSize: 10,
-                      color: PdfColors.grey700,
+                  if (controller.selectedDueDateOption.value != 'No Due Date')
+                    pw.Text(
+                      'Due: ${controller.formattedDueDate}',
+                      style: const pw.TextStyle(
+                        fontSize: 10,
+                        color: PdfColors.grey700,
+                      ),
                     ),
-                  ),
                   pw.SizedBox(height: 12),
                   _buildPdfMetadataLabel('CONTACT INFO'),
                   pw.SizedBox(height: 4),
@@ -923,15 +908,15 @@ class InvoicePreviewView extends GetView<InvoiceController> {
   pw.Widget _buildPdfLogo(pw.ImageProvider? logoImage) {
     if (logoImage != null) {
       return pw.Container(
-        width: 48,
-        height: 48,
+        width: 80,
+        height: 80,
         margin: const pw.EdgeInsets.only(bottom: 8),
         child: pw.Image(logoImage, fit: pw.BoxFit.cover),
       );
     } else {
       return pw.Container(
-        width: 40,
-        height: 40,
+        width: 80,
+        height: 80,
         color: PdfColors.black,
         margin: const pw.EdgeInsets.only(bottom: 8),
         alignment: pw.Alignment.center,
@@ -941,7 +926,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
               : 'K',
           style: pw.TextStyle(
             color: PdfColors.white,
-            fontSize: 18,
+            fontSize: 24,
             fontWeight: pw.FontWeight.bold,
           ),
         ),

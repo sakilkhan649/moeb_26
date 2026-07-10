@@ -154,9 +154,9 @@ class ProfileView extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       SvgPicture.asset(
-                                        AppIcons.job_offer_icon,
-                                        width: 24.sp,
-                                        height: 24.sp,
+                                        AppIcons.edit_icon_myjob,
+                                        width: 22.sp,
+                                        height: 22.sp,
                                         colorFilter: const ColorFilter.mode(
                                           Colors.white,
                                           BlendMode.srcIn,

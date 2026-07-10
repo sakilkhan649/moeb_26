@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_settings_view.dart';
 import '../../../config/routes/app_pages.dart';
 import '../controllers/invoice_controller.dart';
-import 'invoice_preview_view.dart';
+import 'invoice_detail_view.dart';
 
 class InvoiceHistoryView extends GetView<InvoiceController> {
   const InvoiceHistoryView({super.key});
@@ -124,7 +124,10 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
             border: Border(top: BorderSide(color: Color(0xFF1E1E1E), width: 1)),
           ),
           child: GestureDetector(
-            onTap: () => Get.toNamed(Routes.createInvoiceView),
+            onTap: () {
+              controller.prepareNewInvoice();
+              Get.toNamed(Routes.createInvoiceView);
+            },
             child: Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -237,35 +240,10 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
 
     return GestureDetector(
       onTap: () {
-        // Populate controller with this record's details to preview it
-        controller.invoiceNumberController.text = record.invoiceNumber;
-        controller.invoiceAmountController.text = record.totalAmount
-            .toStringAsFixed(2);
-        controller.clientNameController.text = record.clientName;
-        controller.clientEmailController.text = record.clientEmail;
-        controller.issuedDate.value = record.issuedDate;
-        controller.selectedCurrency.value =
-            '${record.currency} - ${record.currency}';
-
-        controller.clientBusinessNameController.text =
-            record.clientBusinessName;
-        controller.clientPhoneController.text = record.clientPhone;
-        controller.clientStreetAddressController.text =
-            record.clientStreetAddress;
-        controller.clientCityController.text = record.clientCity;
-        controller.clientStateController.text = record.clientState;
-        controller.clientZipController.text = record.clientZip;
-        controller.clientCountry.value = record.clientCountry;
-        controller.messageToClientController.text = record.messageToClient;
-        controller.selectedDueDateOption.value = record.dueDate;
-
-        controller.businessNameController.text = record.businessName;
-        controller.businessEmailController.text = record.businessEmail;
-        controller.businessPhoneController.text = record.businessPhone;
-        controller.businessAddressController.text = record.businessAddress;
-        controller.businessLogoPath.value = record.businessLogoPath;
-
-        Get.to(() => const InvoicePreviewView());
+        final trueIndex = controller.invoiceHistory.indexOf(record);
+        if (trueIndex != -1) {
+          Get.to(() => InvoiceDetailView(index: trueIndex));
+        }
       },
       child: Container(
         padding: EdgeInsets.all(16.w),
@@ -391,7 +369,7 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                 SizedBox(height: 22.h),
                 // Amount (Paid is highlighted in peach-yellow, Unpaid is white)
                 Text(
-                  '${record.currency == 'USD' ? '\$' : '${record.currency} '}${record.totalAmount.toStringAsFixed(2)}',
+                  'USD ${record.totalAmount.toStringAsFixed(2)}',
                   style: GoogleFonts.inter(
                     color: isPaid ? const Color(0xFFFEDB9B) : Colors.white,
                     fontSize: 17.sp, // Sleeker bold font size

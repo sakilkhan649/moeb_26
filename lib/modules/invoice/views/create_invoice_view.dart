@@ -170,7 +170,8 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         _buildFieldLabel('Invoice amount*'),
         _buildInputField(
           controller: controller.invoiceAmountController,
-          hint: 'e.g. 150.00',
+          hint: '0.00',
+          prefixText: 'USD ',
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),
         SizedBox(height: 20.h),
@@ -254,7 +255,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         _buildFieldLabel('Phone Number (Optional)'),
         _buildInputField(
           controller: controller.clientPhoneController,
-          hint: '+1 (555) 000-0000',
+          hint: 'e.g. 555-000-0000',
           keyboardType: TextInputType.phone,
         ),
         SizedBox(height: 24.h),
@@ -443,6 +444,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
     required TextEditingController controller,
     required String hint,
     Widget? suffixIcon,
+    String? prefixText,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
   }) {
@@ -462,6 +464,12 @@ class CreateInvoiceView extends GetView<InvoiceController> {
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
+          prefixText: prefixText,
+          prefixStyle: GoogleFonts.inter(
+            color: const Color(0xFFD5C4AB),
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w500,
+          ),
           hintText: hint,
           hintStyle: GoogleFonts.inter(
             color: const Color(0xFF4B5563),

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../rides/controllers/rides_controller.dart';
 import '../../my_jobs/controllers/my_jobs_controller.dart';
 import '../../chat/controllers/chat_controller.dart';
-import '../../deals/controllers/deals_controller.dart';
 
 class NavigationController extends GetxController {
   var currentIndex = 0.obs;
@@ -43,14 +42,8 @@ class NavigationController extends GetxController {
         debugPrint("NavigationController fetchChats error: $e");
       }
     } else if (index == 4) {
-      // Index 4 is DealsPage
-      try {
-        if (Get.isRegistered<DealsController>()) {
-          Get.find<DealsController>().fetchDeals();
-        }
-      } catch (e) {
-        debugPrint("NavigationController fetchDeals error: $e");
-      }
+      // Index 4 is Favorite Drivers page
+      // Local state is used, no API call needed
     }
   }
 }

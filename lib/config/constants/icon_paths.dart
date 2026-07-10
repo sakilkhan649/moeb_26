@@ -73,4 +73,6 @@ class AppIcons {
   static const String time_myjob_icon = "$iconurl/time_myjob_icon.svg";
   // ignore: constant_identifier_names
   static const String bmw_car_icon = "$iconurl/bmw_car_icon.svg";
+  // ignore: constant_identifier_names
+  static const String favorite_icon = "$iconurl/heart_icon.svg";
 }
