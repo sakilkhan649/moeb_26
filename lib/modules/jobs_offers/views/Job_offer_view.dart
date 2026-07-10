@@ -97,6 +97,7 @@ class _JobOfferViewState extends State<JobOfferView> {
                             child: CustomJobButton(
                               text: "My Jobs",
                               iconPath: AppIcons.edit_icon_myjob,
+                              iconSize: 18.w,
                               padding: EdgeInsets.symmetric(
                                 vertical: 12.h,
                                 horizontal: 8.w,

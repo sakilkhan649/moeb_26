@@ -17,6 +17,7 @@ class CustomJobButton extends StatelessWidget {
   final FontWeight? fontWeight;
   final IconData? icon; // Added icon parameter
   final String? iconPath; // Added iconPath parameter for SVG support
+  final double? iconSize; // Added iconSize parameter
 
   const CustomJobButton({
     super.key,
@@ -32,6 +33,7 @@ class CustomJobButton extends StatelessWidget {
     this.fontWeight,
     this.icon,
     this.iconPath,
+    this.iconSize,
   });
 
   @override
@@ -65,8 +67,8 @@ class CustomJobButton extends StatelessWidget {
             if (iconPath != null)
               SvgPicture.asset(
                 iconPath!,
-                width: 24.w,
-                height: 24.w,
+                width: iconSize ?? 24.w,
+                height: iconSize ?? 24.w,
                 colorFilter: ColorFilter.mode(
                   textColor ?? Colors.black,
                   BlendMode.srcIn,
@@ -76,7 +78,7 @@ class CustomJobButton extends StatelessWidget {
               Icon(
                 icon ?? Icons.add,
                 color: textColor ?? Colors.black, // Icon color
-                size: 24.sp, // Set the icon size
+                size: iconSize ?? 24.sp, // Set the icon size
               ),
             SizedBox(width: 8.w), // Space between icon and text
             Flexible(
