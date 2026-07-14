@@ -53,9 +53,7 @@ class InvoiceHistoryRecord {
     required this.businessLogoPath,
   });
 
-  InvoiceHistoryRecord copyWith({
-    String? status,
-  }) {
+  InvoiceHistoryRecord copyWith({String? status}) {
     return InvoiceHistoryRecord(
       invoiceNumber: invoiceNumber,
       clientName: clientName,
@@ -209,7 +207,7 @@ class InvoiceController extends GetxController {
         issuedDate: DateTime.now().subtract(const Duration(days: 25)),
         currency: 'USD',
         status: 'Paid',
-        totalAmount: 1200.00,
+        totalAmount: 120.00,
         clientBusinessName: 'Globex Inc',
         clientPhone: '800-555-0144',
         clientStreetAddress: '500 Corporate Blvd',
@@ -450,7 +448,8 @@ class InvoiceController extends GetxController {
 
     // Generate next invoice number based on history count
     final nextNum = invoiceHistory.isEmpty ? 1 : (invoiceHistory.length + 1);
-    invoiceNumberController.text = 'Invoice ${nextNum.toString().padLeft(3, '0')}';
+    invoiceNumberController.text =
+        'Invoice ${nextNum.toString().padLeft(3, '0')}';
 
     issuedDate.value = DateTime.now();
     selectedDueDateOption.value = 'On Receipt';
@@ -468,7 +467,9 @@ class InvoiceController extends GetxController {
       clientEmail: clientEmailController.text.trim(),
       issuedDate: issuedDate.value,
       currency: selectedCurrency.value.split(' ')[0],
-      status: wasEditing ? invoiceHistory[editingRecordIndex.value].status : 'Unpaid',
+      status: wasEditing
+          ? invoiceHistory[editingRecordIndex.value].status
+          : 'Unpaid',
       totalAmount: amount,
       clientBusinessName: clientBusinessNameController.text.trim(),
       clientPhone: clientPhoneController.text.trim(),
