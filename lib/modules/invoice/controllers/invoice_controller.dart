@@ -457,6 +457,43 @@ class InvoiceController extends GetxController {
     currentStep.value = 1;
   }
 
+  void deleteInvoice() {
+    final wasEditing = editingRecordIndex.value != -1;
+    if (wasEditing) {
+      invoiceHistory.removeAt(editingRecordIndex.value);
+    }
+    
+    // Reset fields for the next invoice
+    invoiceAmountController.text = '0.00';
+    clientNameController.clear();
+    clientBusinessNameController.clear();
+    clientEmailController.clear();
+    clientPhoneController.clear();
+    clientStreetAddressController.clear();
+    clientCityController.clear();
+    clientStateController.clear();
+    clientZipController.clear();
+    messageToClientController.clear();
+
+    invoiceNumberController.text =
+        'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
+    currentStep.value = 1;
+    editingRecordIndex.value = -1;
+
+    Get.back(); // close preview screen
+    Get.back(); // close create screen
+    if (wasEditing) {
+      Get.back(); // close details view screen
+    }
+    Get.snackbar(
+      'Deleted',
+      'Invoice has been deleted.',
+      backgroundColor: Colors.redAccent,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
   void submitInvoice() {
     final wasEditing = editingRecordIndex.value != -1;
     final double amount = double.tryParse(invoiceAmountController.text) ?? 0.0;
@@ -537,49 +574,100 @@ class InvoiceController extends GetxController {
                 style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Reset fields for the next invoice
-                    invoiceAmountController.text = '0.00';
-                    clientNameController.clear();
-                    clientBusinessNameController.clear();
-                    clientEmailController.clear();
-                    clientPhoneController.clear();
-                    clientStreetAddressController.clear();
-                    clientCityController.clear();
-                    clientStateController.clear();
-                    clientZipController.clear();
-                    messageToClientController.clear();
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Delete logic
+                        if (wasEditing) {
+                          invoiceHistory.removeAt(editingRecordIndex.value);
+                        } else {
+                          invoiceHistory.removeAt(0);
+                        }
 
-                    invoiceNumberController.text =
-                        'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
-                    currentStep.value = 1;
-                    editingRecordIndex.value = -1;
+                        // Reset fields for the next invoice
+                        invoiceAmountController.text = '0.00';
+                        clientNameController.clear();
+                        clientBusinessNameController.clear();
+                        clientEmailController.clear();
+                        clientPhoneController.clear();
+                        clientStreetAddressController.clear();
+                        clientCityController.clear();
+                        clientStateController.clear();
+                        clientZipController.clear();
+                        messageToClientController.clear();
 
-                    Get.back(); // close dialog
-                    Get.back(); // close preview screen
-                    Get.back(); // close create screen (returns to history/detail screen)
-                    if (wasEditing) {
-                      Get.back(); // close details view screen
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(
-                      0xFFD08700,
-                    ), // Bright orange-yellow
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                        invoiceNumberController.text =
+                            'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
+                        currentStep.value = 1;
+                        editingRecordIndex.value = -1;
+
+                        Get.back(); // close dialog
+                        Get.back(); // close preview screen
+                        Get.back(); // close create screen (returns to history/detail screen)
+                        if (wasEditing) {
+                          Get.back(); // close details view screen
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2C2C2C), // Dark gray
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text(
-                    'Done',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Save (Same as Done)
+                        // Reset fields for the next invoice
+                        invoiceAmountController.text = '0.00';
+                        clientNameController.clear();
+                        clientBusinessNameController.clear();
+                        clientEmailController.clear();
+                        clientPhoneController.clear();
+                        clientStreetAddressController.clear();
+                        clientCityController.clear();
+                        clientStateController.clear();
+                        clientZipController.clear();
+                        messageToClientController.clear();
+
+                        invoiceNumberController.text =
+                            'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
+                        currentStep.value = 1;
+                        editingRecordIndex.value = -1;
+
+                        Get.back(); // close dialog
+                        Get.back(); // close preview screen
+                        Get.back(); // close create screen (returns to history/detail screen)
+                        if (wasEditing) {
+                          Get.back(); // close details view screen
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFD08700), // Bright orange-yellow
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),

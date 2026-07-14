@@ -219,11 +219,12 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
         dueDateDisplay = 'Due: On Receipt';
       } else if (record.dueDate == 'Custom Due Date') {
         dueDateDisplay =
-            'Due: ${DateFormat('dd.MM.yy').format(record.issuedDate)}';
+            'Due: ${DateFormat('MM/dd/yyyy').format(record.issuedDate)}';
       } else {
         final days = int.tryParse(record.dueDate.split(' ')[0]) ?? 0;
         final dueDate = record.issuedDate.add(Duration(days: days));
-        dueDateDisplay = 'Due date ${DateFormat('dd.MM.yy').format(dueDate)}';
+        dueDateDisplay =
+            'Due date : ${DateFormat('MM/dd/yyyy').format(dueDate)}';
       }
     }
 
@@ -257,38 +258,6 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Left: Client Avatar/Initials
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF2C2C2C), width: 0.98),
-              ),
-              child: CircleAvatar(
-                radius: 26.r,
-                backgroundColor: const Color(0xFF27272A),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(26.r),
-                  child: Image.network(
-                    record.clientName.toLowerCase().contains('elena')
-                        ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150' // Woman
-                        : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150', // Man (default)
-                    fit: BoxFit.cover,
-                    width: 56.r,
-                    height: 56.r,
-                    errorBuilder: (context, error, stackTrace) => Text(
-                      initials,
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 14.w),
-
             // Middle: Details Column
             Expanded(
               child: Column(
@@ -324,12 +293,15 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                         size: 14.sp,
                       ),
                       SizedBox(width: 6.w),
-                      Text(
-                        dueDateDisplay,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFD5C4AB), // Warm beige
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Text(
+                          dueDateDisplay,
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFFD5C4AB), // Warm beige
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -372,7 +344,7 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                   'USD ${record.totalAmount.toStringAsFixed(2)}',
                   style: GoogleFonts.inter(
                     color: isPaid ? const Color(0xFFFEDB9B) : Colors.white,
-                    fontSize: 17.sp, // Sleeker bold font size
+                    fontSize: 14.sp, // Sleeker bold font size
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -374,7 +374,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Message to Client',
+                    'Description',
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontSize: 15.sp,
