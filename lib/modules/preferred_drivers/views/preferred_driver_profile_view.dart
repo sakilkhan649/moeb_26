@@ -9,15 +9,16 @@ class PreferredDriverProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PreferredDriversController controller = Get.find<PreferredDriversController>();
-    final driver = controller.selectedDriver.value;
+    final PreferredDriversController controller =
+        Get.find<PreferredDriversController>();
+    final chauffeur = controller.selectedChauffeur.value;
 
-    if (driver == null) {
+    if (chauffeur == null) {
       return Scaffold(
         backgroundColor: Colors.black,
         body: Center(
           child: Text(
-            'No driver selected.',
+            'No chauffeur selected.',
             style: GoogleFonts.inter(color: Colors.white),
           ),
         ),
@@ -38,7 +39,7 @@ class PreferredDriverProfileView extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          'Favorite Drivers List',
+          'Favorite Chauffeur',
           style: GoogleFonts.inter(
             color: Colors.white,
             fontSize: 18.sp,
@@ -48,12 +49,15 @@ class PreferredDriverProfileView extends StatelessWidget {
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.5.h),
-          child: Divider(color: const Color(0xFF1E1E1E), height: 1.5.h, thickness: 1.5.h),
+          child: Divider(
+            color: const Color(0xFF1E1E1E),
+            height: 1.5.h,
+            thickness: 1.5.h,
+          ),
         ),
       ),
       body: Column(
         children: [
-          
           // Scrollable Body Content
           Expanded(
             child: SingleChildScrollView(
@@ -61,7 +65,7 @@ class PreferredDriverProfileView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Driver Avatar with Rating Badge
+                  // Chauffeur Avatar with Rating Badge
                   Stack(
                     children: [
                       Container(
@@ -75,7 +79,9 @@ class PreferredDriverProfileView extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFD08700).withValues(alpha: 0.15),
+                              color: const Color(
+                                0xFFD08700,
+                              ).withValues(alpha: 0.15),
                               blurRadius: 15,
                               spreadRadius: 2,
                             ),
@@ -84,7 +90,7 @@ class PreferredDriverProfileView extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(65.w),
                           child: Image.network(
-                            driver.imageUrl,
+                            chauffeur.imageUrl,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -111,7 +117,7 @@ class PreferredDriverProfileView extends StatelessWidget {
                               ),
                               SizedBox(width: 2.w),
                               Text(
-                                driver.rating.toString(),
+                                chauffeur.rating.toString(),
                                 style: GoogleFonts.inter(
                                   color: Colors.black,
                                   fontSize: 11.sp,
@@ -126,69 +132,110 @@ class PreferredDriverProfileView extends StatelessWidget {
                   ),
                   SizedBox(height: 16.h),
 
-                  // Driver Name
+                  // Chauffeur Name
                   Text(
-                    driver.name,
+                    chauffeur.name +
+                        (chauffeur.nickName != null &&
+                                chauffeur.nickName!.isNotEmpty
+                            ? ' (${chauffeur.nickName})'
+                            : ''),
                     style: GoogleFonts.inter(
                       color: const Color(0xFFFEDB9B), // Soft peach-yellow
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 16.h),
 
-                  // "Remove from Favorites" Button
-                  OutlinedButton(
-                    onPressed: () => controller.removeFromFavorites(driver),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFFEDB9B), width: 1.2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24.r),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 10.h,
-                      ),
-                      backgroundColor: Colors.transparent,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.heart_broken_outlined,
-                          color: const Color(0xFFFEDB9B),
-                          size: 18.sp,
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          'Remove from Favorites',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFFFEDB9B),
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w600,
+                  // Action Buttons (Start Conversation & Remove from Favorites)
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // "Start Conversation" Button
+                      ElevatedButton(
+                        onPressed: () =>
+                            controller.startConversation(chauffeur),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD08700),
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.r),
                           ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 32.w,
+                            vertical: 12.h,
+                          ),
+                          elevation: 0,
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.chat_bubble_outline_rounded,
+                              color: Colors.black,
+                              size: 18.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              'Start Conversation',
+                              style: GoogleFonts.inter(
+                                color: Colors.black,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 12.h),
 
-                  // Total Rides
-                  Text(
-                    '${driver.totalRides} Total Rides',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFFD5C4AB),
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
+                      // "Remove from Favorites" Button
+                      OutlinedButton(
+                        onPressed: () =>
+                            controller.removeFromFavorites(chauffeur),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: Color(0xFFFEDB9B),
+                            width: 1.2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.r),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 10.h,
+                          ),
+                          backgroundColor: Colors.transparent,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.heart_broken_outlined,
+                              color: const Color(0xFFFEDB9B),
+                              size: 18.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              'Remove from Favorites',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFFEDB9B),
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 28.h),
 
-                  // Driver Information Title
+                  // Chauffeur Information Title
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Driver Information',
+                      'Chauffeur Information',
                       style: GoogleFonts.inter(
                         color: const Color(0xFFD5C4AB),
                         fontSize: 15.sp,
@@ -211,10 +258,47 @@ class PreferredDriverProfileView extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
+
                         _buildInfoRow(
-                          icon: Icons.calendar_today_outlined,
-                          title: 'Joined',
-                          value: driver.joinedDate,
+                          icon: Icons.business_outlined,
+                          title: 'Company',
+                          value: chauffeur.companyName,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          child: const Divider(
+                            color: Color(0xFF2C2C2C),
+                            thickness: 1,
+                          ),
+                        ),
+                        _buildInfoRow(
+                          icon: Icons.phone_outlined,
+                          title: 'Phone',
+                          value: chauffeur.phone,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          child: const Divider(
+                            color: Color(0xFF2C2C2C),
+                            thickness: 1,
+                          ),
+                        ),
+                        _buildInfoRow(
+                          icon: Icons.email_outlined,
+                          title: 'Email',
+                          value: chauffeur.email,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          child: const Divider(
+                            color: Color(0xFF2C2C2C),
+                            thickness: 1,
+                          ),
+                        ),
+                        _buildInfoRow(
+                          icon: Icons.map_outlined,
+                          title: 'Service Area',
+                          value: chauffeur.serviceArea,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -225,8 +309,8 @@ class PreferredDriverProfileView extends StatelessWidget {
                         ),
                         _buildInfoRow(
                           icon: Icons.directions_car_outlined,
-                          title: 'Vehicle',
-                          value: driver.vehicleName,
+                          title: 'Car - Tag',
+                          value: chauffeur.carTag,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -238,7 +322,82 @@ class PreferredDriverProfileView extends StatelessWidget {
                         _buildInfoRow(
                           icon: Icons.translate_outlined,
                           title: 'Languages',
-                          value: driver.languages,
+                          value: chauffeur.languages,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 28.h),
+
+                  // Accepted Payment Methods Title
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Accepted Payment Methods',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFD5C4AB),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+
+                  // Payment Card Container
+                  Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1A1A1A),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(
+                        color: const Color(0xFF2C2C2C),
+                        width: 0.98,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildInfoRow(
+                          icon: Icons.account_balance_wallet_outlined,
+                          title: 'Zelle',
+                          value: chauffeur.zelle,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          child: const Divider(
+                            color: Color(0xFF2C2C2C),
+                            thickness: 1,
+                          ),
+                        ),
+                        _buildInfoRow(
+                          icon: Icons.payment_outlined,
+                          title: 'Venmo',
+                          value: chauffeur.venmo,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          child: const Divider(
+                            color: Color(0xFF2C2C2C),
+                            thickness: 1,
+                          ),
+                        ),
+                        _buildInfoRow(
+                          icon: Icons.monetization_on_outlined,
+                          title: 'Cash App',
+                          value: chauffeur.cashApp,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          child: const Divider(
+                            color: Color(0xFF2C2C2C),
+                            thickness: 1,
+                          ),
+                        ),
+                        _buildInfoRow(
+                          icon: Icons.credit_card_outlined,
+                          title: 'Card Payment',
+                          value: chauffeur.cardPaymentAccepted
+                              ? 'Accepted ✅'
+                              : 'Not Accepted ❌',
                         ),
                       ],
                     ),
@@ -297,7 +456,7 @@ class PreferredDriverProfileView extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              driver.reviewDate,
+                              chauffeur.reviewDate,
                               style: GoogleFonts.inter(
                                 color: const Color(0xFFD5C4AB),
                                 fontSize: 12.sp,
@@ -307,7 +466,7 @@ class PreferredDriverProfileView extends StatelessWidget {
                         ),
                         SizedBox(height: 12.h),
                         Text(
-                          '"${driver.reviewText}"',
+                          '"${chauffeur.reviewText}"',
                           style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 14.sp,
@@ -334,13 +493,15 @@ class PreferredDriverProfileView extends StatelessWidget {
                               ),
                               child: CircleAvatar(
                                 radius: 16.r,
-                                backgroundImage: NetworkImage(driver.reviewerImageUrl),
+                                backgroundImage: NetworkImage(
+                                  chauffeur.reviewerImageUrl,
+                                ),
                                 backgroundColor: const Color(0xFF27272A),
                               ),
                             ),
                             SizedBox(width: 10.w),
                             Text(
-                              driver.reviewerName,
+                              chauffeur.reviewerName,
                               style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 14.sp,
@@ -375,11 +536,7 @@ class PreferredDriverProfileView extends StatelessWidget {
             color: const Color(0xFF27272A),
             borderRadius: BorderRadius.circular(8.r),
           ),
-          child: Icon(
-            icon,
-            color: const Color(0xFFD5C4AB),
-            size: 20.sp,
-          ),
+          child: Icon(icon, color: const Color(0xFFD5C4AB), size: 20.sp),
         ),
         SizedBox(width: 14.w),
         Expanded(

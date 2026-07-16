@@ -35,4 +35,12 @@ class NotificationsService extends GetxService {
       rethrow;
     }
   }
+
+  Future<Response> deleteNotification(String notificationId) async {
+    try {
+      return await _notificationsRepo.deleteNotification(notificationId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

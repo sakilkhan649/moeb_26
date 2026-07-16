@@ -10,6 +10,7 @@ import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomText_Field_Hight.dart';
 import 'package:moeb_26/core/widgets/Custom_Job_Button.dart';
 import '../controllers/job_post_controller.dart';
+import 'job_post_sheet_tabbar_view.dart';
 
 class OnewayScreen extends StatelessWidget {
   OnewayScreen({super.key});
@@ -35,6 +36,8 @@ class OnewayScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            JobPostSheetTabBarView.buildChauffeurSelection(context, postJobController),
+            SizedBox(height: 16.h),
             _buildFieldWithLabel(
               "Pickup Location",
               pickupController,

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
@@ -99,8 +100,8 @@ class ChatCommunityDetailView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  controller.room.name.replaceAll('Network', '').trim(),
+                Obx(() => Text(
+                  "${controller.selectedState.value} Chat",
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: 16.sp,
@@ -108,19 +109,73 @@ class ChatCommunityDetailView extends StatelessWidget {
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  'Network Chat',
+                )),
+                Obx(() => Text(
+                  '${controller.selectedState.value} Live Chat',
                   style: GoogleFonts.inter(
-                    color: Colors.white,
+                    color: Colors.white70,
                     fontSize: 12.sp,
                   ),
-                ),
+                )),
               ],
             ),
           ),
         ],
       ),
+      actions: [
+        Obx(() => DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            customButton: Container(
+              margin: EdgeInsets.only(right: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFF364153)),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    controller.selectedState.value,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFD5C4AB),
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 4.w),
+                  const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xFFD5C4AB),
+                    size: 16,
+                  ),
+                ],
+              ),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.r),
+                color: Colors.black,
+              ),
+              width: 160.w,
+            ),
+            items: controller.states.map((state) {
+              return DropdownMenuItem(
+                value: state,
+                child: Text(
+                  state,
+                  style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
+                ),
+              );
+            }).toList(),
+            onChanged: (val) {
+              if (val != null) {
+                controller.changeState(val);
+              }
+            },
+          ),
+        )),
+      ],
     );
   }
 

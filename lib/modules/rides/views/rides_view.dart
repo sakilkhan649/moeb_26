@@ -30,7 +30,7 @@ class RidesView extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: CustomText(text: "MY Rides", fontSize: 22.sp),
+                  child: CustomText(text: "My Rides", fontSize: 22.sp),
                 ),
                 // Expanded(
                 //   child: CustomJobButton(

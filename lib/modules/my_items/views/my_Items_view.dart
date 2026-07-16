@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/my_items_controller.dart';
 import '../../../core/widgets/my_items_card.dart';
 
@@ -14,10 +13,37 @@ class MyItemsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'My Items',
-        subtitle: 'MANAGE YOUR LISTINGS',
-        notificationCount: 3,
+      backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'My Items',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () => controller.fetchMyItems(),

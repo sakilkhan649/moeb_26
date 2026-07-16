@@ -72,6 +72,7 @@ class AuthService extends GetxService {
     File? localPermitFile,
     String? localPermitExpiry,
     required File headshotFile,
+    String? languages,
   }) async {
     try {
       final response = await _authRepo.signup(
@@ -91,6 +92,7 @@ class AuthService extends GetxService {
         localPermitFile: localPermitFile,
         localPermitExpiry: localPermitExpiry,
         headshotFile: headshotFile,
+        languages: languages,
       );
       return response;
     } catch (e) {

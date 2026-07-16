@@ -41,6 +41,7 @@ class AuthRepo {
     File? localPermitFile,
     String? localPermitExpiry,
     required File headshotFile,
+    String? languages,
   }) async {
     final formData = FormData();
 
@@ -60,6 +61,9 @@ class AuthRepo {
 
     if (localPermitExpiry != null) {
       formData.fields.add(MapEntry('localPermitExpiryDate', localPermitExpiry));
+    }
+    if (languages != null) {
+      formData.fields.add(MapEntry('languages', languages));
     }
 
     // Vehicle JSON string

@@ -13,64 +13,66 @@ class JobPostSheetTabBarView extends StatelessWidget {
   Widget build(BuildContext context) {
     final PostJobController controller = Get.find<PostJobController>();
 
-    return Container(
-      height: 0.9.sh,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      child: Column(
-        children: [
-          _buildHeader(),
-          _buildTabBar(controller),
-          _buildDriverSelection(context, controller),
-          SizedBox(height: 12.h),
-          Expanded(
-            child: Obx(
-              () => controller.jobType.value == 'One Way'
-                  ? OnewayScreen()
-                  : ByTheHour(),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
             ),
           ),
-        ],
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Post New Job',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 16.h),
+            _buildTabBar(controller),
+            SizedBox(height: 16.h),
+            Expanded(
+              child: Obx(
+                () => controller.jobType.value == 'One Way'
+                    ? OnewayScreen()
+                    : ByTheHour(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  static Widget buildChauffeurSelection(BuildContext context, PostJobController controller) {
     return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade800)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Post New Job',
-            style: GoogleFonts.inter(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            onPressed: () => Get.back(),
-            icon: Icon(Icons.close, color: Colors.white, size: 24.sp),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDriverSelection(BuildContext context, PostJobController controller) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      margin: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Driver Selection',
+            'Chauffeur Selection',
             style: GoogleFonts.inter(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
@@ -80,7 +82,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
           SizedBox(height: 8.h),
           Obx(
             () => GestureDetector(
-              onTap: () => _showDriverSelectionBottomSheet(context, controller),
+              onTap: () => showChauffeurSelectionBottomSheet(context, controller),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
@@ -92,7 +94,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      controller.driverSelectionText,
+                      controller.chauffeurSelectionText,
                       style: GoogleFonts.inter(
                         color: Colors.white,
                         fontSize: 15.sp,
@@ -108,12 +110,65 @@ class JobPostSheetTabBarView extends StatelessWidget {
               ),
             ),
           ),
+          // If Chauffeur Selection is 'Service Area / Chauffeur Favorite', show Service Area Picker
+          Obx(() {
+            if (controller.isGlobal.value) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 12.h),
+                  Text(
+                    'Select Service Area',
+                    style: GoogleFonts.inter(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFFD5C4AB),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  GestureDetector(
+                    onTap: () => showServiceAreaBottomSheet(context, controller),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1F1C1C),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(color: const Color(0xFF364153)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              controller.selectedServiceArea.value,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Color(0xFFD5C4AB),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
         ],
       ),
     );
   }
 
-  void _showDriverSelectionBottomSheet(
+  static void showChauffeurSelectionBottomSheet(
       BuildContext context, PostJobController controller) {
     Get.bottomSheet(
       Container(
@@ -142,10 +197,10 @@ class JobPostSheetTabBarView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.h),
-              
-              // Section 1: Global
+
+              // Section 1: Service Area / Chauffeur Favorite
               Text(
-                'Global',
+                'Service Area / Chauffeur Favorite',
                 style: GoogleFonts.inter(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
@@ -153,8 +208,8 @@ class JobPostSheetTabBarView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8.h),
-              
-              // Auto-assign Driver Card
+
+              // Auto-assign Chauffeur Card
               Obx(
                 () => GestureDetector(
                   onTap: () => controller.selectGlobal(),
@@ -200,7 +255,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Auto-assign Driver',
+                                'Auto-assign Chauffeur',
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontSize: 15.sp,
@@ -209,7 +264,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                               ),
                               SizedBox(height: 4.h),
                               Text(
-                                'Closest available professional',
+                                'Closest available chauffeur',
                                 style: GoogleFonts.inter(
                                   color: Colors.grey.shade500,
                                   fontSize: 13.sp,
@@ -224,10 +279,10 @@ class JobPostSheetTabBarView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 24.h),
-              
-              // Section 2: Favorite Drivers
+
+              // Section 2: Favorite Chauffeurs
               Text(
-                'Favorite Drivers',
+                'Favorite Chauffeurs',
                 style: GoogleFonts.inter(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
@@ -235,8 +290,8 @@ class JobPostSheetTabBarView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8.h),
-              
-              // Driver list items
+
+              // Chauffeur list items
               ...controller.favoriteDrivers.map((driver) {
                 return Padding(
                   padding: EdgeInsets.only(bottom: 12.h),
@@ -358,9 +413,9 @@ class JobPostSheetTabBarView extends StatelessWidget {
                   }),
                 );
               }),
-              
+
               SizedBox(height: 16.h),
-              
+
               // Done Button
               SizedBox(
                 width: double.infinity,
@@ -392,6 +447,77 @@ class JobPostSheetTabBarView extends StatelessWidget {
     );
   }
 
+  static void showServiceAreaBottomSheet(
+      BuildContext context, PostJobController controller) {
+    Get.bottomSheet(
+      Container(
+        height: 0.6.sh,
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0A0A0A),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          border: const Border(
+            top: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade800,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+            ),
+            SizedBox(height: 20.h),
+            Text(
+              'Select Service Area',
+              style: GoogleFonts.inter(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFD5C4AB),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Expanded(
+              child: ListView.builder(
+                itemCount: controller.serviceAreas.length,
+                itemBuilder: (context, index) {
+                  final area = controller.serviceAreas[index];
+                  return Obx(() {
+                    final isSelected = controller.selectedServiceArea.value == area;
+                    return ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 4.w),
+                      title: Text(
+                        area,
+                        style: GoogleFonts.inter(
+                          color: isSelected ? const Color(0xFFD08700) : Colors.white,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontSize: 15.sp,
+                        ),
+                      ),
+                      trailing: isSelected
+                          ? const Icon(Icons.check, color: Color(0xFFD08700))
+                          : null,
+                      onTap: () {
+                        controller.selectedServiceArea.value = area;
+                        Get.back();
+                      },
+                    );
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildTabBar(PostJobController controller) {
     return Obx(
       () => Container(
@@ -406,9 +532,9 @@ class JobPostSheetTabBarView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: controller.jobType.value == 'One Way'
                         ? Colors.white
-                        : Color(0xFF1F1C1C),
+                        : const Color(0xFF1F1C1C),
                     borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: Color(0xFF364153)),
+                    border: Border.all(color: const Color(0xFF364153)),
                   ),
                   child: Center(
                     child: Text(
@@ -434,9 +560,9 @@ class JobPostSheetTabBarView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: controller.jobType.value == 'By the hour'
                         ? Colors.white
-                        : Color(0xFF1F1C1C),
+                        : const Color(0xFF1F1C1C),
                     borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: Color(0xFF364153)),
+                    border: Border.all(color: const Color(0xFF364153)),
                   ),
                   child: Center(
                     child: Text(

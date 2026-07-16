@@ -34,8 +34,8 @@ class MarketplaceController extends GetxController {
   final TextEditingController locationController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
-  final Rxn<File> selectedImage = Rxn<File>();
-  final RxString existingImagePath = "".obs;
+  final RxList<File> selectedImages = <File>[].obs;
+  final RxList<String> existingImagePaths = <String>[].obs;
 
   @override
   void onInit() {
@@ -125,11 +125,13 @@ class MarketplaceController extends GetxController {
     fetchItems(query: query);
   }
 
-  Future<void> pickImage(BuildContext context) async {
-    final File? image = await MediaPickerHelper.pickSingleImage(context);
-    if (image != null) {
-      final compressed = await Helpers.compressImage(image);
-      selectedImage.value = compressed;
+  Future<void> pickImages(BuildContext context) async {
+    final List<File>? images = await MediaPickerHelper.pickMultiImages(context);
+    if (images != null && images.isNotEmpty) {
+      for (var image in images) {
+        final compressed = await Helpers.compressImage(image);
+        selectedImages.add(compressed);
+      }
     }
   }
 
@@ -164,8 +166,8 @@ class MarketplaceController extends GetxController {
               description: descriptionController.text.isNotEmpty
                   ? descriptionController.text
                   : null,
-              photos: selectedImage.value != null
-                  ? [selectedImage.value!]
+              photos: selectedImages.isNotEmpty
+                  ? selectedImages.toList()
                   : null,
             )
           : await _marketplaceService.updateItem(
@@ -179,8 +181,8 @@ class MarketplaceController extends GetxController {
               description: descriptionController.text.isNotEmpty
                   ? descriptionController.text
                   : null,
-              photos: selectedImage.value != null
-                  ? [selectedImage.value!]
+              photos: selectedImages.isNotEmpty
+                  ? selectedImages.toList()
                   : null,
               // status could also be updated here if needed
             );
@@ -231,8 +233,8 @@ class MarketplaceController extends GetxController {
     priceController.clear();
     locationController.clear();
     descriptionController.clear();
-    selectedImage.value = null;
-    existingImagePath.value = "";
+    selectedImages.clear();
+    existingImagePaths.clear();
     selectedCondition.value = "New";
   }
 
@@ -242,18 +244,18 @@ class MarketplaceController extends GetxController {
     String location,
     String condition,
     String description,
-    String? imagePath,
+    List<String> photos,
   ) {
     titleController.text = title;
     priceController.text = price;
     locationController.text = location;
     descriptionController.text = description;
-    existingImagePath.value = imagePath ?? "";
+    existingImagePaths.assignAll(photos);
     if (condition.isNotEmpty && conditions.contains(condition)) {
       selectedCondition.value = condition;
     } else {
       selectedCondition.value = "Used";
     }
-    selectedImage.value = null;
+    selectedImages.clear();
   }
 }

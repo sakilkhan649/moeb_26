@@ -38,7 +38,7 @@ class SellItemBottomSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    editItemId == null ? "Sell Item" : "Edit Item",
+                    editItemId == null ? "Item Description" : "Edit Item",
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontSize: 20.sp,
@@ -173,68 +173,154 @@ class SellItemBottomSheet extends StatelessWidget {
                       SizedBox(height: 20.h),
 
                       _buildLabel("Photos (Optional)"),
-                      Obx(
-                        () => GestureDetector(
-                          onTap: () => controller.pickImage(context),
-                          child: Container(
-                            width: double.infinity,
-                            padding:
-                                (controller.selectedImage.value != null ||
-                                    controller
-                                        .existingImagePath
-                                        .value
-                                        .isNotEmpty)
-                                ? EdgeInsets.zero
-                                : EdgeInsets.symmetric(vertical: 40.h),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF000000),
-                              borderRadius: BorderRadius.circular(16.r),
-                              border: Border.all(
-                                color: const Color(0xFF1A1A1A),
+                      Obx(() {
+                        final newImages = controller.selectedImages;
+                        final existingImages = controller.existingImagePaths;
+
+                        if (newImages.isEmpty && existingImages.isEmpty) {
+                          return GestureDetector(
+                            onTap: () => controller.pickImages(context),
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(vertical: 40.h),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF000000),
+                                borderRadius: BorderRadius.circular(16.r),
+                                border: Border.all(
+                                  color: const Color(0xFF1A1A1A),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.file_upload_outlined,
+                                    color: Colors.grey,
+                                    size: 32.sp,
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    "Upload or take Photos",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.grey,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: controller.selectedImage.value != null
-                                ? ClipRRect(
+                          );
+                        }
+
+                        return SizedBox(
+                          height: 100.h,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount:
+                                existingImages.length + newImages.length + 1,
+                            separatorBuilder: (context, index) =>
+                                SizedBox(width: 10.w),
+                            itemBuilder: (context, index) {
+                              // Last item is the "+ Add" button
+                              if (index ==
+                                  existingImages.length + newImages.length) {
+                                return GestureDetector(
+                                  onTap: () => controller.pickImages(context),
+                                  child: Container(
+                                    width: 100.h,
+                                    height: 100.h,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF1A1A1A),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      border: Border.all(
+                                        color: const Color(0xFF242424),
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                      size: 28.sp,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              // Existing Images first
+                              if (index < existingImages.length) {
+                                final path = existingImages[index];
+                                return Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      child: Image.network(
+                                        path,
+                                        width: 100.h,
+                                        height: 100.h,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 4.h,
+                                      right: 4.w,
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            existingImages.removeAt(index),
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.black54,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          padding: EdgeInsets.all(2.w),
+                                          child: Icon(
+                                            Icons.close,
+                                            color: Colors.red,
+                                            size: 16.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+
+                              // Newly selected images
+                              final newIndex = index - existingImages.length;
+                              final file = newImages[newIndex];
+                              return Stack(
+                                children: [
+                                  ClipRRect(
                                     borderRadius: BorderRadius.circular(16.r),
                                     child: Image.file(
-                                      controller.selectedImage.value!,
-                                      height: 150.h,
-                                      width: double.infinity,
+                                      file,
+                                      width: 100.h,
+                                      height: 100.h,
                                       fit: BoxFit.cover,
                                     ),
-                                  )
-                                : (controller.existingImagePath.value.isNotEmpty
-                                      ? ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            16.r,
-                                          ),
-                                          child: Image.network(
-                                            controller.existingImagePath.value,
-                                            height: 150.h,
-                                            width: double.infinity,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
-                                      : Column(
-                                          children: [
-                                            Icon(
-                                              Icons.file_upload_outlined,
-                                              color: Colors.grey,
-                                              size: 32.sp,
-                                            ),
-                                            SizedBox(height: 8.h),
-                                            Text(
-                                              "Upload or take Photos",
-                                              style: GoogleFonts.inter(
-                                                color: Colors.grey,
-                                                fontSize: 14.sp,
-                                              ),
-                                            ),
-                                          ],
-                                        )),
+                                  ),
+                                  Positioned(
+                                    top: 4.h,
+                                    right: 4.w,
+                                    child: GestureDetector(
+                                      onTap: () => newImages.removeAt(newIndex),
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          color: Colors.black54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        padding: EdgeInsets.all(2.w),
+                                        child: Icon(
+                                          Icons.close,
+                                          color: Colors.red,
+                                          size: 16.sp,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                       SizedBox(height: 30.h),
 
                       Obx(

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import '../../../core/widgets/Custom_Job_Button.dart';
-import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/market_place_controller.dart';
 import '../../../core/widgets/SellItemBottomSheet.dart';
 import '../../../core/widgets/MarketplaceCard.dart';
@@ -17,10 +16,36 @@ class MarketPlaceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Marketplace',
-        subtitle: 'WHERE THE NETWORK MEETS OPPORTUNITY',
-        notificationCount: 3,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Marketplace',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () => controller.fetchItems(),
@@ -29,7 +54,7 @@ class MarketPlaceView extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
-              SizedBox(height: 5.h),
+              SizedBox(height: 10.h),
 
               // "List Item for Sale" & "My Items" Buttons
               Row(

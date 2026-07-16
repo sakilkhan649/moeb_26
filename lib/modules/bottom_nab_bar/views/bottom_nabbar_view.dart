@@ -6,9 +6,9 @@ import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/controllers/bottom_nabbar_controller.dart';
 import 'package:moeb_26/modules/chat/views/chat_view.dart';
 import 'package:moeb_26/modules/jobs_offers/views/Job_offer_view.dart';
-import 'package:moeb_26/modules/market_place/views/market_place_view.dart';
 import 'package:moeb_26/modules/rides/views/rides_view.dart';
 import 'package:moeb_26/modules/preferred_drivers/views/preferred_drivers_view.dart';
+import 'package:moeb_26/modules/auth/profile/views/profile_view.dart';
 
 class BottomNabbarView extends StatelessWidget {
   BottomNabbarView({super.key});
@@ -17,8 +17,8 @@ class BottomNabbarView extends StatelessWidget {
     JobOfferView(),
     RidesView(),
     ChatView(),
-    MarketPlaceView(),
     const PreferredDriversView(),
+    ProfileView(),
   ];
 
   @override
@@ -32,7 +32,7 @@ class BottomNabbarView extends StatelessWidget {
           () => Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: Color(0xFF191919), // Background color
+              color: const Color(0xFF191919), // Background color
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.r),
                 topRight: Radius.circular(16.r),
@@ -100,9 +100,9 @@ class BottomNabbarView extends StatelessWidget {
       case 2:
         return AppIcons.chats_icon;
       case 3:
-        return AppIcons.marketplace_icon;
-      case 4:
         return AppIcons.favorite_icon;
+      case 4:
+        return AppIcons.person_icon;
       default:
         return '';
     }
@@ -117,9 +117,9 @@ class BottomNabbarView extends StatelessWidget {
       case 2:
         return 'Chat';
       case 3:
-        return 'Marketplace';
-      case 4:
         return 'Favorite';
+      case 4:
+        return 'Profile';
       default:
         return '';
     }

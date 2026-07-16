@@ -21,4 +21,10 @@ class NotificationsRepo {
       {},
     );
   }
+
+  Future<Response> deleteNotification(String notificationId) async {
+    return await apiClient.deleteData(
+      '${ApiConstants.notifications}/$notificationId',
+    );
+  }
 }

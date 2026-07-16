@@ -38,8 +38,10 @@ class SignupController extends GetxController {
   var showConfirmPassword = false.obs;
   var selectedRole = ''.obs;
   var selectedArea = ''.obs;
+  var selectedLanguages = <String>['English'].obs;
 
   final roles = ['Company manager', 'Owner operator', 'Driver'];
+  final List<String> availableLanguages = ['English', 'Spanish', 'Arabic', 'French', 'Bengali', 'German', 'Russian', 'Mandarin', 'Hindi', 'Urdu'];
 
   // Service Area data
   List<String> get cities => _serviceAreaController.serviceAreas
@@ -324,6 +326,7 @@ class SignupController extends GetxController {
             ? null
             : localPermitExpireController.text,
         headshotFile: profilePictureFile.value!,
+        languages: selectedLanguages.join(', '),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

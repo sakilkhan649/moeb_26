@@ -20,11 +20,12 @@ class CommunityService extends GetxService {
     }
   }
 
-  Future<Response> getCommunityMessages({int page = 1, int limit = 10}) async {
+  Future<Response> getCommunityMessages({int page = 1, int limit = 10, String? serviceArea}) async {
     try {
       return await _communityRepo.getCommunityMessages(
         page: page,
         limit: limit,
+        serviceArea: serviceArea,
       );
     } catch (e) {
       rethrow;

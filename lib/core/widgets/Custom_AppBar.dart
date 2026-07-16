@@ -6,36 +6,38 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
-import 'package:moeb_26/core/widgets/LogoutBottomSheet.dart';
 import 'package:moeb_26/modules/notifications/controllers/notifications_controller.dart';
 import 'package:moeb_26/modules/notifications/views/notifications_view.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
+import 'package:moeb_26/modules/market_place/views/market_place_view.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onNotificationTap;
   final VoidCallback? onAccountTap;
   final VoidCallback? onMyJobsTap;
-  final VoidCallback? onLogoutTap;
   final VoidCallback? serviceAreaTap;
   final VoidCallback? onMyProductsTap;
   final int notificationCount;
   final String? logoPath;
   final String? title;
   final String? subtitle;
+  final bool showBackButton;
+  final bool showActions;
 
   CustomAppBar({
     super.key,
     this.onNotificationTap,
     this.onAccountTap,
     this.onMyJobsTap,
-    this.onLogoutTap,
     this.serviceAreaTap,
     this.onMyProductsTap,
     this.notificationCount = 0,
     this.logoPath,
     this.title,
     this.subtitle,
+    this.showBackButton = false,
+    this.showActions = true,
   });
 
   final NotificationController _notificationController = Get.put(
@@ -48,7 +50,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       automaticallyImplyLeading: false,
-      titleSpacing: 4.w,
+      leading: showBackButton
+          ? IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            )
+          : null,
+      titleSpacing: showBackButton ? 0 : 4.w,
       title: Row(
         children: [
           if (logoPath != null && logoPath!.isNotEmpty) ...[
@@ -92,213 +104,175 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
-      actions: [
-        Obx(
-          () => GestureDetector(
-            onTap:
-                onNotificationTap ??
-                () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return NotificationsView();
-                    },
-                  );
-                },
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Icon(
-                  Icons.notifications_outlined,
-                  size: 30.sp,
-                  color: Colors.white,
-                ),
-                if (_notificationController.unreadCount > 0)
-                  Positioned(
-                    top: -2.w,
-                    right: -1.w,
-                    child: Container(
-                      width: 15.w,
-                      height: 15.w,
-                      decoration: const BoxDecoration(
-                        color: Colors.orange,
-                        shape: BoxShape.circle,
+      actions: showActions
+          ? [
+              Obx(
+                () => GestureDetector(
+                  onTap:
+                      onNotificationTap ??
+                      () {
+                        Get.toNamed(Routes.notificationsView);
+                      },
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(
+                        Icons.notifications_outlined,
+                        size: 30.sp,
+                        color: Colors.white,
                       ),
-                      child: Center(
-                        child: Text(
-                          _notificationController.unreadCount > 99
-                              ? '99+'
-                              : '${_notificationController.unreadCount}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
+                      if (_notificationController.unreadCount > 0)
+                        Positioned(
+                          top: -2.w,
+                          right: -1.w,
+                          child: Container(
+                            width: 15.w,
+                            height: 15.w,
+                            decoration: const BoxDecoration(
+                              color: Colors.orange,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                _notificationController.unreadCount > 99
+                                    ? '99+'
+                                    : '${_notificationController.unreadCount}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              PopupMenuButton<int>(
+                icon: Icon(Icons.menu, size: 30.sp, color: Colors.white),
+                color: const Color(0xFF1E1E1E), // Dark background
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  side: const BorderSide(color: Color(0xFF364153)),
+                ),
+                onSelected: (item) => handleMenuItemSelection(item),
+                itemBuilder: (context) => [
+                  PopupMenuItem<int>(
+                    value: 3,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.receipt_long_outlined,
+                          color: Colors.white,
+                          size: 24.sp,
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Text(
+                            'Create Invoice',
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Icon(
+                          CupertinoIcons.chevron_forward,
+                          size: 20.sp,
+                          color: Colors.white,
+                        ),
+                      ],
                     ),
                   ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(width: 10.w),
-        PopupMenuButton<int>(
-          icon: Icon(Icons.person_outline, size: 30.sp, color: Colors.white),
-          color: const Color(0xFF1E1E1E), // Dark background
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            side: const BorderSide(color: Color(0xFF364153)),
-          ),
-          onSelected: (item) => handleMenuItemSelection(item),
-          itemBuilder: (context) => [
-            PopupMenuItem<int>(
-              value: 0,
-              child: Row(
-                children: [
-                  Icon(Icons.person_outline, color: Colors.white, size: 24.sp),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      'Account',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  PopupMenuItem<int>(
+                    value: 4,
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          AppIcons.marketplace_icon,
+                          width: 24.sp,
+                          height: 24.sp,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Text(
+                            'Marketplace',
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Icon(
+                          CupertinoIcons.chevron_forward,
+                          size: 20.sp,
+                          color: Colors.white,
+                        ),
+                      ],
                     ),
                   ),
-                  Icon(
-                    CupertinoIcons.chevron_forward,
-                    size: 20.sp,
-                    color: Colors.white,
+                  PopupMenuItem<int>(
+                    value: 1,
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          AppIcons.deals_icon,
+                          width: 24.sp,
+                          height: 24.sp,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Text(
+                            'Deals',
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Icon(
+                          CupertinoIcons.chevron_forward,
+                          size: 20.sp,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
+                offset: const Offset(0, 50),
               ),
-            ),
-            PopupMenuItem<int>(
-              value: 3,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.receipt_long_outlined,
-                    color: Colors.white,
-                    size: 24.sp,
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      'Create Invoice',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.chevron_forward,
-                    size: 20.sp,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem<int>(
-              value: 1,
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    AppIcons.deals_icon,
-                    width: 24.sp,
-                    height: 24.sp,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      'Deals',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.chevron_forward,
-                    size: 20.sp,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-
-            PopupMenuItem<int>(
-              value: 2,
-              child: Row(
-                children: [
-                  Icon(Icons.logout_outlined, color: Colors.white, size: 24.sp),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      'Logout',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.chevron_forward,
-                    size: 20.sp,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-          ],
-          offset: const Offset(0, 50),
-        ),
-        // SizedBox(width: 16.w),
-      ],
+            ]
+          : null,
     );
   }
 
   void handleMenuItemSelection(int item) {
     switch (item) {
-      case 0:
-        if (onAccountTap != null) {
-          onAccountTap!();
-        } else {
-          Get.toNamed(Routes.profileView);
-        }
-        break;
       case 3:
         Get.toNamed(Routes.invoiceHistoryView);
         break;
+      case 4:
+        Get.to(() => MarketPlaceView());
+        break;
       case 1:
         Get.toNamed(Routes.dealsView);
-        break;
-
-      case 2:
-        if (onLogoutTap != null) {
-          onLogoutTap!();
-        } else {
-          Get.bottomSheet(
-            const LogoutBottomSheet(),
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-          );
-        }
         break;
     }
   }

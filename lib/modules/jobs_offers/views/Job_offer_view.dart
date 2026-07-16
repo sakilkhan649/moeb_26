@@ -84,11 +84,7 @@ class _JobOfferViewState extends State<JobOfferView> {
                                 horizontal: 8.w,
                               ),
                               onPressed: () {
-                                Get.bottomSheet(
-                                  JobPostSheetTabBarView(),
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                );
+                                Get.to(() => JobPostSheetTabBarView());
                               },
                             ),
                           ),

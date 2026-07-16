@@ -11,10 +11,16 @@ class CommunityRepo {
     return await apiClient.getData(ApiConstants.communityRoom);
   }
 
-  Future<Response> getCommunityMessages({int page = 1, int limit = 10}) async {
-    return await apiClient.getData(
-      "${ApiConstants.communityMessages}?page=$page&limit=$limit",
-    );
+  Future<Response> getCommunityMessages({
+    int page = 1,
+    int limit = 10,
+    String? serviceArea,
+  }) async {
+    String url = "${ApiConstants.communityMessages}?page=$page&limit=$limit";
+    if (serviceArea != null && serviceArea.isNotEmpty) {
+      url += "&serviceArea=$serviceArea";
+    }
+    return await apiClient.getData(url);
   }
 
   Future<Response> sendCommunityMessage({

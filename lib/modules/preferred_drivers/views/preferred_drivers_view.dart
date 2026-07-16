@@ -17,19 +17,75 @@ class PreferredDriversView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: CustomAppBar(
-        title: 'Favorite Driver',
-        subtitle: 'YOUR FAVORITE LIST OF DRIVERS',
+        title: 'Favorite Chauffeur',
+        subtitle: 'YOUR FAVORITE LIST OF CHAUFFEURS',
         notificationCount: 3,
       ),
       body: Column(
         children: [
-          // Driver list content
+          // Search Bar
+          Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
+            child: TextFormField(
+              onChanged: (value) => controller.searchQuery.value = value,
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 14.sp,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Search by phone or email...',
+                hintStyle: GoogleFonts.inter(
+                  color: Colors.grey,
+                  fontSize: 14.sp,
+                ),
+                filled: true,
+                fillColor: const Color(0xFF1A1A1A),
+                prefixIcon: Padding(
+                  padding: EdgeInsets.only(left: 12.w, right: 8.w),
+                  child: Icon(
+                    Icons.search,
+                    color: Colors.grey,
+                    size: 20.sp,
+                  ),
+                ),
+                prefixIconConstraints: BoxConstraints(
+                  minWidth: 36.w,
+                  minHeight: 36.h,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 12.h,
+                  horizontal: 16.w,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(
+                    color: const Color(0xFF2C2C2C),
+                    width: 0.98,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(color: const Color(0xFFD08700), width: 1.w),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(
+                    color: const Color(0xFF2C2C2C),
+                    width: 0.98,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Chauffeur list content
           Expanded(
             child: Obx(() {
-              if (controller.driversList.isEmpty) {
+              if (controller.filteredChauffeursList.isEmpty) {
                 return Center(
                   child: Text(
-                    'No favorite drivers added yet.',
+                    controller.searchQuery.isEmpty
+                        ? 'No favorite chauffeurs added yet.'
+                        : 'No matching chauffeurs found.',
                     style: GoogleFonts.inter(
                       color: const Color(0xFFD5C4AB),
                       fontSize: 16.sp,
@@ -38,11 +94,11 @@ class PreferredDriversView extends StatelessWidget {
                 );
               }
               return ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-                itemCount: controller.driversList.length,
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                itemCount: controller.filteredChauffeursList.length,
                 separatorBuilder: (context, index) => SizedBox(height: 16.h),
                 itemBuilder: (context, index) {
-                  final driver = controller.driversList[index];
+                  final chauffeur = controller.filteredChauffeursList[index];
                   return Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
@@ -66,7 +122,7 @@ class PreferredDriversView extends StatelessWidget {
                           ),
                           child: CircleAvatar(
                             radius: 28.r,
-                            backgroundImage: NetworkImage(driver.imageUrl),
+                            backgroundImage: NetworkImage(chauffeur.imageUrl),
                             backgroundColor: const Color(0xFF27272A),
                           ),
                         ),
@@ -79,7 +135,7 @@ class PreferredDriversView extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                driver.name,
+                                chauffeur.name,
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontSize: 16.sp,
@@ -96,7 +152,7 @@ class PreferredDriversView extends StatelessWidget {
                                   ),
                                   SizedBox(width: 4.w),
                                   Text(
-                                    driver.rating.toString(),
+                                    chauffeur.rating.toString(),
                                     style: GoogleFonts.inter(
                                       color: Colors.white,
                                       fontSize: 14.sp,
@@ -105,7 +161,7 @@ class PreferredDriversView extends StatelessWidget {
                                   ),
                                   SizedBox(width: 4.w),
                                   Text(
-                                    driver.ratingCount,
+                                    chauffeur.ratingCount,
                                     style: GoogleFonts.inter(
                                       color: const Color(0xFFD5C4AB),
                                       fontSize: 12.sp,
@@ -120,7 +176,7 @@ class PreferredDriversView extends StatelessWidget {
 
                         // Right: View Profile Button
                         ElevatedButton(
-                          onPressed: () => controller.viewProfile(driver),
+                          onPressed: () => controller.viewProfile(chauffeur),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFD08700),
                             foregroundColor: Colors.black,

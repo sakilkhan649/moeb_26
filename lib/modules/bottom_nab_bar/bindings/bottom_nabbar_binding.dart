@@ -7,6 +7,7 @@ import 'package:moeb_26/modules/market_place/controllers/market_place_controller
 import 'package:moeb_26/modules/my_jobs/controllers/my_jobs_controller.dart';
 import 'package:moeb_26/modules/rides/controllers/rides_controller.dart';
 import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
+import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
 
 class BottomNabbarBinding extends Bindings {
   @override
@@ -19,6 +20,7 @@ class BottomNabbarBinding extends Bindings {
     Get.lazyPut(() => DealsController(), fenix: true);
     Get.lazyPut(() => PostJobController(), fenix: true);
     Get.lazyPut(() => PreferredDriversController(), fenix: true);
+    Get.lazyPut(() => ProfileController(), fenix: true);
   }
 }
 

@@ -10,6 +10,7 @@ import 'package:moeb_26/core/widgets/CustomText_Field_Hight.dart';
 import 'package:moeb_26/core/widgets/Custom_Job_Button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import '../controllers/job_post_controller.dart';
+import 'job_post_sheet_tabbar_view.dart';
 
 class ByTheHour extends StatelessWidget {
   ByTheHour({super.key});
@@ -34,6 +35,8 @@ class ByTheHour extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            JobPostSheetTabBarView.buildChauffeurSelection(context, controller),
+            SizedBox(height: 16.h),
             _buildFieldWithLabel(
               "From",
               fromController,

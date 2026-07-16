@@ -6,14 +6,14 @@ import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/job_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 
-class FavoriteDriverSelection {
+class FavoriteChauffeurSelection {
   final String name;
   final String imageUrl;
   final String vehicleName;
   final double rating;
   final bool isTopRated;
 
-  FavoriteDriverSelection({
+  FavoriteChauffeurSelection({
     required this.name,
     required this.imageUrl,
     required this.vehicleName,
@@ -30,12 +30,66 @@ class PostJobController extends GetxController {
   var selectedVehicle = ''.obs;
   var isLoading = false.obs;
 
-  // Driver Selection State
+  // Chauffeur Selection State
   var isGlobal = true.obs;
   var selectedDrivers = <String>[].obs;
+  var selectedServiceArea = 'Miami, FL'.obs;
 
-  final List<FavoriteDriverSelection> favoriteDrivers = [
-    FavoriteDriverSelection(
+  final List<String> serviceAreas = [
+    'Miami, FL',
+    'Fort Lauderdale, FL',
+    'West Palm Beach, FL',
+    'Boca Raton, FL',
+    'Orlando, FL',
+    'Tampa, FL',
+    'Jacksonville, FL',
+    'Naples, FL',
+    'Sarasota, FL',
+    'Fort Myers, FL',
+    'Los Angeles, CA',
+    'San Francisco, CA',
+    'San Diego, CA',
+    'San Jose, CA',
+    'Sacramento, CA',
+    'Santa Barbara, CA',
+    'Dallas, TX',
+    'Houston, TX',
+    'Austin, TX',
+    'San Antonio, TX',
+    'New York City, NY',
+    'Chicago, IL',
+    'Washington, DC',
+    'Las Vegas, NV',
+    'Boston, MA',
+    'Atlanta, GA',
+    'Seattle, WA',
+    'Denver, CO',
+    'Aspen, CO',
+    'Phoenix, AZ',
+    'Scottsdale, AZ',
+    'Philadelphia, PA',
+    'Pittsburgh, PA',
+    'Charlotte, NC',
+    'Raleigh, NC',
+    'Nashville, TN',
+    'Minneapolis, MN',
+    'New Orleans, LA',
+    'Salt Lake City, UT',
+    'Portland, OR',
+    'Detroit, MI',
+    'Kansas City, MO',
+    'St. Louis, MO',
+    'Columbus, OH',
+    'Cincinnati, OH',
+    'Cleveland, OH',
+    'Indianapolis, IN',
+    'Richmond, VA',
+    'Charleston, SC',
+    'Greenwich, CT',
+  ];
+
+  final List<FavoriteChauffeurSelection> favoriteDrivers = [
+    FavoriteChauffeurSelection(
       name: 'Marcus J.',
       imageUrl:
           'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150',
@@ -43,7 +97,7 @@ class PostJobController extends GetxController {
       rating: 4.98,
       isTopRated: true,
     ),
-    FavoriteDriverSelection(
+    FavoriteChauffeurSelection(
       name: 'Elena V.',
       imageUrl:
           'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
@@ -51,7 +105,7 @@ class PostJobController extends GetxController {
       rating: 4.95,
       isTopRated: false,
     ),
-    FavoriteDriverSelection(
+    FavoriteChauffeurSelection(
       name: 'Julian K.',
       imageUrl:
           'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
@@ -61,11 +115,11 @@ class PostJobController extends GetxController {
     ),
   ];
 
-  String get driverSelectionText {
+  String get chauffeurSelectionText {
     if (isGlobal.value || selectedDrivers.isEmpty) {
-      return 'Global';
+      return 'Service Area / Chauffeur Favorite';
     } else {
-      return 'Preffered Driver';
+      return 'Preferred Chauffeur';
     }
   }
 
@@ -219,7 +273,9 @@ class PostJobController extends GetxController {
             ? 'NO COLLECT'
             : 'COLLECT',
         instruction: instruction,
-        driverSelection: isGlobal.value ? 'Global' : selectedDrivers.join(', '),
+        driverSelection: isGlobal.value
+            ? 'Service Area: ${selectedServiceArea.value}'
+            : selectedDrivers.join(', '),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -270,7 +326,9 @@ class PostJobController extends GetxController {
             ? 'NO COLLECT'
             : 'COLLECT',
         instruction: instruction,
-        driverSelection: isGlobal.value ? 'Global' : selectedDrivers.join(', '),
+        driverSelection: isGlobal.value
+            ? 'Service Area: ${selectedServiceArea.value}'
+            : selectedDrivers.join(', '),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

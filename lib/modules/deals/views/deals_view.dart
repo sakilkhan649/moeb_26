@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/data/models/deals_model.dart';
-import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/deals_controller.dart';
 import '../../../core/widgets/QrPopup.dart';
 
@@ -19,10 +18,37 @@ class DealsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Deals',
-        subtitle: 'ELITE NETWORK EXCLUSIVE SAVINGS',
-        notificationCount: 3,
+      backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Deals',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () => controller.fetchDeals(),

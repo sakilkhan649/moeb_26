@@ -20,7 +20,7 @@ class ChatView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Messages',
+        title: 'Chats',
         subtitle: 'Messaging',
         notificationCount: 3,
       ),

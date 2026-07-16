@@ -159,7 +159,7 @@ class MyItemsCard extends StatelessWidget {
                     item.location,
                     item.condition,
                     item.description,
-                    item.imagePath,
+                    item.photos,
                   );
                   Get.bottomSheet(
                     SellItemBottomSheet(editItemId: item.id),

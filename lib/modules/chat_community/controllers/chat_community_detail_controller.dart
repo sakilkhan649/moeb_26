@@ -21,18 +21,44 @@ class CommunityChatDetailController extends GetxController {
   final RxList<File> selectedImages = <File>[].obs;
 
   late CommunityRoom room;
+  var selectedState = 'Florida'.obs;
+
+  final List<String> states = [
+    'Florida', 'California', 'Texas', 'New York', 'Illinois', 'District of Columbia',
+    'Nevada', 'Massachusetts', 'Georgia', 'Washington', 'Colorado', 'Arizona',
+    'Pennsylvania', 'North Carolina', 'Tennessee', 'Minnesota', 'Louisiana', 'Utah',
+    'Oregon', 'Michigan', 'Missouri', 'Ohio', 'Indiana', 'Virginia', 'South Carolina',
+    'Connecticut'
+  ];
 
   @override
   void onInit() {
     super.onInit();
     room = Get.arguments;
+    // Set initial state matching Florida, California, Texas, etc.
+    if (room.serviceArea != null && room.serviceArea.isNotEmpty) {
+      final String area = room.serviceArea.toLowerCase();
+      for (var state in states) {
+        if (area.contains(state.toLowerCase())) {
+          selectedState.value = state;
+          break;
+        }
+      }
+    }
     fetchMessages();
     setupSocket();
   }
 
+  void changeState(String newState) {
+    if (selectedState.value == newState) return;
+    socketService.leaveRoom('community::${selectedState.value.toLowerCase()}');
+    selectedState.value = newState;
+    socketService.joinRoom('community::${newState.toLowerCase()}');
+    fetchMessages();
+  }
+
   void setupSocket() {
-    // Community chat use room joining by community::${serviceArea}
-    socketService.joinRoom('community::${room.serviceArea}');
+    socketService.joinRoom('community::${selectedState.value.toLowerCase()}');
 
     ever(socketService.lastReceivedCommunityMessage, (data) {
       if (data != null) {
@@ -47,7 +73,9 @@ class CommunityChatDetailController extends GetxController {
   Future<void> fetchMessages() async {
     try {
       isLoading.value = true;
-      final response = await _communityService.getCommunityMessages();
+      final response = await _communityService.getCommunityMessages(
+        serviceArea: selectedState.value,
+      );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List data = response.data['data'] ?? [];
         messages.assignAll(
@@ -120,7 +148,7 @@ class CommunityChatDetailController extends GetxController {
 
   @override
   void onClose() {
-    socketService.leaveRoom('community::${room.serviceArea}');
+    socketService.leaveRoom('community::${selectedState.value.toLowerCase()}');
     messageController.dispose();
     super.onClose();
   }
