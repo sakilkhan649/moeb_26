@@ -65,7 +65,8 @@ class PreferredDriversController extends GetxController {
       carTag: 'Mercedes-Benz S580 / NY-77B99',
       rating: 4.9,
       ratingCount: '(1.2k)',
-      imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150',
+      imageUrl:
+          'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150',
       joinedDate: 'Oct 2022',
       vehicleName: 'Mercedes-Benz S-Class',
       languages: 'English, Spanish',
@@ -77,9 +78,11 @@ class PreferredDriversController extends GetxController {
       cashApp: '\$MarcusChauffeur',
       cardPaymentAccepted: true,
       reviewDate: '2 days ago',
-      reviewText: 'Excellent service. Marcus was extremely polite and the car was immaculate. Definitely my preferred chauffeur from now on.',
+      reviewText:
+          'Excellent service. Marcus was extremely polite and the car was immaculate. Definitely my preferred chauffeur from now on.',
       reviewerName: 'Sarah T.',
-      reviewerImageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100',
+      reviewerImageUrl:
+          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100',
     ),
     FavoriteChauffeur(
       id: 'sarah_k',
@@ -89,7 +92,8 @@ class PreferredDriversController extends GetxController {
       carTag: 'BMW 750i / CA-99X88',
       rating: 4.8,
       ratingCount: '(850)',
-      imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
+      imageUrl:
+          'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
       joinedDate: 'Jan 2023',
       vehicleName: 'BMW 7 Series',
       languages: 'English, German',
@@ -101,9 +105,11 @@ class PreferredDriversController extends GetxController {
       cashApp: '\$SarahKChauffeur',
       cardPaymentAccepted: true,
       reviewDate: '5 days ago',
-      reviewText: 'Sarah was very professional and prompt. The ride was extremely comfortable and smooth. Highly recommended!',
+      reviewText:
+          'Sarah was very professional and prompt. The ride was extremely comfortable and smooth. Highly recommended!',
       reviewerName: 'Michael P.',
-      reviewerImageUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100',
+      reviewerImageUrl:
+          'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100',
     ),
     FavoriteChauffeur(
       id: 'david_l',
@@ -113,7 +119,8 @@ class PreferredDriversController extends GetxController {
       carTag: 'Audi A8 L / IL-44Y55',
       rating: 5.0,
       ratingCount: '(2.1k)',
-      imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+      imageUrl:
+          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
       joinedDate: 'Jun 2021',
       vehicleName: 'Audi A8L',
       languages: 'English, French',
@@ -125,9 +132,11 @@ class PreferredDriversController extends GetxController {
       cashApp: '\$DavidLChauffeur',
       cardPaymentAccepted: true,
       reviewDate: '1 day ago',
-      reviewText: 'David always provides a 5-star experience. Friendly conversation and very clean vehicle. Best chauffeur on the platform!',
+      reviewText:
+          'David always provides a 5-star experience. Friendly conversation and very clean vehicle. Best chauffeur on the platform!',
       reviewerName: 'John D.',
-      reviewerImageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
+      reviewerImageUrl:
+          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
     ),
     FavoriteChauffeur(
       id: 'elena_r',
@@ -137,7 +146,8 @@ class PreferredDriversController extends GetxController {
       carTag: 'Tesla Model S / FL-88Z77',
       rating: 4.9,
       ratingCount: '(420)',
-      imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      imageUrl:
+          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
       joinedDate: 'Mar 2023',
       vehicleName: 'Tesla Model S',
       languages: 'English, Russian',
@@ -149,14 +159,128 @@ class PreferredDriversController extends GetxController {
       cashApp: '\$ElenaRChauffeur',
       cardPaymentAccepted: false,
       reviewDate: '1 week ago',
-      reviewText: "Elena's Tesla was super clean and quiet. She is a very safe chauffeur and was extremely polite. Will book again!",
+      reviewText:
+          "Elena's Tesla was super clean and quiet. She is a very safe chauffeur and was extremely polite. Will book again!",
       reviewerName: 'Emily R.',
-      reviewerImageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      reviewerImageUrl:
+          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     ),
   ].obs;
 
   final Rxn<FavoriteChauffeur> selectedChauffeur = Rxn<FavoriteChauffeur>();
   final RxString searchQuery = ''.obs;
+  final RxString globalSearchQuery = ''.obs;
+
+  // Global pool of all drivers (in a real app, this would come from an API)
+  final List<FavoriteChauffeur> globalDriverPool = [
+    FavoriteChauffeur(
+      id: 'james_b',
+      name: 'James B.',
+      companyName: 'NYC Premier Rides',
+      carTag: 'Cadillac CT6 / NY-11A22',
+      rating: 4.7,
+      ratingCount: '(630)',
+      imageUrl:
+          'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=150',
+      joinedDate: 'Jul 2022',
+      vehicleName: 'Cadillac CT6',
+      languages: 'English',
+      phone: '+1 (555) 012-3456',
+      email: 'james.b@example.com',
+      serviceArea: 'New York Metro Area',
+      zelle: 'james.b@example.com',
+      venmo: '@james-b-chauffeur',
+      cashApp: r'$JamesBChauffeur',
+      cardPaymentAccepted: true,
+      reviewDate: '3 days ago',
+      reviewText: 'Great service!',
+      reviewerName: 'Alice M.',
+      reviewerImageUrl:
+          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100',
+    ),
+    FavoriteChauffeur(
+      id: 'nina_s',
+      name: 'Nina S.',
+      companyName: 'Florida Luxury Transport',
+      carTag: 'Lincoln Navigator / FL-55C33',
+      rating: 4.6,
+      ratingCount: '(290)',
+      imageUrl:
+          'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=150',
+      joinedDate: 'Apr 2023',
+      vehicleName: 'Lincoln Navigator',
+      languages: 'English, Portuguese',
+      phone: '+1 (555) 098-7654',
+      email: 'nina.s@example.com',
+      serviceArea: 'Miami Metro Area',
+      zelle: 'nina.s@example.com',
+      venmo: '@nina-s-chauffeur',
+      cashApp: r'$NinaSChauffeur',
+      cardPaymentAccepted: true,
+      reviewDate: '1 week ago',
+      reviewText: 'Very professional and on time.',
+      reviewerName: 'Carlos R.',
+      reviewerImageUrl:
+          'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100',
+    ),
+    FavoriteChauffeur(
+      id: 'kevin_m',
+      name: 'Kevin M.',
+      companyName: 'Chicago Elite Limo',
+      carTag: 'Bentley Mulsanne / IL-22D44',
+      rating: 5.0,
+      ratingCount: '(1.5k)',
+      imageUrl:
+          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
+      joinedDate: 'Jan 2021',
+      vehicleName: 'Bentley Mulsanne',
+      languages: 'English, Mandarin',
+      phone: '+1 (555) 076-5432',
+      email: 'kevin.m@example.com',
+      serviceArea: 'Chicago Area',
+      zelle: 'kevin.m@example.com',
+      venmo: '@kevin-m-chauffeur',
+      cashApp: r'$KevinMChauffeur',
+      cardPaymentAccepted: true,
+      reviewDate: '2 days ago',
+      reviewText: 'Absolutely top-notch service.',
+      reviewerName: 'Rachel K.',
+      reviewerImageUrl:
+          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    ),
+  ];
+
+  List<FavoriteChauffeur> get filteredGlobalResults {
+    final query = globalSearchQuery.value.toLowerCase().trim();
+    if (query.isEmpty) return [];
+    // Search all drivers including favorites
+    final allDrivers = [...chauffeursList, ...globalDriverPool];
+    final uniqueIds = <String>{};
+    return allDrivers.where((d) {
+      if (!uniqueIds.add(d.id)) return false;
+      return d.name.toLowerCase().contains(query) ||
+          d.phone.toLowerCase().contains(query) ||
+          d.email.toLowerCase().contains(query) ||
+          d.serviceArea.toLowerCase().contains(query) ||
+          d.companyName.toLowerCase().contains(query);
+    }).toList();
+  }
+
+  bool isInFavorites(String id) => chauffeursList.any((c) => c.id == id);
+
+  void addToFavorites(FavoriteChauffeur chauffeur) {
+    if (!isInFavorites(chauffeur.id)) {
+      chauffeursList.add(chauffeur);
+      Get.snackbar(
+        "Added to Favorites",
+        "${chauffeur.name} added to your favorites!",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFF1E1E1E),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+    }
+  }
 
   List<FavoriteChauffeur> get filteredChauffeursList {
     if (searchQuery.isEmpty) {
@@ -215,7 +339,12 @@ class PreferredDriversController extends GetxController {
           final fallbackChat = ChatPreview(
             id: 'mock_chat_${chauffeur.id}',
             participants: [
-              ChatParticipant(id: userService.userId.isNotEmpty ? userService.userId : 'user_id', name: 'Me'),
+              ChatParticipant(
+                id: userService.userId.isNotEmpty
+                    ? userService.userId
+                    : 'user_id',
+                name: 'Me',
+              ),
               ChatParticipant(
                 id: chauffeur.id,
                 name: chauffeur.name,
@@ -223,7 +352,9 @@ class PreferredDriversController extends GetxController {
                 email: chauffeur.email,
               ),
             ],
-            createdBy: userService.userId.isNotEmpty ? userService.userId : 'user_id',
+            createdBy: userService.userId.isNotEmpty
+                ? userService.userId
+                : 'user_id',
             createdAt: DateTime.now().toIso8601String(),
             updatedAt: DateTime.now().toIso8601String(),
           );
@@ -236,7 +367,10 @@ class PreferredDriversController extends GetxController {
       final fallbackChat = ChatPreview(
         id: 'mock_chat_${chauffeur.id}',
         participants: [
-          ChatParticipant(id: userService.userId.isNotEmpty ? userService.userId : 'user_id', name: 'Me'),
+          ChatParticipant(
+            id: userService.userId.isNotEmpty ? userService.userId : 'user_id',
+            name: 'Me',
+          ),
           ChatParticipant(
             id: chauffeur.id,
             name: chauffeur.name,
@@ -244,7 +378,9 @@ class PreferredDriversController extends GetxController {
             email: chauffeur.email,
           ),
         ],
-        createdBy: userService.userId.isNotEmpty ? userService.userId : 'user_id',
+        createdBy: userService.userId.isNotEmpty
+            ? userService.userId
+            : 'user_id',
         createdAt: DateTime.now().toIso8601String(),
         updatedAt: DateTime.now().toIso8601String(),
       );
