@@ -81,6 +81,50 @@ class ChatController extends GetxController {
       isLoading.value = true;
       final fetchedChats = await socketRepo.getChats();
       chats.assignAll(fetchedChats);
+      
+      if (chats.isEmpty) {
+        final currentUserId = Get.find<UserService>().userId;
+        chats.addAll([
+          ChatPreview(
+            id: 'demo_admin_chat',
+            participants: [
+              ChatParticipant(
+                id: currentUserId,
+                name: 'You',
+              ),
+              ChatParticipant(
+                id: 'admin_id',
+                name: 'Ekkali Support',
+                profilePicture: 'assets/images/ekkali support.png',
+              ),
+            ],
+            lastMessage: 'Hello! Let us know if you have any questions.',
+            lastMessageAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
+            createdBy: 'admin_id',
+            createdAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
+            updatedAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
+          ),
+          ChatPreview(
+            id: 'demo_user_chat',
+            participants: [
+              ChatParticipant(
+                id: currentUserId,
+                name: 'You',
+              ),
+              ChatParticipant(
+                id: 'demo_user_id',
+                name: 'Demo User',
+                profilePicture: null,
+              ),
+            ],
+            lastMessage: 'Hey, is the offer still available?',
+            lastMessageAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+            createdBy: 'demo_user_id',
+            createdAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+            updatedAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+          ),
+        ]);
+      }
       filteredChats.assignAll(chats);
     } catch (e) {
       Get.snackbar('Error', 'Failed to load chats');

@@ -13,23 +13,45 @@ class EditProfileBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasUploadedPhoto = controller.userProfile.value?.profilePicture != null &&
+        controller.userProfile.value!.profilePicture.isNotEmpty;
+
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
       maxChildSize: 0.95,
       minChildSize: 0.5,
       builder: (context, scrollController) => Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1E2632),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+          color: Colors.black, // Dark background matching request
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          border: Border.all(
+            color: const Color(0xFF1E1E1E),
+            width: 1.5,
+          ),
         ),
         child: Column(
           children: [
-            // Header
+            // Sheet Pull Handle
+            SizedBox(height: 12.h),
+            Center(
+              child: Container(
+                width: 48.w,
+                height: 5.h,
+                decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+
+            // Header Section
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -44,41 +66,53 @@ class EditProfileBottomSheet extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () => Get.back(),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white.withValues(alpha: 0.5),
-                      size: 24.sp,
+                    child: Container(
+                      padding: EdgeInsets.all(4.r),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF111827),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: const Color(0xFF1E1E1E)),
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white70,
+                        size: 20.sp,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+
             Expanded(
               child: SingleChildScrollView(
                 controller: scrollController,
                 padding: EdgeInsets.fromLTRB(
                   20.w,
-                  20.h,
+                  24.h,
                   20.w,
-                  MediaQuery.of(context).viewInsets.bottom + 20.h,
+                  MediaQuery.of(context).viewInsets.bottom + 24.h,
                 ),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Profile Picture Section
                       Center(
                         child: Stack(
                           children: [
                             Obx(
                               () => Container(
-                                height: 100.h,
-                                width: 100.h,
+                                height: 110.h,
+                                width: 110.h,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                    width: 2,
+                                    color: hasUploadedPhoto
+                                        ? const Color(0xFF374151)
+                                        : const Color(0xFFFF9800), // Orange outline if not uploaded
+                                    width: 2.5,
                                   ),
                                   image: DecorationImage(
                                     image: controller.pickedImage.value != null
@@ -92,9 +126,8 @@ class EditProfileBottomSheet extends StatelessWidget {
                                                   .isEmpty ??
                                               true)
                                         ? const AssetImage(
-                                                "assets/images/profile.png",
-                                              )
-                                              as ImageProvider
+                                                "assets/images/sadat_image", // fallback
+                                              ) as ImageProvider
                                         : NetworkImage(
                                             controller
                                                 .userProfile
@@ -107,35 +140,66 @@ class EditProfileBottomSheet extends StatelessWidget {
                               ),
                             ),
                             Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: GestureDetector(
-                                onTap: () => controller.pickImage(context),
-                                child: Container(
-                                  padding: EdgeInsets.all(8.h),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    color: Colors.black,
-                                    size: 16.sp,
-                                  ),
-                                ),
-                              ),
+                              bottom: 2.h,
+                              right: 2.w,
+                              child: hasUploadedPhoto
+                                  ? Container(
+                                      padding: EdgeInsets.all(8.h),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[900],
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: const Color(0xFF374151)),
+                                      ),
+                                      child: Icon(
+                                        Icons.lock,
+                                        color: Colors.white70,
+                                        size: 16.sp,
+                                      ),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () => controller.pickImage(context),
+                                      child: Container(
+                                        padding: EdgeInsets.all(8.h),
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFFF9800), // Orange theme camera edit button
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.white,
+                                          size: 16.sp,
+                                        ),
+                                      ),
+                                    ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 24.h),
+                      
+                      // Lock Warning Banner if Photo is Locked
+                      if (hasUploadedPhoto) ...[
+                        SizedBox(height: 12.h),
+                        Center(
+                          child: Text(
+                            "Profile photo is locked for professional verification",
+                            style: GoogleFonts.inter(
+                              color: Colors.grey[500],
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                      SizedBox(height: 28.h),
+
+                      // Full Name Field (ReadOnly & Locked)
                       _buildField(
                         "Full Name",
                         controller.nameController,
                         readOnly: true,
                         suffixIcon: Icon(
                           Icons.lock_outline,
-                          color: Colors.grey,
+                          color: Colors.grey[600],
                           size: 18.sp,
                         ),
                         validator: (value) {
@@ -145,13 +209,15 @@ class EditProfileBottomSheet extends StatelessWidget {
                           return null;
                         },
                       ),
+
+                      // Email Field (ReadOnly & Locked)
                       _buildField(
                         "Email",
                         controller.emailController,
                         readOnly: true,
                         suffixIcon: Icon(
                           Icons.lock_outline,
-                          color: Colors.grey,
+                          color: Colors.grey[600],
                           size: 18.sp,
                         ),
                         validator: (value) {
@@ -164,10 +230,12 @@ class EditProfileBottomSheet extends StatelessWidget {
                           return null;
                         },
                       ),
+
+                      // Phone Field (Editable)
                       _buildField(
                         "Phone",
-                        keyboardType: TextInputType.phone,
                         controller.phoneController,
+                        keyboardType: TextInputType.phone,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter your phone number";
@@ -176,10 +244,15 @@ class EditProfileBottomSheet extends StatelessWidget {
                         },
                       ),
 
-                      _buildField("Nick Name", controller.nickNameController),
+                      // Nick Name Field (Editable)
+                      _buildField(
+                        "Nick Name",
+                        controller.nickNameController,
+                      ),
 
-                      SizedBox(height: 30.h),
+                      SizedBox(height: 36.h),
 
+                      // Actions Block
                       Row(
                         children: [
                           Expanded(
@@ -188,14 +261,18 @@ class EditProfileBottomSheet extends StatelessWidget {
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 16.h),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12.r),
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  border: Border.all(
+                                    color: const Color(0xFF374151),
+                                    width: 1.5,
+                                  ),
                                 ),
                                 child: Center(
                                   child: Text(
                                     "Cancel",
                                     style: GoogleFonts.inter(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -216,8 +293,15 @@ class EditProfileBottomSheet extends StatelessWidget {
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 16.h),
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(12.r),
+                                  color: const Color(0xFFFF9800), // Orange theme save button
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFFF9800).withOpacity(0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
                                 child: Center(
                                   child: Obx(
@@ -225,11 +309,10 @@ class EditProfileBottomSheet extends StatelessWidget {
                                         ? SizedBox(
                                             height: 20.h,
                                             width: 20.h,
-                                            child:
-                                                const CircularProgressIndicator(
-                                                  color: Colors.white,
-                                                  strokeWidth: 2,
-                                                ),
+                                            child: const CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2.5,
+                                            ),
                                           )
                                         : Text(
                                             "Save Changes",
@@ -258,7 +341,6 @@ class EditProfileBottomSheet extends StatelessWidget {
     );
   }
 
-
   Widget _buildField(
     String label,
     TextEditingController textController, {
@@ -268,7 +350,7 @@ class EditProfileBottomSheet extends StatelessWidget {
     Widget? suffixIcon,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.only(bottom: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -287,28 +369,36 @@ class EditProfileBottomSheet extends StatelessWidget {
             keyboardType: keyboardType,
             readOnly: readOnly,
             style: GoogleFonts.inter(
-              color: readOnly ? Colors.grey : Colors.white,
+              color: readOnly ? Colors.grey[500] : Colors.white,
+              fontSize: 15.sp,
             ),
             decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.black.withValues(alpha: 0.2),
+              fillColor: readOnly ? const Color(0xFF0F172A) : const Color(0xFF111827),
               errorStyle: TextStyle(fontSize: 12.sp),
               suffixIcon: suffixIcon,
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 16.w,
-                vertical: 12.h,
+                vertical: 14.h,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                borderRadius: BorderRadius.circular(14.r),
+                borderSide: BorderSide(
+                  color: readOnly ? const Color(0xFF1E293B) : const Color(0xFF374151),
+                ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                borderRadius: BorderRadius.circular(14.r),
+                borderSide: BorderSide(
+                  color: readOnly ? const Color(0xFF1E293B) : const Color(0xFF374151),
+                ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: const BorderSide(color: Colors.grey),
+                borderRadius: BorderRadius.circular(14.r),
+                borderSide: BorderSide(
+                  color: readOnly ? const Color(0xFF1E293B) : const Color(0xFFFF9800),
+                  width: readOnly ? 1 : 1.5,
+                ),
               ),
             ),
           ),

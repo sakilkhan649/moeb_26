@@ -133,6 +133,12 @@ class ProfileController extends GetxController {
   }
 
   Future<void> pickImage(BuildContext context) async {
+    final hasUploadedPhoto = userProfile.value?.profilePicture != null &&
+        userProfile.value!.profilePicture.isNotEmpty;
+    if (hasUploadedPhoto) {
+      Helpers.showCustomSnackBar("Profile pictures cannot be changed once uploaded.", isError: true);
+      return;
+    }
     final File? image = await MediaPickerHelper.pickSingleImage(context);
 
     if (image != null) {

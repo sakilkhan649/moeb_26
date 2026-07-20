@@ -31,62 +31,56 @@ class PostJobController extends GetxController {
   var isLoading = false.obs;
 
   // Chauffeur Selection State
-  var isGlobal = true.obs;
+  var chauffeurSelectionType = ''.obs; // '', 'global', or 'favorites'
   var selectedDrivers = <String>[].obs;
-  var selectedServiceArea = 'Miami, FL'.obs;
+  var selectedServiceAreas = <String>[].obs;
 
-  final List<String> serviceAreas = [
-    'Miami, FL',
-    'Fort Lauderdale, FL',
-    'West Palm Beach, FL',
-    'Boca Raton, FL',
-    'Orlando, FL',
-    'Tampa, FL',
-    'Jacksonville, FL',
-    'Naples, FL',
-    'Sarasota, FL',
-    'Fort Myers, FL',
-    'Los Angeles, CA',
-    'San Francisco, CA',
-    'San Diego, CA',
-    'San Jose, CA',
-    'Sacramento, CA',
-    'Santa Barbara, CA',
-    'Dallas, TX',
-    'Houston, TX',
-    'Austin, TX',
-    'San Antonio, TX',
-    'New York City, NY',
-    'Chicago, IL',
-    'Washington, DC',
-    'Las Vegas, NV',
-    'Boston, MA',
-    'Atlanta, GA',
-    'Seattle, WA',
-    'Denver, CO',
-    'Aspen, CO',
-    'Phoenix, AZ',
-    'Scottsdale, AZ',
-    'Philadelphia, PA',
-    'Pittsburgh, PA',
-    'Charlotte, NC',
-    'Raleigh, NC',
-    'Nashville, TN',
-    'Minneapolis, MN',
-    'New Orleans, LA',
-    'Salt Lake City, UT',
-    'Portland, OR',
-    'Detroit, MI',
-    'Kansas City, MO',
-    'St. Louis, MO',
-    'Columbus, OH',
-    'Cincinnati, OH',
-    'Cleveland, OH',
-    'Indianapolis, IN',
-    'Richmond, VA',
-    'Charleston, SC',
-    'Greenwich, CT',
-  ];
+  final Map<String, List<String>> stateServiceAreas = {
+    'Florida': [
+      'Miami, FL',
+      'Fort Lauderdale, FL',
+      'West Palm Beach, FL',
+      'Boca Raton, FL',
+      'Orlando, FL',
+      'Tampa, FL',
+      'Jacksonville, FL',
+      'Naples, FL',
+      'Sarasota, FL',
+      'Fort Myers, FL',
+    ],
+    'California': [
+      'Los Angeles, CA',
+      'San Francisco, CA',
+      'San Diego, CA',
+      'San Jose, CA',
+      'Sacramento, CA',
+      'Santa Barbara, CA',
+    ],
+    'Texas': ['Dallas, TX', 'Houston, TX', 'Austin, TX', 'San Antonio, TX'],
+    'New York': ['New York City, NY'],
+    'Illinois': ['Chicago, IL'],
+    'District of Columbia': ['Washington, DC'],
+    'Nevada': ['Las Vegas, NV'],
+    'Massachusetts': ['Boston, MA'],
+    'Georgia': ['Atlanta, GA'],
+    'Washington State': ['Seattle, WA'],
+    'Colorado': ['Denver, CO', 'Aspen, CO'],
+    'Arizona': ['Phoenix, AZ', 'Scottsdale, AZ'],
+    'Pennsylvania': ['Philadelphia, PA', 'Pittsburgh, PA'],
+    'North Carolina': ['Charlotte, NC', 'Raleigh, NC'],
+    'Tennessee': ['Nashville, TN'],
+    'Minnesota': ['Minneapolis, MN'],
+    'Louisiana': ['New Orleans, LA'],
+    'Utah': ['Salt Lake City, UT'],
+    'Oregon': ['Portland, OR'],
+    'Michigan': ['Detroit, MI'],
+    'Missouri': ['Kansas City, MO', 'St. Louis, MO'],
+    'Ohio': ['Columbus, OH', 'Cincinnati, OH', 'Cleveland, OH'],
+    'Indiana': ['Indianapolis, IN'],
+    'Virginia': ['Richmond, VA'],
+    'South Carolina': ['Charleston, SC'],
+    'Connecticut': ['Greenwich, CT'],
+  };
 
   final List<FavoriteChauffeurSelection> favoriteDrivers = [
     FavoriteChauffeurSelection(
@@ -116,27 +110,55 @@ class PostJobController extends GetxController {
   ];
 
   String get chauffeurSelectionText {
-    if (isGlobal.value || selectedDrivers.isEmpty) {
-      return 'Service Area / Chauffeur Favorite';
-    } else {
-      return 'Preferred Chauffeur';
+    if (chauffeurSelectionType.value == 'global') {
+      if (selectedServiceAreas.isEmpty) {
+        return 'Select Service Area';
+      }
+      final cities = selectedServiceAreas
+          .map((city) => city.split(',').first.trim())
+          .join(', ');
+      return 'Auto-assign: $cities';
+    } else if (chauffeurSelectionType.value == 'favorites' &&
+        selectedDrivers.isNotEmpty) {
+      return 'Preferred: ${selectedDrivers.join(', ')}';
     }
+    return 'Select Chauffeur / Service Area';
   }
 
   void selectGlobal() {
-    isGlobal.value = true;
+    chauffeurSelectionType.value = 'global';
     selectedDrivers.clear();
   }
 
   void toggleDriverSelection(String name) {
+    if (chauffeurSelectionType.value != 'favorites') {
+      chauffeurSelectionType.value = 'favorites';
+      selectedDrivers.clear();
+      selectedServiceAreas.clear();
+    }
     if (selectedDrivers.contains(name)) {
       selectedDrivers.remove(name);
       if (selectedDrivers.isEmpty) {
-        isGlobal.value = true;
+        chauffeurSelectionType.value = '';
       }
     } else {
       selectedDrivers.add(name);
-      isGlobal.value = false;
+    }
+  }
+
+  void toggleServiceAreaSelection(String area) {
+    if (chauffeurSelectionType.value != 'global') {
+      chauffeurSelectionType.value = 'global';
+      selectedDrivers.clear();
+      selectedServiceAreas.clear();
+    }
+    if (selectedServiceAreas.contains(area)) {
+      selectedServiceAreas.remove(area);
+      if (selectedServiceAreas.isEmpty) {
+        chauffeurSelectionType.value = '';
+      }
+    } else {
+      selectedServiceAreas.add(area);
     }
   }
 
@@ -273,8 +295,8 @@ class PostJobController extends GetxController {
             ? 'NO COLLECT'
             : 'COLLECT',
         instruction: instruction,
-        driverSelection: isGlobal.value
-            ? 'Service Area: ${selectedServiceArea.value}'
+        driverSelection: chauffeurSelectionType.value == 'global'
+            ? 'Service Area: ${selectedServiceAreas.join(', ')}'
             : selectedDrivers.join(', '),
       );
 
@@ -326,8 +348,8 @@ class PostJobController extends GetxController {
             ? 'NO COLLECT'
             : 'COLLECT',
         instruction: instruction,
-        driverSelection: isGlobal.value
-            ? 'Service Area: ${selectedServiceArea.value}'
+        driverSelection: chauffeurSelectionType.value == 'global'
+            ? 'Service Area: ${selectedServiceAreas.join(', ')}'
             : selectedDrivers.join(', '),
       );
 

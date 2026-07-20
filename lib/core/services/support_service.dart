@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:moeb_26/data/repositories/support_repository.dart';
@@ -22,11 +23,13 @@ class SupportService extends GetxService {
   Future<Response> createSupport({
     required String subject,
     required String message,
+    List<File>? attachments,
   }) async {
     try {
       return await _supportRepo.createSupport(
         subject: subject,
         message: message,
+        attachments: attachments,
       );
     } catch (e) {
       rethrow;

@@ -4,16 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/data/models/my_jobs_model.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/modules/ride_progress_way_location/views/ride_progress_way_location_view.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
-import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
-import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
 import '../controllers/my_jobs_controller.dart';
 
 class VehicleTypeColors {
@@ -83,7 +80,40 @@ class _MyJobsViewState extends State<MyJobsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () {
+                controller.setJobAcceptanceView(false);
+                Get.toNamed(Routes.bottomNabbarView);
+              },
+            ),
+            title: Text(
+              'My Jobs',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
       body: RefreshIndicator(
         color: AppColors.orange100,
         onRefresh: () async {
@@ -102,28 +132,7 @@ class _MyJobsViewState extends State<MyJobsView> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Stack(
-                        alignment: Alignment.centerLeft,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              controller.setJobAcceptanceView(false);
-                              Get.toNamed(Routes.bottomNabbarView);
-                            },
-                            icon: Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.white,
-                              size: 20.sp,
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: CustomText(text: "My Jobs", fontSize: 20.sp),
-                          ),
-                        ],
-                      ),
-                      Divider(color: Colors.white, thickness: 1.h),
-                      SizedBox(height: 8.h),
+                      SizedBox(height: 15.h),
 
                       /// ================= JOB CARD =================
                       Obx(() {

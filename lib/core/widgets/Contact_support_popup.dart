@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,163 +12,231 @@ import 'package:moeb_26/core/widgets/Custom_ButtonIcon.dart';
 import '../../modules/auth/authentication/controllers/support_controller.dart';
 
 // ============================================
-// FUNCTION: Bottom Sheet Show Korar Jonno
+// FUNCTION: Navigation helper for Contact Support
 // ============================================
 void showContactSupportBottomSheet() {
-  Get.bottomSheet(
-    ContactSupportBottomSheet(),
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    isDismissible: true,
-  );
+  Get.to(() => const ContactSupportView());
 }
 
 // ============================================
-// MAIN WIDGET: Contact Support Bottom Sheet
+// WIDGET 1: Contact Support Tickets List View
 // ============================================
-class ContactSupportBottomSheet extends StatelessWidget {
-  ContactSupportBottomSheet({super.key});
+class ContactSupportView extends StatefulWidget {
+  const ContactSupportView({super.key});
 
-  final _formKey = GlobalKey<FormState>();
-  final SupportController controller = Get.put(SupportController());
+  @override
+  State<ContactSupportView> createState() => _ContactSupportViewState();
+}
+
+class _ContactSupportViewState extends State<ContactSupportView> {
+  late final SupportController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(SupportController());
+    controller.fetchMyTickets();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 700.h,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Section
-          _buildHeader(),
-
-          // Form Content Section
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await controller.fetchMyTickets();
-              },
-              color: Colors.white,
-              backgroundColor: const Color(0xFF111827),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    // Tickets List (If any)
-                    Obx(() {
-                      if (controller.isLoading.value) {
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(20.w),
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          ),
-                        );
-                      }
-                      if (controller.tickets.isEmpty) return SizedBox.shrink();
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 10.h,
-                            ),
-                            child: CustomText(
-                              text: "My Support Tickets",
-                              fontSize: 16.sp,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 190.h,
-                            child: ListView.builder(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20.w,
-                                vertical: 20.w,
-                              ),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: controller.tickets.length,
-                              itemBuilder: (context, index) {
-                                final ticket = controller.tickets[index];
-                                return _buildTicketCard(ticket);
-                              },
-                            ),
-                          ),
-                          Divider(color: Colors.grey[900]),
-                        ],
-                      );
-                    }),
-
-                    Form(key: _formKey, child: _buildFormContent()),
-                  ],
-                ),
-              ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
             ),
           ),
-          SizedBox(height: 20.h),
-        ],
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Support Tickets',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await controller.fetchMyTickets();
+          },
+          color: Colors.white,
+          backgroundColor: const Color(0xFF111827),
+          child: Obx(() {
+            if (controller.isLoading.value && controller.tickets.isEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              );
+            }
+
+            if (controller.tickets.isEmpty) {
+              return _buildEmptyState(context);
+            }
+
+            return ListView.builder(
+              padding: EdgeInsets.all(20.w),
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: controller.tickets.length,
+              itemBuilder: (context, index) {
+                final ticket = controller.tickets[index];
+                return _buildTicketListItem(ticket);
+              },
+            );
+          }),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Get.to(() => const CreateSupportTicketView())?.then((_) {
+            // Refresh list when returning
+            controller.fetchMyTickets();
+          });
+        },
+        backgroundColor: const Color(0xFFFF9800), // Premium orange color matching App Theme
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          "Create Ticket",
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 14.sp,
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildTicketCard(dynamic ticket) {
-    return GestureDetector(
-      onTap: () => controller.handleTicketTap(ticket),
+  Widget _buildEmptyState(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       child: Container(
-        width: 250.w,
-        margin: EdgeInsets.only(right: 12.w),
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color: Color(0xFF111827),
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: Color(0xFF374151)),
-        ),
+        height: 0.75.sh,
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 40.w),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Container(
+              padding: EdgeInsets.all(24.r),
+              decoration: BoxDecoration(
+                color: const Color(0xFF111827),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF374151), width: 2),
+              ),
+              child: Icon(
+                Icons.confirmation_number_outlined,
+                color: Colors.grey[500],
+                size: 64.sp,
+              ),
+            ),
+            SizedBox(height: 24.h),
             Text(
-              ticket['subject'] ?? 'No Subject',
+              "No Support Tickets Yet",
               style: GoogleFonts.inter(
                 color: Colors.white,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 12.h),
             Text(
-              ticket['messages'] != null && ticket['messages'].isNotEmpty
-                  ? ticket['messages'].last['message']
-                  : 'No messages',
+              "Have a question, issue, or need help? Create a support ticket and our team will get back to you shortly.",
               style: GoogleFonts.inter(
-                color: Colors.grey[400],
-                fontSize: 12.sp,
+                color: Colors.grey[500],
+                fontSize: 14.sp,
+                height: 1.4,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                _formatDate(ticket['createdAt']),
-                style: GoogleFonts.inter(
-                  color: Colors.grey[600],
-                  fontSize: 10.sp,
-                ),
-              ),
+              textAlign: TextAlign.center,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTicketListItem(dynamic ticket) {
+    final hasMessages = ticket['messages'] != null && ticket['messages'].isNotEmpty;
+    final lastMessage = hasMessages ? ticket['messages'].last['message'] : 'No messages';
+    final subject = ticket['subject'] ?? 'No Subject';
+    final dateStr = _formatDate(ticket['createdAt']);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF111827),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFF374151)),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16.r),
+        onTap: () => controller.handleTicketTap(ticket),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      subject,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      lastMessage,
+                      style: GoogleFonts.inter(
+                        color: Colors.grey[400],
+                        fontSize: 13.sp,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      dateStr,
+                      style: GoogleFonts.inter(
+                        color: Colors.grey[600],
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.grey[600],
+                size: 16.sp,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -182,68 +251,103 @@ class ContactSupportBottomSheet extends StatelessWidget {
       return "";
     }
   }
+}
 
-  // ============================================
-  // HEADER SECTION
-  // ============================================
-  Widget _buildHeader() {
-    return Column(
-      children: [
-        SizedBox(height: 24.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomText(text: "Contact Support", fontSize: 20.sp),
-              IconButton(
-                icon: Icon(Icons.close, color: Colors.white),
-                onPressed: () => Get.back(),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+// ============================================
+// WIDGET 2: Contact Support Create Ticket View
+// ============================================
+class CreateSupportTicketView extends StatefulWidget {
+  const CreateSupportTicketView({super.key});
+
+  @override
+  State<CreateSupportTicketView> createState() => _CreateSupportTicketViewState();
+}
+
+class _CreateSupportTicketViewState extends State<CreateSupportTicketView> {
+  final _formKey = GlobalKey<FormState>();
+  late final SupportController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<SupportController>();
+    controller.subjectController.clear();
+    controller.messageController.clear();
+    controller.selectedFiles.clear();
   }
 
-  // ============================================
-  // FORM CONTENT SECTION
-  // ============================================
-  Widget _buildFormContent() {
-    return Padding(
-      padding: EdgeInsets.all(20.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Subject Field
-          _buildSubjectField(controller.subjectController),
-          SizedBox(height: 24.h),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Create Support Ticket',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildSubjectField(controller.subjectController),
+                  SizedBox(height: 24.h),
 
-          // Message Field
-          _buildMessageField(controller.messageController),
-          SizedBox(height: 24.h),
+                  _buildMessageField(controller.messageController),
+                  SizedBox(height: 24.h),
 
-          // Info Box
-          _buildInfoBox(),
-          SizedBox(height: 24.h),
+                  _buildAttachmentsField(context),
+                  SizedBox(height: 24.h),
 
-          // Action Buttons
-          _buildActionButtons(),
-          SizedBox(height: 16.h),
-        ],
+                  _buildInfoBox(),
+                  SizedBox(height: 32.h),
+
+                  _buildActionButtons(),
+                  SizedBox(height: 16.h),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  // ============================================
-  // SUBJECT FIELD
-  // ============================================
-  Widget _buildSubjectField(TextEditingController controller) {
+  Widget _buildSubjectField(TextEditingController textController) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label
         Text(
           'Subject',
           style: GoogleFonts.inter(
@@ -253,10 +357,8 @@ class ContactSupportBottomSheet extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8.h),
-
-        // Input Field
         Customtextfield(
-          controller: controller,
+          controller: textController,
           hintText: "Enter subject",
           obscureText: false,
           textInputType: TextInputType.text,
@@ -271,14 +373,10 @@ class ContactSupportBottomSheet extends StatelessWidget {
     );
   }
 
-  // ============================================
-  // MESSAGE FIELD
-  // ============================================
-  Widget _buildMessageField(TextEditingController controller) {
+  Widget _buildMessageField(TextEditingController textController) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label
         Text(
           'Message',
           style: GoogleFonts.inter(
@@ -288,10 +386,8 @@ class ContactSupportBottomSheet extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8.h),
-
-        // Multi-line Input Field
         TextFormField(
-          controller: controller,
+          controller: textController,
           style: TextStyle(color: Colors.white, fontSize: 16.sp),
           maxLines: 5,
           validator: (value) {
@@ -338,9 +434,155 @@ class ContactSupportBottomSheet extends StatelessWidget {
     );
   }
 
-  // ============================================
-  // INFO BOX (Response Time)
-  // ============================================
+  Widget _buildAttachmentsField(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Attachments (e.g. screenshots)',
+              style: GoogleFonts.inter(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+            GestureDetector(
+              onTap: () => controller.pickAttachment(context),
+              child: Row(
+                children: [
+                  Icon(Icons.add_circle_outline, color: const Color(0xFFFF9800), size: 20.sp),
+                  SizedBox(width: 4.w),
+                  Text(
+                    'Add File',
+                    style: GoogleFonts.inter(
+                      fontSize: 14.sp,
+                      color: const Color(0xFFFF9800),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8.h),
+
+        Obx(() {
+          if (controller.selectedFiles.isEmpty) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+              decoration: BoxDecoration(
+                color: const Color(0xFF111827),
+                borderRadius: BorderRadius.circular(16.r),
+                border: Border.all(color: const Color(0xFF374151)),
+              ),
+              child: GestureDetector(
+                onTap: () => controller.pickAttachment(context),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.attach_file, color: Colors.grey, size: 20.sp),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "No attachments selected. Tap to add.",
+                      style: GoogleFonts.inter(color: Colors.grey, fontSize: 13.sp),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return SizedBox(
+            height: 90.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.selectedFiles.length,
+              itemBuilder: (context, index) {
+                final file = controller.selectedFiles[index];
+                final isImage = file.path.toLowerCase().endsWith('.png') ||
+                    file.path.toLowerCase().endsWith('.jpg') ||
+                    file.path.toLowerCase().endsWith('.jpeg') ||
+                    file.path.toLowerCase().endsWith('.webp');
+
+                return Container(
+                  margin: EdgeInsets.only(right: 12.w),
+                  width: 90.w,
+                  height: 90.h,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF111827),
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(color: const Color(0xFF374151)),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: isImage
+                                ? Image.file(
+                                    file,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.insert_drive_file, color: Colors.white70, size: 28.sp),
+                                        SizedBox(height: 4.h),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 4.w),
+                                          child: Text(
+                                            file.path.split('/').last,
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white70,
+                                              fontSize: 8.sp,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 2.h,
+                        right: 2.w,
+                        child: GestureDetector(
+                          onTap: () => controller.removeAttachment(index),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            padding: EdgeInsets.all(4.r),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
   Widget _buildInfoBox() {
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -352,7 +594,6 @@ class ContactSupportBottomSheet extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icon
           Container(
             margin: EdgeInsets.only(top: 2.h),
             child: SvgPicture.asset(
@@ -362,13 +603,10 @@ class ContactSupportBottomSheet extends StatelessWidget {
             ),
           ),
           SizedBox(width: 12.w),
-
-          // Text Content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
                 Text(
                   'Average Response Time',
                   style: GoogleFonts.inter(
@@ -378,8 +616,6 @@ class ContactSupportBottomSheet extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 4.h),
-
-                // Description
                 Text(
                   'Our support team typically responds within 24 hours during business days.',
                   style: GoogleFonts.inter(
@@ -395,13 +631,9 @@ class ContactSupportBottomSheet extends StatelessWidget {
     );
   }
 
-  // ============================================
-  // ACTION BUTTONS (Cancel & Send)
-  // ============================================
   Widget _buildActionButtons() {
     return Row(
       children: [
-        // Cancel Button
         Expanded(
           child: CustomButton(
             text: "Cancel",
@@ -411,8 +643,6 @@ class ContactSupportBottomSheet extends StatelessWidget {
           ),
         ),
         SizedBox(width: 12.w),
-
-        // Send Message Button
         Expanded(
           child: Obx(
             () => CustomButtonIcon(
@@ -426,7 +656,7 @@ class ContactSupportBottomSheet extends StatelessWidget {
                   ? SizedBox(
                       width: 20.w,
                       height: 20.w,
-                      child: CircularProgressIndicator(
+                      child: const CircularProgressIndicator(
                         strokeWidth: 2,
                         color: Colors.white,
                       ),

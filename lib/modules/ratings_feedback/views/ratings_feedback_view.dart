@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import '../controllers/ratings_feedback_controller.dart';
 import '../../../core/widgets/CustomText.dart';
-import '../../../core/widgets/Custom_AppBar.dart';
 
 class RatingsFeedbackView extends StatelessWidget {
   RatingsFeedbackView({super.key});
@@ -17,7 +17,37 @@ class RatingsFeedbackView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Ratings & Feedback',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
       body: RefreshIndicator(
         color: const Color(0xFFF1A107),
         onRefresh: () => controller.fetchReviews(),
@@ -35,42 +65,7 @@ class RatingsFeedbackView extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Column(
                   children: [
-                    SizedBox(height: 20.h),
-                    // Header Section
-                    SizedBox(
-                      width: double.infinity,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: IconButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              icon: Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                                size: 20.sp,
-                              ),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 40.w),
-                            child: CustomText(
-                              text: "Ratings & Feedback",
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w600,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: 15.h),
                     // Summary Row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

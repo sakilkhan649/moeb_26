@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import '../../data/models/my_items_model.dart';
 import '../../modules/my_items/controllers/my_items_controller.dart';
-import 'ImagePreviewPopup.dart';
+import '../../modules/market_place/views/market_place_detail_view.dart';
 import 'SellItemBottomSheet.dart';
 import '../../modules/market_place/controllers/market_place_controller.dart';
 
@@ -17,113 +17,196 @@ class MyItemsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 270.h,
-      decoration: BoxDecoration(color: const Color(0xFF1A1A1A)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Item Image
-          GestureDetector(
-            onTap: () {
-              Get.dialog(
-                ImagePreviewPopup(imageUrl: item.imagePath, title: item.name),
-              );
-            },
-            child: ClipRRect(child: _buildImage()),
+    final String location = item.location.split(',').first.trim();
+
+    return GestureDetector(
+      onTap: () {
+        Get.to(
+          () => MarketplaceItemDetailView(
+            item: item.toItemData(),
+            isOwnItem: true,
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.all(4.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF111113),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: const Color(0xFF222226), width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Image Stack with Overlay Badge
+            Stack(
               children: [
-                // Item Name
-                SizedBox(
-                  height: 38.h,
-                  child: Text(
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(15.r),
+                  ),
+                  child: _buildImage(),
+                ),
+                // Floating Condition Badge
+                Positioned(
+                  top: 8.h,
+                  left: 8.w,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 5.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: const Color(0xFF2C2C2C)),
+                    ),
+                    child: Text(
+                      item.condition,
+                      style: GoogleFonts.inter(
+                        color: item.condition.toLowerCase() == 'new'
+                            ? Colors.green.shade400
+                            : const Color(0xFFFF9800),
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Info Section
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title Name
+                  Text(
                     item.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withValues(alpha: 0.95),
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.bold,
+                      height: 1.3,
                     ),
                   ),
-                ),
-                SizedBox(height: 4.h),
-                // Price and Condition
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "\$${item.price}",
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFFF1A107),
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Text(
-                        item.condition,
-                        textAlign: TextAlign.end,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xff949494),
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 4.h),
-          // Bottom Row: Status badge + Popup menu icon
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 2.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: item.status == 'Active'
-                        ? Colors.green.withValues(alpha: 0.2)
-                        : Colors.orange.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  child: Text(
-                    item.status,
+                  SizedBox(height: 4.h),
+
+                  // Price
+                  Text(
+                    "\$${item.price}",
                     style: GoogleFonts.inter(
-                      color: item.status == 'Active'
-                          ? Colors.green
-                          : Colors.orange,
-                      fontSize: 10.sp,
+                      color: const Color(0xFFFF9800),
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () => _showOptionsDialog(context),
-                  child: Icon(
-                    Icons.more_vert,
-                    color: Colors.white,
-                    size: 18.sp,
+                  SizedBox(height: 6.h),
+
+                  // Location row
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        color: Colors.grey.shade500,
+                        size: 13.sp,
+                      ),
+                      SizedBox(width: 3.w),
+                      Expanded(
+                        child: Text(
+                          location,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            color: Colors.grey.shade500,
+                            fontSize: 11.sp,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                  SizedBox(height: 6.h),
+
+                  // Status + Options row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Status Pill
+                      Flexible(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E1E22),
+                            borderRadius: BorderRadius.circular(30.r),
+                            border: Border.all(color: const Color(0xFF2D2D33)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6.w,
+                                height: 6.w,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: item.status == 'Active'
+                                      ? Colors.green
+                                      : Colors.orange,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: item.status == 'Active'
+                                          ? Colors.green.withValues(alpha: 0.5)
+                                          : Colors.orange.withValues(alpha: 0.5),
+                                      blurRadius: 4,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 5.w),
+                              Text(
+                                item.status,
+                                style: GoogleFonts.inter(
+                                  color: Colors.white70,
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Options Trigger
+                      GestureDetector(
+                        onTap: () => _showOptionsDialog(context),
+                        child: Icon(
+                          Icons.more_vert,
+                          color: Colors.white,
+                          size: 18.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -226,7 +309,6 @@ class MyItemsCard extends StatelessWidget {
             ),
           ],
         ),
-        // Remove actions entirely — using content column instead
         actionsPadding: EdgeInsets.zero,
       ),
     );
@@ -235,7 +317,7 @@ class MyItemsCard extends StatelessWidget {
   Widget _buildImage() {
     if (item.imagePath.isEmpty) {
       return Container(
-        height: 130.h,
+        height: 115.h,
         width: double.infinity,
         color: Colors.grey[900],
         child: Icon(
@@ -248,11 +330,11 @@ class MyItemsCard extends StatelessWidget {
 
     return Image.network(
       item.imagePath,
-      height: 130.h,
+      height: 115.h,
       width: double.infinity,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) => Container(
-        height: 130.h,
+        height: 115.h,
         width: double.infinity,
         color: Colors.grey[900],
         child: Icon(

@@ -6,10 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart' as my_rides;
 import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
-import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
-import '../../../core/widgets/CustomText.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/rides_controller.dart';
 
@@ -22,31 +20,11 @@ class RidesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
+      appBar: CustomAppBar(title: "My Rides", notificationCount: 3),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: CustomText(text: "My Rides", fontSize: 22.sp),
-                ),
-                // Expanded(
-                //   child: CustomJobButton(
-                //     text: "New Job",
-                //     onPressed: () {
-                //       Get.bottomSheet(
-                //         PostJobBottomSheet(),
-                //         isScrollControlled: true,
-                //         backgroundColor: Colors.transparent,
-                //       );
-                //     },
-                //   ),
-                // ),
-              ],
-            ),
-
             SizedBox(height: 15.h),
 
             /// CUSTOM TAB BAR
@@ -83,10 +61,10 @@ class RidesView extends StatelessWidget {
   Widget _buildTabBar() {
     return Obx(
       () => Container(
-        padding: EdgeInsets.all(8.w),
+        padding: EdgeInsets.all(6.w),
         decoration: BoxDecoration(
           color: const Color(0xff1A1A1A),
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(16.r),
         ),
         child: Row(
           children: List.generate(_tabs.length, (index) {
@@ -95,12 +73,12 @@ class RidesView extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => controller.changeTab(index),
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.orange100
                         : Colors.transparent,
-                    borderRadius: BorderRadius.circular(15.r),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Center(
                     child: Text(

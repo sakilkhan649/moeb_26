@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:moeb_26/config/constants/api_constants.dart';
 import 'package:moeb_26/core/services/api_client.dart';
@@ -15,11 +16,22 @@ class SupportRepo {
   Future<Response> createSupport({
     required String subject,
     required String message,
+    List<File>? attachments,
   }) async {
-    return await apiClient.postData(ApiConstants.createSupport, {
-      "subject": subject,
-      "message": message,
-    });
+    if (attachments != null && attachments.isNotEmpty) {
+      final multipartList = attachments
+          .map((file) => MultipartBody("attachments", file))
+          .toList();
+      return await apiClient.postMultipartData(ApiConstants.createSupport, {
+        "subject": subject,
+        "message": message,
+      }, multipartBody: multipartList);
+    } else {
+      return await apiClient.postData(ApiConstants.createSupport, {
+        "subject": subject,
+        "message": message,
+      });
+    }
   }
 
   /// ===================== GET MESSAGES = : =====================

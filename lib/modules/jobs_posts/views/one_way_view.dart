@@ -9,6 +9,7 @@ import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomText_Field_Hight.dart';
 import 'package:moeb_26/core/widgets/Custom_Job_Button.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import '../controllers/job_post_controller.dart';
 import 'job_post_sheet_tabbar_view.dart';
 
@@ -312,6 +313,22 @@ class OnewayScreen extends StatelessWidget {
               onPressed: () {
                 final isFormValid = _formKey.currentState!.validate();
                 postJobController.showAsapError.value = false;
+
+                if (postJobController.chauffeurSelectionType.value.isEmpty) {
+                  Helpers.showCustomSnackBar("Please select a chauffeur or service area", isError: true);
+                  return;
+                }
+                if (postJobController.chauffeurSelectionType.value == 'global' &&
+                    postJobController.selectedServiceAreas.isEmpty) {
+                  Helpers.showCustomSnackBar("Please select at least one service area city", isError: true);
+                  return;
+                }
+                if (postJobController.chauffeurSelectionType.value == 'favorites' &&
+                    postJobController.selectedDrivers.isEmpty) {
+                  Helpers.showCustomSnackBar("Please select at least one preferred driver", isError: true);
+                  return;
+                }
+
                 if (isFormValid) {
                   postJobController.submitOneWayJob(
                     pickupLocation: pickupController.text,

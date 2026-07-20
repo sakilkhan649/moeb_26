@@ -1,3 +1,5 @@
+import 'market_place_model.dart';
+
 class MyItemsResponse {
   bool? success;
   String? message;
@@ -100,5 +102,19 @@ class MyItemsModel {
       'photos': photos,
       'createdAt': createdAt.toIso8601String(),
     };
+  }
+
+  ItemData toItemData() {
+    return ItemData(
+      id: id,
+      title: name,
+      price: int.tryParse(price) ?? 0,
+      condition: condition,
+      status: status,
+      location: location,
+      description: description,
+      photos: photos,
+      createdAt: createdAt.toIso8601String(),
+    );
   }
 }

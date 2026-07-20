@@ -27,7 +27,6 @@ class ProfileView extends StatelessWidget {
       backgroundColor: Colors.black,
       appBar: CustomAppBar(
         title: 'Profile',
-        subtitle: 'CHAUFFEUR PROFILE DETAILS',
         showBackButton: false,
         showActions: true,
       ),
@@ -141,9 +140,6 @@ class ProfileView extends StatelessWidget {
                                   },
                                 );
                                 break;
-                              case 2:
-                                Get.toNamed(Routes.serviceAreaView);
-                                break;
                               case 3:
                                 Get.toNamed(Routes.personalDocumentView);
                                 break;
@@ -155,11 +151,6 @@ class ProfileView extends StatelessWidget {
                               1,
                               Icons.directions_car_outlined,
                               "Vehicle",
-                            ),
-                            _buildPopupItem(
-                              2,
-                              Icons.location_on_outlined,
-                              "Service Area",
                             ),
                             _buildPopupItem(
                               3,

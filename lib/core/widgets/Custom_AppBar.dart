@@ -46,220 +46,227 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      leading: showBackButton
-          ? IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-                size: 20.sp,
-              ),
-              onPressed: () => Get.back(),
-            )
-          : null,
-      titleSpacing: showBackButton ? 0 : 4.w,
-      title: Row(
-        children: [
-          if (logoPath != null && logoPath!.isNotEmpty) ...[
-            Image.asset(logoPath!, height: 70.h, width: 130.w),
-            SizedBox(width: 12.w),
-          ],
-          Expanded(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (title != null && title!.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(left: 16.w),
-                      child: CustomText(
-                        text: title!,
-                        fontSize: 20.sp,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+        ),
+      ),
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: showBackButton
+            ? IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: 20.sp,
+                ),
+                onPressed: () => Get.back(),
+              )
+            : null,
+        titleSpacing: showBackButton ? 0 : 4.w,
+        title: Row(
+          children: [
+            if (logoPath != null && logoPath!.isNotEmpty) ...[
+              Image.asset(logoPath!, height: 70.h, width: 130.w),
+              SizedBox(width: 12.w),
+            ],
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (title != null && title!.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(left: 16.w),
+                        child: CustomText(
+                          text: title!,
+                          fontSize: 20.sp,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
-                    ),
-                  if (subtitle != null && subtitle!.isNotEmpty) ...[
-                    SizedBox(height: 2.h),
-                    Padding(
-                      padding: EdgeInsets.only(left: 16.w),
-                      child: CustomTextgray(
-                        text: subtitle!,
-                        fontSize: 12.sp,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                    if (subtitle != null && subtitle!.isNotEmpty) ...[
+                      SizedBox(height: 2.h),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16.w),
+                        child: CustomTextgray(
+                          text: subtitle!,
+                          fontSize: 12.sp,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      actions: showActions
-          ? [
-              Obx(
-                () => GestureDetector(
-                  onTap:
-                      onNotificationTap ??
-                      () {
-                        Get.toNamed(Routes.notificationsView);
-                      },
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Icon(
-                        Icons.notifications_outlined,
-                        size: 30.sp,
-                        color: Colors.white,
-                      ),
-                      if (_notificationController.unreadCount > 0)
-                        Positioned(
-                          top: -2.w,
-                          right: -1.w,
-                          child: Container(
-                            width: 15.w,
-                            height: 15.w,
-                            decoration: const BoxDecoration(
-                              color: Colors.orange,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                _notificationController.unreadCount > 99
-                                    ? '99+'
-                                    : '${_notificationController.unreadCount}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.bold,
+          ],
+        ),
+        actions: showActions
+            ? [
+                Obx(
+                  () => GestureDetector(
+                    onTap:
+                        onNotificationTap ??
+                        () {
+                          Get.toNamed(Routes.notificationsView);
+                        },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          Icons.notifications_outlined,
+                          size: 30.sp,
+                          color: Colors.white,
+                        ),
+                        if (_notificationController.unreadCount > 0)
+                          Positioned(
+                            top: -2.w,
+                            right: -1.w,
+                            child: Container(
+                              width: 15.w,
+                              height: 15.w,
+                              decoration: const BoxDecoration(
+                                color: Colors.orange,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  _notificationController.unreadCount > 99
+                                      ? '99+'
+                                      : '${_notificationController.unreadCount}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: 10.w),
-              PopupMenuButton<int>(
-                icon: Icon(Icons.menu, size: 30.sp, color: Colors.white),
-                color: const Color(0xFF1E1E1E), // Dark background
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  side: const BorderSide(color: Color(0xFF364153)),
+                SizedBox(width: 10.w),
+                PopupMenuButton<int>(
+                  icon: Icon(Icons.menu, size: 30.sp, color: Colors.white),
+                  color: const Color(0xFF1E1E1E), // Dark background
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    side: const BorderSide(color: Color(0xFF364153)),
+                  ),
+                  onSelected: (item) => handleMenuItemSelection(item),
+                  itemBuilder: (context) => [
+                    PopupMenuItem<int>(
+                      value: 3,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.receipt_long_outlined,
+                            color: Colors.white,
+                            size: 24.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              'Create Invoice',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            CupertinoIcons.chevron_forward,
+                            size: 20.sp,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 4,
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            AppIcons.marketplace_icon,
+                            width: 24.sp,
+                            height: 24.sp,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              'Marketplace',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            CupertinoIcons.chevron_forward,
+                            size: 20.sp,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 1,
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            AppIcons.deals_icon,
+                            width: 24.sp,
+                            height: 24.sp,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              'Deals',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            CupertinoIcons.chevron_forward,
+                            size: 20.sp,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  offset: const Offset(0, 50),
                 ),
-                onSelected: (item) => handleMenuItemSelection(item),
-                itemBuilder: (context) => [
-                  PopupMenuItem<int>(
-                    value: 3,
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.receipt_long_outlined,
-                          color: Colors.white,
-                          size: 24.sp,
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: Text(
-                            'Create Invoice',
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Icon(
-                          CupertinoIcons.chevron_forward,
-                          size: 20.sp,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 4,
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          AppIcons.marketplace_icon,
-                          width: 24.sp,
-                          height: 24.sp,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: Text(
-                            'Marketplace',
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Icon(
-                          CupertinoIcons.chevron_forward,
-                          size: 20.sp,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 1,
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          AppIcons.deals_icon,
-                          width: 24.sp,
-                          height: 24.sp,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: Text(
-                            'Deals',
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Icon(
-                          CupertinoIcons.chevron_forward,
-                          size: 20.sp,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                offset: const Offset(0, 50),
-              ),
-            ]
-          : null,
+              ]
+            : null,
+      ),
     );
   }
 

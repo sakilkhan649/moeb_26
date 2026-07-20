@@ -16,62 +16,55 @@ class PreferredDriversView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CustomAppBar(
-        title: 'Favorite Chauffeur',
-        subtitle: 'YOUR FAVORITE LIST OF CHAUFFEURS',
-        notificationCount: 3,
-      ),
+      appBar: CustomAppBar(title: 'Favorite Chauffeurs', notificationCount: 3),
       body: Column(
         children: [
+          SizedBox(height: 15.h),
           // Search Bar
           Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
+            padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
             child: TextFormField(
               onChanged: (value) => controller.searchQuery.value = value,
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 14.sp,
-              ),
+              style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),
               decoration: InputDecoration(
                 hintText: 'Search by phone or email...',
                 hintStyle: GoogleFonts.inter(
                   color: Colors.grey,
-                  fontSize: 14.sp,
+                  fontSize: 16.sp,
                 ),
                 filled: true,
                 fillColor: const Color(0xFF1A1A1A),
                 prefixIcon: Padding(
                   padding: EdgeInsets.only(left: 12.w, right: 8.w),
-                  child: Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                    size: 20.sp,
-                  ),
+                  child: Icon(Icons.search, color: Colors.grey, size: 24.sp),
                 ),
                 prefixIconConstraints: BoxConstraints(
-                  minWidth: 36.w,
-                  minHeight: 36.h,
+                  minWidth: 40.w,
+                  minHeight: 40.h,
                 ),
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 12.h,
                   horizontal: 16.w,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(16.r),
                   borderSide: BorderSide(
-                    color: const Color(0xFF2C2C2C),
-                    width: 0.98,
+                    color: const Color(0xFF242424),
+                    width: 1.w,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: const Color(0xFFD08700), width: 1.w),
+                  borderRadius: BorderRadius.circular(16.r),
+                  borderSide: BorderSide(
+                    color: const Color(0xFFD08700),
+                    width: 1.w,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(16.r),
                   borderSide: BorderSide(
-                    color: const Color(0xFF2C2C2C),
-                    width: 0.98,
+                    color: const Color(0xFF242424),
+                    width: 1.w,
                   ),
                 ),
               ),

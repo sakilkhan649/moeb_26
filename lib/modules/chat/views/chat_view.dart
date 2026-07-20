@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/user_service.dart';
 import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
@@ -19,11 +18,7 @@ class ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Chats',
-        subtitle: 'Messaging',
-        notificationCount: 3,
-      ),
+      appBar: CustomAppBar(title: 'Chats', notificationCount: 3),
       body: GestureDetector(
         onTap: () => controller.clearDeleteSelection(),
         behavior: HitTestBehavior.opaque,
@@ -33,7 +28,7 @@ class ChatView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 4.h),
+                SizedBox(height: 15.h),
 
                 // ── Search Bar ──
                 TextFormField(
@@ -63,7 +58,7 @@ class ChatView extends StatelessWidget {
                       minHeight: 40.h,
                     ),
                     contentPadding: EdgeInsets.symmetric(
-                      vertical: 15.h,
+                      vertical: 12.h,
                       horizontal: 16.w,
                     ),
                     border: OutlineInputBorder(
@@ -75,7 +70,10 @@ class ChatView extends StatelessWidget {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: BorderSide(color: Colors.grey, width: 1.w),
+                      borderSide: BorderSide(
+                        color: const Color(0xFFD08700),
+                        width: 1.w,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
@@ -105,16 +103,11 @@ class ChatView extends StatelessWidget {
 
                       final communityRoom = controller.communityRoom.value;
 
-                      return ListView.separated(
+                      return ListView.builder(
                         physics: const AlwaysScrollableScrollPhysics(),
                         itemCount:
                             controller.filteredChats.length +
                             (communityRoom != null ? 1 : 0),
-                        separatorBuilder: (context, index) => Divider(
-                          color: Colors.grey.withValues(alpha: 0.15),
-                          height: 1.h,
-                          thickness: 0.5.h,
-                        ),
                         itemBuilder: (context, index) {
                           if (communityRoom != null && index == 0) {
                             return _buildCommunityChatTile(communityRoom);
@@ -161,12 +154,9 @@ class ChatView extends StatelessWidget {
                 ),
               ),
               child: ClipOval(
-                child: Transform.scale(
-                  scale: 1.4,
-                  child: Image.asset(
-                    AppImages.moeb26_community_chat_pp,
-                    fit: BoxFit.cover,
-                  ),
+                child: Image.asset(
+                  'assets/images/ekkali chat.png',
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -181,7 +171,7 @@ class ChatView extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          "Live Chat: ${room.name.replaceAll('Network', '').trim()}",
+                          "Live Chat",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
@@ -397,22 +387,39 @@ class ChatView extends StatelessWidget {
   /// ── Avatar Widget ──
   Widget _buildAvatar(ChatPreview chat) {
     final other = chat.getOtherParticipant(userService.userId);
-    return CircleAvatar(
-      radius: 28.r,
-      backgroundColor: Colors.grey[800],
-      backgroundImage: other?.profilePicture != null
-          ? NetworkImage(other!.profilePicture!) as ImageProvider
-          : null,
-      child: other?.profilePicture == null
-          ? Text(
-              other?.initials ?? '?',
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            )
-          : null,
+    final hasImage =
+        other?.profilePicture != null && other!.profilePicture!.isNotEmpty;
+    final isNetwork = hasImage && other.profilePicture!.startsWith('http');
+    return Container(
+      width: 56.r,
+      height: 56.r,
+      padding: EdgeInsets.all(2.r),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.grey[700]!, width: 1.5),
+      ),
+      child: ClipOval(
+        child: CircleAvatar(
+          radius: 28.r,
+          backgroundColor: Colors.grey[800],
+          backgroundImage: hasImage
+              ? (isNetwork
+                        ? NetworkImage(other.profilePicture!)
+                        : AssetImage(other.profilePicture!))
+                    as ImageProvider
+              : null,
+          child: !hasImage
+              ? Text(
+                  other?.initials ?? '?',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              : null,
+        ),
+      ),
     );
   }
 

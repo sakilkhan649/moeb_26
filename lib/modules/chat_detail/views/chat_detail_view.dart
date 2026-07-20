@@ -69,22 +69,38 @@ class ChatDetailView extends StatelessWidget {
       titleSpacing: 0,
       title: Row(
         children: [
-          CircleAvatar(
-            radius: 20.r,
-            backgroundColor: const Color(0xffE0E0E0),
-            backgroundImage: other?.profilePicture != null
-                ? NetworkImage(other!.profilePicture!) as ImageProvider
-                : null,
-            child: other?.profilePicture == null
-                ? Text(
-                    other?.initials ?? '?',
-                    style: GoogleFonts.inter(
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
-                    ),
-                  )
-                : null,
+          Container(
+            width: 40.r,
+            height: 40.r,
+            padding: EdgeInsets.all(2.r),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey[700]!,
+                width: 1.5,
+              ),
+            ),
+            child: ClipOval(
+              child: CircleAvatar(
+                radius: 20.r,
+                backgroundColor: const Color(0xffE0E0E0),
+                backgroundImage: (other?.profilePicture != null && other!.profilePicture!.isNotEmpty)
+                    ? (other.profilePicture!.startsWith('http')
+                        ? NetworkImage(other.profilePicture!)
+                        : AssetImage(other.profilePicture!)) as ImageProvider
+                    : null,
+                child: (other?.profilePicture == null || other!.profilePicture!.isEmpty)
+                    ? Text(
+                        other?.initials ?? '?',
+                        style: GoogleFonts.inter(
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.sp,
+                        ),
+                      )
+                    : null,
+              ),
+            ),
           ),
           SizedBox(width: 12.w),
           Text(

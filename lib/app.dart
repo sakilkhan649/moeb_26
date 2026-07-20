@@ -21,9 +21,12 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
           scaffoldBackgroundColor: AppColors.black100,
           appBarTheme: const AppBarTheme(
+            scrolledUnderElevation: 0,
+            surfaceTintColor: Colors.transparent,
             systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.light, // For Android (light icons)
+              statusBarIconBrightness:
+                  Brightness.light, // For Android (light icons)
               statusBarBrightness: Brightness.dark, // For iOS (light icons)
             ),
           ),

@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/support_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/core/utils/media_picker_helper.dart';
 
 class SupportController extends GetxController {
   final SupportService _supportService = Get.find<SupportService>();
@@ -13,6 +15,7 @@ class SupportController extends GetxController {
 
   final subjectController = TextEditingController();
   final messageController = TextEditingController();
+  final RxList<File> selectedFiles = <File>[].obs;
 
   @override
   void onInit() {
@@ -34,6 +37,23 @@ class SupportController extends GetxController {
     }
   }
 
+  Future<void> pickAttachment(BuildContext context) async {
+    try {
+      final File? file = await MediaPickerHelper.showImageOrPdfPicker(context);
+      if (file != null) {
+        selectedFiles.add(file);
+      }
+    } catch (e) {
+      debugPrint("Error picking attachment: $e");
+    }
+  }
+
+  void removeAttachment(int index) {
+    if (index >= 0 && index < selectedFiles.length) {
+      selectedFiles.removeAt(index);
+    }
+  }
+
   Future<void> createSupportTicket() async {
     if (subjectController.text.isEmpty || messageController.text.isEmpty) {
       Helpers.showCustomSnackBar("Please fill all fields", isError: true);
@@ -45,6 +65,7 @@ class SupportController extends GetxController {
       final response = await _supportService.createSupport(
         subject: subjectController.text,
         message: messageController.text,
+        attachments: selectedFiles,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -54,7 +75,9 @@ class SupportController extends GetxController {
         );
         subjectController.clear();
         messageController.clear();
+        selectedFiles.clear();
         await fetchMyTickets(); // Refresh list
+        Get.back(); // Go back to previous screen
       }
     } catch (e) {
       Helpers.showCustomSnackBar(

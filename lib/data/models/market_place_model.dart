@@ -160,6 +160,7 @@ class ItemData {
   String? condition;
   String? status;
   String? location;
+  String? description;
   List<String>? photos;
   User? createdBy;
   String? createdAt;
@@ -172,6 +173,7 @@ class ItemData {
     this.condition,
     this.status,
     this.location,
+    this.description,
     this.photos,
     this.createdBy,
     this.createdAt,
@@ -185,6 +187,7 @@ class ItemData {
     condition = json['condition'];
     status = json['status'];
     location = json['location'];
+    description = json['description'];
     photos = json['photos'] != null ? List<String>.from(json['photos']) : [];
  
     createdBy =

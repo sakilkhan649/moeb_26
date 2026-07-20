@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/modules/my_jobs/controllers/my_jobs_controller.dart';
@@ -56,7 +55,7 @@ class _JobOfferViewState extends State<JobOfferView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
+      appBar: CustomAppBar(title: "Offers", notificationCount: 3),
       body: RefreshIndicator(
         onRefresh: () async {
           await controller.fetchJobOffers(isRefresh: true);
@@ -73,7 +72,7 @@ class _JobOfferViewState extends State<JobOfferView> {
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: Column(
                     children: [
-                      SizedBox(height: 2.w),
+                      SizedBox(height: 15.h),
                       Row(
                         children: [
                           Expanded(

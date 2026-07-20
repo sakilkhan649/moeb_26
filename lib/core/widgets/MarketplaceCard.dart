@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import '../../data/models/market_place_model.dart';
+import '../../modules/market_place/views/market_place_detail_view.dart';
 import 'ContactSellerPopup.dart';
-import 'ImagePreviewPopup.dart';
 
 class MarketplaceCard extends StatelessWidget {
   final ItemData item;
@@ -19,119 +19,178 @@ class MarketplaceCard extends StatelessWidget {
         ? item.photos!.first
         : "";
     final String title = item.title ?? "No Title";
+    final String condition = item.condition ?? "Used";
+    final String location = item.location?.split(',').first.trim() ?? "Unknown";
 
-    return Container(
-      height: 255.h, // Adjusted height for a more compact look
-      decoration: BoxDecoration(color: const Color(0xFF1A1A1A)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Item Image with rounded top corners
-          GestureDetector(
-            onTap: () {
-              Get.dialog(ImagePreviewPopup(imageUrl: imagePath, title: title));
-            },
-            child: ClipRRect(child: _buildImage(imagePath)),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => MarketplaceItemDetailView(item: item));
+      },
+      child: Container(
+        margin: EdgeInsets.all(4.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF111113),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: const Color(0xFF222226), width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Image Stack with Overlay Badge
+            Stack(
               children: [
-                // Item Name
-                SizedBox(
-                  height: 38.h, // Fixed height for 2 lines consistency
-                  child: Text(
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(15.r),
+                  ),
+                  child: _buildImage(imagePath),
+                ),
+                // Floating Condition Badge
+                Positioned(
+                  top: 8.h,
+                  left: 8.w,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 5.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: const Color(0xFF2C2C2C)),
+                    ),
+                    child: Text(
+                      condition,
+                      style: GoogleFonts.inter(
+                        color: condition.toLowerCase() == 'new'
+                            ? Colors.green.shade400
+                            : const Color(0xFFFF9800),
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Info Section
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  Text(
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      height: 1.2,
+                      color: Colors.white.withValues(alpha: 0.95),
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.bold,
+                      height: 1.3,
                     ),
                   ),
-                ),
-                SizedBox(height: 4.h),
-                // Price and Rating
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "\$${item.price ?? 0}",
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFFF1A107),
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // const Spacer(), // Removed Spacer to reduce gap
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.condition ?? "",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  SizedBox(height: 4.h),
+
+                  // Price
+                  Text(
+                    "\$${item.price ?? 0}",
                     style: GoogleFonts.inter(
-                      color: const Color(0xff949494),
-                      fontSize: 12.sp,
+                      color: const Color(0xFFFF9800),
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                SizedBox(width: 8.w),
-                GestureDetector(
-                  onTap: () {
-                    Get.dialog(ContactSellerPopup(item: item));
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1A107),
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 6.h,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SvgPicture.asset(
-                          AppIcons.contact_icon,
-                          height: 14.sp,
-                          width: 14.sp,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.black,
-                            BlendMode.srcIn,
+                  SizedBox(height: 6.h),
+
+                  // Bottom Action row: Location & Contact
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Location
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              color: Colors.grey.shade500,
+                              size: 14.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Expanded(
+                              child: Text(
+                                location,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.inter(
+                                  color: Colors.grey.shade500,
+                                  fontSize: 11.sp,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+
+                      // Contact Button
+                      GestureDetector(
+                        onTap: () {
+                          Get.dialog(ContactSellerPopup(item: item));
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFF1A107), Color(0xFFFF9800)],
+                            ),
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(
+                                AppIcons.contact_icon,
+                                height: 12.sp,
+                                width: 12.sp,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              SizedBox(width: 4.w),
+                              Text(
+                                "Contact",
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          "Contact",
-                          style: GoogleFonts.inter(
-                            color: Colors.black,
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 8.h), // Small padding at the bottom
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -144,7 +203,7 @@ class MarketplaceCard extends StatelessWidget {
     if (imagePath.startsWith('http')) {
       return Image.network(
         imagePath,
-        height: 130.h,
+        height: 115.h,
         width: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) =>
@@ -152,7 +211,7 @@ class MarketplaceCard extends StatelessWidget {
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return Container(
-            height: 130.h,
+            height: 115.h,
             width: double.infinity,
             color: Colors.grey[900],
             child: const Center(
@@ -167,7 +226,7 @@ class MarketplaceCard extends StatelessWidget {
     } else {
       return Image.asset(
         imagePath,
-        height: 130.h,
+        height: 115.h,
         width: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) =>
@@ -178,7 +237,7 @@ class MarketplaceCard extends StatelessWidget {
 
   Widget _buildNoImagePlaceholder() {
     return Container(
-      height: 130.h,
+      height: 115.h,
       width: double.infinity,
       color: Colors.grey[900],
       child: Column(

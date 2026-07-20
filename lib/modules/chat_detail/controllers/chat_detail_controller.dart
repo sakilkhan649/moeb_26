@@ -40,6 +40,9 @@ class ChatDetailController extends GetxController {
   }
 
   void setupSocket() {
+    if (chat.id.startsWith('demo_')) {
+      return;
+    }
     debugPrint(
       '🔄 ChatDetailController: Setting up socket for room: chat::${chat.id}',
     );
@@ -65,6 +68,76 @@ class ChatDetailController extends GetxController {
   }
 
   Future<void> fetchMessages() async {
+    if (chat.id.startsWith('demo_')) {
+      try {
+        isLoading.value = true;
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (chat.id == 'demo_admin_chat') {
+          messages.assignAll([
+            ChatMessage(
+              id: 'msg_admin_1',
+              chatId: chat.id,
+              text: 'Hello! Let us know if you have any questions.',
+              senderId: 'admin_id',
+              sender: ChatParticipant(id: 'admin_id', name: 'Ekkali Support'),
+              createdAt: DateTime.now()
+                  .subtract(const Duration(minutes: 5))
+                  .toIso8601String(),
+              updatedAt: DateTime.now()
+                  .subtract(const Duration(minutes: 5))
+                  .toIso8601String(),
+            ),
+            ChatMessage(
+              id: 'msg_admin_0',
+              chatId: chat.id,
+              text: 'Welcome to Moeb 26! How can we assist you today?',
+              senderId: 'admin_id',
+              sender: ChatParticipant(id: 'admin_id', name: 'Ekkali Support'),
+              createdAt: DateTime.now()
+                  .subtract(const Duration(minutes: 10))
+                  .toIso8601String(),
+              updatedAt: DateTime.now()
+                  .subtract(const Duration(minutes: 10))
+                  .toIso8601String(),
+            ),
+          ]);
+        } else if (chat.id == 'demo_user_chat') {
+          messages.assignAll([
+            ChatMessage(
+              id: 'msg_user_1',
+              chatId: chat.id,
+              text: 'Hey, is the offer still available?',
+              senderId: 'demo_user_id',
+              sender: ChatParticipant(id: 'demo_user_id', name: 'Demo User'),
+              createdAt: DateTime.now()
+                  .subtract(const Duration(hours: 2))
+                  .toIso8601String(),
+              updatedAt: DateTime.now()
+                  .subtract(const Duration(hours: 2))
+                  .toIso8601String(),
+            ),
+            ChatMessage(
+              id: 'msg_user_0',
+              chatId: chat.id,
+              text: 'Hello there!',
+              senderId: 'demo_user_id',
+              sender: ChatParticipant(id: 'demo_user_id', name: 'Demo User'),
+              createdAt: DateTime.now()
+                  .subtract(const Duration(hours: 2, minutes: 5))
+                  .toIso8601String(),
+              updatedAt: DateTime.now()
+                  .subtract(const Duration(hours: 2, minutes: 5))
+                  .toIso8601String(),
+            ),
+          ]);
+        }
+      } catch (_) {
+      } finally {
+        isLoading.value = false;
+      }
+      return;
+    }
+
     try {
       isLoading.value = true;
       final fetchedMessages = await socketRepo.getMessages(chat.id);
@@ -132,6 +205,23 @@ class ChatDetailController extends GetxController {
 
       messages.insert(0, tempMessage);
       messageController.clear();
+
+      if (chat.id.startsWith('demo_')) {
+        await Future.delayed(const Duration(milliseconds: 200));
+        int index = messages.indexWhere((m) => m.id == tempId);
+        if (index != -1) {
+          messages[index] = ChatMessage(
+            id: 'demo_sent_${DateTime.now().millisecondsSinceEpoch}',
+            chatId: chat.id,
+            text: text,
+            senderId: userService.userId,
+            sender: ChatParticipant(id: userService.userId, name: 'You'),
+            createdAt: DateTime.now().toIso8601String(),
+            updatedAt: DateTime.now().toIso8601String(),
+          );
+        }
+        return;
+      }
 
       try {
         final sentMessage = await socketRepo.sendMessage(
