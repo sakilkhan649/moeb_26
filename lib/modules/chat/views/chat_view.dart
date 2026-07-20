@@ -145,18 +145,18 @@ class ChatView extends StatelessWidget {
             Container(
               width: 56.r,
               height: 56.r,
-              padding: EdgeInsets.all(2.r), // This creates space for the border
+              padding: EdgeInsets.all(2.r),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.grey[700]!, // Visible gray border
-                  width: 1.5,
-                ),
+                border: Border.all(color: Colors.grey[700]!, width: 1.5),
               ),
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/ekkali chat.png',
-                  fit: BoxFit.cover,
+                child: Transform.scale(
+                  scale: 1.8,
+                  child: Image.asset(
+                    'assets/images/ekkali chat.png',
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
@@ -390,6 +390,8 @@ class ChatView extends StatelessWidget {
     final hasImage =
         other?.profilePicture != null && other!.profilePicture!.isNotEmpty;
     final isNetwork = hasImage && other.profilePicture!.startsWith('http');
+    final isAsset = hasImage && !isNetwork;
+
     return Container(
       width: 56.r,
       height: 56.r,
@@ -399,25 +401,33 @@ class ChatView extends StatelessWidget {
         border: Border.all(color: Colors.grey[700]!, width: 1.5),
       ),
       child: ClipOval(
-        child: CircleAvatar(
-          radius: 28.r,
-          backgroundColor: Colors.grey[800],
-          backgroundImage: hasImage
-              ? (isNetwork
-                        ? NetworkImage(other.profilePicture!)
-                        : AssetImage(other.profilePicture!))
-                    as ImageProvider
-              : null,
-          child: !hasImage
-              ? Text(
-                  other?.initials ?? '?',
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              : null,
+        child: isAsset
+            ? Transform.scale(
+                scale: 1.3,
+                child: Image.asset(other.profilePicture!, fit: BoxFit.contain),
+              )
+            : isNetwork
+            ? Image.network(
+                other.profilePicture!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _avatarFallback(other?.initials),
+              )
+            : _avatarFallback(other?.initials),
+      ),
+    );
+  }
+
+  Widget _avatarFallback(String? initials) {
+    return Container(
+      color: Colors.grey[800],
+      child: Center(
+        child: Text(
+          initials ?? '?',
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

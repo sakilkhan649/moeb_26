@@ -86,20 +86,20 @@ class ChatCommunityDetailView extends StatelessWidget {
               Container(
                 width: 40.r,
                 height: 40.r,
-                padding: EdgeInsets.all(
-                  2.r,
-                ), // This creates space for the border
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.grey[700]!, // Visible gray border
+                    color: Colors.grey[700]!,
                     width: 1.5,
                   ),
                 ),
                 child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/ekkali chat.png',
-                    fit: BoxFit.cover,
+                  child: Transform.scale(
+                    scale: 1.8,
+                    child: Image.asset(
+                      'assets/images/ekkali chat.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),

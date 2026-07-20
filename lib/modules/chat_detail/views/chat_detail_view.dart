@@ -81,25 +81,33 @@ class ChatDetailView extends StatelessWidget {
               ),
             ),
             child: ClipOval(
-              child: CircleAvatar(
-                radius: 20.r,
-                backgroundColor: const Color(0xffE0E0E0),
-                backgroundImage: (other?.profilePicture != null && other!.profilePicture!.isNotEmpty)
-                    ? (other.profilePicture!.startsWith('http')
-                        ? NetworkImage(other.profilePicture!)
-                        : AssetImage(other.profilePicture!)) as ImageProvider
-                    : null,
-                child: (other?.profilePicture == null || other!.profilePicture!.isEmpty)
-                    ? Text(
-                        other?.initials ?? '?',
-                        style: GoogleFonts.inter(
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.sp,
-                        ),
-                      )
-                    : null,
-              ),
+              child: () {
+                final pic = other?.profilePicture;
+                final hasImage = pic != null && pic.isNotEmpty;
+                final isNetwork = hasImage && pic.startsWith('http');
+                if (hasImage && !isNetwork) {
+                  // Asset image — zoom in the logo
+                  return Transform.scale(
+                    scale: 1.3,
+                    child: Image.asset(pic, fit: BoxFit.contain),
+                  );
+                } else if (hasImage && isNetwork) {
+                  return Image.network(pic, fit: BoxFit.cover);
+                } else {
+                  return CircleAvatar(
+                    radius: 20.r,
+                    backgroundColor: const Color(0xffE0E0E0),
+                    child: Text(
+                      other?.initials ?? '?',
+                      style: GoogleFonts.inter(
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  );
+                }
+              }(),
             ),
           ),
           SizedBox(width: 12.w),
