@@ -22,7 +22,6 @@ class ChatDetailView extends StatelessWidget {
         top: false,
         child: Column(
           children: [
-            const Divider(color: Color(0xffDADADA), height: 1),
             // Messages List
             Expanded(
               child: Obx(() {
@@ -59,81 +58,91 @@ class ChatDetailView extends StatelessWidget {
     final currentUserId = controller.userService.userId;
     final other = controller.chat.getOtherParticipant(currentUserId);
 
-    return AppBar(
-      backgroundColor: Colors.black,
-      elevation: 0,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.sp),
-        onPressed: () => Get.back(),
-      ),
-      titleSpacing: 0,
-      title: Row(
-        children: [
-          Container(
-            width: 40.r,
-            height: 40.r,
-            padding: EdgeInsets.all(2.r),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.grey[700]!,
-                width: 1.5,
-              ),
-            ),
-            child: ClipOval(
-              child: () {
-                final pic = other?.profilePicture;
-                final hasImage = pic != null && pic.isNotEmpty;
-                final isNetwork = hasImage && pic.startsWith('http');
-                if (hasImage && !isNetwork) {
-                  // Asset image — zoom in the logo
-                  return Transform.scale(
-                    scale: 1.3,
-                    child: Image.asset(pic, fit: BoxFit.contain),
-                  );
-                } else if (hasImage && isNetwork) {
-                  return Image.network(pic, fit: BoxFit.cover);
-                } else {
-                  return CircleAvatar(
-                    radius: 20.r,
-                    backgroundColor: const Color(0xffE0E0E0),
-                    child: Text(
-                      other?.initials ?? '?',
-                      style: GoogleFonts.inter(
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  );
-                }
-              }(),
-            ),
+    return PreferredSize(
+      preferredSize: Size.fromHeight(60.h),
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
           ),
-          SizedBox(width: 12.w),
-          Text(
-            other?.name ?? 'Chat',
-            style: GoogleFonts.inter(
+        ),
+        child: AppBar(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new,
               color: Colors.white,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
+              size: 20.sp,
             ),
+            onPressed: () => Get.back(),
           ),
-          SizedBox(width: 8.w),
-          // সকেট স্ট্যাটাস ইন্ডিকেটর
-          Obx(
-            () => Container(
-              width: 8.w,
-              height: 8.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: controller.socketService.isConnected.value
-                    ? Colors.green
-                    : Colors.red,
+          titleSpacing: 0,
+          title: Row(
+            children: [
+              Container(
+                width: 40.r,
+                height: 40.r,
+                padding: EdgeInsets.all(2.r),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey[700]!, width: 1.5),
+                ),
+                child: ClipOval(
+                  child: () {
+                    final pic = other?.profilePicture;
+                    final hasImage = pic != null && pic.isNotEmpty;
+                    final isNetwork = hasImage && pic.startsWith('http');
+                    if (hasImage && !isNetwork) {
+                      return Transform.scale(
+                        scale: 1.3,
+                        child: Image.asset(pic, fit: BoxFit.contain),
+                      );
+                    } else if (hasImage && isNetwork) {
+                      return Image.network(pic, fit: BoxFit.cover);
+                    } else {
+                      return CircleAvatar(
+                        radius: 20.r,
+                        backgroundColor: const Color(0xffE0E0E0),
+                        child: Text(
+                          other?.initials ?? '?',
+                          style: GoogleFonts.inter(
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      );
+                    }
+                  }(),
+                ),
               ),
-            ),
+              SizedBox(width: 12.w),
+              Text(
+                other?.name ?? 'Chat',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              // সকেট স্ট্যাটাস ইন্ডিকেটর
+              Obx(
+                () => Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: controller.socketService.isConnected.value
+                        ? Colors.green
+                        : Colors.red,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
