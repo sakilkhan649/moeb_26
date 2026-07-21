@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/modules/notifications/controllers/notifications_controller.dart';
-import 'package:moeb_26/modules/notifications/views/notifications_view.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:moeb_26/modules/market_place/views/market_place_view.dart';
@@ -196,6 +195,35 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     PopupMenuItem<int>(
+                      value: 5,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.badge_outlined,
+                            color: Colors.white,
+                            size: 24.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              'Meet & Greet Sign',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            CupertinoIcons.chevron_forward,
+                            size: 20.sp,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<int>(
                       value: 4,
                       child: Row(
                         children: [
@@ -274,6 +302,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     switch (item) {
       case 3:
         Get.toNamed(Routes.invoiceHistoryView);
+        break;
+      case 5:
+        Get.toNamed(Routes.meetGreetView);
         break;
       case 4:
         Get.to(() => MarketPlaceView());

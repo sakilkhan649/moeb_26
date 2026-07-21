@@ -61,6 +61,9 @@ import 'package:moeb_26/modules/preferred_drivers/views/preferred_drivers_view.d
 import 'package:moeb_26/modules/preferred_drivers/views/preferred_driver_profile_view.dart';
 import 'package:moeb_26/modules/notifications/bindings/notifications_binding.dart';
 import 'package:moeb_26/modules/notifications/views/notifications_view.dart';
+import 'package:moeb_26/modules/meet_greet/bindings/meet_greet_binding.dart';
+import 'package:moeb_26/modules/meet_greet/views/meet_greet_view.dart';
+import 'package:moeb_26/modules/meet_greet/views/meet_greet_fullscreen_view.dart';
 
 class Routes {
   static const String splashView = "/SplashView";
@@ -113,6 +116,8 @@ class Routes {
   static const String preferredDriversView = "/PreferredDriversView";
   static const String preferredDriverProfileView = "/PreferredDriverProfileView";
   static const String notificationsView = "/NotificationsView";
+  static const String meetGreetView = "/MeetGreetView";
+  static const String meetGreetFullscreenView = "/MeetGreetFullscreenView";
 
   static List<GetPage> routes = [
     GetPage(
@@ -370,6 +375,18 @@ class Routes {
       page: () => NotificationsView(),
       transition: Transition.noTransition,
       binding: NotificationsBinding(),
+    ),
+    GetPage(
+      name: meetGreetView,
+      page: () => const MeetGreetView(),
+      transition: Transition.noTransition,
+      binding: MeetGreetBinding(),
+    ),
+    GetPage(
+      name: meetGreetFullscreenView,
+      page: () => const MeetGreetFullscreenView(),
+      transition: Transition.noTransition,
+      binding: MeetGreetBinding(),
     ),
   ];
 }
