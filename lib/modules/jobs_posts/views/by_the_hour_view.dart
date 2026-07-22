@@ -399,7 +399,6 @@ class ByTheHour extends StatelessWidget {
       'SEDAN',
       'SUV',
       'SPRINTER',
-      'BUS',
       'LIMO STRETCH',
       'SEDAN/SUV',
     ];

@@ -291,93 +291,73 @@ class ProfileView extends StatelessWidget {
                   SizedBox(height: 28.h),
 
                   // --- ACTIONS: LOG OUT & DELETE ACCOUNT ---
-                  Row(
-                    children: [
-                      // Log Out Button
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Get.bottomSheet(
-                              LogoutBottomSheet(),
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                              color: Color(0xFFEF4444),
-                              width: 1.2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 13.h),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.logout_rounded,
-                                color: const Color(0xFFEF4444),
-                                size: 17.sp,
-                              ),
-                              SizedBox(width: 6.w),
-                              Text(
-                                "Log Out",
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFFEF4444),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Get.bottomSheet(
+                          LogoutBottomSheet(),
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                          color: Color(0xFFEF4444),
+                          width: 1.2,
                         ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 13.h),
                       ),
-                      SizedBox(width: 12.w),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.logout_rounded,
+                            color: const Color(0xFFEF4444),
+                            size: 17.sp,
+                          ),
+                          SizedBox(width: 6.w),
+                          Text(
+                            "Log Out",
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFFEF4444),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
 
-                      // Delete Account Button
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Get.bottomSheet(
-                              DeleteAccountBottomSheet(),
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: const Color(0xFFEF4444).withValues(alpha: 0.5),
-                              width: 1.2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 13.h),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.delete_outline_rounded,
-                                color: const Color(0xFFEF4444),
-                                size: 17.sp,
-                              ),
-                              SizedBox(width: 6.w),
-                              Text(
-                                "Delete Account",
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFFEF4444),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                  // Delete Account Button (Subtle text link under Log Out)
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Get.bottomSheet(
+                          DeleteAccountBottomSheet(),
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      ),
+                      child: Text(
+                        "Delete Account",
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFEF4444).withValues(alpha: 0.5),
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                          decorationColor: const Color(0xFFEF4444).withValues(alpha: 0.5),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                   SizedBox(height: 20.h),
                 ],

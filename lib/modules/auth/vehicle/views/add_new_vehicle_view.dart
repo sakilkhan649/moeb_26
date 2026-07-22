@@ -129,7 +129,6 @@ class AddNewVehicleView extends StatelessWidget {
             _buildVehicleTypeChip("Sedan"),
             _buildVehicleTypeChip("SUV"),
             _buildVehicleTypeChip("Sprinter"),
-            _buildVehicleTypeChip("Bus"),
             _buildVehicleTypeChip("LimoStretch"),
           ],
         ),

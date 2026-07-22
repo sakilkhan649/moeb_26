@@ -280,7 +280,6 @@ class _JobEditViewState extends State<JobEditView> {
       'SEDAN',
       'SUV',
       'SPRINTER',
-      'BUS',
       'LIMOSTRETCH',
       'SEDAN/SUV',
     ];

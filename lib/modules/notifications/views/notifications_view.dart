@@ -145,6 +145,9 @@ class NotificationsView extends StatelessWidget {
     } else if (notification.type == "REMINDER") {
       iconColor = const Color(0xFF2ECC71);
       iconBgColor = const Color(0xFF2ECC71).withValues(alpha: 0.1);
+    } else if (notification.type == "MESSAGE") {
+      iconColor = const Color(0xFF9B59B6);
+      iconBgColor = const Color(0xFF9B59B6).withValues(alpha: 0.1);
     }
 
     return Obx(() {
@@ -269,10 +272,23 @@ class NotificationsView extends StatelessWidget {
           child: Opacity(
             opacity: isMuted ? 0.4 : 1.0,
             child: Container(
-              color: currentNoti.isRead
-                  ? Colors.transparent
-                  : Colors.white.withValues(alpha: 0.02),
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+              decoration: BoxDecoration(
+                color: currentNoti.isRead
+                    ? Colors.transparent
+                    : const Color(0xFFD08700).withValues(alpha: 0.05),
+                border: Border(
+                  left: BorderSide(
+                    color: currentNoti.isRead ? Colors.transparent : const Color(0xFFD08700),
+                    width: 3.5.w,
+                  ),
+                ),
+              ),
+              padding: EdgeInsets.only(
+                left: 16.5.w,
+                right: 20.w,
+                top: 16.h,
+                bottom: 16.h,
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -281,13 +297,18 @@ class NotificationsView extends StatelessWidget {
                     height: 48.w,
                     width: 48.w,
                     decoration: BoxDecoration(
-                      color: iconBgColor,
+                      color: currentNoti.isRead
+                          ? iconBgColor.withValues(alpha: 0.04)
+                          : iconBgColor,
                       shape: BoxShape.circle,
                     ),
                     padding: EdgeInsets.all(12.w),
                     child: SvgPicture.asset(
                       currentNoti.icon,
-                      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                      colorFilter: ColorFilter.mode(
+                        currentNoti.isRead ? iconColor.withValues(alpha: 0.5) : iconColor,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                   SizedBox(width: 16.w),
@@ -298,78 +319,91 @@ class NotificationsView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      currentNoti.title,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 16.sp,
-                                        fontWeight: currentNoti.isRead
-                                            ? FontWeight.w500
-                                            : FontWeight.w700,
-                                        color: currentNoti.isRead
-                                            ? Colors.white.withValues(alpha: 0.8)
-                                            : Colors.white,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  if (isMuted) ...[
-                                    SizedBox(width: 6.w),
-                                    Icon(
-                                      Icons.notifications_off,
-                                      size: 14.sp,
-                                      color: Colors.white.withValues(alpha: 0.4),
-                                    ),
-                                  ],
-                                ],
+                              child: Text(
+                                currentNoti.title,
+                                style: GoogleFonts.inter(
+                                  fontSize: 15.sp,
+                                  fontWeight: currentNoti.isRead
+                                      ? FontWeight.w400
+                                      : FontWeight.bold,
+                                  color: currentNoti.isRead
+                                      ? Colors.white.withValues(alpha: 0.5)
+                                      : Colors.white,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            SizedBox(width: 8.w),
+                            if (isMuted) ...[
+                              Icon(
+                                Icons.notifications_off,
+                                size: 14.sp,
+                                color: Colors.white.withValues(alpha: 0.4),
+                              ),
+                              SizedBox(width: 8.w),
+                            ],
                             if (!currentNoti.isRead)
                               Container(
                                 width: 8.w,
                                 height: 8.w,
+                                margin: EdgeInsets.only(top: 4.h),
                                 decoration: const BoxDecoration(
                                   color: Color(0xFFD08700),
                                   shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0xFFD08700),
+                                      blurRadius: 4,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
                                 ),
                               )
                             else
                               Icon(
-                                Icons.check,
+                                Icons.done_all_rounded,
                                 size: 16.sp,
-                                color: Colors.white.withValues(alpha: 0.2),
+                                color: Colors.white.withValues(alpha: 0.15),
                               ),
                           ],
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         Text(
                           currentNoti.subtitle,
                           style: GoogleFonts.inter(
-                            fontSize: 14.sp,
-                            color: Colors.white.withValues(alpha: 0.6),
-                            height: 1.4,
+                            fontSize: 13.sp,
+                            fontWeight: currentNoti.isRead
+                                ? FontWeight.w300
+                                : FontWeight.w500,
+                            color: currentNoti.isRead
+                                ? Colors.white.withValues(alpha: 0.4)
+                                : Colors.white.withValues(alpha: 0.85),
+                            height: 1.45,
                           ),
                         ),
                         SizedBox(height: 8.h),
                         Row(
                           children: [
                             Icon(
-                              Icons.access_time,
+                              Icons.access_time_rounded,
                               size: 12.sp,
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: currentNoti.isRead
+                                  ? Colors.white.withValues(alpha: 0.3)
+                                  : Colors.white.withValues(alpha: 0.55),
                             ),
                             SizedBox(width: 4.w),
                             Expanded(
                               child: Text(
                                 currentNoti.timeAgo,
                                 style: GoogleFonts.inter(
-                                  fontSize: 12.sp,
-                                  color: Colors.white.withValues(alpha: 0.4),
+                                  fontSize: 11.sp,
+                                  fontWeight: currentNoti.isRead ? FontWeight.w300 : FontWeight.w400,
+                                  color: currentNoti.isRead
+                                      ? Colors.white.withValues(alpha: 0.3)
+                                      : Colors.white.withValues(alpha: 0.55),
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),

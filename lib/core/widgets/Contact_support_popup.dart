@@ -113,7 +113,7 @@ class _ContactSupportViewState extends State<ContactSupportView> {
         backgroundColor: const Color(
           0xFFFF9800,
         ), // Premium orange color matching App Theme
-        icon: const Icon(Icons.add, color: Colors.white),
+        icon: const Icon(Icons.add, color: Colors.black),
         label: Text(
           "Create Ticket",
           style: GoogleFonts.inter(

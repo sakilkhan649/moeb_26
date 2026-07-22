@@ -180,7 +180,6 @@ class VehicleInformationView extends StatelessWidget {
               _buildVehicleTypeChip(model, "Sedan"),
               _buildVehicleTypeChip(model, "SUV"),
               _buildVehicleTypeChip(model, "Sprinter"),
-              _buildVehicleTypeChip(model, "Bus"),
             ],
           ),
           SizedBox(height: 10.h),

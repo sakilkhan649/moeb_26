@@ -29,7 +29,6 @@ class OnewayScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
       child: Form(
@@ -37,7 +36,10 @@ class OnewayScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            JobPostSheetTabBarView.buildChauffeurSelection(context, postJobController),
+            JobPostSheetTabBarView.buildChauffeurSelection(
+              context,
+              postJobController,
+            ),
             SizedBox(height: 16.h),
             _buildFieldWithLabel(
               "Pickup Location",
@@ -105,8 +107,7 @@ class OnewayScreen extends StatelessWidget {
                         SizedBox(width: 8.w),
                         GestureDetector(
                           onTap: () {
-                            final newVal =
-                                !postJobController.isAsap.value;
+                            final newVal = !postJobController.isAsap.value;
                             postJobController.toggleAsap(newVal);
                           },
                           child: Text(
@@ -203,11 +204,7 @@ class OnewayScreen extends StatelessWidget {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          value:
-                              postJobController
-                                  .selectedRole
-                                  .value
-                                  .isEmpty
+                          value: postJobController.selectedRole.value.isEmpty
                               ? null
                               : postJobController.selectedRole.value,
                           items: postJobController.roles
@@ -267,9 +264,7 @@ class OnewayScreen extends StatelessWidget {
                             padding: EdgeInsets.only(left: 14.w, right: 14.w),
                           ),
                           selectedItemBuilder: (context) {
-                            return postJobController.roles.map((
-                              String value,
-                            ) {
+                            return postJobController.roles.map((String value) {
                               return Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
@@ -315,17 +310,28 @@ class OnewayScreen extends StatelessWidget {
                 postJobController.showAsapError.value = false;
 
                 if (postJobController.chauffeurSelectionType.value.isEmpty) {
-                  Helpers.showCustomSnackBar("Please select a chauffeur or service area", isError: true);
+                  Helpers.showCustomSnackBar(
+                    "Please select a chauffeur or service area",
+                    isError: true,
+                  );
                   return;
                 }
-                if (postJobController.chauffeurSelectionType.value == 'global' &&
+                if (postJobController.chauffeurSelectionType.value ==
+                        'global' &&
                     postJobController.selectedServiceAreas.isEmpty) {
-                  Helpers.showCustomSnackBar("Please select at least one service area city", isError: true);
+                  Helpers.showCustomSnackBar(
+                    "Please select at least one service area city",
+                    isError: true,
+                  );
                   return;
                 }
-                if (postJobController.chauffeurSelectionType.value == 'favorites' &&
+                if (postJobController.chauffeurSelectionType.value ==
+                        'favorites' &&
                     postJobController.selectedDrivers.isEmpty) {
-                  Helpers.showCustomSnackBar("Please select at least one preferred chauffeur", isError: true);
+                  Helpers.showCustomSnackBar(
+                    "Please select at least one preferred chauffeur",
+                    isError: true,
+                  );
                   return;
                 }
 
@@ -434,8 +440,7 @@ class OnewayScreen extends StatelessWidget {
               await postJobController.chooseTime(context);
               final time = postJobController.selectedTime.value;
               if (time != null) {
-                timeController.text =
-                    postJobController.formattedTime.value;
+                timeController.text = postJobController.formattedTime.value;
               }
             },
             validator: (val) {
@@ -495,14 +500,7 @@ class OnewayScreen extends StatelessWidget {
     PostJobController controller,
     FormFieldState<String> state,
   ) {
-    final vehicles = [
-      'SEDAN',
-      'SUV',
-      'SPRINTER',
-      'BUS',
-      'LIMO STRETCH',
-      'SEDAN/SUV',
-    ];
+    final vehicles = ['SEDAN', 'SUV', 'SPRINTER', 'LIMO STRETCH', 'SEDAN/SUV'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

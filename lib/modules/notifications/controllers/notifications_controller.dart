@@ -73,8 +73,9 @@ class NotificationController extends GetxController {
     final list = [
       NotificationItem(
         id: "demo_1",
-        title: "Job Acceptance",
-        subtitle: "Your chauffeur request has been accepted. View details.",
+        title: "Ride Request Accepted",
+        subtitle:
+            "Your chauffeur request for trip #TX-8921 has been accepted by John Doe.",
         type: "TASK",
         isRead: false,
         createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
@@ -82,31 +83,70 @@ class NotificationController extends GetxController {
       ),
       NotificationItem(
         id: "demo_2",
-        title: "New Message from Support",
+        title: "Chauffeur on the Way",
+        subtitle: "Driver is heading to your pick-up location at 450 Ocean Dr.",
+        type: "TASK",
+        isRead: false,
+        createdAt: DateTime.now().subtract(const Duration(minutes: 25)),
+        icon: AppIcons.job_icon,
+      ),
+      NotificationItem(
+        id: "demo_3",
+        title: "New Message from Driver",
         subtitle:
-            "Hello, we have updated your ride details. Press to open support chat.",
+            "Hello! I have arrived at the lobby. Let me know when you are ready.",
         type: "MESSAGE",
         isRead: false,
         createdAt: DateTime.now().subtract(const Duration(hours: 1)),
         icon: AppIcons.message_icon,
       ),
       NotificationItem(
-        id: "demo_3",
-        title: "Exclusive Savings Deal",
+        id: "demo_4",
+        title: "Support Ticket Resolved",
         subtitle:
-            "Get 20% off on your next chauffeur booking in Miami service area.",
+            "Support ticket #ST-3490 regarding payment query has been resolved.",
+        type: "MESSAGE",
+        isRead: true,
+        createdAt: DateTime.now().subtract(const Duration(hours: 4)),
+        icon: AppIcons.message_icon,
+      ),
+      NotificationItem(
+        id: "demo_5",
+        title: "Upcoming Ride Reminder",
+        subtitle:
+            "Your scheduled ride to Miami International Airport starts in 2 hours.",
+        type: "REMINDER",
+        isRead: false,
+        createdAt: DateTime.now().subtract(const Duration(hours: 6)),
+        icon: AppIcons.deals_icon,
+      ),
+      NotificationItem(
+        id: "demo_6",
+        title: "Weekend Discount Offer",
+        subtitle:
+            "Book any premium SUV this weekend and get a flat 15% off. Use code: WEEKEND15",
         type: "REMINDER",
         isRead: true,
         createdAt: DateTime.now().subtract(const Duration(days: 1)),
         icon: AppIcons.deals_icon,
       ),
       NotificationItem(
-        id: "demo_4",
-        title: "New Invoice #INV-8729",
-        subtitle: "A payment request has been issued for your recent ride.",
+        id: "demo_7",
+        title: "New Invoice Available",
+        subtitle: "Invoice #INV-8729 for your recent ride has been generated.",
         type: "GENERAL",
-        isRead: false,
+        isRead: true,
         createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        icon: AppIcons.job_icon,
+      ),
+      NotificationItem(
+        id: "demo_8",
+        title: "Profile Verified Successfully",
+        subtitle:
+            "Your profile documents have been verified. You can now request trips.",
+        type: "GENERAL",
+        isRead: true,
+        createdAt: DateTime.now().subtract(const Duration(days: 3)),
         icon: AppIcons.job_icon,
       ),
     ];
