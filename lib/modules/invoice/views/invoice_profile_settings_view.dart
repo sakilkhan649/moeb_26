@@ -194,6 +194,16 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                     ),
                     SizedBox(height: 16.h),
 
+                    // Website Card
+                    _buildProfileInputField(
+                      title: 'Website (optional)',
+                      controller: controller.businessWebsiteController,
+                      hint: 'Enter Business Website',
+                      maxLength: 40,
+                      keyboardType: TextInputType.url,
+                    ),
+                    SizedBox(height: 16.h),
+
                     // Address Card
                     _buildProfileInputField(
                       title: 'Address (optional)',

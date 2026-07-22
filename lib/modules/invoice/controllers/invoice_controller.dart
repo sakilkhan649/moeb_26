@@ -16,7 +16,7 @@ class InvoiceHistoryRecord {
   // New fields to preserve full invoice details
   final String clientBusinessName;
   final String clientPhone;
-  final String clientWebsite;
+  final String invoiceDescription;
   final String clientStreetAddress;
   final String clientCity;
   final String clientState;
@@ -27,6 +27,7 @@ class InvoiceHistoryRecord {
   final String businessName;
   final String businessEmail;
   final String businessPhone;
+  final String businessWebsite;
   final String businessAddress;
   final String businessLogoPath;
 
@@ -40,7 +41,7 @@ class InvoiceHistoryRecord {
     required this.totalAmount,
     required this.clientBusinessName,
     required this.clientPhone,
-    required this.clientWebsite,
+    required this.invoiceDescription,
     required this.clientStreetAddress,
     required this.clientCity,
     required this.clientState,
@@ -51,6 +52,7 @@ class InvoiceHistoryRecord {
     required this.businessName,
     required this.businessEmail,
     required this.businessPhone,
+    required this.businessWebsite,
     required this.businessAddress,
     required this.businessLogoPath,
   });
@@ -66,7 +68,7 @@ class InvoiceHistoryRecord {
       totalAmount: totalAmount,
       clientBusinessName: clientBusinessName,
       clientPhone: clientPhone,
-      clientWebsite: clientWebsite,
+      invoiceDescription: invoiceDescription,
       clientStreetAddress: clientStreetAddress,
       clientCity: clientCity,
       clientState: clientState,
@@ -77,6 +79,7 @@ class InvoiceHistoryRecord {
       businessName: businessName,
       businessEmail: businessEmail,
       businessPhone: businessPhone,
+      businessWebsite: businessWebsite,
       businessAddress: businessAddress,
       businessLogoPath: businessLogoPath,
     );
@@ -101,7 +104,6 @@ class InvoiceController extends GetxController {
   late TextEditingController clientBusinessNameController;
   late TextEditingController clientEmailController;
   late TextEditingController clientPhoneController;
-  late TextEditingController clientWebsiteController;
 
   // Billing Address
   late TextEditingController clientStreetAddressController;
@@ -111,12 +113,14 @@ class InvoiceController extends GetxController {
   var clientCountry = 'United States'.obs;
 
   // Step 3: Message to Client
+  late TextEditingController invoiceDescriptionController;
   late TextEditingController messageToClientController;
 
   // --- PROFILE SETTING FIELDS ---
   late TextEditingController businessNameController;
   late TextEditingController businessEmailController;
   late TextEditingController businessPhoneController;
+  late TextEditingController businessWebsiteController;
   late TextEditingController businessAddressController;
   var businessLogoPath = RxnString();
   var savedBusinessName = 'Kali Ride LLC'.obs;
@@ -163,7 +167,6 @@ class InvoiceController extends GetxController {
     clientBusinessNameController = TextEditingController();
     clientEmailController = TextEditingController();
     clientPhoneController = TextEditingController();
-    clientWebsiteController = TextEditingController();
 
     // Billing Address
     clientStreetAddressController = TextEditingController();
@@ -172,12 +175,16 @@ class InvoiceController extends GetxController {
     clientZipController = TextEditingController();
 
     // Step 3: Message
-    messageToClientController = TextEditingController();
+    invoiceDescriptionController = TextEditingController();
+    messageToClientController = TextEditingController(
+      text: 'Thank you for your business!',
+    );
 
     // Profile Settings controllers
     businessNameController = TextEditingController(text: 'Kali Ride LLC');
     businessEmailController = TextEditingController(text: 'Info@kaliride.com');
     businessPhoneController = TextEditingController(text: '5617793674');
+    businessWebsiteController = TextEditingController(text: 'www.kaliride.com');
     businessAddressController = TextEditingController(text: '');
 
     // Add mock invoice history records
@@ -192,7 +199,8 @@ class InvoiceController extends GetxController {
         totalAmount: 450.00,
         clientBusinessName: 'Acme Corp',
         clientPhone: '561-555-0199',
-        clientWebsite: 'www.acme.com',
+        invoiceDescription:
+            'Consulting services and software development work.',
         clientStreetAddress: '100 Industrial Parkway',
         clientCity: 'Metropolis',
         clientState: 'NY',
@@ -203,6 +211,7 @@ class InvoiceController extends GetxController {
         businessName: 'Kali Ride LLC',
         businessEmail: 'Info@kaliride.com',
         businessPhone: '5617793674',
+        businessWebsite: 'www.kaliride.com',
         businessAddress: '123 Luxury Road, Palm Beach, FL 33480',
         businessLogoPath: '',
       ),
@@ -216,7 +225,7 @@ class InvoiceController extends GetxController {
         totalAmount: 120.00,
         clientBusinessName: 'Globex Inc',
         clientPhone: '800-555-0144',
-        clientWebsite: 'www.globex.com',
+        invoiceDescription: 'Graphic design and brand identity development.',
         clientStreetAddress: '500 Corporate Blvd',
         clientCity: 'Gotham',
         clientState: 'NJ',
@@ -227,6 +236,7 @@ class InvoiceController extends GetxController {
         businessName: 'Kali Ride LLC',
         businessEmail: 'Info@kaliride.com',
         businessPhone: '5617793674',
+        businessWebsite: 'www.kaliride.com',
         businessAddress: '123 Luxury Road, Palm Beach, FL 33480',
         businessLogoPath: '',
       ),
@@ -241,16 +251,17 @@ class InvoiceController extends GetxController {
     clientBusinessNameController.dispose();
     clientEmailController.dispose();
     clientPhoneController.dispose();
-    clientWebsiteController.dispose();
     clientStreetAddressController.dispose();
     clientCityController.dispose();
     clientStateController.dispose();
     clientZipController.dispose();
+    invoiceDescriptionController.dispose();
     messageToClientController.dispose();
 
     businessNameController.dispose();
     businessEmailController.dispose();
     businessPhoneController.dispose();
+    businessWebsiteController.dispose();
     businessAddressController.dispose();
     super.onClose();
   }
@@ -426,18 +437,19 @@ class InvoiceController extends GetxController {
 
     clientBusinessNameController.text = record.clientBusinessName;
     clientPhoneController.text = record.clientPhone;
-    clientWebsiteController.text = record.clientWebsite;
     clientStreetAddressController.text = record.clientStreetAddress;
     clientCityController.text = record.clientCity;
     clientStateController.text = record.clientState;
     clientZipController.text = record.clientZip;
     clientCountry.value = record.clientCountry;
+    invoiceDescriptionController.text = record.invoiceDescription;
     messageToClientController.text = record.messageToClient;
     selectedDueDateOption.value = record.dueDate;
 
     businessNameController.text = record.businessName;
     businessEmailController.text = record.businessEmail;
     businessPhoneController.text = record.businessPhone;
+    businessWebsiteController.text = record.businessWebsite;
     businessAddressController.text = record.businessAddress;
     businessLogoPath.value = record.businessLogoPath;
   }
@@ -449,12 +461,12 @@ class InvoiceController extends GetxController {
     clientBusinessNameController.clear();
     clientEmailController.clear();
     clientPhoneController.clear();
-    clientWebsiteController.clear();
     clientStreetAddressController.clear();
     clientCityController.clear();
     clientStateController.clear();
     clientZipController.clear();
-    messageToClientController.clear();
+    invoiceDescriptionController.clear();
+    messageToClientController.text = 'Thank you for your business!';
 
     // Generate next invoice number based on history count
     final nextNum = invoiceHistory.isEmpty ? 1 : (invoiceHistory.length + 1);
@@ -479,12 +491,12 @@ class InvoiceController extends GetxController {
     clientBusinessNameController.clear();
     clientEmailController.clear();
     clientPhoneController.clear();
-    clientWebsiteController.clear();
     clientStreetAddressController.clear();
     clientCityController.clear();
     clientStateController.clear();
     clientZipController.clear();
-    messageToClientController.clear();
+    invoiceDescriptionController.clear();
+    messageToClientController.text = 'Thank you for your business!';
 
     invoiceNumberController.text =
         'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
@@ -521,17 +533,18 @@ class InvoiceController extends GetxController {
       totalAmount: amount,
       clientBusinessName: clientBusinessNameController.text.trim(),
       clientPhone: clientPhoneController.text.trim(),
-      clientWebsite: clientWebsiteController.text.trim(),
       clientStreetAddress: clientStreetAddressController.text.trim(),
       clientCity: clientCityController.text.trim(),
       clientState: clientStateController.text.trim(),
       clientZip: clientZipController.text.trim(),
       clientCountry: clientCountry.value,
+      invoiceDescription: invoiceDescriptionController.text.trim(),
       messageToClient: messageToClientController.text.trim(),
       dueDate: selectedDueDateOption.value,
       businessName: businessNameController.text.trim(),
       businessEmail: businessEmailController.text.trim(),
       businessPhone: businessPhoneController.text.trim(),
+      businessWebsite: businessWebsiteController.text.trim(),
       businessAddress: businessAddressController.text.trim(),
       businessLogoPath: businessLogoPath.value ?? '',
     );

@@ -251,15 +251,6 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         ),
         SizedBox(height: 16.h),
 
-        // Website
-        _buildFieldLabel('Website (Optional)'),
-        _buildInputField(
-          controller: controller.clientWebsiteController,
-          hint: 'www.example.com',
-          keyboardType: TextInputType.url,
-        ),
-        SizedBox(height: 16.h),
-
         // Phone Number
         _buildFieldLabel('Phone Number (Optional)'),
         _buildInputField(
@@ -368,7 +359,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Message to Client Card
+        // Description Card
         Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
@@ -401,7 +392,70 @@ class CreateInvoiceView extends GetView<InvoiceController> {
               ),
               SizedBox(height: 12.h),
               Container(
-                height: 180.h,
+                height: 100.h,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E1E),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: TextField(
+                  controller: controller.invoiceDescriptionController,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                  ),
+                  decoration: InputDecoration(
+                    hintText:
+                        'Briefly describe the work or services rendered...',
+                    hintStyle: GoogleFonts.inter(
+                      color: const Color(0xFF4B5563),
+                      fontSize: 14.sp,
+                    ),
+                    contentPadding: EdgeInsets.all(14.w),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 16.h),
+
+        // Message to Client Card
+        Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: const Color(0xFF111111),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Message to Client',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'Optional',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFD5C4AB),
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              Container(
+                height: 100.h,
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E1E1E),
                   borderRadius: BorderRadius.circular(12.r),
@@ -416,7 +470,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                   ),
                   decoration: InputDecoration(
                     hintText:
-                        'Briefly describe the work or add a personal note to your client...',
+                        'Add a personal note or thank you message for your client...',
                     hintStyle: GoogleFonts.inter(
                       color: const Color(0xFF4B5563),
                       fontSize: 14.sp,
