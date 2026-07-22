@@ -1,17 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
-import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
-import 'package:moeb_26/core/widgets/EditProfileBottomSheet.dart';
+import 'package:moeb_26/modules/auth/profile/views/personal_information_view.dart';
+import 'package:moeb_26/modules/auth/profile/views/payment_information_view.dart';
 import 'package:moeb_26/core/widgets/LogoutBottomSheet.dart';
-import 'package:moeb_26/modules/jobs_offers/views/Job_offer_view.dart';
 import 'package:moeb_26/core/widgets/Contact_support_popup.dart';
 import 'package:moeb_26/core/widgets/DeleteAccountBottomSheet.dart';
 import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
@@ -26,7 +22,7 @@ class ProfileView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: CustomAppBar(
-        title: 'Profile',
+        title: 'My Profile',
         showBackButton: false,
         showActions: true,
       ),
@@ -35,468 +31,353 @@ class ProfileView extends StatelessWidget {
           onRefresh: () async {
             await controller.fetchUserProfile();
           },
-          color: AppColors.orange100,
+          color: const Color(0xFFD08700),
           backgroundColor: Colors.black,
           child: Obx(() {
             if (controller.isLoading.value &&
                 controller.userProfile.value == null) {
               return const Center(
-                child: CircularProgressIndicator(color: AppColors.orange100),
+                child: CircularProgressIndicator(color: Color(0xFFD08700)),
               );
             }
             return SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 15.h),
-
-                  // Profile Info Row
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Profile Image
-                        CircleAvatar(
-                          radius: 42.r,
-                          backgroundImage:
-                              controller.profilePicture.value.isNotEmpty
-                              ? NetworkImage(controller.profilePicture.value)
-                              : AssetImage(AppImages.sadat_image)
-                                    as ImageProvider,
+                  // --- HEADER PROFILE CARD ---
+                  Stack(
+                    children: [
+                      Container(
+                        width: 105.w,
+                        height: 105.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color(0xFFD08700),
+                            width: 2.w,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFD08700).withValues(alpha: 0.2),
+                              blurRadius: 15,
+                              spreadRadius: 2,
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 14.w),
-                        // Profile Text Info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Name
-                              Obx(
-                                () => Text(
-                                  controller.fullName.value,
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(55.w),
+                          child: controller.profilePicture.value.isNotEmpty
+                              ? Image.network(
+                                  controller.profilePicture.value,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  AppImages.sadat_image,
+                                  fit: BoxFit.cover,
                                 ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 2.w,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 9.w,
+                            vertical: 3.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD08700),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: Colors.black,
+                                size: 12.sp,
                               ),
-                              SizedBox(height: 6.h),
-                              // Rating
-                              Obx(
-                                () => Row(
-                                  children: [
-                                    Icon(
-                                      Icons.star,
-                                      color: AppColors.orange100,
-                                      size: 16.sp,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      controller.rating.value.toString(),
-                                      style: GoogleFonts.inter(
-                                        color: Colors.white,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
+                              SizedBox(width: 2.w),
+                              Text(
+                                controller.rating.value.toStringAsFixed(1),
+                                style: GoogleFonts.inter(
+                                  color: Colors.black,
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        // Edit Button — styled as orange background button with text and edit icon on the far right
-                        PopupMenuButton<int>(
-                          padding: EdgeInsets.zero,
-                          color: const Color(0xFF000000),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.r),
-                            side: const BorderSide(
-                              color: Color(0xFF364153),
-                              width: 1,
-                            ),
-                          ),
-                          offset: const Offset(0, 50),
-                          onSelected: (item) {
-                            switch (item) {
-                              case 0:
-                                Get.bottomSheet(
-                                  EditProfileBottomSheet(),
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                );
-                                break;
-                              case 1:
-                                Get.toNamed(
-                                  Routes.allVehicleView,
-                                  arguments: {
-                                    "vehicles":
-                                        controller.userProfile.value?.vehicles,
-                                  },
-                                );
-                                break;
-                              case 3:
-                                Get.toNamed(Routes.personalDocumentView);
-                                break;
-                            }
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+
+                  // --- USER NAME ---
+                  Text(
+                    controller.fullName.value +
+                        (controller.nickName.value.isNotEmpty
+                            ? ' (${controller.nickName.value})'
+                            : ''),
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFFEDB9B), // Soft peach-yellow
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 4.h),
+
+                  // --- VERIFIED BADGE ---
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.verified,
+                        color: const Color(0xFFD08700),
+                        size: 15.sp,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Verified Professional Chauffeur',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFD5C4AB),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // --- CATEGORY 1: ACCOUNT & DRIVER DETAILS ---
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Account & Driver Details',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFD5C4AB),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1A1A1A),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(
+                        color: const Color(0xFF2C2C2C),
+                        width: 0.98,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildSettingTile(
+                          icon: Icons.person_outline_rounded,
+                          title: "Personal & Driver Information",
+                          subtitle: "Manage email, phone, company & languages",
+                          onTap: () {
+                            Get.to(() => const PersonalInformationView());
                           },
-                          itemBuilder: (context) => [
-                            _buildPopupItem(0, Icons.person_outline, "Profile"),
-                            _buildPopupItem(
-                              1,
-                              Icons.directions_car_outlined,
-                              "Vehicle",
-                            ),
-                            _buildPopupItem(
-                              3,
-                              Icons.document_scanner_outlined,
-                              "Personal doc",
-                            ),
-                          ],
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 18.w,
-                              vertical: 8.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.orange100,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SvgPicture.asset(
-                                  AppIcons.edit_icon_myjob,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
-                                  width: 18.sp,
-                                  height: 18.sp,
-                                ),
-                                SizedBox(width: 6.w),
-                                Text(
-                                  "Edit",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        ),
+                        _buildTileDivider(),
+                        _buildSettingTile(
+                          icon: Icons.account_balance_wallet_outlined,
+                          title: "Payment Methods & Payouts",
+                          subtitle: "Manage Zelle, Venmo, Cash App & Card",
+                          onTap: () {
+                            Get.to(() => const PaymentInformationView());
+                          },
+                        ),
+                        _buildTileDivider(),
+                        _buildSettingTile(
+                          icon: Icons.directions_car_outlined,
+                          title: "My Vehicles",
+                          subtitle: "Manage and select active vehicles",
+                          onTap: () {
+                            Get.toNamed(
+                              Routes.allVehicleView,
+                              arguments: {
+                                "vehicles":
+                                    controller.userProfile.value?.vehicles,
+                              },
+                            );
+                          },
+                        ),
+                        _buildTileDivider(),
+                        _buildSettingTile(
+                          icon: Icons.document_scanner_outlined,
+                          title: "Personal Documents",
+                          subtitle: "License and verification documents",
+                          onTap: () {
+                            Get.toNamed(Routes.personalDocumentView);
+                          },
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.h),
-                  Divider(
-                    color: Colors.grey.withValues(alpha: 0.15),
-                    thickness: 0.8.h,
-                  ),
+                  SizedBox(height: 24.h),
 
-                  // Account Details Section
-                  _buildSectionTitle("Account Details"),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      children: [
-                        _buildDetailRow("Email", controller.email),
-                        _buildDetailRow("Phone", controller.phone),
-                        _buildDetailRow("Service Area", controller.serviceArea),
-                        _buildDetailRow("Nick Name", controller.nickName),
-                      ],
+                  // --- CATEGORY 2: PREFERENCES & SUPPORT ---
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Preferences & Support',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFD5C4AB),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 16.h),
-                  Divider(
-                    color: Colors.grey.withValues(alpha: 0.2),
-                    thickness: 1.h,
-                  ),
+                  SizedBox(height: 10.h),
 
-                  // My Vehicles Section
-                  _buildSectionTitle("My Vehicles"),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Obx(() {
-                      final vehicles =
-                          controller.userProfile.value?.vehicles ?? [];
-                      if (vehicles.isEmpty) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.h),
-                          child: Center(
-                            child: Text(
-                              "No vehicles added",
-                              style: GoogleFonts.inter(color: Colors.grey),
-                            ),
-                          ),
-                        );
-                      }
-                      return Column(
-                        children: vehicles.map((vehicle) {
-                          final vehicleStyle =
-                              VehicleTypeColors.getVehicleStyle(
-                                vehicle.carType,
-                              );
-                          final isSelected =
-                              controller.userProfile.value?.selectedVehicle ==
-                              vehicle.id;
-
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (!isSelected) {
-                                  controller.updateSelectedVehicle(vehicle.id);
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(16.w),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF1A1A1A),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? Colors.green.withValues(alpha: 0.5)
-                                        : Colors.white.withValues(alpha: 0.1),
-                                    width: isSelected ? 1.5.w : 1.w,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(8.w),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.circular(
-                                          8.r,
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.directions_car,
-                                        color: isSelected
-                                            ? Colors.green
-                                            : Colors.grey,
-                                        size: 24.sp,
-                                      ),
-                                    ),
-                                    SizedBox(width: 16.w),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${vehicle.year} ${vehicle.make} ${vehicle.model}",
-                                            style: GoogleFonts.inter(
-                                              color: Colors.white,
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          Text(
-                                            "${vehicle.carType} • ${vehicle.licensePlate}",
-                                            style: GoogleFonts.inter(
-                                              color: Colors.grey,
-                                              fontSize: 12.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    if (isSelected)
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 12.w),
-                                        child: Icon(
-                                          Icons.check_circle,
-                                          color: Colors.green,
-                                          size: 20.sp,
-                                        ),
-                                      ),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 12.w,
-                                        vertical: 6.h,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: vehicleStyle is Color
-                                            ? vehicleStyle
-                                            : null,
-                                        gradient: vehicleStyle is Gradient
-                                            ? vehicleStyle
-                                            : null,
-                                        borderRadius: BorderRadius.circular(
-                                          4.r,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        vehicle.carType.toUpperCase(),
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white,
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    }),
-                  ),
-                  SizedBox(height: 16.h),
-                  Divider(
-                    color: Colors.grey.withValues(alpha: 0.2),
-                    thickness: 1.h,
-                  ),
-
-                  // Settings List
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1A1A1A),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(
+                        color: const Color(0xFF2C2C2C),
+                        width: 0.98,
+                      ),
+                    ),
                     child: Column(
                       children: [
-                        _buildSettingItem(
-                          SvgPicture.asset(
-                            AppIcons.ratings_icon,
-                            height: 24.sp,
-                            width: 24.sp,
-                          ),
-                          "Ratings & Feedback",
+                        _buildSettingTile(
+                          icon: Icons.star_outline_rounded,
+                          title: "Ratings & Feedback",
                           onTap: () => Get.toNamed(Routes.ratingsFeedbackView),
                         ),
-
                         Obx(
                           () => Column(
                             children: controller.legalPages.map((legal) {
-                              return _buildSettingItem(
-                                SvgPicture.asset(
-                                  AppIcons.settings_icon,
-                                  height: 24.sp,
-                                  width: 24.sp,
-                                ),
-                                legal['title'] ?? "",
-                                onTap: () => Get.toNamed(
-                                  Routes.termPolicyView,
-                                  arguments: {"slug": legal['slug']},
-                                ),
+                              return Column(
+                                children: [
+                                  _buildTileDivider(),
+                                  _buildSettingTile(
+                                    icon: Icons.description_outlined,
+                                    title: legal['title'] ?? "",
+                                    onTap: () => Get.toNamed(
+                                      Routes.termPolicyView,
+                                      arguments: {"slug": legal['slug']},
+                                    ),
+                                  ),
+                                ],
                               );
                             }).toList(),
                           ),
                         ),
-
-                        _buildSettingItem(
-                          SvgPicture.asset(
-                            AppIcons.support_icon,
-                            height: 24.sp,
-                            width: 24.sp,
-                          ),
-                          "Support and Report",
+                        _buildTileDivider(),
+                        _buildSettingTile(
+                          icon: Icons.headset_mic_outlined,
+                          title: "Support and Report",
                           onTap: () => showContactSupportBottomSheet(),
                         ),
-                        _buildSettingItem(
-                          SvgPicture.asset(
-                            AppIcons.password_icon,
-                            height: 24.sp,
-                            width: 24.sp,
-                          ),
-                          "Password Change",
+                        _buildTileDivider(),
+                        _buildSettingTile(
+                          icon: Icons.lock_outline_rounded,
+                          title: "Password Change",
                           onTap: () => Get.toNamed(Routes.changePasswordView),
                         ),
                       ],
                     ),
                   ),
+                  SizedBox(height: 28.h),
 
-                  // Log Out Button
-                  Padding(
-                    padding: EdgeInsets.all(20.w),
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.bottomSheet(
-                          LogoutBottomSheet(),
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.logout, color: Colors.red, size: 20.sp),
-                            SizedBox(width: 8.w),
-                            Text(
-                              "Log Out",
-                              style: GoogleFonts.inter(
-                                color: Colors.red,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
+                  // --- ACTIONS: LOG OUT & DELETE ACCOUNT ---
+                  Row(
+                    children: [
+                      // Log Out Button
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Get.bottomSheet(
+                              LogoutBottomSheet(),
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
+                              color: Color(0xFFEF4444),
+                              width: 1.2,
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Delete Account Button
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 8.h,
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.bottomSheet(
-                          DeleteAccountBottomSheet(),
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(16.r),
-                          border: Border.all(
-                            color: Colors.red.withValues(alpha: 0.5),
-                            width: 1.w,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 13.h),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.logout_rounded,
+                                color: const Color(0xFFEF4444),
+                                size: 17.sp,
+                              ),
+                              SizedBox(width: 6.w),
+                              Text(
+                                "Log Out",
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFFEF4444),
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.delete_forever_outlined,
-                              color: Colors.red,
-                              size: 20.sp,
+                      ),
+                      SizedBox(width: 12.w),
+
+                      // Delete Account Button
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Get.bottomSheet(
+                              DeleteAccountBottomSheet(),
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: const Color(0xFFEF4444).withValues(alpha: 0.5),
+                              width: 1.2,
                             ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              "Delete Account",
-                              style: GoogleFonts.inter(
-                                color: Colors.red,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 13.h),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.delete_outline_rounded,
+                                color: const Color(0xFFEF4444),
+                                size: 17.sp,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 6.w),
+                              Text(
+                                "Delete Account",
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFFEF4444),
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                   SizedBox(height: 20.h),
                 ],
@@ -508,92 +389,55 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  PopupMenuItem<int> _buildPopupItem(int value, IconData icon, String title) {
-    return PopupMenuItem<int>(
-      value: value,
-      height: 45.h,
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white, size: 22.sp),
-          SizedBox(width: 14.w),
-          Expanded(
-            child: Text(
-              title,
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Icon(
-            CupertinoIcons.chevron_forward,
-            size: 18.sp,
-            color: Colors.white,
-          ),
-        ],
-      ),
+  // --- REUSABLE UI BUILDERS ---
+
+  Widget _buildTileDivider() {
+    return const Divider(
+      color: Color(0xFF2C2C2C),
+      thickness: 1,
+      height: 1,
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20.w, top: 5.h, bottom: 5.h),
-      child: Text(
+  Widget _buildSettingTile({
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        width: 38.w,
+        height: 38.w,
+        decoration: BoxDecoration(
+          color: const Color(0xFF27272A),
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Icon(icon, color: const Color(0xFFD5C4AB), size: 19.sp),
+      ),
+      title: Text(
         title,
         style: GoogleFonts.inter(
           color: Colors.white,
-          fontSize: 18.sp,
-          fontWeight: FontWeight.bold,
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, RxString value) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 10.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            flex: 2,
-            child: Text(
-              label,
-              style: GoogleFonts.inter(color: Colors.grey, fontSize: 14.sp),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          SizedBox(width: 10.w),
-          Flexible(
-            flex: 3,
-            child: Obx(
-              () => Text(
-                value.value,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.right,
-                overflow: TextOverflow.ellipsis,
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF71717A),
+                fontSize: 11.sp,
               ),
-            ),
-          ),
-        ],
+            )
+          : null,
+      trailing: Icon(
+        Icons.arrow_forward_ios_rounded,
+        color: const Color(0xFF71717A),
+        size: 14.sp,
       ),
-    );
-  }
-
-  Widget _buildSettingItem(Widget icon, String title, {VoidCallback? onTap}) {
-    return ListTile(
-      leading: icon,
-      title: Text(
-        title,
-        style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),
-      ),
-      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16.sp),
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
       onTap: onTap,
     );
   }

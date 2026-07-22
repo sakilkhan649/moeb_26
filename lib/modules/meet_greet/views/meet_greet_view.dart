@@ -382,7 +382,7 @@ class MeetGreetView extends GetView<MeetGreetController> {
                 height: 52.h,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD5C4AB),
+                    backgroundColor: const Color(0xFFD08700),
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14.r),

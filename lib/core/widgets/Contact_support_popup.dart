@@ -110,12 +110,14 @@ class _ContactSupportViewState extends State<ContactSupportView> {
             controller.fetchMyTickets();
           });
         },
-        backgroundColor: const Color(0xFFFF9800), // Premium orange color matching App Theme
+        backgroundColor: const Color(
+          0xFFFF9800,
+        ), // Premium orange color matching App Theme
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text(
           "Create Ticket",
           style: GoogleFonts.inter(
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 14.sp,
           ),
@@ -175,8 +177,11 @@ class _ContactSupportViewState extends State<ContactSupportView> {
   }
 
   Widget _buildTicketListItem(dynamic ticket) {
-    final hasMessages = ticket['messages'] != null && ticket['messages'].isNotEmpty;
-    final lastMessage = hasMessages ? ticket['messages'].last['message'] : 'No messages';
+    final hasMessages =
+        ticket['messages'] != null && ticket['messages'].isNotEmpty;
+    final lastMessage = hasMessages
+        ? ticket['messages'].last['message']
+        : 'No messages';
     final subject = ticket['subject'] ?? 'No Subject';
     final dateStr = _formatDate(ticket['createdAt']);
 
@@ -260,7 +265,8 @@ class CreateSupportTicketView extends StatefulWidget {
   const CreateSupportTicketView({super.key});
 
   @override
-  State<CreateSupportTicketView> createState() => _CreateSupportTicketViewState();
+  State<CreateSupportTicketView> createState() =>
+      _CreateSupportTicketViewState();
 }
 
 class _CreateSupportTicketViewState extends State<CreateSupportTicketView> {
@@ -453,7 +459,11 @@ class _CreateSupportTicketViewState extends State<CreateSupportTicketView> {
               onTap: () => controller.pickAttachment(context),
               child: Row(
                 children: [
-                  Icon(Icons.add_circle_outline, color: const Color(0xFFFF9800), size: 20.sp),
+                  Icon(
+                    Icons.add_circle_outline,
+                    color: const Color(0xFFFF9800),
+                    size: 20.sp,
+                  ),
                   SizedBox(width: 4.w),
                   Text(
                     'Add File',
@@ -488,7 +498,10 @@ class _CreateSupportTicketViewState extends State<CreateSupportTicketView> {
                     SizedBox(width: 8.w),
                     Text(
                       "No attachments selected. Tap to add.",
-                      style: GoogleFonts.inter(color: Colors.grey, fontSize: 13.sp),
+                      style: GoogleFonts.inter(
+                        color: Colors.grey,
+                        fontSize: 13.sp,
+                      ),
                     ),
                   ],
                 ),
@@ -503,7 +516,8 @@ class _CreateSupportTicketViewState extends State<CreateSupportTicketView> {
               itemCount: controller.selectedFiles.length,
               itemBuilder: (context, index) {
                 final file = controller.selectedFiles[index];
-                final isImage = file.path.toLowerCase().endsWith('.png') ||
+                final isImage =
+                    file.path.toLowerCase().endsWith('.png') ||
                     file.path.toLowerCase().endsWith('.jpg') ||
                     file.path.toLowerCase().endsWith('.jpeg') ||
                     file.path.toLowerCase().endsWith('.webp');
@@ -524,18 +538,22 @@ class _CreateSupportTicketViewState extends State<CreateSupportTicketView> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12.r),
                             child: isImage
-                                ? Image.file(
-                                    file,
-                                    fit: BoxFit.cover,
-                                  )
+                                ? Image.file(file, fit: BoxFit.cover)
                                 : Center(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Icon(Icons.insert_drive_file, color: Colors.white70, size: 28.sp),
+                                        Icon(
+                                          Icons.insert_drive_file,
+                                          color: Colors.white70,
+                                          size: 28.sp,
+                                        ),
                                         SizedBox(height: 4.h),
                                         Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 4.w),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 4.w,
+                                          ),
                                           child: Text(
                                             file.path.split('/').last,
                                             style: GoogleFonts.inter(

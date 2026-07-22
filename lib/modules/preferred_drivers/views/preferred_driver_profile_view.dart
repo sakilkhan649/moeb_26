@@ -145,6 +145,28 @@ class PreferredDriverProfileView extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(height: 6.h),
+
+                  // Verified Chauffeur Badge
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.verified,
+                        color: const Color(0xFFD08700),
+                        size: 16.sp,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Verified Professional Chauffeur',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFD5C4AB),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 16.h),
 
                   // Action Buttons (Start Conversation & Remove from Favorites)
