@@ -16,6 +16,7 @@ class InvoiceHistoryRecord {
   // New fields to preserve full invoice details
   final String clientBusinessName;
   final String clientPhone;
+  final String clientWebsite;
   final String clientStreetAddress;
   final String clientCity;
   final String clientState;
@@ -39,6 +40,7 @@ class InvoiceHistoryRecord {
     required this.totalAmount,
     required this.clientBusinessName,
     required this.clientPhone,
+    required this.clientWebsite,
     required this.clientStreetAddress,
     required this.clientCity,
     required this.clientState,
@@ -64,6 +66,7 @@ class InvoiceHistoryRecord {
       totalAmount: totalAmount,
       clientBusinessName: clientBusinessName,
       clientPhone: clientPhone,
+      clientWebsite: clientWebsite,
       clientStreetAddress: clientStreetAddress,
       clientCity: clientCity,
       clientState: clientState,
@@ -98,6 +101,7 @@ class InvoiceController extends GetxController {
   late TextEditingController clientBusinessNameController;
   late TextEditingController clientEmailController;
   late TextEditingController clientPhoneController;
+  late TextEditingController clientWebsiteController;
 
   // Billing Address
   late TextEditingController clientStreetAddressController;
@@ -159,6 +163,7 @@ class InvoiceController extends GetxController {
     clientBusinessNameController = TextEditingController();
     clientEmailController = TextEditingController();
     clientPhoneController = TextEditingController();
+    clientWebsiteController = TextEditingController();
 
     // Billing Address
     clientStreetAddressController = TextEditingController();
@@ -187,6 +192,7 @@ class InvoiceController extends GetxController {
         totalAmount: 450.00,
         clientBusinessName: 'Acme Corp',
         clientPhone: '561-555-0199',
+        clientWebsite: 'www.acme.com',
         clientStreetAddress: '100 Industrial Parkway',
         clientCity: 'Metropolis',
         clientState: 'NY',
@@ -210,6 +216,7 @@ class InvoiceController extends GetxController {
         totalAmount: 120.00,
         clientBusinessName: 'Globex Inc',
         clientPhone: '800-555-0144',
+        clientWebsite: 'www.globex.com',
         clientStreetAddress: '500 Corporate Blvd',
         clientCity: 'Gotham',
         clientState: 'NJ',
@@ -234,6 +241,7 @@ class InvoiceController extends GetxController {
     clientBusinessNameController.dispose();
     clientEmailController.dispose();
     clientPhoneController.dispose();
+    clientWebsiteController.dispose();
     clientStreetAddressController.dispose();
     clientCityController.dispose();
     clientStateController.dispose();
@@ -418,6 +426,7 @@ class InvoiceController extends GetxController {
 
     clientBusinessNameController.text = record.clientBusinessName;
     clientPhoneController.text = record.clientPhone;
+    clientWebsiteController.text = record.clientWebsite;
     clientStreetAddressController.text = record.clientStreetAddress;
     clientCityController.text = record.clientCity;
     clientStateController.text = record.clientState;
@@ -440,6 +449,7 @@ class InvoiceController extends GetxController {
     clientBusinessNameController.clear();
     clientEmailController.clear();
     clientPhoneController.clear();
+    clientWebsiteController.clear();
     clientStreetAddressController.clear();
     clientCityController.clear();
     clientStateController.clear();
@@ -462,13 +472,14 @@ class InvoiceController extends GetxController {
     if (wasEditing) {
       invoiceHistory.removeAt(editingRecordIndex.value);
     }
-    
+
     // Reset fields for the next invoice
     invoiceAmountController.text = '0.00';
     clientNameController.clear();
     clientBusinessNameController.clear();
     clientEmailController.clear();
     clientPhoneController.clear();
+    clientWebsiteController.clear();
     clientStreetAddressController.clear();
     clientCityController.clear();
     clientStateController.clear();
@@ -510,6 +521,7 @@ class InvoiceController extends GetxController {
       totalAmount: amount,
       clientBusinessName: clientBusinessNameController.text.trim(),
       clientPhone: clientPhoneController.text.trim(),
+      clientWebsite: clientWebsiteController.text.trim(),
       clientStreetAddress: clientStreetAddressController.text.trim(),
       clientCity: clientCityController.text.trim(),
       clientState: clientStateController.text.trim(),
@@ -654,7 +666,9 @@ class InvoiceController extends GetxController {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD08700), // Bright orange-yellow
+                        backgroundColor: const Color(
+                          0xFFD08700,
+                        ), // Bright orange-yellow
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

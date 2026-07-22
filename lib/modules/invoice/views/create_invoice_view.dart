@@ -251,6 +251,15 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         ),
         SizedBox(height: 16.h),
 
+        // Website
+        _buildFieldLabel('Website (Optional)'),
+        _buildInputField(
+          controller: controller.clientWebsiteController,
+          hint: 'www.example.com',
+          keyboardType: TextInputType.url,
+        ),
+        SizedBox(height: 16.h),
+
         // Phone Number
         _buildFieldLabel('Phone Number (Optional)'),
         _buildInputField(
