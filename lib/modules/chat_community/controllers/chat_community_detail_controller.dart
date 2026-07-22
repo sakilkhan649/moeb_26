@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:moeb_26/core/utils/media_picker_helper.dart';
-import 'package:moeb_26/core/services/community_service.dart';
 import 'package:moeb_26/core/services/socket_service.dart';
 import 'package:moeb_26/core/services/user_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
+import 'package:moeb_26/data/models/chat_model.dart';
 
 class CommunityChatDetailController extends GetxController {
-  final CommunityService _communityService = Get.find<CommunityService>();
   final UserService userService = Get.find<UserService>();
   final SocketService socketService = Get.find<SocketService>();
 
@@ -51,37 +50,85 @@ class CommunityChatDetailController extends GetxController {
 
   void changeState(String newState) {
     if (selectedState.value == newState) return;
-    socketService.leaveRoom('community::${selectedState.value.toLowerCase()}');
     selectedState.value = newState;
-    socketService.joinRoom('community::${newState.toLowerCase()}');
     fetchMessages();
   }
 
   void setupSocket() {
-    socketService.joinRoom('community::${selectedState.value.toLowerCase()}');
-
-    ever(socketService.lastReceivedCommunityMessage, (data) {
-      if (data != null) {
-        debugPrint(
-          '📥 CommunityChatDetailController: Received community message update',
-        );
-        fetchMessages();
-      }
-    });
+    // Disabled for demo mode
   }
 
   Future<void> fetchMessages() async {
     try {
       isLoading.value = true;
-      final response = await _communityService.getCommunityMessages(
-        serviceArea: selectedState.value,
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final List data = response.data['data'] ?? [];
-        messages.assignAll(
-          data.map((m) => CommunityMessage.fromJson(m)).toList(),
-        );
-      }
+      await Future.delayed(const Duration(milliseconds: 300));
+      messages.assignAll([
+        CommunityMessage(
+          id: 'cmsg_5',
+          serviceArea: selectedState.value,
+          sender: ChatParticipant(
+            id: 'user_jim',
+            name: 'Jim Halpert',
+            profilePicture: null,
+          ),
+          text: 'Is anyone heading towards Miami this weekend?',
+          attachments: [],
+          createdAt: DateTime.now().subtract(const Duration(minutes: 2)).toIso8601String(),
+          updatedAt: DateTime.now().subtract(const Duration(minutes: 2)).toIso8601String(),
+        ),
+        CommunityMessage(
+          id: 'cmsg_4',
+          serviceArea: selectedState.value,
+          sender: ChatParticipant(
+            id: 'user_dwight',
+            name: 'Dwight Schrute',
+            profilePicture: null,
+          ),
+          text: 'Traffic on the main highway is really heavy today, drive safe guys.',
+          attachments: [],
+          createdAt: DateTime.now().subtract(const Duration(minutes: 10)).toIso8601String(),
+          updatedAt: DateTime.now().subtract(const Duration(minutes: 10)).toIso8601String(),
+        ),
+        CommunityMessage(
+          id: 'cmsg_3',
+          serviceArea: selectedState.value,
+          sender: ChatParticipant(
+            id: 'user_michael',
+            name: 'Michael Scott',
+            profilePicture: null,
+          ),
+          text: 'Thanks Pam, I\'ll check it out right now.',
+          attachments: [],
+          createdAt: DateTime.now().subtract(const Duration(minutes: 15)).toIso8601String(),
+          updatedAt: DateTime.now().subtract(const Duration(minutes: 15)).toIso8601String(),
+        ),
+        CommunityMessage(
+          id: 'cmsg_2',
+          serviceArea: selectedState.value,
+          sender: ChatParticipant(
+            id: 'user_pam',
+            name: 'Pam Beesly',
+            profilePicture: null,
+          ),
+          text: 'Yes, I saw a couple of airport runs posted in the Job Offer section.',
+          attachments: [],
+          createdAt: DateTime.now().subtract(const Duration(minutes: 20)).toIso8601String(),
+          updatedAt: DateTime.now().subtract(const Duration(minutes: 20)).toIso8601String(),
+        ),
+        CommunityMessage(
+          id: 'cmsg_1',
+          serviceArea: selectedState.value,
+          sender: ChatParticipant(
+            id: 'user_michael',
+            name: 'Michael Scott',
+            profilePicture: null,
+          ),
+          text: 'Hey everyone! Is there any ride request available in Orlando today?',
+          attachments: [],
+          createdAt: DateTime.now().subtract(const Duration(minutes: 30)).toIso8601String(),
+          updatedAt: DateTime.now().subtract(const Duration(minutes: 30)).toIso8601String(),
+        ),
+      ]);
     } catch (e) {
       Get.snackbar('Error', 'Failed to load community messages');
     } finally {
@@ -127,28 +174,32 @@ class CommunityChatDetailController extends GetxController {
     final text = messageController.text.trim();
     if (text.isEmpty && selectedImages.isEmpty) return;
 
-    try {
-      isSending.value = true;
-      final response = await _communityService.sendCommunityMessage(
-        text: text,
-        attachments: selectedImages.toList(),
-      );
+    isSending.value = true;
+    await Future.delayed(const Duration(milliseconds: 100));
+    final currentUserId = userService.userId;
+    
+    final newMsg = CommunityMessage(
+      id: 'cmsg_user_${DateTime.now().millisecondsSinceEpoch}',
+      serviceArea: selectedState.value,
+      sender: ChatParticipant(
+        id: currentUserId,
+        name: 'You',
+        profilePicture: null,
+      ),
+      text: text,
+      attachments: [],
+      createdAt: DateTime.now().toIso8601String(),
+      updatedAt: DateTime.now().toIso8601String(),
+    );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        messageController.clear();
-        selectedImages.clear();
-        fetchMessages(); // Refresh to show new message
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to send message');
-    } finally {
-      isSending.value = false;
-    }
+    messages.insert(0, newMsg);
+    messageController.clear();
+    selectedImages.clear();
+    isSending.value = false;
   }
 
   @override
   void onClose() {
-    socketService.leaveRoom('community::${selectedState.value.toLowerCase()}');
     messageController.dispose();
     super.onClose();
   }

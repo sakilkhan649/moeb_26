@@ -101,14 +101,14 @@ class ChatDetailController extends GetxController {
                   .toIso8601String(),
             ),
           ]);
-        } else if (chat.id == 'demo_user_chat') {
+        } else if (chat.id == 'demo_user_chat_1') {
           messages.assignAll([
             ChatMessage(
               id: 'msg_user_1',
               chatId: chat.id,
               text: 'Hey, is the offer still available?',
-              senderId: 'demo_user_id',
-              sender: ChatParticipant(id: 'demo_user_id', name: 'Demo User'),
+              senderId: 'demo_user_id_1',
+              sender: ChatParticipant(id: 'demo_user_id_1', name: 'John Doe'),
               createdAt: DateTime.now()
                   .subtract(const Duration(hours: 2))
                   .toIso8601String(),
@@ -120,13 +120,42 @@ class ChatDetailController extends GetxController {
               id: 'msg_user_0',
               chatId: chat.id,
               text: 'Hello there!',
-              senderId: 'demo_user_id',
-              sender: ChatParticipant(id: 'demo_user_id', name: 'Demo User'),
+              senderId: 'demo_user_id_1',
+              sender: ChatParticipant(id: 'demo_user_id_1', name: 'John Doe'),
               createdAt: DateTime.now()
                   .subtract(const Duration(hours: 2, minutes: 5))
                   .toIso8601String(),
               updatedAt: DateTime.now()
                   .subtract(const Duration(hours: 2, minutes: 5))
+                  .toIso8601String(),
+            ),
+          ]);
+        } else if (chat.id == 'demo_user_chat_2') {
+          messages.assignAll([
+            ChatMessage(
+              id: 'msg_user_2_1',
+              chatId: chat.id,
+              text: 'I am interested in this vehicle listing.',
+              senderId: 'demo_user_id_2',
+              sender: ChatParticipant(id: 'demo_user_id_2', name: 'Jane Smith'),
+              createdAt: DateTime.now()
+                  .subtract(const Duration(days: 1))
+                  .toIso8601String(),
+              updatedAt: DateTime.now()
+                  .subtract(const Duration(days: 1))
+                  .toIso8601String(),
+            ),
+            ChatMessage(
+              id: 'msg_user_2_0',
+              chatId: chat.id,
+              text: 'Hi, can you give me more details?',
+              senderId: 'demo_user_id_2',
+              sender: ChatParticipant(id: 'demo_user_id_2', name: 'Jane Smith'),
+              createdAt: DateTime.now()
+                  .subtract(const Duration(days: 1, hours: 1))
+                  .toIso8601String(),
+              updatedAt: DateTime.now()
+                  .subtract(const Duration(days: 1, hours: 1))
                   .toIso8601String(),
             ),
           ]);

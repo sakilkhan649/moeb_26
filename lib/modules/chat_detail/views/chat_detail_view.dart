@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 import '../controllers/chat_detail_controller.dart';
 import '../../../data/models/chat_message_model.dart';
 
@@ -27,7 +29,7 @@ class ChatDetailView extends StatelessWidget {
               child: Obx(() {
                 return ListView.builder(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
+                    horizontal: 10.w,
                     vertical: 10.h,
                   ),
                   itemCount: controller.messages.length,
@@ -78,69 +80,88 @@ class ChatDetailView extends StatelessWidget {
             onPressed: () => Get.back(),
           ),
           titleSpacing: 0,
-          title: Row(
-            children: [
-              Container(
-                width: 40.r,
-                height: 40.r,
-                padding: EdgeInsets.all(2.r),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.grey[700]!, width: 1.5),
-                ),
-                child: ClipOval(
-                  child: () {
-                    final pic = other?.profilePicture;
-                    final hasImage = pic != null && pic.isNotEmpty;
-                    final isNetwork = hasImage && pic.startsWith('http');
-                    if (hasImage && !isNetwork) {
-                      return Transform.scale(
-                        scale: 1.3,
-                        child: Image.asset(pic, fit: BoxFit.contain),
-                      );
-                    } else if (hasImage && isNetwork) {
-                      return Image.network(pic, fit: BoxFit.cover);
-                    } else {
-                      return CircleAvatar(
-                        radius: 20.r,
-                        backgroundColor: const Color(0xffE0E0E0),
-                        child: Text(
-                          other?.initials ?? '?',
-                          style: GoogleFonts.inter(
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      );
-                    }
-                  }(),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Text(
-                other?.name ?? 'Chat',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(width: 8.w),
-              // সকেট স্ট্যাটাস ইন্ডিকেটর
-              Obx(
-                () => Container(
-                  width: 8.w,
-                  height: 8.w,
+          title: GestureDetector(
+            onTap: () {
+              final preferredController =
+                  Get.isRegistered<PreferredDriversController>()
+                  ? Get.find<PreferredDriversController>()
+                  : Get.put(PreferredDriversController());
+
+              final namePart =
+                  other?.name.split(' ').first.toLowerCase() ?? '';
+              final chauffeur = preferredController.chauffeursList
+                  .firstWhere(
+                    (c) => c.name.toLowerCase().startsWith(namePart),
+                    orElse: () => preferredController.chauffeursList.first,
+                  );
+              preferredController.selectedChauffeur.value = chauffeur;
+              Get.toNamed(Routes.preferredDriverProfileView);
+            },
+            behavior: HitTestBehavior.opaque,
+            child: Row(
+              children: [
+                Container(
+                  width: 40.r,
+                  height: 40.r,
+                  padding: EdgeInsets.all(2.r),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: controller.socketService.isConnected.value
-                        ? Colors.green
-                        : Colors.red,
+                    border: Border.all(color: Colors.grey[700]!, width: 1.5),
+                  ),
+                  child: ClipOval(
+                    child: () {
+                      final pic = other?.profilePicture;
+                      final hasImage = pic != null && pic.isNotEmpty;
+                      final isNetwork = hasImage && pic.startsWith('http');
+                      if (hasImage && !isNetwork) {
+                        return Transform.scale(
+                          scale: 1.3,
+                          child: Image.asset(pic, fit: BoxFit.contain),
+                        );
+                      } else if (hasImage && isNetwork) {
+                        return Image.network(pic, fit: BoxFit.cover);
+                      } else {
+                        return CircleAvatar(
+                          radius: 20.r,
+                          backgroundColor: const Color(0xffE0E0E0),
+                          child: Text(
+                            other?.initials ?? '?',
+                            style: GoogleFonts.inter(
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        );
+                      }
+                    }(),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(width: 12.w),
+                Text(
+                  other?.name ?? 'Chat',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                // সকেট স্ট্যাটাস ইন্ডিকেটর
+                Obx(
+                  () => Container(
+                    width: 8.w,
+                    height: 8.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: controller.socketService.isConnected.value
+                          ? Colors.green
+                          : Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -155,70 +176,124 @@ class ChatDetailView extends StatelessWidget {
     return Obx(() {
       final String currentUserId = controller.userService.userId;
       final bool isMe = message.isSentBy(currentUserId);
+      final other = controller.chat.getOtherParticipant(currentUserId);
+
+      final avatar = Container(
+        margin: EdgeInsets.only(right: 8.w, bottom: 4.h),
+        width: 32.r,
+        height: 32.r,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey[850]!, width: 1),
+        ),
+        child: ClipOval(
+          child:
+              other?.profilePicture != null && other!.profilePicture!.isNotEmpty
+              ? (other.profilePicture!.startsWith('http')
+                    ? Image.network(other.profilePicture!, fit: BoxFit.cover)
+                    : Image.asset(other.profilePicture!, fit: BoxFit.cover))
+              : Container(
+                  color: Colors.grey[800],
+                  child: Center(
+                    child: Text(
+                      other?.initials ?? '?',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+        ),
+      );
 
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 4.h),
         child: Align(
           alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-          child: Column(
-            crossAxisAlignment: isMe
-                ? CrossAxisAlignment.end
-                : CrossAxisAlignment.start,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Container(
-                constraints: BoxConstraints(maxWidth: 0.75.sw),
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: isMe
-                      ? const Color(0xff1A1A1A)
-                      : const Color(0xff2A2A2A),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.r),
-                    topRight: Radius.circular(16.r),
-                    bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
-                    bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
-                  ),
-                  border: Border.all(color: const Color(0xff333333)),
-                ),
+              if (!isMe) avatar,
+              Flexible(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: isMe
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
                   children: [
-                    if (message.attachments.isNotEmpty)
-                      Column(
-                        children: message.attachments
-                            .map(
-                              (url) => Padding(
-                                padding: EdgeInsets.only(bottom: 8.h),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  child: Image.network(url, fit: BoxFit.cover),
-                                ),
-                              ),
-                            )
-                            .toList(),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: 0.70.sw),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
                       ),
-                    if (message.text.trim().isNotEmpty)
-                      Text(
-                        message.text,
+                      decoration: BoxDecoration(
+                        color: isMe
+                            ? const Color(0xff1A1A1A)
+                            : const Color(0xff2A2A2A),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16.r),
+                          topRight: Radius.circular(16.r),
+                          bottomLeft: isMe
+                              ? Radius.circular(16.r)
+                              : Radius.zero,
+                          bottomRight: isMe
+                              ? Radius.zero
+                              : Radius.circular(16.r),
+                        ),
+                        border: Border.all(color: const Color(0xff333333)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (message.attachments.isNotEmpty)
+                            Column(
+                              children: message.attachments
+                                  .map(
+                                    (url) => Padding(
+                                      padding: EdgeInsets.only(bottom: 8.h),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
+                                        child: Image.network(
+                                          url,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          if (message.text.trim().isNotEmpty)
+                            Text(
+                              message.text,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                height: 1.4,
+                                fontWeight: isMe
+                                    ? FontWeight.w500
+                                    : FontWeight.w400,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: Text(
+                        message.time,
                         style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          height: 1.4,
-                          fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
+                          color: Colors.grey[600],
+                          fontSize: 10.sp,
                         ),
                       ),
+                    ),
                   ],
-                ),
-              ),
-              SizedBox(height: 4.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: Text(
-                  message.time,
-                  style: GoogleFonts.inter(
-                    color: Colors.grey[600],
-                    fontSize: 10.sp,
-                  ),
                 ),
               ),
             ],

@@ -5,8 +5,10 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/modules/chat_community/controllers/chat_community_detail_controller.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 
 class ChatCommunityDetailView extends StatelessWidget {
   ChatCommunityDetailView({super.key});
@@ -31,7 +33,7 @@ class ChatCommunityDetailView extends StatelessWidget {
                 }
                 return ListView.builder(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
+                    horizontal: 10.w,
                     vertical: 10.h,
                   ),
                   itemCount: controller.messages.length,
@@ -88,10 +90,7 @@ class ChatCommunityDetailView extends StatelessWidget {
                 height: 40.r,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.grey[700]!,
-                    width: 1.5,
-                  ),
+                  border: Border.all(color: Colors.grey[700]!, width: 1.5),
                 ),
                 child: ClipOval(
                   child: Transform.scale(
@@ -188,79 +187,170 @@ class ChatCommunityDetailView extends StatelessWidget {
   Widget _buildMessageBubble(CommunityMessage message) {
     final bool isMe = message.sender.id == controller.userService.userId;
 
+    final avatar = GestureDetector(
+      onTap: () {
+        final preferredController =
+            Get.isRegistered<PreferredDriversController>()
+            ? Get.find<PreferredDriversController>()
+            : Get.put(PreferredDriversController());
+
+        final namePart = message.sender.name.split(' ').first.toLowerCase();
+        final chauffeur = preferredController.chauffeursList.firstWhere(
+          (c) => c.name.toLowerCase().startsWith(namePart),
+          orElse: () => preferredController.chauffeursList.first,
+        );
+        preferredController.selectedChauffeur.value = chauffeur;
+        Get.toNamed(Routes.preferredDriverProfileView);
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: 8.w, bottom: 4.h),
+        width: 32.r,
+        height: 32.r,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey[850]!, width: 1),
+        ),
+        child: ClipOval(
+          child:
+              message.sender.profilePicture != null &&
+                  message.sender.profilePicture!.isNotEmpty
+              ? (message.sender.profilePicture!.startsWith('http')
+                    ? Image.network(
+                        message.sender.profilePicture!,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        message.sender.profilePicture!,
+                        fit: BoxFit.cover,
+                      ))
+              : Container(
+                  color: Colors.grey[800],
+                  child: Center(
+                    child: Text(
+                      message.sender.initials,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+        ),
+      ),
+    );
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Align(
         alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: isMe
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (!isMe)
-              Padding(
-                padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
-                child: Text(
-                  message.sender.name,
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            Container(
-              constraints: BoxConstraints(maxWidth: 0.75.sw),
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              decoration: BoxDecoration(
-                color: isMe ? Color(0xff1A1A1A) : const Color(0xff1A1A1A),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.r),
-                  topRight: Radius.circular(16.r),
-                  bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
-                  bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
-                ),
-                border: Border.all(
-                  color: isMe
-                      ? const Color(0xff333333)
-                      : const Color(0xff333333),
-                ),
-              ),
+            if (!isMe) avatar,
+            Flexible(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: isMe
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
-                  if (message.attachments.isNotEmpty)
-                    Column(
-                      children: message.attachments
-                          .map(
-                            (url) => Padding(
-                              padding: EdgeInsets.only(bottom: 8.h),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.r),
-                                child: Image.network(url, fit: BoxFit.cover),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  if (message.text.isNotEmpty)
-                    Text(
-                      message.text,
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        height: 1.4,
+                  if (!isMe)
+                    GestureDetector(
+                      onTap: () {
+                        final preferredController =
+                            Get.isRegistered<PreferredDriversController>()
+                            ? Get.find<PreferredDriversController>()
+                            : Get.put(PreferredDriversController());
+
+                        final namePart = message.sender.name
+                            .split(' ')
+                            .first
+                            .toLowerCase();
+                        final chauffeur = preferredController.chauffeursList
+                            .firstWhere(
+                              (c) => c.name.toLowerCase().startsWith(namePart),
+                              orElse: () =>
+                                  preferredController.chauffeursList.first,
+                            );
+                        preferredController.selectedChauffeur.value = chauffeur;
+                        Get.toNamed(Routes.preferredDriverProfileView);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
+                        child: Text(
+                          message.sender.name,
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: 0.70.sw),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 5.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isMe
+                          ? const Color(0xff1A1A1A)
+                          : const Color(0xff1A1A1A),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16.r),
+                        topRight: Radius.circular(16.r),
+                        bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
+                        bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
+                      ),
+                      border: Border.all(
+                        color: isMe
+                            ? const Color(0xff333333)
+                            : const Color(0xff333333),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (message.attachments.isNotEmpty)
+                          Column(
+                            children: message.attachments
+                                .map(
+                                  (url) => Padding(
+                                    padding: EdgeInsets.only(bottom: 8.h),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      child: Image.network(
+                                        url,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        if (message.text.isNotEmpty)
+                          Text(
+                            message.text,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              height: 1.4,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    message.time,
+                    style: GoogleFonts.inter(
+                      color: Colors.grey[600],
+                      fontSize: 10.sp,
+                    ),
+                  ),
                 ],
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              message.time,
-              style: GoogleFonts.inter(
-                color: Colors.grey[600],
-                fontSize: 10.sp,
               ),
             ),
           ],

@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
@@ -36,20 +35,16 @@ class ChatController extends GetxController {
     super.onInit();
     fetchChats();
     fetchCommunityRoom();
-    setupRealtimeUpdates();
+    // setupRealtimeUpdates();
   }
 
   Future<void> fetchCommunityRoom() async {
-    try {
-      final response = await communityService.getCommunityRoom();
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        communityRoom.value = CommunityRoom.fromJson(
-          response.data['data'] ?? {},
-        );
-      }
-    } catch (e) {
-      print("Error fetching community room: $e");
-    }
+    communityRoom.value = CommunityRoom(
+      name: "Live Chat",
+      serviceArea: "Global",
+      lastMessage: "Welcome to the live chat room!",
+      lastMessageAt: DateTime.now().toIso8601String(),
+    );
   }
 
   void setupRealtimeUpdates() {
@@ -77,60 +72,69 @@ class ChatController extends GetxController {
   }
 
   Future<void> fetchChats() async {
-    try {
-      isLoading.value = true;
-      final fetchedChats = await socketRepo.getChats();
-      chats.assignAll(fetchedChats);
-      
-      if (chats.isEmpty) {
-        final currentUserId = Get.find<UserService>().userId;
-        chats.addAll([
-          ChatPreview(
-            id: 'demo_admin_chat',
-            participants: [
-              ChatParticipant(
-                id: currentUserId,
-                name: 'You',
-              ),
-              ChatParticipant(
-                id: 'admin_id',
-                name: 'Ekkali Support',
-                profilePicture: 'assets/images/ekkali support.png',
-              ),
-            ],
-            lastMessage: 'Hello! Let us know if you have any questions.',
-            lastMessageAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
-            createdBy: 'admin_id',
-            createdAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
-            updatedAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
+    isLoading.value = true;
+    final currentUserId = Get.find<UserService>().userId;
+    chats.assignAll([
+      ChatPreview(
+        id: 'demo_admin_chat',
+        participants: [
+          ChatParticipant(
+            id: currentUserId,
+            name: 'You',
           ),
-          ChatPreview(
-            id: 'demo_user_chat',
-            participants: [
-              ChatParticipant(
-                id: currentUserId,
-                name: 'You',
-              ),
-              ChatParticipant(
-                id: 'demo_user_id',
-                name: 'Demo User',
-                profilePicture: null,
-              ),
-            ],
-            lastMessage: 'Hey, is the offer still available?',
-            lastMessageAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
-            createdBy: 'demo_user_id',
-            createdAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
-            updatedAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+          ChatParticipant(
+            id: 'admin_id',
+            name: 'Ekkali Support',
+            profilePicture: 'assets/images/ekkali support.png',
           ),
-        ]);
-      }
-      filteredChats.assignAll(chats);
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load chats');
-    } finally {
-      isLoading.value = false;
-    }
+        ],
+        lastMessage: 'Hello! Let us know if you have any questions.',
+        lastMessageAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
+        createdBy: 'admin_id',
+        createdAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
+        updatedAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
+      ),
+      ChatPreview(
+        id: 'demo_user_chat_1',
+        participants: [
+          ChatParticipant(
+            id: currentUserId,
+            name: 'You',
+          ),
+          ChatParticipant(
+            id: 'demo_user_id_1',
+            name: 'John Doe',
+            profilePicture: null,
+          ),
+        ],
+        lastMessage: 'Hey, is the offer still available?',
+        lastMessageAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+        createdBy: 'demo_user_id_1',
+        createdAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+        updatedAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+      ),
+      ChatPreview(
+        id: 'demo_user_chat_2',
+        participants: [
+          ChatParticipant(
+            id: currentUserId,
+            name: 'You',
+          ),
+          ChatParticipant(
+            id: 'demo_user_id_2',
+            name: 'Jane Smith',
+            profilePicture: null,
+          ),
+        ],
+        lastMessage: 'I am interested in this vehicle listing.',
+        lastMessageAt: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+        createdBy: 'demo_user_id_2',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+      ),
+    ]);
+    filteredChats.assignAll(chats);
+    isLoading.value = false;
   }
 
   void filterChats(String query) {
@@ -150,19 +154,11 @@ class ChatController extends GetxController {
   }
 
   Future<void> deleteChat(String chatId) async {
-    try {
-      isLoading.value = true;
-      final success = await socketRepo.deleteChat(chatId);
-      if (success.statusCode == 200) {
-        chats.removeWhere((c) => c.id == chatId);
-        filterChats(searchController.value);
-        selectedChatIdForDelete.value = "";
-        Get.back();
-      }
-    } catch (e) {
-      Helpers.showDebugLog("Error deleting chat: $e");
-    } finally {
-      isLoading.value = false;
-    }
+    isLoading.value = true;
+    chats.removeWhere((c) => c.id == chatId);
+    filterChats(searchController.value);
+    selectedChatIdForDelete.value = "";
+    Get.back();
+    isLoading.value = false;
   }
 }
