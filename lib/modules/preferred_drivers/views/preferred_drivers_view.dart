@@ -57,7 +57,7 @@ class PreferredDriversView extends StatelessWidget {
                   ),
                   tabs: const [
                     Tab(text: '⭐  My Favorites'),
-                    Tab(text: '🔍  Find Drivers'),
+                    Tab(text: '🔍  Find Chauffeurs'),
                   ],
                 ),
               ),
@@ -116,7 +116,7 @@ class _MyFavoritesTab extends StatelessWidget {
                     ? 'No favorites yet'
                     : 'No matching chauffeur',
                 subtitle: controller.searchQuery.isEmpty
-                    ? 'Go to "Find Drivers" tab to discover and add chauffeurs.'
+                    ? 'Go to "Find Chauffeurs" tab to discover and add chauffeurs.'
                     : 'Try a different name, phone or email.',
               );
             }

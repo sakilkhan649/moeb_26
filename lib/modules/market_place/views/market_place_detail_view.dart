@@ -233,7 +233,7 @@ class _MarketplaceItemDetailViewState extends State<MarketplaceItemDetailView> {
                         // Specs Row (Condition / Status)
                         Row(
                           children: [
-                            if (widget.item.condition != null) ...[
+                            if (widget.item.condition != null && widget.item.condition!.isNotEmpty) ...[
                               _buildBadge(
                                 label: "Condition: ${widget.item.condition}",
                                 backgroundColor: const Color(0xFF1F1C1C),

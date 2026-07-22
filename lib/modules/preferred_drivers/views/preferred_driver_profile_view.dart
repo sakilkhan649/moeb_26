@@ -177,7 +177,7 @@ class PreferredDriverProfileView extends StatelessWidget {
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              'Start Conversation',
+                              'Sent a message',
                               style: GoogleFonts.inter(
                                 color: Colors.black,
                                 fontSize: 14.sp,
@@ -258,7 +258,6 @@ class PreferredDriverProfileView extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-
                         _buildInfoRow(
                           icon: Icons.business_outlined,
                           title: 'Company',

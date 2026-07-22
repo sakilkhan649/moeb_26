@@ -66,7 +66,10 @@ class JobPostSheetTabBarView extends StatelessWidget {
     );
   }
 
-  static Widget buildChauffeurSelection(BuildContext context, PostJobController controller) {
+  static Widget buildChauffeurSelection(
+    BuildContext context,
+    PostJobController controller,
+  ) {
     return Container(
       margin: EdgeInsets.zero,
       child: Column(
@@ -83,7 +86,8 @@ class JobPostSheetTabBarView extends StatelessWidget {
           SizedBox(height: 8.h),
           Obx(
             () => GestureDetector(
-              onTap: () => showChauffeurSelectionBottomSheet(context, controller),
+              onTap: () =>
+                  showChauffeurSelectionBottomSheet(context, controller),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
@@ -120,7 +124,9 @@ class JobPostSheetTabBarView extends StatelessWidget {
   }
 
   static void showChauffeurSelectionBottomSheet(
-      BuildContext context, PostJobController controller) {
+    BuildContext context,
+    PostJobController controller,
+  ) {
     Get.bottomSheet(
       Container(
         constraints: BoxConstraints(
@@ -177,7 +183,9 @@ class JobPostSheetTabBarView extends StatelessWidget {
                             color: const Color(0xFF1E1E1E),
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
-                              color: controller.chauffeurSelectionType.value == 'global'
+                              color:
+                                  controller.chauffeurSelectionType.value ==
+                                      'global'
                                   ? const Color(0xFFFF9800)
                                   : const Color(0xFF2C2C2C),
                               width: 1,
@@ -186,10 +194,13 @@ class JobPostSheetTabBarView extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(
-                                controller.chauffeurSelectionType.value == 'global'
+                                controller.chauffeurSelectionType.value ==
+                                        'global'
                                     ? Icons.check_circle
                                     : Icons.radio_button_unchecked,
-                                color: controller.chauffeurSelectionType.value == 'global'
+                                color:
+                                    controller.chauffeurSelectionType.value ==
+                                        'global'
                                     ? const Color(0xFFFF9800)
                                     : Colors.grey.shade600,
                                 size: 22.sp,
@@ -256,7 +267,9 @@ class JobPostSheetTabBarView extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 12.h),
-                            ...controller.stateServiceAreas.entries.map((entry) {
+                            ...controller.stateServiceAreas.entries.map((
+                              entry,
+                            ) {
                               final state = entry.key;
                               final cities = entry.value;
                               return Padding(
@@ -279,10 +292,13 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                           ),
                                           SizedBox(width: 8.w),
                                           Icon(
-                                            state == 'Florida' || state == 'California'
+                                            state == 'Florida' ||
+                                                    state == 'California'
                                                 ? Icons.check_circle_outline
                                                 : Icons.lock_outline,
-                                            color: state == 'Florida' || state == 'California'
+                                            color:
+                                                state == 'Florida' ||
+                                                    state == 'California'
                                                 ? const Color(0xFFFF9800)
                                                 : Colors.grey[600],
                                             size: 16.sp,
@@ -295,10 +311,16 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                       spacing: 8.w,
                                       runSpacing: 8.h,
                                       children: cities.map((cityFull) {
-                                        final cityName = cityFull.split(',').first.trim();
-                                        final isSelected =
-                                            controller.selectedServiceAreas.contains(cityFull);
-                                        final isLocked = state != 'Florida' && state != 'California';
+                                        final cityName = cityFull
+                                            .split(',')
+                                            .first
+                                            .trim();
+                                        final isSelected = controller
+                                            .selectedServiceAreas
+                                            .contains(cityFull);
+                                        final isLocked =
+                                            state != 'Florida' &&
+                                            state != 'California';
                                         return GestureDetector(
                                           onTap: () {
                                             if (isLocked) {
@@ -307,25 +329,33 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                                 isError: true,
                                               );
                                             } else {
-                                              controller.toggleServiceAreaSelection(cityFull);
+                                              controller
+                                                  .toggleServiceAreaSelection(
+                                                    cityFull,
+                                                  );
                                             }
                                           },
                                           child: Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 12.w, vertical: 8.h),
+                                              horizontal: 12.w,
+                                              vertical: 8.h,
+                                            ),
                                             decoration: BoxDecoration(
                                               color: isSelected
-                                                  ? const Color(0xFFFF9800).withValues(alpha: 0.15)
+                                                  ? const Color(
+                                                      0xFFFF9800,
+                                                    ).withValues(alpha: 0.15)
                                                   : isLocked
-                                                      ? const Color(0xFF161618)
-                                                      : const Color(0xFF1E1E1E),
-                                              borderRadius: BorderRadius.circular(20.r),
+                                                  ? const Color(0xFF161618)
+                                                  : const Color(0xFF1E1E1E),
+                                              borderRadius:
+                                                  BorderRadius.circular(20.r),
                                               border: Border.all(
                                                 color: isSelected
                                                     ? const Color(0xFFFF9800)
                                                     : isLocked
-                                                        ? const Color(0xFF222224)
-                                                        : const Color(0xFF2C2C2C),
+                                                    ? const Color(0xFF222224)
+                                                    : const Color(0xFF2C2C2C),
                                                 width: 1,
                                               ),
                                             ),
@@ -335,8 +365,8 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                                 color: isSelected
                                                     ? const Color(0xFFFF9800)
                                                     : isLocked
-                                                        ? Colors.grey[700]
-                                                        : Colors.white70,
+                                                    ? Colors.grey[700]
+                                                    : Colors.white70,
                                                 fontSize: 12.sp,
                                                 fontWeight: isSelected
                                                     ? FontWeight.bold
@@ -375,10 +405,12 @@ class JobPostSheetTabBarView extends StatelessWidget {
                         padding: EdgeInsets.only(bottom: 12.h),
                         child: Obx(() {
                           final isSelected =
-                              controller.chauffeurSelectionType.value == 'favorites' &&
+                              controller.chauffeurSelectionType.value ==
+                                  'favorites' &&
                               controller.selectedDrivers.contains(driver.name);
                           return GestureDetector(
-                            onTap: () => controller.toggleDriverSelection(driver.name),
+                            onTap: () =>
+                                controller.toggleDriverSelection(driver.name),
                             child: Container(
                               padding: EdgeInsets.all(16.w),
                               decoration: BoxDecoration(
@@ -415,14 +447,17 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                     ),
                                     child: CircleAvatar(
                                       radius: 22.r,
-                                      backgroundImage: NetworkImage(driver.imageUrl),
+                                      backgroundImage: NetworkImage(
+                                        driver.imageUrl,
+                                      ),
                                       backgroundColor: const Color(0xFF27272A),
                                     ),
                                   ),
                                   SizedBox(width: 14.w),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -442,8 +477,13 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                                   vertical: 2.h,
                                                 ),
                                                 decoration: BoxDecoration(
-                                                  color: const Color(0xFFFF9800),
-                                                  borderRadius: BorderRadius.circular(4.r),
+                                                  color: const Color(
+                                                    0xFFFF9800,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        4.r,
+                                                      ),
                                                 ),
                                                 child: Text(
                                                   'TOP RATED',
@@ -506,7 +546,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                 onPressed: () => Get.back(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF9800),
-                  foregroundColor: Colors.white,
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),

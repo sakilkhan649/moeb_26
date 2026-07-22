@@ -42,7 +42,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             CustomText(
-                              text: "Driver Code of Conduct &",
+                              text: "Chauffeur Code of Conduct &",
                               fontSize: 20.sp,
                             ),
                             CustomText(
@@ -245,7 +245,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
         _buildSection(
           title: "PAYMENT",
           items: [
-            "Once a job is completed, the job poster must pay the driver within a maximum of 48 hours.",
+            "Once a job is completed, the job poster must pay the chauffeur within a maximum of 48 hours.",
           ],
           startIndex: 53,
         ),
@@ -260,7 +260,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
           startIndex: 54,
         ),
         _buildSection(
-          title: "DRIVER AGREEMENT",
+          title: "CHAUFFEUR AGREEMENT",
           items: [
             "By accepting jobs through the platform, the chauffeur agrees to fully comply with this Ekkali Code of Conduct.",
           ],

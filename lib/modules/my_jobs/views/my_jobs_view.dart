@@ -678,7 +678,7 @@ class _MyJobsViewState extends State<MyJobsView> {
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                "Chat with Driver",
+                                "Chat with Chauffeur",
                                 style: GoogleFonts.inter(
                                   color: Colors.black.withValues(alpha: 0.6),
                                   fontSize: 14.sp,

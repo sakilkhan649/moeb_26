@@ -22,7 +22,7 @@ class MarketplaceController extends GetxController {
   final ScrollController scrollController = ScrollController();
 
   // Sell Item Form States
-  final RxString selectedCondition = "New".obs;
+  final RxString selectedCondition = "".obs;
   final List<String> conditions = [
     "New",
     "Used", // Changed to match API/Postman
@@ -136,7 +136,11 @@ class MarketplaceController extends GetxController {
   }
 
   void updateCondition(String condition) {
-    selectedCondition.value = condition;
+    if (selectedCondition.value == condition) {
+      selectedCondition.value = "";
+    } else {
+      selectedCondition.value = condition;
+    }
   }
 
   Future<void> listItem({String? editItemId}) async {
@@ -235,7 +239,7 @@ class MarketplaceController extends GetxController {
     descriptionController.clear();
     selectedImages.clear();
     existingImagePaths.clear();
-    selectedCondition.value = "New";
+    selectedCondition.value = "";
   }
 
   void prefillForEdit(
@@ -254,7 +258,7 @@ class MarketplaceController extends GetxController {
     if (condition.isNotEmpty && conditions.contains(condition)) {
       selectedCondition.value = condition;
     } else {
-      selectedCondition.value = "Used";
+      selectedCondition.value = "";
     }
     selectedImages.clear();
   }

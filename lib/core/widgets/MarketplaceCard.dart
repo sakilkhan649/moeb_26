@@ -19,7 +19,7 @@ class MarketplaceCard extends StatelessWidget {
         ? item.photos!.first
         : "";
     final String title = item.title ?? "No Title";
-    final String condition = item.condition ?? "Used";
+    final String? condition = item.condition;
     final String location = item.location?.split(',').first.trim() ?? "Unknown";
 
     return GestureDetector(
@@ -54,31 +54,32 @@ class MarketplaceCard extends StatelessWidget {
                   child: _buildImage(imagePath),
                 ),
                 // Floating Condition Badge
-                Positioned(
-                  top: 8.h,
-                  left: 8.w,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 5.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.7),
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: const Color(0xFF2C2C2C)),
-                    ),
-                    child: Text(
-                      condition,
-                      style: GoogleFonts.inter(
-                        color: condition.toLowerCase() == 'new'
-                            ? Colors.green.shade400
-                            : const Color(0xFFFF9800),
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
+                if (condition != null && condition.isNotEmpty)
+                  Positioned(
+                    top: 8.h,
+                    left: 8.w,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(color: const Color(0xFF2C2C2C)),
+                      ),
+                      child: Text(
+                        condition,
+                        style: GoogleFonts.inter(
+                          color: condition.toLowerCase() == 'new'
+                              ? Colors.green.shade400
+                              : const Color(0xFFFF9800),
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
 

@@ -280,7 +280,7 @@ class ByTheHour extends StatelessWidget {
                 }
                 if (controller.chauffeurSelectionType.value == 'favorites' &&
                     controller.selectedDrivers.isEmpty) {
-                  Helpers.showCustomSnackBar("Please select at least one preferred driver", isError: true);
+                  Helpers.showCustomSnackBar("Please select at least one preferred chauffeur", isError: true);
                   return;
                 }
 

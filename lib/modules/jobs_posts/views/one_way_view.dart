@@ -325,7 +325,7 @@ class OnewayScreen extends StatelessWidget {
                 }
                 if (postJobController.chauffeurSelectionType.value == 'favorites' &&
                     postJobController.selectedDrivers.isEmpty) {
-                  Helpers.showCustomSnackBar("Please select at least one preferred driver", isError: true);
+                  Helpers.showCustomSnackBar("Please select at least one preferred chauffeur", isError: true);
                   return;
                 }
 

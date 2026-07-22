@@ -40,8 +40,22 @@ class SignupController extends GetxController {
   var selectedArea = ''.obs;
   var selectedLanguages = <String>['English'].obs;
 
-  final roles = ['Company manager', 'Owner operator', 'Driver'];
-  final List<String> availableLanguages = ['English', 'Spanish', 'Arabic', 'French', 'Bengali', 'German', 'Russian', 'Mandarin', 'Hindi', 'Urdu'];
+  final roles = ['Company manager', 'Owner operator', 'Chauffeur'];
+  final List<String> availableLanguages = [
+    'English',
+    'Spanish',
+    'Portuguese',
+    'Arabic',
+    'French',
+    'Bengali',
+    'German',
+    'Russian',
+    'Mandarin',
+    'Hindi',
+    'Urdu',
+  ];
+
+
 
   // Service Area data
   List<String> get cities => _serviceAreaController.serviceAreas
@@ -178,6 +192,7 @@ class SignupController extends GetxController {
       _isPicking = false;
     }
   }
+
   Future<void> pickFromGallery(BuildContext context, Rx<File?> target) async {
     if (_isPicking) return;
     _isPicking = true;
@@ -240,6 +255,7 @@ class SignupController extends GetxController {
       _isPicking = false;
     }
   }
+
   String getFileName(Rx<File?> file) {
     if (file.value == null) return '';
     final name = file.value!.path.split('/').last.split('\\').last;
@@ -303,7 +319,7 @@ class SignupController extends GetxController {
         // ignore: curly_braces_in_flow_control_structures
         roleToSubmit = 'OWNER';
       // ignore: curly_braces_in_flow_control_structures
-      else if (roleToSubmit == 'Driver')
+      else if (roleToSubmit == 'Chauffeur')
         // ignore: curly_braces_in_flow_control_structures
         roleToSubmit = 'DRIVER';
 

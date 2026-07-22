@@ -56,31 +56,32 @@ class MyItemsCard extends StatelessWidget {
                   child: _buildImage(),
                 ),
                 // Floating Condition Badge
-                Positioned(
-                  top: 8.h,
-                  left: 8.w,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 5.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.7),
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: const Color(0xFF2C2C2C)),
-                    ),
-                    child: Text(
-                      item.condition,
-                      style: GoogleFonts.inter(
-                        color: item.condition.toLowerCase() == 'new'
-                            ? Colors.green.shade400
-                            : const Color(0xFFFF9800),
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
+                if (item.condition.isNotEmpty)
+                  Positioned(
+                    top: 8.h,
+                    left: 8.w,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(color: const Color(0xFF2C2C2C)),
+                      ),
+                      child: Text(
+                        item.condition,
+                        style: GoogleFonts.inter(
+                          color: item.condition.toLowerCase() == 'new'
+                              ? Colors.green.shade400
+                              : const Color(0xFFFF9800),
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
 
