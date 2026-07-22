@@ -10,8 +10,6 @@ class MeetGreetView extends GetView<MeetGreetController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.resetOrientation();
-
     final TextEditingController nameTextController = TextEditingController();
     final TextEditingController subtitleTextController =
         TextEditingController();
@@ -112,6 +110,7 @@ class MeetGreetView extends GetView<MeetGreetController> {
                                   }
 
                                   return ChoiceChip(
+                                    checkmarkColor: Colors.black,
                                     label: Text(
                                       passengerStr,
                                       style: GoogleFonts.inter(
@@ -194,6 +193,7 @@ class MeetGreetView extends GetView<MeetGreetController> {
                         children: controller.headerTagPresets.map((tag) {
                           final isSelected = currentTag == tag;
                           return ChoiceChip(
+                            checkmarkColor: Colors.black,
                             label: Text(
                               tag,
                               style: GoogleFonts.inter(

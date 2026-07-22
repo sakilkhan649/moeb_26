@@ -116,6 +116,7 @@ class MeetGreetController extends GetxController {
   void onInit() {
     super.onInit();
     fetchActiveJobs();
+    resetOrientation();
   }
 
   @override

@@ -195,7 +195,7 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 24.w,
-                      vertical: 16.h,
+                      vertical: controller.isLandscape.value ? 8.h : 16.h,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -207,14 +207,14 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
                             if (controller.showCompanyLogo.value)
                               Image.asset(
                                 AppImages.app_logo,
-                                height: 45.h,
+                                height: controller.isLandscape.value ? 35.h : 45.h,
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) =>
                                     Text(
                                   'MOEB',
                                   style: GoogleFonts.outfit(
                                     color: theme.accentColor,
-                                    fontSize: 20.sp,
+                                    fontSize: controller.isLandscape.value ? 16.sp : 20.sp,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 2.w,
                                   ),
@@ -225,7 +225,7 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
                             Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 16.w,
-                                vertical: 6.h,
+                                vertical: controller.isLandscape.value ? 4.h : 6.h,
                               ),
                               decoration: BoxDecoration(
                                 color: theme.cardColor,
@@ -241,14 +241,14 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
                                   Icon(
                                     Icons.local_taxi_rounded,
                                     color: theme.headerColor,
-                                    size: 18.sp,
+                                    size: controller.isLandscape.value ? 14.sp : 18.sp,
                                   ),
                                   SizedBox(width: 8.w),
                                   Text(
                                     controller.headerTag.value.toUpperCase(),
                                     style: GoogleFonts.inter(
                                       color: theme.headerColor,
-                                      fontSize: 14.sp,
+                                      fontSize: controller.isLandscape.value ? 11.sp : 14.sp,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 2.w,
                                     ),
@@ -259,142 +259,62 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
                           ],
                         ),
 
-                        // --- CENTER CONTENT (Decorative Borders + Big Passenger Name) ---
+                        // --- MAIN CONTENT ---
                         Expanded(
-                          child: Center(
-                            child: Container(
-                              width: double.infinity,
-                              margin: EdgeInsets.symmetric(vertical: 10.h),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 16.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: theme.cardColor.withValues(alpha: 0.4),
-                                borderRadius: BorderRadius.circular(24.r),
-                                border: Border.all(
-                                  color: theme.borderColor.withValues(alpha: 0.8),
-                                  width: 2,
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Top Decorative Bar
-                                  Container(
-                                    height: 3.h,
-                                    width: 140.w,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.transparent,
-                                          theme.borderColor,
-                                          Colors.transparent,
-                                        ],
+                          child: (controller.isLandscape.value && controller.showQrCode.value)
+                              ? Row(
+                                  children: [
+                                    // Left Side: Name & Subtitle Card
+                                    Expanded(
+                                      flex: 3,
+                                      child: _buildNameCard(theme, isLandscape: true),
+                                    ),
+                                    // Right Side: Subtitle & QR Code
+                                    SizedBox(width: 16.w),
+                                    _buildLandscapeRightPanel(theme),
+                                  ],
+                                )
+                              : Column(
+                                  children: [
+                                    Expanded(
+                                      child: _buildNameCard(
+                                        theme,
+                                        isLandscape: controller.isLandscape.value,
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(height: 20.h),
-
-                                  // BIG BOLD PASSENGER NAME WITH SCALING
-                                  Expanded(
-                                    child: Center(
-                                      child: AnimatedBuilder(
-                                        animation: _pulseAnimation,
-                                        builder: (context, child) {
-                                          final scale =
-                                              controller.isFlashingText.value
-                                                  ? _pulseAnimation.value
-                                                  : 1.0;
-                                          return Transform.scale(
-                                            scale: scale,
-                                            child: FittedBox(
-                                              fit: BoxFit.scaleDown,
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                controller.passengerName.value,
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.outfit(
-                                                  color: theme.nameColor,
-                                                  fontSize: (70 *
-                                                          controller
-                                                              .fontSizeScale
-                                                              .value)
-                                                      .sp,
-                                                  fontWeight: FontWeight.w900,
-                                                  letterSpacing: 2.w,
-                                                  shadows: [
-                                                    Shadow(
-                                                      color: theme.borderColor
-                                                          .withValues(alpha: 0.4),
-                                                      blurRadius: 15,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                    if (controller.subtitleText.value.isNotEmpty) ...[
+                                      SizedBox(height: controller.isLandscape.value ? 6.h : 10.h),
+                                      Text(
+                                        controller.subtitleText.value.toUpperCase(),
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          color: theme.subtitleColor,
+                                          fontSize: controller.isLandscape.value ? 16.sp : 20.sp,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 1.5.w,
+                                        ),
                                       ),
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 16.h),
-                                  // Bottom Decorative Bar
-                                  Container(
-                                    height: 3.h,
-                                    width: 140.w,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.transparent,
-                                          theme.borderColor,
-                                          Colors.transparent,
-                                        ],
+                                    ],
+                                    if (!controller.isLandscape.value && controller.showQrCode.value) ...[
+                                      SizedBox(height: 10.h),
+                                      Container(
+                                        padding: EdgeInsets.all(8.w),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12.r),
+                                        ),
+                                        child: QrImageView(
+                                          data: controller.qrData.value.isEmpty
+                                              ? controller.passengerName.value
+                                              : controller.qrData.value,
+                                          version: QrVersions.auto,
+                                          size: 90.sp,
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // --- BOTTOM SUBTITLE / QR CODE / FOOTER ---
-                        Column(
-                          children: [
-                            if (controller.subtitleText.value.isNotEmpty) ...[
-                              Text(
-                                controller.subtitleText.value.toUpperCase(),
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.inter(
-                                  color: theme.subtitleColor,
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.5.w,
+                                    ],
+                                    SizedBox(height: controller.isLandscape.value ? 4.h : 8.h),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(height: 10.h),
-                            ],
-
-                            if (controller.showQrCode.value) ...[
-                              Container(
-                                padding: EdgeInsets.all(8.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: QrImageView(
-                                  data: controller.qrData.value.isEmpty
-                                      ? controller.passengerName.value
-                                      : controller.qrData.value,
-                                  version: QrVersions.auto,
-                                  size: 90.sp,
-                                ),
-                              ),
-                              SizedBox(height: 8.h),
-                            ],
-                          ],
                         ),
                       ],
                     ),
@@ -498,6 +418,153 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
       }),
     );
   }
+
+  Widget _buildNameCard(MeetGreetThemeData theme, {required bool isLandscape}) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(vertical: isLandscape ? 4.h : 10.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: isLandscape ? 8.h : 16.h,
+      ),
+      decoration: BoxDecoration(
+        color: theme.cardColor.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(
+          color: theme.borderColor.withValues(alpha: 0.8),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Top Decorative Bar
+          Container(
+            height: isLandscape ? 2.h : 3.h,
+            width: isLandscape ? 100.w : 140.w,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  theme.borderColor,
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: isLandscape ? 8.h : 20.h),
+
+          // BIG BOLD PASSENGER NAME WITH SCALING
+          Expanded(
+            child: Center(
+              child: AnimatedBuilder(
+                animation: _pulseAnimation,
+                builder: (context, child) {
+                  final scale = controller.isFlashingText.value
+                      ? _pulseAnimation.value
+                      : 1.0;
+                  return Transform.scale(
+                    scale: scale,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.center,
+                      child: Text(
+                        controller.passengerName.value,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.outfit(
+                          color: theme.nameColor,
+                          fontSize: ((isLandscape ? 48 : 70) *
+                                  controller.fontSizeScale.value)
+                              .sp,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2.w,
+                          shadows: [
+                            Shadow(
+                              color: theme.borderColor.withValues(alpha: 0.4),
+                              blurRadius: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+
+          SizedBox(height: isLandscape ? 6.h : 16.h),
+          // Bottom Decorative Bar
+          Container(
+            height: isLandscape ? 2.h : 3.h,
+            width: isLandscape ? 100.w : 140.w,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  theme.borderColor,
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLandscapeRightPanel(MeetGreetThemeData theme) {
+    return Container(
+      width: 150.w,
+      margin: EdgeInsets.symmetric(vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: theme.cardColor.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: theme.borderColor.withValues(alpha: 0.5),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (controller.subtitleText.value.isNotEmpty) ...[
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                controller.subtitleText.value.toUpperCase(),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: theme.subtitleColor,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.w,
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+          ],
+          if (controller.showQrCode.value)
+            Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: QrImageView(
+                data: controller.qrData.value.isEmpty
+                    ? controller.passengerName.value
+                    : controller.qrData.value,
+                version: QrVersions.auto,
+                size: 70.sp,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildControlButton({
     required IconData icon,
