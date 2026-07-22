@@ -500,6 +500,7 @@ class ChatCommunityDetailView extends StatelessWidget {
               ),
               child: TextField(
                 controller: controller.messageController,
+                textCapitalization: TextCapitalization.sentences,
                 style: GoogleFonts.inter(color: Colors.white, fontSize: 15.sp),
                 maxLines: 5,
                 minLines: 1,

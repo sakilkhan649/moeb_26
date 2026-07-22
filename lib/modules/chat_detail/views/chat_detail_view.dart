@@ -87,13 +87,11 @@ class ChatDetailView extends StatelessWidget {
                   ? Get.find<PreferredDriversController>()
                   : Get.put(PreferredDriversController());
 
-              final namePart =
-                  other?.name.split(' ').first.toLowerCase() ?? '';
-              final chauffeur = preferredController.chauffeursList
-                  .firstWhere(
-                    (c) => c.name.toLowerCase().startsWith(namePart),
-                    orElse: () => preferredController.chauffeursList.first,
-                  );
+              final namePart = other?.name.split(' ').first.toLowerCase() ?? '';
+              final chauffeur = preferredController.chauffeursList.firstWhere(
+                (c) => c.name.toLowerCase().startsWith(namePart),
+                orElse: () => preferredController.chauffeursList.first,
+              );
               preferredController.selectedChauffeur.value = chauffeur;
               Get.toNamed(Routes.preferredDriverProfileView);
             },
@@ -401,6 +399,7 @@ class ChatDetailView extends StatelessWidget {
               ),
               child: TextField(
                 controller: controller.messageController,
+                textCapitalization: TextCapitalization.sentences,
                 style: GoogleFonts.inter(color: Colors.white, fontSize: 15.sp),
                 maxLines: 5,
                 minLines: 1,

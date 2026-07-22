@@ -179,6 +179,7 @@ class SupportChatDetailView extends StatelessWidget {
               ),
               child: TextField(
                 controller: controller.messageController,
+                textCapitalization: TextCapitalization.sentences,
                 style: GoogleFonts.inter(color: Colors.white),
                 onSubmitted: (value) => controller.sendMessage(),
                 decoration: InputDecoration(
