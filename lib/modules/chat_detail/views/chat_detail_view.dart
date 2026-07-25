@@ -81,20 +81,25 @@ class ChatDetailView extends StatelessWidget {
           ),
           titleSpacing: 0,
           title: GestureDetector(
-            onTap: () {
-              final preferredController =
-                  Get.isRegistered<PreferredDriversController>()
-                  ? Get.find<PreferredDriversController>()
-                  : Get.put(PreferredDriversController());
+            onTap: (other?.name.toLowerCase() == 'support team' ||
+                    other?.name.toLowerCase().contains('support') == true)
+                ? null
+                : () {
+                    final preferredController =
+                        Get.isRegistered<PreferredDriversController>()
+                        ? Get.find<PreferredDriversController>()
+                        : Get.put(PreferredDriversController());
 
-              final namePart = other?.name.split(' ').first.toLowerCase() ?? '';
-              final chauffeur = preferredController.chauffeursList.firstWhere(
-                (c) => c.name.toLowerCase().startsWith(namePart),
-                orElse: () => preferredController.chauffeursList.first,
-              );
-              preferredController.selectedChauffeur.value = chauffeur;
-              Get.toNamed(Routes.preferredDriverProfileView);
-            },
+                    final namePart =
+                        other?.name.split(' ').first.toLowerCase() ?? '';
+                    final chauffeur =
+                        preferredController.chauffeursList.firstWhere(
+                      (c) => c.name.toLowerCase().startsWith(namePart),
+                      orElse: () => preferredController.chauffeursList.first,
+                    );
+                    preferredController.selectedChauffeur.value = chauffeur;
+                    Get.toNamed(Routes.preferredDriverProfileView);
+                  },
             behavior: HitTestBehavior.opaque,
             child: Row(
               children: [

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -75,6 +76,119 @@ class MeetGreetView extends GetView<MeetGreetController> {
                     _buildSectionHeader('LIVE SIGN BOARD PREVIEW'),
                     SizedBox(height: 10.h),
                     _buildLivePreviewCard(),
+                    SizedBox(height: 24.h),
+
+                    // --- LOGO CONFIGURATION ---
+                    _buildSectionHeader('LOGO CONFIGURATION'),
+                    SizedBox(height: 10.h),
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E1E1E),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(color: const Color(0xFF364153)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Enable Logo Header',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Obx(() => Switch(
+                                    value: controller.showCompanyLogo.value,
+                                    activeThumbColor: const Color(0xFFD5C4AB),
+                                    activeTrackColor: const Color(0xFFD5C4AB).withValues(alpha: 0.4),
+                                    inactiveThumbColor: Colors.grey,
+                                    inactiveTrackColor: const Color(0xFF121212),
+                                    onChanged: (v) => controller.showCompanyLogo.value = v,
+                                  )),
+                            ],
+                          ),
+                          Obx(() {
+                            if (!controller.showCompanyLogo.value) {
+                              return const SizedBox.shrink();
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Divider(color: Color(0xFF364153), height: 24),
+                                Text(
+                                  'Custom Logo (Optional)',
+                                  style: GoogleFonts.inter(
+                                    color: Colors.grey.shade400,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: 10.h),
+                                controller.customLogoPath.value != null
+                                    ? Row(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(8.r),
+                                            child: Image.file(
+                                              File(controller.customLogoPath.value!),
+                                              width: 80.w,
+                                              height: 60.h,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          SizedBox(width: 16.w),
+                                          ElevatedButton.icon(
+                                            onPressed: () => controller.customLogoPath.value = null,
+                                            icon: const Icon(Icons.delete, color: Colors.black, size: 16),
+                                            label: Text(
+                                              'Remove',
+                                              style: GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.sp),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFFFEDB9B),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : GestureDetector(
+                                        onTap: () => controller.pickLogo(),
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 70.h,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF121212),
+                                            borderRadius: BorderRadius.circular(12.r),
+                                            border: Border.all(color: const Color(0xFF364153)),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.upload_file, color: const Color(0xFFD5C4AB), size: 20.sp),
+                                              SizedBox(width: 8.w),
+                                              Text(
+                                                'Upload Custom Logo',
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.grey.shade400,
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                              ],
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 24.h),
 
                     // --- ACTIVE RIDE QUICK SELECT ---
@@ -269,33 +383,7 @@ class MeetGreetView extends GetView<MeetGreetController> {
                       }),
                     ),
 
-                    SizedBox(height: 24.h),
 
-                    // --- DISPLAY OPTIONS TOGGLES ---
-                    _buildSectionHeader('DISPLAY & VISIBILITY OPTIONS'),
-                    SizedBox(height: 10.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 12.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1E1E1E),
-                        borderRadius: BorderRadius.circular(16.r),
-                        border: Border.all(color: const Color(0xFF364153)),
-                      ),
-                      child: Obx(() {
-                        final showLogo = controller.showCompanyLogo.value;
-
-                        return _buildToggleTile(
-                          title: 'Show Company Logo Header',
-                          subtitle: 'Displays company branding at top',
-                          value: showLogo,
-                          onChanged: (v) =>
-                              controller.showCompanyLogo.value = v,
-                        );
-                      }),
-                    ),
                     SizedBox(height: 20.h),
                   ],
                 ),
@@ -381,17 +469,29 @@ class MeetGreetView extends GetView<MeetGreetController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'MOEB PICKUP',
-                style: GoogleFonts.inter(
-                  color: theme.headerColor,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            if (controller.showCompanyLogo.value)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: controller.customLogoPath.value != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(4.r),
+                        child: Image.file(
+                          File(controller.customLogoPath.value!),
+                          height: 18.h,
+                          fit: BoxFit.contain,
+                        ),
+                      )
+                    : Text(
+                        'MOEB PICKUP',
+                        style: GoogleFonts.inter(
+                          color: theme.headerColor,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              )
+            else
+              const SizedBox.shrink(),
             Expanded(
               child: Center(
                 child: FittedBox(

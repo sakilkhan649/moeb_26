@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:moeb_26/core/services/job_service.dart';
 import 'package:moeb_26/data/models/my_jobs_model.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
@@ -33,15 +34,27 @@ class MeetGreetController extends GetxController {
   var subtitleText = 'FLIGHT BG-088'.obs;
   var selectedThemeIndex = 0.obs;
   var showCompanyLogo = true.obs;
+  var customLogoPath = RxnString();
   var isLandscape = false.obs;
   var isFullscreen = false.obs;
   var fontSizeScale = 1.0.obs;
+
+  Future<void> pickLogo() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        customLogoPath.value = image.path;
+      }
+    } catch (e) {
+      Helpers.showCustomSnackBar('Could not access gallery: $e', isError: true);
+    }
+  }
 
   // Active jobs for dynamic fetch
   var isLoadingJobs = false.obs;
   RxList<JobData> activeJobsList = <JobData>[].obs;
   Rx<JobData?> selectedJob = Rx<JobData?>(null);
-
 
   // Curated Luxurious Themes (Matches Create Invoice Flow)
   final List<MeetGreetThemeData> themes = [
@@ -174,16 +187,13 @@ class MeetGreetController extends GetxController {
     isFullscreen.value = false;
   }
 
-  void toggleOrientation() {
-    isLandscape.value = !isLandscape.value;
-    if (isLandscape.value) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-    } else {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    }
+  void unlockOrientation() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
   void resetOrientation() {

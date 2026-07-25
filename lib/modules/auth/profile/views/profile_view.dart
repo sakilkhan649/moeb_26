@@ -60,7 +60,9 @@ class ProfileView extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFD08700).withValues(alpha: 0.2),
+                              color: const Color(
+                                0xFFD08700,
+                              ).withValues(alpha: 0.2),
                               blurRadius: 15,
                               spreadRadius: 2,
                             ),
@@ -132,32 +134,44 @@ class ProfileView extends StatelessWidget {
                   SizedBox(height: 4.h),
 
                   // --- VERIFIED BADGE ---
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.verified,
-                        color: const Color(0xFFD08700),
-                        size: 15.sp,
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        'Verified Professional Chauffeur',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFD5C4AB),
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.h),
+                  Obx(() {
+                    final isVerified =
+                        controller.userProfile.value?.verified ?? false;
+                    if (!isVerified) return const SizedBox.shrink();
 
-                  // --- CATEGORY 1: ACCOUNT & DRIVER DETAILS ---
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.verified,
+                              color: const Color(0xFFD08700),
+                              size: 15.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              'Verified Professional Chauffeur',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFD5C4AB),
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10.h),
+                      ],
+                    );
+                  }),
+                  SizedBox(height: 14.h),
+
+                  // --- CATEGORY 1: ACCOUNT & CHAUFFEUR DETAILS ---
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Account & Driver Details',
+                      'Account & Chauffeur Details',
                       style: GoogleFonts.inter(
                         color: const Color(0xFFD5C4AB),
                         fontSize: 14.sp,
@@ -180,7 +194,7 @@ class ProfileView extends StatelessWidget {
                       children: [
                         _buildSettingTile(
                           icon: Icons.person_outline_rounded,
-                          title: "Personal & Driver Information",
+                          title: "Personal & Chauffeur Info",
                           subtitle: "Manage email, phone, company & languages",
                           onTap: () {
                             Get.to(() => const PersonalInformationView());
@@ -345,7 +359,10 @@ class ProfileView extends StatelessWidget {
                         );
                       },
                       style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
                       ),
                       child: Text(
                         "Delete Account",
@@ -354,7 +371,9 @@ class ProfileView extends StatelessWidget {
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                           decoration: TextDecoration.underline,
-                          decorationColor: const Color(0xFFEF4444).withValues(alpha: 0.5),
+                          decorationColor: const Color(
+                            0xFFEF4444,
+                          ).withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -372,11 +391,7 @@ class ProfileView extends StatelessWidget {
   // --- REUSABLE UI BUILDERS ---
 
   Widget _buildTileDivider() {
-    return const Divider(
-      color: Color(0xFF2C2C2C),
-      thickness: 1,
-      height: 1,
-    );
+    return const Divider(color: Color(0xFF2C2C2C), thickness: 1, height: 1);
   }
 
   Widget _buildSettingTile({
@@ -397,6 +412,8 @@ class ProfileView extends StatelessWidget {
       ),
       title: Text(
         title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: GoogleFonts.inter(
           color: Colors.white,
           fontSize: 14.sp,

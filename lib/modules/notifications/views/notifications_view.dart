@@ -251,7 +251,7 @@ class NotificationsView extends StatelessWidget {
             final subtitle = currentNoti.subtitle.toLowerCase();
 
             if (type == 'MESSAGE' || title.contains('message') || title.contains('chat') || subtitle.contains('message') || subtitle.contains('chat')) {
-              Get.toNamed(Routes.chatView);
+              Get.offAllNamed(Routes.bottomNabbarView, arguments: 2);
             } else if (type == 'TASK' || title.contains('job') || subtitle.contains('job') || title.contains('acceptance')) {
               final BookingController bookingController =
                   Get.isRegistered<BookingController>()

@@ -16,7 +16,7 @@ class PersonalInformationView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: CustomAppBar(
-        title: 'Personal & Driver Info',
+        title: 'Personal & Chauffeur Info',
         showBackButton: true,
         showActions: false,
       ),
@@ -90,31 +90,43 @@ class PersonalInformationView extends StatelessWidget {
               SizedBox(height: 12.h),
 
               // Verified Chauffeur Badge
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.verified,
-                    color: const Color(0xFFD08700),
-                    size: 15.sp,
-                  ),
-                  SizedBox(width: 4.w),
-                  Text(
-                    'Verified Professional Chauffeur',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFFD5C4AB),
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
+              Obx(() {
+                final isVerified =
+                    controller.userProfile.value?.verified ?? false;
+                if (!isVerified) return const SizedBox.shrink();
+
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.verified,
+                          color: const Color(0xFFD08700),
+                          size: 15.sp,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'Verified Professional Chauffeur',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFFD5C4AB),
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.h),
+                    SizedBox(height: 12.h),
+                  ],
+                );
+              }),
+              SizedBox(height: 12.h),
 
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Edit Personal & Driver Details',
+                  'Edit Personal & Chauffeur Details',
                   style: GoogleFonts.inter(
                     color: const Color(0xFFD5C4AB),
                     fontSize: 15.sp,

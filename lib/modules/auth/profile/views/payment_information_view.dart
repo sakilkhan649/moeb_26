@@ -83,53 +83,73 @@ class PaymentInformationView extends StatelessWidget {
                     ),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 38.w,
-                            height: 38.w,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF27272A),
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                            child: Icon(
-                              Icons.credit_card_outlined,
-                              color: const Color(0xFFD5C4AB),
-                              size: 19.sp,
-                            ),
-                          ),
-                          SizedBox(width: 14.w),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Accept Card Payments",
-                                style: GoogleFonts.inter(
-                                  color: Colors.white,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(height: 2.h),
-                              Text(
-                                "Allow clients to pay via credit card",
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFF71717A),
-                                  fontSize: 11.sp,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      Container(
+                        width: 38.w,
+                        height: 38.w,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF27272A),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Icon(
+                          Icons.credit_card_outlined,
+                          color: const Color(0xFFD5C4AB),
+                          size: 19.sp,
+                        ),
                       ),
-                      Switch.adaptive(
-                        value: controller.cardPaymentAccepted.value,
-                        activeThumbColor: const Color(0xFFD08700),
-                        onChanged: (val) {
-                          controller.cardPaymentAccepted.value = val;
+                      SizedBox(width: 14.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Accept Card Payments",
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              "Allow affiliate / clients to pay via credit card",
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF71717A),
+                                fontSize: 11.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 14.w),
+                      GestureDetector(
+                        onTap: () {
+                          controller.cardPaymentAccepted.value =
+                              !controller.cardPaymentAccepted.value;
                         },
+                        child: Container(
+                          width: 24.w,
+                          height: 24.w,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: controller.cardPaymentAccepted.value
+                                  ? const Color(0xFFD08700)
+                                  : const Color(0xFF71717A),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(6.r),
+                            color: controller.cardPaymentAccepted.value
+                                ? const Color(0xFFD08700)
+                                : Colors.transparent,
+                          ),
+                          child: controller.cardPaymentAccepted.value
+                              ? Icon(
+                                  Icons.check,
+                                  color: Colors.black,
+                                  size: 16.sp,
+                                )
+                              : null,
+                        ),
                       ),
                     ],
                   ),

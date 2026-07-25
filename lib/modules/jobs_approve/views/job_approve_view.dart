@@ -35,7 +35,7 @@ class JobApproveView extends StatelessWidget {
                     buttonText: "Chat with Job Poster",
                     buttonIcon: Icons.chat_bubble_outline, // যেকোনো icon
                     onButtonPressed: () {
-                      Get.toNamed(Routes.chatView);
+                      Get.offAllNamed(Routes.bottomNabbarView, arguments: 2);
                     },
                   ),
                 ),

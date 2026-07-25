@@ -58,6 +58,7 @@ dependencies:
   flutter_cached_pdfview: ^0.4.4
   pdf: ^3.10.8
   printing: ^5.11.1
+  wakelock_plus: ^1.2.8
 
 dev_dependencies:
   flutter_test:

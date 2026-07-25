@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/constants/app_constants.dart';
 import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/core/services/storege_service.dart';
@@ -130,7 +133,15 @@ class FirebaseNotificationService {
       settings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         print('🔔 Local notification tapped: ${response.payload}');
-        // Handle tap
+        if (response.payload != null) {
+          try {
+            final Map<String, dynamic> data =
+                Map<String, dynamic>.from(jsonDecode(response.payload!));
+            _handleNotificationTap(RemoteMessage(data: data));
+          } catch (e) {
+            print('❌ Error handling local notification tap: $e');
+          }
+        }
       },
     );
 
@@ -175,7 +186,7 @@ class FirebaseNotificationService {
             presentSound: true,
           ),
         ),
-        payload: message.data.toString(),
+        payload: jsonEncode(message.data),
       );
     }
   }
@@ -185,10 +196,13 @@ class FirebaseNotificationService {
     // Navigate based on notification data
     Map<String, dynamic> data = message.data;
 
-    if (data['type'] == 'order_update') {
+    final String? type = data['type']?.toString().toLowerCase();
+    if (type == 'message' || type == 'chat') {
+      Get.offAllNamed(Routes.bottomNabbarView, arguments: 2);
+    } else if (type == 'order_update') {
       // Navigate to order details
       // Get.to(() => OrderDetailsScreen(orderId: data['orderId']));
-    } else if (data['type'] == 'promotion') {
+    } else if (type == 'promotion') {
       // Navigate to promotions
       // Get.to(() => PromotionsScreen());
     }

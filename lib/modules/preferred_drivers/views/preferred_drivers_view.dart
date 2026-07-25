@@ -156,7 +156,7 @@ class _FindDriversTab extends StatelessWidget {
           child: TextFormField(
             onChanged: (value) => controller.globalSearchQuery.value = value,
             style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp),
-            decoration: _searchDecoration('Search by name, area, email...'),
+            decoration: _searchDecoration('Search by name or phone number...'),
           ),
         ),
 
@@ -168,7 +168,7 @@ class _FindDriversTab extends StatelessWidget {
               return _emptyState(
                 icon: Icons.person_search_outlined,
                 title: 'Find any chauffeur',
-                subtitle: 'Search by name, service area, email or phone number.',
+                subtitle: 'Search by name or phone number.',
               );
             }
             final results = controller.filteredGlobalResults;
@@ -185,12 +185,14 @@ class _FindDriversTab extends StatelessWidget {
               separatorBuilder: (_, _) => SizedBox(height: 14.h),
               itemBuilder: (context, index) {
                 final chauffeur = results[index];
-                return Obx(() => _DriverCard(
-                      chauffeur: chauffeur,
-                      controller: controller,
-                      isFavorite: controller.isInFavorites(chauffeur.id),
-                      showAddToFavorites: true,
-                    ));
+                return Obx(
+                  () => _DriverCard(
+                    chauffeur: chauffeur,
+                    controller: controller,
+                    isFavorite: controller.isInFavorites(chauffeur.id),
+                    showAddToFavorites: true,
+                  ),
+                );
               },
             );
           }),
@@ -238,10 +240,7 @@ class _DriverCard extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFFD08700),
-                width: 1.8.w,
-              ),
+              border: Border.all(color: const Color(0xFFD08700), width: 1.8.w),
             ),
             child: CircleAvatar(
               radius: 26.r,
@@ -278,7 +277,11 @@ class _DriverCard extends StatelessWidget {
                 SizedBox(height: 5.h),
                 Row(
                   children: [
-                    Icon(Icons.star, color: const Color(0xFFD08700), size: 14.sp),
+                    Icon(
+                      Icons.star,
+                      color: const Color(0xFFD08700),
+                      size: 14.sp,
+                    ),
                     SizedBox(width: 3.w),
                     Text(
                       '${chauffeur.rating}',
@@ -313,7 +316,10 @@ class _DriverCard extends StatelessWidget {
               GestureDetector(
                 onTap: () => controller.viewProfile(chauffeur),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 7.h,
+                  ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFD08700), Color(0xFFF1A800)],
@@ -335,9 +341,14 @@ class _DriverCard extends StatelessWidget {
               if (showAddToFavorites) ...[
                 SizedBox(height: 6.h),
                 GestureDetector(
-                  onTap: isFavorite ? null : () => controller.addToFavorites(chauffeur),
+                  onTap: isFavorite
+                      ? null
+                      : () => controller.addToFavorites(chauffeur),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
                     decoration: BoxDecoration(
                       color: isFavorite
                           ? const Color(0xFF1E2E1E)
