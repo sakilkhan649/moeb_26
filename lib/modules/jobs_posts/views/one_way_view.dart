@@ -301,6 +301,7 @@ class OnewayScreen extends StatelessWidget {
               null,
               textInputType: TextInputType.text,
               isRequired: false,
+              textCapitalization: TextCapitalization.sentences,
             ),
             SizedBox(height: 24.h),
             CustomJobButton(
@@ -371,6 +372,7 @@ class OnewayScreen extends StatelessWidget {
     bool isRequired = true,
     String? Function(String?)? validator,
     TextInputType textInputType = TextInputType.text,
+    TextCapitalization textCapitalization = TextCapitalization.none,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,6 +398,7 @@ class OnewayScreen extends StatelessWidget {
           obscureText: false,
           textInputType: textInputType,
           validator: validator,
+          textCapitalization: textCapitalization,
         ),
         SizedBox(height: 16.h),
       ],

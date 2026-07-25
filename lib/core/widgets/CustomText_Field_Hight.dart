@@ -10,6 +10,7 @@ class CustomtextFieldHight extends StatelessWidget {
   final Widget? suffixIcon;
   final TextInputType? textInputType;
   final String? Function(String?)? validator;
+  final TextCapitalization textCapitalization;
 
   const CustomtextFieldHight({super.key, 
     required this.controller,
@@ -20,6 +21,7 @@ class CustomtextFieldHight extends StatelessWidget {
     this.textInputType,
     this.validator,
     this.readOnly = false,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   final bool readOnly;
@@ -34,6 +36,7 @@ class CustomtextFieldHight extends StatelessWidget {
         readOnly: readOnly,
         keyboardType: textInputType,
         validator: validator,
+        textCapitalization: textCapitalization,
         style: TextStyle(color: Colors.white),
         maxLines: 5, // Max lines the field can expand to
         minLines: 1, // Min lines

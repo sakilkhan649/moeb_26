@@ -264,6 +264,7 @@ class ByTheHour extends StatelessWidget {
               "e.g., VIP client, suit required, name sign needed",
               null,
               isRequired: false,
+              textCapitalization: TextCapitalization.sentences,
             ),
             SizedBox(height: 24.h),
             CustomJobButton(
@@ -317,6 +318,7 @@ class ByTheHour extends StatelessWidget {
     bool isRequired = true,
     String? Function(String?)? validator,
     TextInputType textInputType = TextInputType.text,
+    TextCapitalization textCapitalization = TextCapitalization.none,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,6 +344,7 @@ class ByTheHour extends StatelessWidget {
           obscureText: false,
           textInputType: textInputType,
           validator: validator,
+          textCapitalization: textCapitalization,
         ),
         SizedBox(height: 16.h),
       ],
