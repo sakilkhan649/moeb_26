@@ -31,7 +31,6 @@ class MeetGreetController extends GetxController {
   // Main reactive fields
   var passengerName = 'JOHN SMITH'.obs;
   var subtitleText = 'FLIGHT BG-088'.obs;
-  var headerTag = 'PICKUP'.obs;
   var selectedThemeIndex = 0.obs;
   var showCompanyLogo = true.obs;
   var isLandscape = false.obs;

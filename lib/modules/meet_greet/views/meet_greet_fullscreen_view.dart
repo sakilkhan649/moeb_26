@@ -56,10 +56,12 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
   }
 
   void _showQuickEditDialog(BuildContext context) {
-    final nameEditingController =
-        TextEditingController(text: controller.passengerName.value);
-    final subtitleEditingController =
-        TextEditingController(text: controller.subtitleText.value);
+    final nameEditingController = TextEditingController(
+      text: controller.passengerName.value,
+    );
+    final subtitleEditingController = TextEditingController(
+      text: controller.subtitleText.value,
+    );
 
     showDialog(
       context: context,
@@ -137,11 +139,11 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
               ),
               onPressed: () {
                 if (nameEditingController.text.trim().isNotEmpty) {
-                  controller.passengerName.value =
-                      nameEditingController.text.trim();
+                  controller.passengerName.value = nameEditingController.text
+                      .trim();
                 }
-                controller.subtitleText.value =
-                    subtitleEditingController.text.trim();
+                controller.subtitleText.value = subtitleEditingController.text
+                    .trim();
                 Navigator.pop(context);
               },
               child: Text(
@@ -186,64 +188,30 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // --- TOP BAR (Company Logo & Header Badge) ---
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            if (controller.showCompanyLogo.value)
-                              Image.asset(
-                                AppImages.app_logo,
-                                height: controller.isLandscape.value ? 35.h : 45.h,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Text(
-                                  'MOEB',
-                                  style: GoogleFonts.outfit(
-                                    color: theme.accentColor,
-                                    fontSize: controller.isLandscape.value ? 16.sp : 20.sp,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 2.w,
-                                  ),
-                                ),
-                              )
-                            else
-                              const SizedBox.shrink(),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: controller.isLandscape.value ? 4.h : 6.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: theme.cardColor,
-                                borderRadius: BorderRadius.circular(20.r),
-                                border: Border.all(
-                                  color: theme.borderColor,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.local_taxi_rounded,
-                                    color: theme.headerColor,
-                                    size: controller.isLandscape.value ? 14.sp : 18.sp,
-                                  ),
-                                  SizedBox(width: 8.w),
+                        // --- TOP BAR (Company Logo) ---
+                        if (controller.showCompanyLogo.value)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Image.asset(
+                              AppImages.app_logo,
+                              height: controller.isLandscape.value
+                                  ? 35.h
+                                  : 45.h,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
                                   Text(
-                                    controller.headerTag.value.toUpperCase(),
-                                    style: GoogleFonts.inter(
-                                      color: theme.headerColor,
-                                      fontSize: controller.isLandscape.value ? 11.sp : 14.sp,
+                                    'MOEB',
+                                    style: GoogleFonts.outfit(
+                                      color: theme.accentColor,
+                                      fontSize: controller.isLandscape.value
+                                          ? 16.sp
+                                          : 20.sp,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 2.w,
                                     ),
                                   ),
-                                ],
-                              ),
                             ),
-                          ],
-                        ),
+                          ),
 
                         // --- MAIN CONTENT ---
                         Expanded(
@@ -256,19 +224,29 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
                                 ),
                               ),
                               if (controller.subtitleText.value.isNotEmpty) ...[
-                                SizedBox(height: controller.isLandscape.value ? 6.h : 10.h),
+                                SizedBox(
+                                  height: controller.isLandscape.value
+                                      ? 6.h
+                                      : 10.h,
+                                ),
                                 Text(
                                   controller.subtitleText.value.toUpperCase(),
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     color: theme.subtitleColor,
-                                    fontSize: controller.isLandscape.value ? 16.sp : 20.sp,
+                                    fontSize: controller.isLandscape.value
+                                        ? 16.sp
+                                        : 20.sp,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 1.5.w,
                                   ),
                                 ),
                               ],
-                              SizedBox(height: controller.isLandscape.value ? 4.h : 8.h),
+                              SizedBox(
+                                height: controller.isLandscape.value
+                                    ? 4.h
+                                    : 8.h,
+                              ),
                             ],
                           ),
                         ),
@@ -338,7 +316,9 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
                                 color: Colors.black.withValues(alpha: 0.8),
                                 borderRadius: BorderRadius.circular(30.r),
                                 border: Border.all(
-                                  color: theme.borderColor.withValues(alpha: 0.5),
+                                  color: theme.borderColor.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                               ),
                               child: Row(
@@ -386,78 +366,32 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
       decoration: BoxDecoration(
         color: theme.cardColor.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(
-          color: theme.borderColor.withValues(alpha: 0.8),
-          width: 2,
-        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Top Decorative Bar
-          Container(
-            height: isLandscape ? 2.h : 3.h,
-            width: isLandscape ? 100.w : 140.w,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.transparent,
-                  theme.borderColor,
-                  Colors.transparent,
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: isLandscape ? 8.h : 20.h),
-
-          // BIG BOLD PASSENGER NAME
-          Expanded(
-            child: Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.center,
-                child: Text(
-                  controller.passengerName.value,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.outfit(
-                    color: theme.nameColor,
-                    fontSize: ((isLandscape ? 48 : 70) *
-                            controller.fontSizeScale.value)
-                        .sp,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.w,
-                    shadows: [
-                      Shadow(
-                        color: theme.borderColor.withValues(alpha: 0.4),
-                        blurRadius: 15,
-                      ),
-                    ],
-                  ),
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.center,
+          child: Text(
+            controller.passengerName.value,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(
+              color: theme.nameColor,
+              fontSize:
+                  ((isLandscape ? 48 : 70) * controller.fontSizeScale.value).sp,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2.w,
+              shadows: [
+                Shadow(
+                  color: theme.borderColor.withValues(alpha: 0.4),
+                  blurRadius: 15,
                 ),
-              ),
+              ],
             ),
           ),
-
-          SizedBox(height: isLandscape ? 6.h : 16.h),
-          // Bottom Decorative Bar
-          Container(
-            height: isLandscape ? 2.h : 3.h,
-            width: isLandscape ? 100.w : 140.w,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.transparent,
-                  theme.borderColor,
-                  Colors.transparent,
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
-
 
   Widget _buildControlButton({
     required IconData icon,

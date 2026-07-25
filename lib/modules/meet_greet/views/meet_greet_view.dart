@@ -13,13 +13,10 @@ class MeetGreetView extends GetView<MeetGreetController> {
     final TextEditingController nameTextController = TextEditingController();
     final TextEditingController subtitleTextController =
         TextEditingController();
-    final TextEditingController headerTagTextController =
-        TextEditingController();
 
     // Sync controllers with rx values
     nameTextController.text = controller.passengerName.value;
     subtitleTextController.text = controller.subtitleText.value;
-    headerTagTextController.text = controller.headerTag.value;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -142,8 +139,6 @@ class MeetGreetView extends GetView<MeetGreetController> {
                                             controller.passengerName.value;
                                         subtitleTextController.text =
                                             controller.subtitleText.value;
-                                        headerTagTextController.text =
-                                            controller.headerTag.value;
                                       }
                                     },
                                   );
@@ -182,18 +177,6 @@ class MeetGreetView extends GetView<MeetGreetController> {
                       controller: subtitleTextController,
                       onChanged: (val) {
                         controller.subtitleText.value = val.trim();
-                      },
-                    ),
-
-                    SizedBox(height: 24.h),
-
-                    _buildInputField(
-                      label: 'Header Tag',
-                      hintText: 'e.g. PICKUP, WELCOME, VIP GUEST',
-                      icon: Icons.tag,
-                      controller: headerTagTextController,
-                      onChanged: (val) {
-                        controller.headerTag.value = val.trim();
                       },
                     ),
 
@@ -378,7 +361,6 @@ class MeetGreetView extends GetView<MeetGreetController> {
       final theme = controller.currentTheme;
       final pName = controller.passengerName.value;
       final pSubtitle = controller.subtitleText.value;
-      final pHeader = controller.headerTag.value;
 
       return Container(
         width: double.infinity,
@@ -399,34 +381,16 @@ class MeetGreetView extends GetView<MeetGreetController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'MOEB PICKUP',
-                  style: GoogleFonts.inter(
-                    color: theme.headerColor,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'MOEB PICKUP',
+                style: GoogleFonts.inter(
+                  color: theme.headerColor,
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.bold,
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(color: theme.borderColor),
-                  ),
-                  child: Text(
-                    pHeader,
-                    style: GoogleFonts.inter(
-                      color: theme.headerColor,
-                      fontSize: 9.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
             Expanded(
               child: Center(
