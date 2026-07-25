@@ -80,7 +80,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
-              color: const Color(0xFFD5C4AB), // warm beige
+              color: const Color.fromARGB(255, 255, 255, 255), // warm beige
             ),
           ),
           SizedBox(height: 8.h),

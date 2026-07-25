@@ -141,6 +141,7 @@ class JobEditController extends GetxController {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedTime.value ?? TimeOfDay.now(),
+      initialEntryMode: TimePickerEntryMode.input,
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
@@ -149,6 +150,8 @@ class JobEditController extends GetxController {
               onPrimary: Colors.white,
               surface: Color(0xFF1E1E1E), // Lighter background
               onSurface: Colors.white, // Text color
+              tertiaryContainer: Colors.white, // Selected AM/PM background
+              onTertiaryContainer: Colors.black, // Selected AM/PM text
             ),
             dialogTheme: DialogThemeData(
               backgroundColor: const Color(0xFF1E1E1E),

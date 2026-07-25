@@ -1115,9 +1115,10 @@ class InvoicePreviewView extends GetView<InvoiceController> {
         pw.SizedBox(height: 4),
         pw.Text(
           desc,
-          style: const pw.TextStyle(
+          style: pw.TextStyle(
             fontSize: 10,
-            color: PdfColors.grey800,
+            color: PdfColors.black,
+            fontWeight: pw.FontWeight.bold,
             lineSpacing: 1.4,
           ),
         ),

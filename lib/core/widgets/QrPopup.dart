@@ -82,16 +82,7 @@ class QrPopup extends StatelessWidget {
                         color: Colors.black,
                       ),
                     ),
-                  SizedBox(height: 20.h),
-                  Text(
-                    "Scan the QR code to view available offers for this vehicle or part.",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      fontSize: 14.sp,
-                      color: Colors.grey[600],
-                      height: 1.5,
-                    ),
-                  ),
+
                 ],
               ),
             ),
