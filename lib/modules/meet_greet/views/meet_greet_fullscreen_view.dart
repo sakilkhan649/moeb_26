@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import '../controllers/meet_greet_controller.dart';
 
@@ -15,35 +14,22 @@ class MeetGreetFullscreenView extends StatefulWidget {
       _MeetGreetFullscreenViewState();
 }
 
-class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
-    with SingleTickerProviderStateMixin {
+class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
   final MeetGreetController controller = Get.find<MeetGreetController>();
 
   bool _showControls = true;
   Timer? _hideTimer;
-  late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
     controller.enterFullscreen();
     _startHideTimer();
-
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-
-    _pulseAnimation = Tween<double>(begin: 0.96, end: 1.04).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
   }
 
   @override
   void dispose() {
     _hideTimer?.cancel();
-    _pulseController.dispose();
     controller.exitFullscreen();
     controller.resetOrientation();
     super.dispose();
@@ -261,60 +247,30 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
 
                         // --- MAIN CONTENT ---
                         Expanded(
-                          child: (controller.isLandscape.value && controller.showQrCode.value)
-                              ? Row(
-                                  children: [
-                                    // Left Side: Name & Subtitle Card
-                                    Expanded(
-                                      flex: 3,
-                                      child: _buildNameCard(theme, isLandscape: true),
-                                    ),
-                                    // Right Side: Subtitle & QR Code
-                                    SizedBox(width: 16.w),
-                                    _buildLandscapeRightPanel(theme),
-                                  ],
-                                )
-                              : Column(
-                                  children: [
-                                    Expanded(
-                                      child: _buildNameCard(
-                                        theme,
-                                        isLandscape: controller.isLandscape.value,
-                                      ),
-                                    ),
-                                    if (controller.subtitleText.value.isNotEmpty) ...[
-                                      SizedBox(height: controller.isLandscape.value ? 6.h : 10.h),
-                                      Text(
-                                        controller.subtitleText.value.toUpperCase(),
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.inter(
-                                          color: theme.subtitleColor,
-                                          fontSize: controller.isLandscape.value ? 16.sp : 20.sp,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.5.w,
-                                        ),
-                                      ),
-                                    ],
-                                    if (!controller.isLandscape.value && controller.showQrCode.value) ...[
-                                      SizedBox(height: 10.h),
-                                      Container(
-                                        padding: EdgeInsets.all(8.w),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12.r),
-                                        ),
-                                        child: QrImageView(
-                                          data: controller.qrData.value.isEmpty
-                                              ? controller.passengerName.value
-                                              : controller.qrData.value,
-                                          version: QrVersions.auto,
-                                          size: 90.sp,
-                                        ),
-                                      ),
-                                    ],
-                                    SizedBox(height: controller.isLandscape.value ? 4.h : 8.h),
-                                  ],
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: _buildNameCard(
+                                  theme,
+                                  isLandscape: controller.isLandscape.value,
                                 ),
+                              ),
+                              if (controller.subtitleText.value.isNotEmpty) ...[
+                                SizedBox(height: controller.isLandscape.value ? 6.h : 10.h),
+                                Text(
+                                  controller.subtitleText.value.toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.inter(
+                                    color: theme.subtitleColor,
+                                    fontSize: controller.isLandscape.value ? 16.sp : 20.sp,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1.5.w,
+                                  ),
+                                ),
+                              ],
+                              SizedBox(height: controller.isLandscape.value ? 4.h : 8.h),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -454,41 +410,30 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
           ),
           SizedBox(height: isLandscape ? 8.h : 20.h),
 
-          // BIG BOLD PASSENGER NAME WITH SCALING
+          // BIG BOLD PASSENGER NAME
           Expanded(
             child: Center(
-              child: AnimatedBuilder(
-                animation: _pulseAnimation,
-                builder: (context, child) {
-                  final scale = controller.isFlashingText.value
-                      ? _pulseAnimation.value
-                      : 1.0;
-                  return Transform.scale(
-                    scale: scale,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.center,
-                      child: Text(
-                        controller.passengerName.value,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                          color: theme.nameColor,
-                          fontSize: ((isLandscape ? 48 : 70) *
-                                  controller.fontSizeScale.value)
-                              .sp,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2.w,
-                          shadows: [
-                            Shadow(
-                              color: theme.borderColor.withValues(alpha: 0.4),
-                              blurRadius: 15,
-                            ),
-                          ],
-                        ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.center,
+                child: Text(
+                  controller.passengerName.value,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    color: theme.nameColor,
+                    fontSize: ((isLandscape ? 48 : 70) *
+                            controller.fontSizeScale.value)
+                        .sp,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.w,
+                    shadows: [
+                      Shadow(
+                        color: theme.borderColor.withValues(alpha: 0.4),
+                        blurRadius: 15,
                       ),
-                    ),
-                  );
-                },
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -508,58 +453,6 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView>
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLandscapeRightPanel(MeetGreetThemeData theme) {
-    return Container(
-      width: 150.w,
-      margin: EdgeInsets.symmetric(vertical: 4.h),
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: theme.cardColor.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: theme.borderColor.withValues(alpha: 0.5),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (controller.subtitleText.value.isNotEmpty) ...[
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                controller.subtitleText.value.toUpperCase(),
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  color: theme.subtitleColor,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.w,
-                ),
-              ),
-            ),
-            SizedBox(height: 8.h),
-          ],
-          if (controller.showQrCode.value)
-            Container(
-              padding: EdgeInsets.all(6.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: QrImageView(
-                data: controller.qrData.value.isEmpty
-                    ? controller.passengerName.value
-                    : controller.qrData.value,
-                version: QrVersions.auto,
-                size: 70.sp,
-              ),
-            ),
         ],
       ),
     );

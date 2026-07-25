@@ -631,37 +631,22 @@ class CreateInvoiceView extends GetView<InvoiceController> {
 
   Widget _buildCountryDropdown(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 16.h,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFF111111),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: controller.clientCountry.value,
-          dropdownColor: const Color(0xFF111111),
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: const Color(0xFFD5C4AB),
-            size: 24.sp,
-          ),
-          isExpanded: true,
-          style: GoogleFonts.inter(
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-          ),
-          onChanged: (newValue) {
-            if (newValue != null) {
-              controller.clientCountry.value = newValue;
-            }
-          },
-          items: controller.countryOptions.map<DropdownMenuItem<String>>((
-            String value,
-          ) {
-            return DropdownMenuItem<String>(value: value, child: Text(value));
-          }).toList(),
+      child: Text(
+        'United States',
+        style: GoogleFonts.inter(
+          color: Colors.white,
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

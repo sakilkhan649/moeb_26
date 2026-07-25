@@ -79,7 +79,7 @@ class ChatDetailController extends GetxController {
               chatId: chat.id,
               text: 'Hello! Let us know if you have any questions.',
               senderId: 'admin_id',
-              sender: ChatParticipant(id: 'admin_id', name: 'Ekkali Support'),
+              sender: ChatParticipant(id: 'admin_id', name: 'Support Team'),
               createdAt: DateTime.now()
                   .subtract(const Duration(minutes: 5))
                   .toIso8601String(),
@@ -92,7 +92,7 @@ class ChatDetailController extends GetxController {
               chatId: chat.id,
               text: 'Welcome to Moeb 26! How can we assist you today?',
               senderId: 'admin_id',
-              sender: ChatParticipant(id: 'admin_id', name: 'Ekkali Support'),
+              sender: ChatParticipant(id: 'admin_id', name: 'Support Team'),
               createdAt: DateTime.now()
                   .subtract(const Duration(minutes: 10))
                   .toIso8601String(),

@@ -541,6 +541,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   _buildPdfOptionalText(
                     controller.businessWebsiteController.text,
                   ),
+                  _buildPdfOptionalText(
+                    controller.businessAddressController.text,
+                  ),
                 ],
               ),
             ),
@@ -718,6 +721,19 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                         ),
                       ),
                     ],
+                    if (controller
+                        .businessAddressController
+                        .text
+                        .isNotEmpty) ...[
+                      pw.SizedBox(height: 1),
+                      pw.Text(
+                        controller.businessAddressController.text,
+                        style: const pw.TextStyle(
+                          fontSize: 9,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],
@@ -760,6 +776,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   ),
                   _buildPdfOptionalText(
                     controller.businessPhoneController.text,
+                  ),
+                  _buildPdfOptionalText(
+                    controller.businessAddressController.text,
                   ),
                   pw.SizedBox(height: 12),
                   _buildPdfMetadataLabel('DATES'),
@@ -954,6 +973,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   ),
                   _buildPdfOptionalText(
                     controller.businessWebsiteController.text,
+                  ),
+                  _buildPdfOptionalText(
+                    controller.businessAddressController.text,
                   ),
                 ],
               ),
@@ -1199,7 +1221,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                       ),
                     ),
                     pw.Text(
-                      'INVOICE STATEMENT',
+                      'INVOICE',
                       style: const pw.TextStyle(
                         fontSize: 9,
                         color: PdfColors.grey600,
@@ -1314,6 +1336,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   _buildPdfOptionalText(
                     controller.businessWebsiteController.text,
                   ),
+                  _buildPdfOptionalText(
+                    controller.businessAddressController.text,
+                  ),
                 ],
               ),
             ),
@@ -1398,7 +1423,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   ),
                   pw.SizedBox(height: 2),
                   pw.Text(
-                    'OFFICIAL INVOICE STATEMENT',
+                    'OFFICIAL INVOICE',
                     style: const pw.TextStyle(
                       color: PdfColors.white,
                       fontSize: 8,
@@ -1443,6 +1468,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                 _buildPdfOptionalText(controller.businessPhoneController.text),
                 _buildPdfOptionalText(
                   controller.businessWebsiteController.text,
+                ),
+                _buildPdfOptionalText(
+                  controller.businessAddressController.text,
                 ),
               ],
             ),
@@ -1497,7 +1525,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    _buildPdfMetadataLabel('STATEMENT DETAILS'),
+                    _buildPdfMetadataLabel('INVOICE DETAILS'),
                     pw.SizedBox(height: 6),
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,

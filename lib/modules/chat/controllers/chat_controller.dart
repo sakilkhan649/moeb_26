@@ -84,7 +84,7 @@ class ChatController extends GetxController {
           ),
           ChatParticipant(
             id: 'admin_id',
-            name: 'Ekkali Support',
+            name: 'Support Team',
             profilePicture: 'assets/images/ekkali support.png',
           ),
         ],

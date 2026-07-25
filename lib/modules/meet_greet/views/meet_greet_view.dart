@@ -13,10 +13,13 @@ class MeetGreetView extends GetView<MeetGreetController> {
     final TextEditingController nameTextController = TextEditingController();
     final TextEditingController subtitleTextController =
         TextEditingController();
+    final TextEditingController headerTagTextController =
+        TextEditingController();
 
     // Sync controllers with rx values
     nameTextController.text = controller.passengerName.value;
     subtitleTextController.text = controller.subtitleText.value;
+    headerTagTextController.text = controller.headerTag.value;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -139,6 +142,8 @@ class MeetGreetView extends GetView<MeetGreetController> {
                                             controller.passengerName.value;
                                         subtitleTextController.text =
                                             controller.subtitleText.value;
+                                        headerTagTextController.text =
+                                            controller.headerTag.value;
                                       }
                                     },
                                   );
@@ -182,46 +187,15 @@ class MeetGreetView extends GetView<MeetGreetController> {
 
                     SizedBox(height: 24.h),
 
-                    // --- HEADER TAG PRESETS ---
-                    _buildSectionHeader('HEADER TAG PRESET'),
-                    SizedBox(height: 10.h),
-                    Obx(() {
-                      final currentTag = controller.headerTag.value;
-                      return Wrap(
-                        spacing: 8.w,
-                        runSpacing: 8.h,
-                        children: controller.headerTagPresets.map((tag) {
-                          final isSelected = currentTag == tag;
-                          return ChoiceChip(
-                            checkmarkColor: Colors.black,
-                            label: Text(
-                              tag,
-                              style: GoogleFonts.inter(
-                                color: isSelected ? Colors.black : Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                            selected: isSelected,
-                            selectedColor: const Color(0xFFD5C4AB),
-                            backgroundColor: const Color(0xFF1E1E1E),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                              side: BorderSide(
-                                color: isSelected
-                                    ? const Color(0xFFD5C4AB)
-                                    : const Color(0xFF364153),
-                              ),
-                            ),
-                            onSelected: (selected) {
-                              if (selected) {
-                                controller.headerTag.value = tag;
-                              }
-                            },
-                          );
-                        }).toList(),
-                      );
-                    }),
+                    _buildInputField(
+                      label: 'Header Tag',
+                      hintText: 'e.g. PICKUP, WELCOME, VIP GUEST',
+                      icon: Icons.tag,
+                      controller: headerTagTextController,
+                      onChanged: (val) {
+                        controller.headerTag.value = val.trim();
+                      },
+                    ),
 
                     SizedBox(height: 24.h),
 
@@ -329,36 +303,13 @@ class MeetGreetView extends GetView<MeetGreetController> {
                       ),
                       child: Obx(() {
                         final showLogo = controller.showCompanyLogo.value;
-                        final showQr = controller.showQrCode.value;
-                        final isFlashing = controller.isFlashingText.value;
 
-                        return Column(
-                          children: [
-                            _buildToggleTile(
-                              title: 'Show Company Logo Header',
-                              subtitle: 'Displays company branding at top',
-                              value: showLogo,
-                              onChanged: (v) =>
-                                  controller.showCompanyLogo.value = v,
-                            ),
-                            const Divider(color: Color(0xFF364153)),
-                            _buildToggleTile(
-                              title: 'Enable QR Code',
-                              subtitle:
-                                  'Displays QR code for ride / passenger info',
-                              value: showQr,
-                              onChanged: (v) => controller.showQrCode.value = v,
-                            ),
-                            const Divider(color: Color(0xFF364153)),
-                            _buildToggleTile(
-                              title: 'Pulsing Text Effect',
-                              subtitle:
-                                  'Subtle text pulse for night arrival gates',
-                              value: isFlashing,
-                              onChanged: (v) =>
-                                  controller.isFlashingText.value = v,
-                            ),
-                          ],
+                        return _buildToggleTile(
+                          title: 'Show Company Logo Header',
+                          subtitle: 'Displays company branding at top',
+                          value: showLogo,
+                          onChanged: (v) =>
+                              controller.showCompanyLogo.value = v,
                         );
                       }),
                     ),

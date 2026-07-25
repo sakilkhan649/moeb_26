@@ -34,10 +34,7 @@ class MeetGreetController extends GetxController {
   var headerTag = 'PICKUP'.obs;
   var selectedThemeIndex = 0.obs;
   var showCompanyLogo = true.obs;
-  var showQrCode = false.obs;
-  var qrData = 'https://example.com/ride'.obs;
   var isLandscape = false.obs;
-  var isFlashingText = false.obs;
   var isFullscreen = false.obs;
   var fontSizeScale = 1.0.obs;
 
@@ -46,15 +43,6 @@ class MeetGreetController extends GetxController {
   RxList<JobData> activeJobsList = <JobData>[].obs;
   Rx<JobData?> selectedJob = Rx<JobData?>(null);
 
-  // Preset Header Tags
-  final List<String> headerTagPresets = [
-    'PICKUP',
-    'WELCOME',
-    'VIP GUEST',
-    'AIRPORT PICKUP',
-    'HOTEL TRANSFER',
-    'COURIER',
-  ];
 
   // Curated Luxurious Themes (Matches Create Invoice Flow)
   final List<MeetGreetThemeData> themes = [
@@ -168,7 +156,6 @@ class MeetGreetController extends GetxController {
       subtitleText.value = job.jobType!.toUpperCase();
     }
 
-    qrData.value = 'Ride ID: ${job.id ?? "N/A"} | ${passengerName.value}';
     Helpers.showCustomSnackBar(
       'Loaded details for passenger ${passengerName.value}',
       isError: false,
