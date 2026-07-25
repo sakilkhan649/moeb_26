@@ -24,6 +24,37 @@ class VehicleInformationView extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60.h),
+          child: Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+              ),
+            ),
+            child: AppBar(
+              backgroundColor: Colors.black,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: 20.sp,
+                ),
+                onPressed: () => Get.back(),
+              ),
+              title: Text(
+                'Vehicle Information',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              centerTitle: true,
+            ),
+          ),
+        ),
         body: Form(
           key: _formKey,
           child: Padding(
@@ -31,24 +62,13 @@ class VehicleInformationView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 50.w),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 22.sp,
-                  ),
-                ),
-                SizedBox(height: 50.w),
-                CustomText(text: "Vehicle Information", fontSize: 20.sp),
-                SizedBox(height: 7.h),
+                SizedBox(height: 20.h),
                 CustomTextgray(
                   text: "Add your professional vehicles",
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w400,
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 24.h),
 
                 // Vehicle list
                 Expanded(

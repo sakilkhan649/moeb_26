@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/widgets/CustomButton.dart';
 import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
@@ -15,30 +16,50 @@ class PersonalDocumentView extends GetView<PersonalDocumentController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Personal Documents',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 50.w),
-              IconButton(
-                onPressed: () => Get.back(),
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 22,
-                ),
-              ),
-              SizedBox(height: 20.w),
-              CustomText(text: "Personal Documents", fontSize: 20.sp),
-              SizedBox(height: 7.h),
+              SizedBox(height: 20.h),
               CustomTextgray(
                 text: "Update or replace your professional documents.",
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w400,
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: 24.h),
 
               _buildDocumentSection(
                 context: context,

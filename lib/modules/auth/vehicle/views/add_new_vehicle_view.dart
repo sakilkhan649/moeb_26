@@ -9,6 +9,7 @@ import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:moeb_26/modules/auth/vehicle/controllers/vehicle_action_controller.dart';
+import 'package:moeb_26/modules/auth/vehicle/views/vehicle_Information_view.dart';
 
 class AddNewVehicleView extends StatelessWidget {
   // Use a unique tag for each navigation to ensure NO data leaks or copying from previous visits
@@ -30,29 +31,40 @@ class AddNewVehicleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: Container(
-            margin: EdgeInsets.all(12.r),
-            decoration: const BoxDecoration(
-              color: Color(0xFF1A1A1A),
-              shape: BoxShape.circle,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
             ),
-            child: Icon(Icons.chevron_left, color: Colors.white, size: 20.sp),
+          ),
+          child: Obx(
+            () => AppBar(
+              backgroundColor: Colors.black,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: 20.sp,
+                ),
+                onPressed: () => Get.back(),
+              ),
+              title: Text(
+                controller.isEditMode.value
+                    ? "Edit Vehicle"
+                    : "Add New Vehicle",
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              centerTitle: true,
+            ),
           ),
         ),
-        title: Text(
-          controller.isEditMode.value ? "Edit Vehicle" : "Add New Vehicle",
-          style: GoogleFonts.inter(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
       ),
       body: Form(
         key: _formKey,
@@ -149,76 +161,122 @@ class AddNewVehicleView extends StatelessWidget {
         }),
 
         SizedBox(height: 20.h),
-        // Row 1: Make & Model
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Column for Make
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        // Make & Model Dropdown Selection
+        Obx(() {
+          final type = controller.selectedVehicleType.value;
+          final cars = vehicleMakeModelMap[type] ?? [];
+          final currentSelection =
+              (controller.makeController.text.isEmpty &&
+                  controller.modelController.text.isEmpty)
+              ? null
+              : "${controller.makeController.text} ${controller.modelController.text}"
+                    .trim();
+          final value = cars.contains(currentSelection)
+              ? currentSelection
+              : null;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      CustomText(
-                        text: "Make",
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
-                      ),
-                      Text(
-                        " *",
-                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
-                      ),
-                    ],
+                  CustomText(
+                    text: "Make & Model",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14.sp,
                   ),
-                  SizedBox(height: 8.h),
-                  _buildTextField(
-                    controller: controller.makeController,
-                    hintText: "Mercedes",
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return "Enter Make";
-                      return null;
-                    },
+                  Text(
+                    " *",
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ],
               ),
-            ),
-            SizedBox(width: 15.w),
-            // Column for Model
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      CustomText(
-                        text: "Model",
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
-                      ),
-                      Text(
-                        " *",
-                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
-                      ),
-                    ],
+              SizedBox(height: 8.h),
+              DropdownButtonFormField<String>(
+                key: ValueKey(type),
+                value: value,
+                dropdownColor: const Color(0xFF1A1A1A),
+                borderRadius: BorderRadius.circular(16.r),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: Color(0xFFD5C4AB),
+                  size: 22,
+                ),
+                style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp),
+                validator: (value) => (value == null || value.isEmpty)
+                    ? "Select Make & Model"
+                    : null,
+                decoration: InputDecoration(
+                  hintText: type.isEmpty
+                      ? "Select Vehicle Type First"
+                      : "Select Make & Model",
+                  hintStyle: TextStyle(
+                    color: AppColors.gray100,
+                    fontSize: 14.sp,
                   ),
-                  SizedBox(height: 8.h),
-                  _buildTextField(
-                    controller: controller.modelController,
-                    hintText: "S-Class",
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter Model";
-                      }
-                      return null;
-                    },
+                  errorStyle: TextStyle(color: Colors.red, fontSize: 11.sp),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 14.h,
+                    horizontal: 16.w,
                   ),
-                ],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: const BorderSide(color: AppColors.black200),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: const BorderSide(color: AppColors.black200),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFD08700),
+                      width: 1.5,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: const BorderSide(color: Color(0xFFEF4444)),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFEF4444),
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+                items: cars.map((car) {
+                  return DropdownMenuItem<String>(
+                    value: car,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 2.h),
+                      child: Text(
+                        car,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: type.isEmpty
+                    ? null
+                    : (val) {
+                        if (val != null) {
+                          final parts = val.split(' ');
+                          controller.makeController.text = parts.first;
+                          controller.modelController.text = parts
+                              .sublist(1)
+                              .join(' ');
+                        }
+                      },
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
         SizedBox(height: 15.h),
         // Row 2: Color (Inside) & Color (Outside)
         Row(
@@ -267,16 +325,112 @@ class AddNewVehicleView extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 8.h),
-                  _buildTextField(
-                    controller: controller.colorOutsideController,
-                    hintText: "Black",
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter Color (Outside)";
-                      }
-                      return null;
-                    },
-                  ),
+                  Obx(() {
+                    final type = controller.selectedVehicleType.value;
+                    final isLimo = type == "LimoStretch";
+                    final colors = isLimo ? ["Black", "White"] : ["Black"];
+
+                    // Auto-populate "Black" for non-limo
+                    if (!isLimo &&
+                        controller.colorOutsideController.text != "Black") {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        controller.colorOutsideController.text = "Black";
+                      });
+                    }
+
+                    final currentSelection =
+                        controller.colorOutsideController.text;
+                    final value = colors.contains(currentSelection)
+                        ? currentSelection
+                        : null;
+
+                    return DropdownButtonFormField<String>(
+                      key: ValueKey(type),
+                      value: value,
+                      dropdownColor: const Color(0xFF1A1A1A),
+                      borderRadius: BorderRadius.circular(16.r),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: Color(0xFFD5C4AB),
+                        size: 22,
+                      ),
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                      ),
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Select Color"
+                          : null,
+                      decoration: InputDecoration(
+                        hintText: "Select Color",
+                        hintStyle: TextStyle(
+                          color: AppColors.gray100,
+                          fontSize: 14.sp,
+                        ),
+                        errorStyle: TextStyle(
+                          color: Colors.red,
+                          fontSize: 11.sp,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 14.h,
+                          horizontal: 16.w,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                          borderSide: const BorderSide(
+                            color: AppColors.black200,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                          borderSide: const BorderSide(
+                            color: AppColors.black200,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFD08700),
+                            width: 1.5,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFEF4444),
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFEF4444),
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      items: colors.map((c) {
+                        return DropdownMenuItem<String>(
+                          value: c,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 2.h),
+                            child: Text(
+                              c,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          controller.colorOutsideController.text = val;
+                        }
+                      },
+                    );
+                  }),
                 ],
               ),
             ),
@@ -310,11 +464,15 @@ class AddNewVehicleView extends StatelessWidget {
                     controller: controller.yearController,
                     hintText: "2021",
                     keyboardType: TextInputType.number,
-                    validator: (value) => Validators.year(
-                      value,
-                      min: DateTime.now().year - 5,
-                      max: DateTime.now().year,
-                    ),
+                    validator: (value) {
+                      final type = controller.selectedVehicleType.value;
+                      final maxAge = (type == "LimoStretch") ? 15 : 5;
+                      return Validators.year(
+                        value,
+                        min: DateTime.now().year - maxAge,
+                        max: DateTime.now().year,
+                      );
+                    },
                   ),
                 ],
               ),
@@ -757,7 +915,17 @@ class AddNewVehicleView extends StatelessWidget {
       bool isSelected = controller.selectedVehicleType.value == vehicleType;
       return GestureDetector(
         onTap: () {
-          controller.selectedVehicleType.value = vehicleType;
+          if (controller.selectedVehicleType.value != vehicleType) {
+            controller.makeController.clear();
+            controller.modelController.clear();
+            controller.yearController.clear();
+            if (vehicleType != "LimoStretch") {
+              controller.colorOutsideController.text = "Black";
+            } else {
+              controller.colorOutsideController.clear();
+            }
+            controller.selectedVehicleType.value = vehicleType;
+          }
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 15.w),

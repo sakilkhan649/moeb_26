@@ -16,29 +16,36 @@ class AllVehicleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: Container(
-            margin: EdgeInsets.all(12.r),
-            decoration: const BoxDecoration(
-              color: Color(0xFF1A1A1A),
-              shape: BoxShape.circle,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
             ),
-            child: Icon(Icons.chevron_left, color: Colors.white, size: 20.sp),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'My Vehicles',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
           ),
         ),
-        title: Text(
-          "All Vehicles",
-          style: GoogleFonts.inter(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
       ),
       body: Obx(() {
         final vehicles = controller.userProfile.value?.vehicles ?? [];
