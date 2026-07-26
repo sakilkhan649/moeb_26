@@ -481,14 +481,7 @@ class MeetGreetView extends GetView<MeetGreetController> {
                           fit: BoxFit.contain,
                         ),
                       )
-                    : Text(
-                        'MOEB PICKUP',
-                        style: GoogleFonts.inter(
-                          color: theme.headerColor,
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                    : const SizedBox.shrink(),
               )
             else
               const SizedBox.shrink(),

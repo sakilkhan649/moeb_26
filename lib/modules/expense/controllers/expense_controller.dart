@@ -22,7 +22,7 @@ class ExpenseThemeData {
 
 class ExpenseController extends GetxController {
   var expenses = <ExpenseModel>[].obs;
-  
+
   var selectedThemeIndex = 0.obs;
 
   final List<ExpenseThemeData> themes = [
@@ -64,15 +64,15 @@ class ExpenseController extends GetxController {
   ];
 
   ExpenseThemeData get currentTheme => themes[selectedThemeIndex.value];
-  
+
   // Input fields controllers
   final amountController = TextEditingController();
   final descriptionController = TextEditingController();
-  
+
   var selectedCategory = 'Fuel'.obs;
   var selectedDate = DateTime.now().obs;
   var selectedImage = Rxn<File>();
-  
+
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -165,7 +165,7 @@ class ExpenseController extends GetxController {
   void addExpense() {
     final amountText = amountController.text.trim();
     final amount = double.tryParse(amountText);
-    
+
     if (amount == null || amount <= 0) {
       Get.snackbar(
         "Invalid Input",
@@ -189,7 +189,7 @@ class ExpenseController extends GetxController {
     expenses.insert(0, newExpense);
     clearForm();
     Get.back(); // close modal
-    
+
     Get.snackbar(
       "Success",
       "Expense added successfully",
