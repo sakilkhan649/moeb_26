@@ -57,6 +57,8 @@ import 'package:moeb_26/modules/invoice/bindings/invoice_binding.dart';
 import 'package:moeb_26/modules/invoice/views/create_invoice_view.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_history_view.dart';
 import 'package:moeb_26/modules/preferred_drivers/bindings/preferred_drivers_binding.dart';
+import 'package:moeb_26/modules/expense/bindings/expense_binding.dart';
+import 'package:moeb_26/modules/expense/views/expense_list_view.dart';
 import 'package:moeb_26/modules/preferred_drivers/views/preferred_drivers_view.dart';
 import 'package:moeb_26/modules/preferred_drivers/views/preferred_driver_profile_view.dart';
 import 'package:moeb_26/modules/notifications/bindings/notifications_binding.dart';
@@ -118,6 +120,7 @@ class Routes {
   static const String notificationsView = "/NotificationsView";
   static const String meetGreetView = "/MeetGreetView";
   static const String meetGreetFullscreenView = "/MeetGreetFullscreenView";
+  static const String expenseListView = "/ExpenseListView";
 
   static List<GetPage> routes = [
     GetPage(
@@ -387,6 +390,12 @@ class Routes {
       page: () => const MeetGreetFullscreenView(),
       transition: Transition.noTransition,
       binding: MeetGreetBinding(),
+    ),
+    GetPage(
+      name: expenseListView,
+      page: () => const ExpenseListView(),
+      transition: Transition.noTransition,
+      binding: ExpenseBinding(),
     ),
   ];
 }

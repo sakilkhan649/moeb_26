@@ -195,6 +195,35 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     PopupMenuItem<int>(
+                      value: 6,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.account_balance_wallet_outlined,
+                            color: Colors.white,
+                            size: 24.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              'Expense Tracker',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            CupertinoIcons.chevron_forward,
+                            size: 20.sp,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<int>(
                       value: 5,
                       child: Row(
                         children: [
@@ -302,6 +331,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     switch (item) {
       case 3:
         Get.toNamed(Routes.invoiceHistoryView);
+        break;
+      case 6:
+        Get.toNamed(Routes.expenseListView);
         break;
       case 5:
         Get.toNamed(Routes.meetGreetView);
