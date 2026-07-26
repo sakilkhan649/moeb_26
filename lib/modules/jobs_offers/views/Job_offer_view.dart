@@ -1,17 +1,13 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
-import 'package:moeb_26/modules/my_jobs/controllers/my_jobs_controller.dart';
+import 'package:moeb_26/core/widgets/ExecutiveRideCard.dart';
+import 'package:moeb_26/core/widgets/ExecutiveRideDetailSheet.dart';
 import 'package:moeb_26/core/widgets/Custom_Job_Button.dart';
-import '../../../core/widgets/CustomText.dart';
-import '../../../core/widgets/CustomTextGary.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../../jobs_posts/views/job_post_sheet_tabbar_view.dart';
 
@@ -23,706 +19,214 @@ class JobOfferView extends StatefulWidget {
 }
 
 class _JobOfferViewState extends State<JobOfferView> {
-  final TextEditingController flightNumberController = TextEditingController();
-  final TextEditingController paymentMethodController = TextEditingController();
-  final TextEditingController specialInstructionsController =
-      TextEditingController();
-
-  final BookingController controller = Get.find<BookingController>();
-  final ScrollController scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    scrollController.addListener(() {
-      if (scrollController.hasClients &&
-          scrollController.position.pixels >=
-              scrollController.position.maxScrollExtent - 200) {
-        controller.loadMoreJobOffers();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    flightNumberController.dispose();
-    paymentMethodController.dispose();
-    specialInstructionsController.dispose();
-    scrollController.dispose();
-    super.dispose();
-  }
+  // Static Demo Job Offers Dataset
+  final List<Map<String, dynamic>> _demoJobOffers = [
+    {
+      'dateHeader': 'Thu, Jul 09',
+      'offers': [
+        {
+          'bookingNo': 'OFFER-884201',
+          'time': '1:45 PM',
+          'pickup': 'Boca Raton Executive Airport (BCT)',
+          'pickupNotes': 'Signature Flight Support FBO Gate 3',
+          'dropoff': 'Four Seasons Resort Palm Beach',
+          'dropoffNotes': 'Valet Main Entrance',
+          'passenger': 'David Sterling',
+          'company': 'Apex Luxury Chauffeur',
+          'vehicle': 'BCT-FBO',
+          'type': 'SUV',
+          'price': '250.00',
+          'payment': 'Credit Card on File',
+          'flight': 'N482AP',
+          'instructions':
+              'Guest requires meet & greet sign in terminal. Please assist with luggage.',
+        },
+        {
+          'bookingNo': 'OFFER-884202',
+          'time': '6:00 PM',
+          'pickup': 'Fort Lauderdale-Hollywood Int Airport (FLL)',
+          'pickupNotes': 'Terminal 3 Arrivals Terminal',
+          'dropoff': 'Ritz-Carlton Fort Lauderdale',
+          'dropoffNotes': 'Beachfront Driveway Entrance',
+          'passenger': 'Elena Rostova',
+          'company': 'VIP Transit Miami',
+          'vehicle': 'FLL-MIA',
+          'type': 'SPRINTER',
+          'price': '320.00',
+          'payment': 'Credit Card on File',
+          'flight': 'AA1042',
+          'instructions':
+              'Provide chilled bottled water and assistance with 3 bags.',
+        },
+      ],
+    },
+    {
+      'dateHeader': 'Fri, Jul 10',
+      'offers': [
+        {
+          'bookingNo': 'OFFER-884203',
+          'time': '10:15 AM',
+          'pickup': 'Downtown Miami Financial District',
+          'pickupNotes': 'Brickell World Plaza Lobby',
+          'dropoff': 'Miami International Airport (MIA)',
+          'dropoffNotes': 'Terminal D American Airlines VIP',
+          'passenger': 'Robert Vance',
+          'company': 'Global Black Car',
+          'vehicle': 'MIA-920',
+          'type': 'SEDAN',
+          'price': '160.00',
+          'payment': 'Credit Card on File',
+          'flight': 'DL492',
+          'instructions':
+              'Silent ride requested. Preferred AC temperature 70F.',
+        },
+        {
+          'bookingNo': 'OFFER-884204',
+          'time': '4:30 PM',
+          'pickup': 'PortMiami Cruise Terminal 4',
+          'pickupNotes': 'VIP Passenger Pickup Zone C',
+          'dropoff': 'The Setai South Beach',
+          'dropoffNotes': 'Collins Ave Entrance',
+          'passenger': 'Marcus Thorne',
+          'company': 'Ocean Drive Chauffeur',
+          'vehicle': 'MIA-881',
+          'type': 'SEDAN/SUV',
+          'price': '210.00',
+          'payment': 'Credit Card on File',
+          'flight': 'CR-9201',
+          'instructions': 'Child safety seat needed in rear passenger seat.',
+        },
+      ],
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: CustomAppBar(title: "Offers", notificationCount: 3),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await controller.fetchJobOffers(isRefresh: true);
-        },
-        color: AppColors.orange100,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                controller: scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Column(
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          children: [
+            SizedBox(height: 15.h),
+            // Top Action Buttons Header
+            Row(
+              children: [
+                Expanded(
+                  child: CustomJobButton(
+                    text: "New Job",
+                    padding: EdgeInsets.symmetric(
+                      vertical: 12.h,
+                      horizontal: 8.w,
+                    ),
+                    onPressed: () {
+                      Get.to(() => JobPostSheetTabBarView());
+                    },
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: CustomJobButton(
+                    text: "My Jobs",
+                    iconPath: AppIcons.edit_icon_myjob,
+                    iconSize: 18.w,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 12.h,
+                      horizontal: 8.w,
+                    ),
+                    onPressed: () {
+                      Get.toNamed(Routes.myJobsView);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 15.h),
+
+            // Job Offers List
+            Expanded(
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: _demoJobOffers.length,
+                padding: EdgeInsets.only(bottom: 20.h),
+                itemBuilder: (context, groupIndex) {
+                  final group = _demoJobOffers[groupIndex];
+                  final String dateHeader = group['dateHeader'];
+                  final List offers = group['offers'];
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 15.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomJobButton(
-                              text: "New Job",
-                              padding: EdgeInsets.symmetric(
-                                vertical: 12.h,
-                                horizontal: 8.w,
-                              ),
-                              onPressed: () {
-                                Get.to(() => JobPostSheetTabBarView());
-                              },
-                            ),
+                      // Date Section Header
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 15.h,
+                          bottom: 10.h,
+                          left: 4.w,
+                        ),
+                        child: Text(
+                          dateHeader,
+                          style: GoogleFonts.outfit(
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
                           ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: CustomJobButton(
-                              text: "My Jobs",
-                              iconPath: AppIcons.edit_icon_myjob,
-                              iconSize: 18.w,
-                              padding: EdgeInsets.symmetric(
-                                vertical: 12.h,
-                                horizontal: 8.w,
-                              ),
-                              onPressed: () {
-                                Get.toNamed(Routes.myJobsView);
-                              },
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      SizedBox(height: 15.h),
-                      Obx(() {
-                        if (controller.isOffersLoading.value &&
-                            controller.jobOffersList.isEmpty) {
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 40.h),
-                              child: const CircularProgressIndicator(
-                                color: AppColors.orange100,
+                      ...offers.map((job) {
+                        return ExecutiveRideCard(
+                          time: job['time'],
+                          pickupLocation: job['pickup'],
+                          dropoffLocation: job['dropoff'],
+                          passengerOrDriverName: job['passenger'],
+                          vehicleInfo: job['company'],
+                          vehicleType: job['type'],
+                          price: job['price'],
+                          paymentType: job['payment'],
+                          status: 'OFFER',
+                          onTap: () {
+                            Get.bottomSheet(
+                              ExecutiveRideDetailSheet(
+                                title: "Job Offer Details",
+                                bookingNo: job['bookingNo'],
+                                dateTimeStr: "$dateHeader • ${job['time']}",
+                                pickupLocation: job['pickup'],
+                                pickupNotes: job['pickupNotes'],
+                                dropoffLocation: job['dropoff'],
+                                dropoffNotes: job['dropoffNotes'],
+                                passengerName: job['passenger'],
+                                driverName: job['company'],
+                                vehicleInfo: job['vehicle'],
+                                vehicleType: job['type'],
+                                paymentType: job['payment'],
+                                amount: job['price'],
+                                flightNumber: job['flight'],
+                                specialInstructions: job['instructions'],
+                                status: "AVAILABLE",
+                                actionButtonText: "Accept Job Offer",
+                                onActionButtonPressed: () {
+                                  Get.snackbar(
+                                    "Job Accepted",
+                                    "Successfully applied for Job Offer #${job['bookingNo']}",
+                                    backgroundColor: const Color(0xFFD08700),
+                                    colorText: Colors.white,
+                                  );
+                                },
                               ),
-                            ),
-                          );
-                        }
-
-                        if (controller.jobOffersList.isEmpty) {
-                          return SizedBox(
-                            height:
-                                constraints.maxHeight *
-                                0.6, // Occupy 60% of screen height to appear centered
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "No offers at this time",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    "Available ride offers will be here",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.grey,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-
-                        return Column(
-                          children: [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.jobOffersList.length,
-                              itemBuilder: (context, index) {
-                                final job = controller.jobOffersList[index];
-
-                                // Format Date and Time
-                                String formattedDateTime = "";
-                                if (job.date != null) {
-                                  String dateStr = DateFormat(
-                                    'EEE, MMM dd',
-                                  ).format(job.date!);
-
-                                  String timeStr = job.time;
-                                  try {
-                                    if (timeStr.contains(':')) {
-                                      final parts = timeStr.split(':');
-                                      int hour = int.parse(parts[0]);
-                                      int minute = int.parse(
-                                        parts[1].split(' ')[0],
-                                      );
-
-                                      final period = hour >= 12 ? "PM" : "AM";
-                                      final hour12 = hour == 0
-                                          ? 12
-                                          : (hour > 12 ? hour - 12 : hour);
-                                      String formattedTime =
-                                          "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
-                                      formattedDateTime =
-                                          "$dateStr · $formattedTime";
-                                    } else {
-                                      formattedDateTime = "$dateStr · $timeStr";
-                                    }
-                                  } catch (_) {
-                                    formattedDateTime = "$dateStr · $timeStr";
-                                  }
-                                } else {
-                                  formattedDateTime =
-                                      (job.time == "null" || job.time.isEmpty)
-                                      ? "ASAP"
-                                      : job.time;
-                                }
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: 16.h),
-                                  child: CustomJobCard(
-                                    dateTime: formattedDateTime,
-                                    vehicleType: job.vehicleType,
-                                    pickupLocation: job.pickupLocation,
-                                    dropoffLocation: job.dropoffLocation ?? '',
-                                    driverName:
-                                        job.createdBy?.nickname != null &&
-                                            job.createdBy!.nickname.isNotEmpty
-                                        ? job.createdBy!.nickname
-                                        : (job.createdBy?.name ?? "Unknown"),
-                                    companyName:
-                                        job.createdBy?.company ?? 'Unknown',
-                                    flightNumberHint: job.flightNumber ?? '',
-                                    paymentMethodHint:
-                                        (job.paymentType == 'NO_COLLECT' ||
-                                            job.paymentType == 'NO COLLECT')
-                                        ? 'Credit Card on File'
-                                        : (job.paymentType == 'COLLECT'
-                                              ? 'Collect Payment'
-                                              : job.paymentType.replaceAll(
-                                                  '_',
-                                                  ' ',
-                                                )),
-                                    specialInstructionsHint:
-                                        job.instruction ?? '',
-                                    price: job.paymentAmount.toString(),
-                                    flightNumberController:
-                                        flightNumberController,
-                                    paymentMethodController:
-                                        paymentMethodController,
-                                    specialInstructionsController:
-                                        specialInstructionsController,
-                                    vehicleStyle:
-                                        VehicleTypeColors.getVehicleStyle(
-                                          job.vehicleType,
-                                        ),
-                                    onArrowTap: () {
-                                      // Handle arrow tap
-                                      controller.applyToJob(jobId: job.id);
-
-                                      if (kDebugMode) {
-                                        print("Arrow tapped");
-                                      }
-                                    },
-                                    onPriceTap: () {
-                                      // Handle price tap
-                                      if (kDebugMode) {
-                                        print("Price tapped");
-                                      }
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                            if (controller.isLoadMore.value)
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 20.h),
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.orange100,
-                                  ),
-                                ),
-                              ),
-                            SizedBox(height: 10.h),
-                          ],
+                              isScrollControlled: true,
+                              ignoreSafeArea: false,
+                            );
+                          },
                         );
                       }),
                     ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// ================= VEHICLE TYPE COLORS =================
-class VehicleTypeColors {
-  static const Color sedan = Color(0xFFDC2626);
-  static const Color suv = Color(0xFF0A1F44);
-  static const Color bus = Color(0xFF3E2723); // Dark Brown color
-  static const Color sprinter = Color(0xFF000000);
-  static const Color gray = Color.fromARGB(255, 65, 63, 63);
-
-  static final LinearGradient sedanSuvGradient = LinearGradient(
-    colors: [
-      const Color(0xFFB11226),
-      const Color(0xFFB11226).withValues(alpha: 0.90),
-      const Color(0xFF0A1F44).withValues(alpha: 0.95),
-      const Color(0xFF0A1F44).withValues(alpha: 0.9),
-    ],
-
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-  );
-
-  static dynamic getVehicleStyle(String? type) {
-    if (type == null) return gray;
-    final t = type.toUpperCase();
-    if (t == 'SUV') return suv;
-    if (t == 'SEDAN') return sedan;
-    if (t == 'BUS') return bus;
-    if (t == 'SEDAN/SUV') return sedanSuvGradient;
-    if (t == 'SPRINTER') return sprinter;
-    return gray;
-  }
-}
-
-/// ================= CUSTOM VEHICLE TYPE BADGE =================
-class VehicleTypeBadge extends StatelessWidget {
-  final String vehicleType;
-  final Color? backgroundColor;
-  final Gradient? gradient;
-  final Color textColor;
-  final double? fontSize;
-  final FontWeight? fontWeight;
-
-  const VehicleTypeBadge({
-    super.key,
-    required this.vehicleType,
-    this.backgroundColor,
-    this.gradient,
-    this.textColor = Colors.white,
-    this.fontSize,
-    this.fontWeight,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: gradient == null ? (backgroundColor ?? Colors.red) : null,
-        gradient: gradient,
-        borderRadius: BorderRadius.circular(6.r),
-      ),
-      child: Text(
-        vehicleType,
-        style: GoogleFonts.inter(
-          color: textColor,
-          fontSize: fontSize ?? 10.sp,
-          fontWeight: fontWeight ?? FontWeight.bold,
-        ),
-      ),
-    );
-  }
-}
-
-class CustomJobCard extends StatefulWidget {
-  final String dateTime;
-  final String vehicleType;
-  final String pickupLocation;
-  final String dropoffLocation;
-  final String driverName;
-  final String companyName;
-  final String flightNumberHint;
-  final String paymentMethodHint;
-  final String specialInstructionsHint;
-  final String price;
-  final TextEditingController flightNumberController;
-  final TextEditingController paymentMethodController;
-  final TextEditingController specialInstructionsController;
-  final VoidCallback? onArrowTap;
-  final VoidCallback? onPriceTap;
-  final dynamic vehicleStyle;
-
-  const CustomJobCard({
-    super.key,
-    required this.dateTime,
-    required this.vehicleType,
-    required this.pickupLocation,
-    required this.dropoffLocation,
-    required this.driverName,
-    required this.companyName,
-    required this.flightNumberHint,
-    required this.paymentMethodHint,
-    required this.specialInstructionsHint,
-    required this.price,
-    required this.flightNumberController,
-    required this.paymentMethodController,
-    required this.specialInstructionsController,
-    this.onArrowTap,
-    this.onPriceTap,
-    required this.vehicleStyle,
-  });
-
-  @override
-  State<CustomJobCard> createState() => _CustomJobCardState();
-}
-
-class _CustomJobCardState extends State<CustomJobCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1C),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: const Color(0xFF2A2A2A)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// HEADER - Date & Vehicle Type
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.grey,
-                    size: 18.sp,
-                  ),
-                  SizedBox(width: 5.w),
-                  Text(
-                    widget.dateTime,
-                    style: GoogleFonts.inter(
-                      color: Colors.grey,
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
-              VehicleTypeBadge(
-                vehicleType: widget.vehicleType.toUpperCase(),
-                backgroundColor: widget.vehicleStyle is Color
-                    ? widget.vehicleStyle
-                    : null,
-                gradient: widget.vehicleStyle is Gradient
-                    ? widget.vehicleStyle
-                    : null,
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-
-          /// PICKUP LOCATION
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "PU: ",
-                style: GoogleFonts.inter(
-                  color: Colors.grey,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  widget.pickupLocation,
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 6.h),
-
-          /// DROPOFF LOCATION
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "DO: ",
-                style: GoogleFonts.inter(
-                  color: Colors.grey,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  widget.dropoffLocation,
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-
-          /// DRIVER NAME
-          Row(
-            children: [
-              SvgPicture.asset(AppIcons.person_icon),
-              SizedBox(width: 5.w),
-              Text(
-                widget.driverName,
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-
-          /// COMPANY NAME
-          Row(
-            children: [
-              SvgPicture.asset(AppIcons.sadax_icon),
-              SizedBox(width: 5.w),
-              Text(
-                widget.companyName,
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 13.sp),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-
-          if (widget.flightNumberHint.isNotEmpty &&
-              widget.flightNumberHint != "N/A") ...[
-            CustomTextgray(
-              text: "Flight Number",
-              color: const Color(0xFF737373),
-              fontWeight: FontWeight.w500,
             ),
-            SizedBox(height: 8.h),
-            CustomTextFieldGold(
-              readOnly: true,
-              controller: widget.flightNumberController,
-              hintText: widget.flightNumberHint,
-              obscureText: false,
-              textInputType: TextInputType.text,
-            ),
-            SizedBox(height: 10.h),
           ],
-
-          /// PAYMENT METHOD
-          CustomTextgray(
-            text: "Payment",
-            color: const Color(0xFF737373),
-            fontWeight: FontWeight.w500,
-          ),
-          SizedBox(height: 8.h),
-          CustomTextFieldGold(
-            readOnly: true,
-            controller: widget.paymentMethodController,
-            hintText: widget.paymentMethodHint,
-            obscureText: false,
-            textInputType: TextInputType.text,
-          ),
-          SizedBox(height: 10.h),
-
-          /// SPECIAL INSTRUCTIONS
-          CustomTextgray(
-            text: "Special Instructions",
-            color: const Color(0xFF737373),
-            fontWeight: FontWeight.w500,
-          ),
-          SizedBox(height: 8.h),
-          CustomTextFieldGold(
-            readOnly: true,
-            controller: widget.specialInstructionsController,
-            hintText:
-                widget.specialInstructionsHint.isEmpty ||
-                    widget.specialInstructionsHint == "N/A"
-                ? "N/A"
-                : widget.specialInstructionsHint,
-            obscureText: false,
-            textInputType: TextInputType.text,
-          ),
-          SizedBox(height: 20.h),
-
-          /// BOTTOM ACTION ROW
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Draggable<String>(
-                data: 'confirm',
-                axis: Axis.horizontal,
-                feedback: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.orange100,
-                      shape: BoxShape.circle,
-                      // No shadow
-                    ),
-                    child: SvgPicture.asset(
-                      AppIcons.arre_right_icon,
-                      width: 24.w,
-                      height: 24.w,
-                    ),
-                  ),
-                ),
-                childWhenDragging: SvgPicture.asset(
-                  AppIcons.arre_right_icon,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.transparent,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                child: GestureDetector(
-                  onTap: widget.onArrowTap,
-                  child: Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.orange100,
-                      shape: BoxShape.circle,
-                      // No shadow
-                    ),
-                    child: SvgPicture.asset(AppIcons.arre_right_icon),
-                  ),
-                ),
-              ),
-              // Directional Arrows
-              Row(
-                children: [
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    color: Colors.white,
-                    size: 30.sp,
-                  ),
-                  Transform.translate(
-                    offset: Offset(-8.w, 0), // Slight overlap for style
-                    child: Icon(
-                      Icons.chevron_right_rounded,
-                      color: const Color(0xFF6B6B6B),
-                      size: 30.sp,
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: DragTarget<String>(
-                  onAcceptWithDetails: (details) {
-                    if (details.data == 'confirm') {
-                      widget.onArrowTap?.call();
-                    }
-                  },
-                  builder: (context, candidateData, rejectedData) {
-                    bool isOver = candidateData.isNotEmpty;
-                    return GestureDetector(
-                      onTap: widget.onPriceTap,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        height: 55.h,
-                        decoration: BoxDecoration(
-                          color: isOver
-                              ? const Color(0xFFE1C16E)
-                              : AppColors.orange100,
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10.w),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: CustomText(
-                                text: '\$${widget.price}',
-                                fontSize: 18.sp,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// ================= CUSTOM TEXT FIELD WIDGET =================
-class CustomTextFieldGold extends StatelessWidget {
-  final TextEditingController controller;
-  final String hintText;
-  final bool obscureText;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
-  final TextInputType textInputType;
-  final String? Function(String?)? validator;
-  final bool readOnly;
-
-  const CustomTextFieldGold({
-    super.key,
-    required this.controller,
-    required this.hintText,
-    required this.obscureText,
-    this.prefixIcon,
-    this.suffixIcon,
-    required this.textInputType,
-    this.validator,
-    this.readOnly = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      maxLines: null,
-      readOnly: readOnly,
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: textInputType,
-      validator: validator,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
-        prefixIcon: prefixIcon,
-        suffixIcon: suffixIcon,
-        contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
         ),
       ),
     );
