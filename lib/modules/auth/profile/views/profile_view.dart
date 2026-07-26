@@ -295,90 +295,74 @@ class ProfileView extends StatelessWidget {
                         ),
                         _buildTileDivider(),
                         _buildSettingTile(
-                          icon: Icons.lock_outline_rounded,
-                          title: "Password Change",
-                          onTap: () => Get.toNamed(Routes.changePasswordView),
+                          icon: Icons.settings_outlined,
+                          title: "Settings",
+                          subtitle: "Security & Account settings",
+                          onTap: () => Get.toNamed(Routes.settingsView),
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 28.h),
 
-                  // --- ACTIONS: LOG OUT & DELETE ACCOUNT ---
-                  SizedBox(
+                  // --- ACTIONS: LOG OUT ---
+                  Container(
                     width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Get.bottomSheet(
-                          LogoutBottomSheet(),
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                        );
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                          color: Color(0xFFEF4444),
-                          width: 1.2,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 13.h),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.logout_rounded,
-                            color: const Color(0xFFEF4444),
-                            size: 17.sp,
-                          ),
-                          SizedBox(width: 6.w),
-                          Text(
-                            "Log Out",
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFFEF4444),
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF261214),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(
+                        color: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                        width: 1,
                       ),
                     ),
-                  ),
-                  SizedBox(height: 16.h),
-
-                  // Delete Account Button (Subtle text link under Log Out)
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Get.bottomSheet(
-                          DeleteAccountBottomSheet(),
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 8.h,
-                        ),
-                      ),
-                      child: Text(
-                        "Delete Account",
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFEF4444).withValues(alpha: 0.5),
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                          decorationColor: const Color(
-                            0xFFEF4444,
-                          ).withValues(alpha: 0.5),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16.r),
+                        onTap: () {
+                          Get.bottomSheet(
+                            const LogoutBottomSheet(),
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                          );
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(6.r),
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFFEF4444,
+                                  ).withValues(alpha: 0.18),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.logout_rounded,
+                                  color: const Color(0xFFEF4444),
+                                  size: 18.sp,
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                              Text(
+                                "Log Out",
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFFEF4444),
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 28.h),
                 ],
               ),
             );
@@ -398,6 +382,8 @@ class ProfileView extends StatelessWidget {
     required IconData icon,
     required String title,
     String? subtitle,
+    Color? iconColor,
+    Color? titleColor,
     required VoidCallback onTap,
   }) {
     return ListTile(
@@ -408,14 +394,18 @@ class ProfileView extends StatelessWidget {
           color: const Color(0xFF27272A),
           borderRadius: BorderRadius.circular(8.r),
         ),
-        child: Icon(icon, color: const Color(0xFFD5C4AB), size: 19.sp),
+        child: Icon(
+          icon,
+          color: iconColor ?? const Color(0xFFD5C4AB),
+          size: 19.sp,
+        ),
       ),
       title: Text(
         title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.inter(
-          color: Colors.white,
+          color: titleColor ?? Colors.white,
           fontSize: 14.sp,
           fontWeight: FontWeight.w600,
         ),

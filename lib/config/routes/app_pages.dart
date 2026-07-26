@@ -28,6 +28,7 @@ import 'package:moeb_26/modules/auth/authentication/views/documents_upload_view.
 import 'package:moeb_26/modules/auth/authentication/views/otp_verifications_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/personal_document_view.dart';
 import 'package:moeb_26/modules/auth/profile/views/profile_view.dart';
+import 'package:moeb_26/modules/auth/profile/views/settings_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/reset_password_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/reset_password_three_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/success_reset_password_view.dart';
@@ -100,6 +101,7 @@ class Routes {
   static const String rideProgressBoard = "/RideProgressBoard";
   static const String rideCompleteJob = "/RideCompleteJob";
   static const String profileView = "/ProfileView";
+  static const String settingsView = "/SettingsView";
   static const String ratingsFeedbackView = "/RatingsFeedbackView";
   static const String serviceAreaView = "/ServiceAreaView";
   static const String noInternetScreen = "/NoInternetScreen";
@@ -378,6 +380,12 @@ class Routes {
       page: () => NotificationsView(),
       transition: Transition.noTransition,
       binding: NotificationsBinding(),
+    ),
+    GetPage(
+      name: settingsView,
+      page: () => const SettingsView(),
+      transition: Transition.noTransition,
+      binding: ProfileBinding(),
     ),
     GetPage(
       name: meetGreetView,
