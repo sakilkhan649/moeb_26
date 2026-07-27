@@ -229,15 +229,6 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
     }
 
     // Avatar initials
-    final String initials = record.clientName.isNotEmpty
-        ? record.clientName
-              .trim()
-              .split(' ')
-              .map((e) => e[0])
-              .take(2)
-              .join('')
-              .toUpperCase()
-        : 'C';
 
     return GestureDetector(
       onTap: () {
