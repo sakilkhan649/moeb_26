@@ -33,7 +33,7 @@ class MeetGreetController extends GetxController {
   var passengerName = 'JOHN SMITH'.obs;
   var subtitleText = 'FLIGHT BG-088'.obs;
   var selectedThemeIndex = 0.obs;
-  var showCompanyLogo = true.obs;
+  var showCompanyLogo = false.obs;
   var customLogoPath = RxnString();
   var isLandscape = false.obs;
   var isFullscreen = false.obs;

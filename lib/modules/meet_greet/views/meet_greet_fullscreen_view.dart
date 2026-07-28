@@ -189,37 +189,25 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
                 SafeArea(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 24.w,
-                      vertical: isLandscape ? 8.h : 16.h,
+                      horizontal: isLandscape ? 8.w : 24.w,
+                      vertical: isLandscape ? 4.h : 16.h,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // --- TOP BAR (Logo) ---
-                        if (controller.showCompanyLogo.value)
+                        if (controller.showCompanyLogo.value &&
+                            controller.customLogoPath.value != null)
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: controller.customLogoPath.value != null
-                                ? Image.file(
-                                    File(controller.customLogoPath.value!),
-                                    height: isLandscape ? 35.h : 45.h,
-                                    fit: BoxFit.contain,
-                                  )
-                                : Image.asset(
-                                    AppImages.app_logo,
-                                    height: isLandscape ? 35.h : 45.h,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        Text(
-                                          'MOEB',
-                                          style: GoogleFonts.outfit(
-                                            color: theme.accentColor,
-                                            fontSize: isLandscape ? 16.sp : 20.sp,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 2.w,
-                                          ),
-                                        ),
-                                  ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.r),
+                              child: Image.file(
+                                File(controller.customLogoPath.value!),
+                                height: isLandscape ? 55.h : 45.h,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
 
                         // --- MAIN CONTENT ---
@@ -233,23 +221,19 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
                                 ),
                               ),
                               if (controller.subtitleText.value.isNotEmpty) ...[
-                                SizedBox(
-                                  height: isLandscape ? 6.h : 10.h,
-                                ),
+                                SizedBox(height: isLandscape ? 6.h : 10.h),
                                 Text(
                                   controller.subtitleText.value.toUpperCase(),
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     color: theme.subtitleColor,
-                                    fontSize: isLandscape ? 16.sp : 20.sp,
+                                    fontSize: isLandscape ? 22.sp : 20.sp,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 1.5.w,
                                   ),
                                 ),
                               ],
-                              SizedBox(
-                                height: isLandscape ? 4.h : 8.h,
-                              ),
+                              SizedBox(height: isLandscape ? 4.h : 8.h),
                             ],
                           ),
                         ),
@@ -352,10 +336,10 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
   Widget _buildNameCard(MeetGreetThemeData theme, {required bool isLandscape}) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(vertical: isLandscape ? 4.h : 10.h),
+      margin: EdgeInsets.symmetric(vertical: isLandscape ? 2.h : 10.h),
       padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: isLandscape ? 8.h : 16.h,
+        horizontal: isLandscape ? 8.w : 16.w,
+        vertical: isLandscape ? 4.h : 16.h,
       ),
       decoration: BoxDecoration(
         color: theme.cardColor.withValues(alpha: 0.4),
@@ -371,7 +355,8 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
             style: GoogleFonts.outfit(
               color: theme.nameColor,
               fontSize:
-                  ((isLandscape ? 48 : 70) * controller.fontSizeScale.value).sp,
+                  ((isLandscape ? 200 : 70) * controller.fontSizeScale.value)
+                      .sp,
               fontWeight: FontWeight.w900,
               letterSpacing: 2.w,
               shadows: [

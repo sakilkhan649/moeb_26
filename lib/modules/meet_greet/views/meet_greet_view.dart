@@ -49,17 +49,6 @@ class MeetGreetView extends GetView<MeetGreetController> {
               ),
             ),
             centerTitle: true,
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.refresh,
-                  color: const Color(0xFFD5C4AB),
-                  size: 22.sp,
-                ),
-                tooltip: 'Refresh Active Jobs',
-                onPressed: () => controller.fetchActiveJobs(),
-              ),
-            ],
           ),
         ),
       ),
@@ -108,7 +97,18 @@ class MeetGreetView extends GetView<MeetGreetController> {
                                     activeTrackColor: const Color(0xFFD5C4AB).withValues(alpha: 0.4),
                                     inactiveThumbColor: Colors.grey,
                                     inactiveTrackColor: const Color(0xFF121212),
-                                    onChanged: (v) => controller.showCompanyLogo.value = v,
+                                    onChanged: (v) async {
+                                      if (v) {
+                                        if (controller.customLogoPath.value == null) {
+                                          await controller.pickLogo();
+                                          if (controller.customLogoPath.value == null) {
+                                            controller.showCompanyLogo.value = false;
+                                            return;
+                                          }
+                                        }
+                                      }
+                                      controller.showCompanyLogo.value = v;
+                                    },
                                   )),
                             ],
                           ),
@@ -121,7 +121,7 @@ class MeetGreetView extends GetView<MeetGreetController> {
                               children: [
                                 const Divider(color: Color(0xFF364153), height: 24),
                                 Text(
-                                  'Custom Logo (Optional)',
+                                  'Custom Logo (Required)',
                                   style: GoogleFonts.inter(
                                     color: Colors.grey.shade400,
                                     fontSize: 12.sp,
@@ -143,7 +143,10 @@ class MeetGreetView extends GetView<MeetGreetController> {
                                           ),
                                           SizedBox(width: 16.w),
                                           ElevatedButton.icon(
-                                            onPressed: () => controller.customLogoPath.value = null,
+                                            onPressed: () {
+                                              controller.customLogoPath.value = null;
+                                              controller.showCompanyLogo.value = false;
+                                            },
                                             icon: const Icon(Icons.delete, color: Colors.black, size: 16),
                                             label: Text(
                                               'Remove',
@@ -191,80 +194,6 @@ class MeetGreetView extends GetView<MeetGreetController> {
                     ),
                     SizedBox(height: 24.h),
 
-                    // --- ACTIVE RIDE QUICK SELECT ---
-                    Obx(() {
-                      final jobs = controller.activeJobsList;
-                      final selectedJobId = controller.selectedJob.value?.id;
-
-                      if (jobs.isNotEmpty) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSectionHeader(
-                              'ASSIGNED PASSENGERS (ACTIVE RIDES)',
-                            ),
-                            SizedBox(height: 10.h),
-                            SizedBox(
-                              height: 40.h,
-                              child: ListView.separated(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: jobs.length,
-                                separatorBuilder: (ctx, idx) =>
-                                    SizedBox(width: 10.w),
-                                itemBuilder: (ctx, idx) {
-                                  final job = jobs[idx];
-                                  final isSelected = selectedJobId == job.id;
-                                  String passengerStr =
-                                      'Ride #${job.id?.substring(0, 5) ?? idx}';
-                                  if (job.createdBy != null) {
-                                    if (job.createdBy is Map) {
-                                      passengerStr =
-                                          job.createdBy['name'] ?? passengerStr;
-                                    }
-                                  }
-
-                                  return ChoiceChip(
-                                    checkmarkColor: Colors.black,
-                                    label: Text(
-                                      passengerStr,
-                                      style: GoogleFonts.inter(
-                                        color: isSelected
-                                            ? Colors.black
-                                            : Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12.sp,
-                                      ),
-                                    ),
-                                    selected: isSelected,
-                                    selectedColor: const Color(0xFFD5C4AB),
-                                    backgroundColor: const Color(0xFF1E1E1E),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      side: BorderSide(
-                                        color: isSelected
-                                            ? const Color(0xFFD5C4AB)
-                                            : const Color(0xFF364153),
-                                      ),
-                                    ),
-                                    onSelected: (selected) {
-                                      if (selected) {
-                                        controller.selectJob(job);
-                                        nameTextController.text =
-                                            controller.passengerName.value;
-                                        subtitleTextController.text =
-                                            controller.subtitleText.value;
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            SizedBox(height: 24.h),
-                          ],
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
 
                     // --- PASSENGER & SUBTITLE INPUTS ---
                     _buildSectionHeader('PASSENGER DETAILS'),
@@ -421,6 +350,16 @@ class MeetGreetView extends GetView<MeetGreetController> {
                     ),
                   ),
                   onPressed: () {
+                    if (controller.showCompanyLogo.value && controller.customLogoPath.value == null) {
+                      Get.snackbar(
+                        'Logo Required',
+                        'Please upload a custom logo or turn off the Logo Header switch.',
+                        backgroundColor: Colors.redAccent,
+                        colorText: Colors.white,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                      return;
+                    }
                     Get.toNamed(Routes.meetGreetFullscreenView);
                   },
                 ),

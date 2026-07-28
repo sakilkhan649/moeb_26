@@ -181,12 +181,13 @@ class ProfileView extends StatelessWidget {
                   ),
                   SizedBox(height: 10.h),
 
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                  Material(
+                    color: const Color(0xFF1A1A1A),
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: const Color(0xFF2C2C2C),
+                      side: const BorderSide(
+                        color: Color(0xFF2C2C2C),
                         width: 0.98,
                       ),
                     ),
@@ -194,7 +195,7 @@ class ProfileView extends StatelessWidget {
                       children: [
                         _buildSettingTile(
                           icon: Icons.person_outline_rounded,
-                          title: "Personal & Chauffeur Info",
+                          title: "Chauffeur information",
                           subtitle: "Manage email, phone, company & languages",
                           onTap: () {
                             Get.to(() => const PersonalInformationView());
@@ -203,7 +204,7 @@ class ProfileView extends StatelessWidget {
                         _buildTileDivider(),
                         _buildSettingTile(
                           icon: Icons.account_balance_wallet_outlined,
-                          title: "Payment Methods & Payouts",
+                          title: "My Payment Methods",
                           subtitle: "Manage Zelle, Venmo, Cash App & Card",
                           onTap: () {
                             Get.to(() => const PaymentInformationView());
@@ -252,12 +253,13 @@ class ProfileView extends StatelessWidget {
                   ),
                   SizedBox(height: 10.h),
 
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                  Material(
+                    color: const Color(0xFF1A1A1A),
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: const Color(0xFF2C2C2C),
+                      side: const BorderSide(
+                        color: Color(0xFF2C2C2C),
                         width: 0.98,
                       ),
                     ),
