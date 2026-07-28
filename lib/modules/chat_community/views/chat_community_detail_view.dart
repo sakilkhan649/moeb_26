@@ -53,7 +53,8 @@ class ChatCommunityDetailView extends StatelessWidget {
                   ? const SizedBox.shrink()
                   : _buildImagePreviews(),
             ),
-
+            // Reply Preview Bar
+            _buildReplyPreviewBar(),
             // Bottom Input Field
             _buildMessageInput(context),
           ],
@@ -240,6 +241,8 @@ class ChatCommunityDetailView extends StatelessWidget {
       ),
     );
 
+    final parsed = ReplyParsedMessage.parse(message.text);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Align(
@@ -288,58 +291,106 @@ class ChatCommunityDetailView extends StatelessWidget {
                         ),
                       ),
                     ),
-                  Container(
-                    constraints: BoxConstraints(maxWidth: 0.70.sw),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 5.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isMe
-                          ? const Color(0xff1A1A1A)
-                          : const Color(0xff1A1A1A),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.r),
-                        topRight: Radius.circular(16.r),
-                        bottomLeft: isMe ? Radius.circular(16.r) : Radius.zero,
-                        bottomRight: isMe ? Radius.zero : Radius.circular(16.r),
+                  GestureDetector(
+                    onLongPress: () =>
+                        _showMessageOptions(Get.context!, message),
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: 0.70.sw),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
                       ),
-                      border: Border.all(
-                        color: isMe
-                            ? const Color(0xff333333)
-                            : const Color(0xff333333),
+                      decoration: BoxDecoration(
+                        color: const Color(0xff1A1A1A),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16.r),
+                          topRight: Radius.circular(16.r),
+                          bottomLeft: isMe
+                              ? Radius.circular(16.r)
+                              : Radius.zero,
+                          bottomRight: isMe
+                              ? Radius.zero
+                              : Radius.circular(16.r),
+                        ),
+                        border: Border.all(color: const Color(0xff333333)),
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (message.attachments.isNotEmpty)
-                          Column(
-                            children: message.attachments
-                                .map(
-                                  (url) => Padding(
-                                    padding: EdgeInsets.only(bottom: 8.h),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.r),
-                                      child: Image.network(
-                                        url,
-                                        fit: BoxFit.cover,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (message.attachments.isNotEmpty)
+                            Column(
+                              children: message.attachments
+                                  .map(
+                                    (url) => Padding(
+                                      padding: EdgeInsets.only(bottom: 8.h),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
+                                        child: Image.network(
+                                          url,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        if (message.text.isNotEmpty)
-                          Text(
-                            message.text,
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              height: 1.4,
+                                  )
+                                  .toList(),
                             ),
-                          ),
-                      ],
+                          if (parsed.replyToUser != null &&
+                              parsed.replyToText != null)
+                            Container(
+                              margin: EdgeInsets.only(bottom: 6.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.06),
+                                borderRadius: BorderRadius.circular(6.r),
+                                border: const Border(
+                                  left: BorderSide(
+                                    color: Color(0xFFD08700),
+                                    width: 3,
+                                  ),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    parsed.replyToUser!,
+                                    style: GoogleFonts.inter(
+                                      color: const Color(0xFFD08700),
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 2.h),
+                                  Text(
+                                    parsed.replyToText!,
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white70,
+                                      fontSize: 12.sp,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (parsed.messageText.isNotEmpty)
+                            Text(
+                              parsed.messageText,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                height: 1.4,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -357,6 +408,134 @@ class ChatCommunityDetailView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showMessageOptions(BuildContext context, CommunityMessage message) {
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: 200.w,
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: const Color(0xFF161619),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: const Color(0xFF24242A), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 15,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  dense: true,
+                  leading: const Icon(
+                    Icons.reply_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  title: Text(
+                    'Reply',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onTap: () {
+                    Get.back();
+                    controller.replyToMessage(message);
+                  },
+                ),
+                const Divider(color: Color(0xFF22222A), height: 1),
+                ListTile(
+                  dense: true,
+                  leading: const Icon(
+                    Icons.copy_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  title: Text(
+                    'Copy',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onTap: () {
+                    Get.back();
+                    controller.copyMessage(message);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReplyPreviewBar() {
+    return Obx(() {
+      if (controller.replyingTo.value == null) {
+        return const SizedBox.shrink();
+      }
+      final replying = controller.replyingTo.value!;
+      final parsed = ReplyParsedMessage.parse(replying.text);
+      final senderName = replying.sender.id == controller.userService.userId
+          ? 'You'
+          : replying.sender.name;
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: const BoxDecoration(
+          color: Color(0xFF141416),
+          border: Border(
+            top: BorderSide(color: Color(0xFF1E1E1E), width: 1),
+            left: BorderSide(color: Color(0xFFD08700), width: 4),
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Replying to $senderName",
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFD08700),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    parsed.messageText,
+                    style: GoogleFonts.inter(
+                      color: Colors.white70,
+                      fontSize: 13.sp,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close, color: Colors.grey, size: 20),
+              onPressed: () => controller.cancelReply(),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildImagePreviews() {
@@ -542,5 +721,30 @@ class ChatCommunityDetailView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class ReplyParsedMessage {
+  final String? replyToUser;
+  final String? replyToText;
+  final String messageText;
+
+  ReplyParsedMessage({
+    this.replyToUser,
+    this.replyToText,
+    required this.messageText,
+  });
+
+  factory ReplyParsedMessage.parse(String rawText) {
+    final regex = RegExp(r'^\[REPLY:([^|]*)\|([^\]]*)\]([\s\S]*)$');
+    final match = regex.firstMatch(rawText);
+    if (match != null) {
+      return ReplyParsedMessage(
+        replyToUser: match.group(1),
+        replyToText: match.group(2),
+        messageText: match.group(3) ?? '',
+      );
+    }
+    return ReplyParsedMessage(messageText: rawText);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:moeb_26/core/utils/media_picker_helper.dart';
@@ -18,6 +19,7 @@ class CommunityChatDetailController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isSending = false.obs;
   final RxList<File> selectedImages = <File>[].obs;
+  final Rxn<CommunityMessage> replyingTo = Rxn<CommunityMessage>();
 
   late CommunityRoom room;
   var selectedState = 'Florida'.obs;
@@ -34,7 +36,6 @@ class CommunityChatDetailController extends GetxController {
   void onInit() {
     super.onInit();
     room = Get.arguments;
-    // Set initial state matching Florida, California, Texas, etc.
     if (room.serviceArea != null && room.serviceArea.isNotEmpty) {
       final String area = room.serviceArea.toLowerCase();
       for (var state in states) {
@@ -170,14 +171,43 @@ class CommunityChatDetailController extends GetxController {
     selectedImages.removeAt(index);
   }
 
+  void replyToMessage(CommunityMessage message) {
+    replyingTo.value = message;
+  }
+
+  void cancelReply() {
+    replyingTo.value = null;
+  }
+
+  void copyMessage(CommunityMessage message) {
+    final regex = RegExp(r'^\[REPLY:([^|]*)\|([^\]]*)\]([\s\S]*)$');
+    final match = regex.firstMatch(message.text);
+    final String cleanText = match != null ? (match.group(3) ?? '') : message.text;
+
+    Clipboard.setData(ClipboardData(text: cleanText));
+    Helpers.showCustomSnackBar('Message copied to clipboard', isError: false);
+  }
+
   Future<void> sendMessage() async {
-    final text = messageController.text.trim();
+    var text = messageController.text.trim();
     if (text.isEmpty && selectedImages.isEmpty) return;
+
+    if (replyingTo.value != null) {
+      final replyText = replyingTo.value!.text;
+      final cleanReplyText = replyText.startsWith('[REPLY:')
+          ? replyText.split(']').skip(1).join(']')
+          : replyText;
+      final senderName = replyingTo.value!.sender.id == userService.userId
+          ? 'You'
+          : replyingTo.value!.sender.name;
+      text = '[REPLY:$senderName|$cleanReplyText]$text';
+      replyingTo.value = null;
+    }
 
     isSending.value = true;
     await Future.delayed(const Duration(milliseconds: 100));
     final currentUserId = userService.userId;
-    
+
     final newMsg = CommunityMessage(
       id: 'cmsg_user_${DateTime.now().millisecondsSinceEpoch}',
       serviceArea: selectedState.value,

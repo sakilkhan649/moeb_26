@@ -354,47 +354,58 @@ class ChatDetailView extends StatelessWidget {
   }
 
   void _showMessageOptions(BuildContext context, ChatMessage message) {
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-        decoration: BoxDecoration(
-          color: const Color(0xFF161619),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-          border: const Border(
-            top: BorderSide(color: Color(0xFF24242A), width: 1.5),
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.reply_rounded, color: Colors.white),
-                title: Text(
-                  'Reply',
-                  style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),
-                ),
-                onTap: () {
-                  Get.back();
-                  controller.replyToMessage(message);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.copy_rounded, color: Colors.white),
-                title: Text(
-                  'Copy',
-                  style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),
-                ),
-                onTap: () {
-                  Get.back();
-                  controller.copyMessage(message);
-                },
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: 200.w,
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: const Color(0xFF161619),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: const Color(0xFF24242A), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 15,
+                spreadRadius: 2,
               ),
             ],
           ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.reply_rounded, color: Colors.white, size: 20),
+                  title: Text(
+                    'Reply',
+                    style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () {
+                    Get.back();
+                    controller.replyToMessage(message);
+                  },
+                ),
+                const Divider(color: Color(0xFF22222A), height: 1),
+                ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.copy_rounded, color: Colors.white, size: 20),
+                  title: Text(
+                    'Copy',
+                    style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () {
+                    Get.back();
+                    controller.copyMessage(message);
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
       ),
-      backgroundColor: Colors.transparent,
     );
   }
 
