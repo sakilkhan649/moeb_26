@@ -151,14 +151,8 @@ class PreferredDriverProfileView extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.verified,
-                        color: const Color(0xFFD08700),
-                        size: 16.sp,
-                      ),
-                      SizedBox(width: 4.w),
                       Text(
-                        'Verified Professional Chauffeur',
+                        ' ⭐ Ekkali Partner',
                         style: GoogleFonts.inter(
                           color: const Color(0xFFD5C4AB),
                           fontSize: 12.sp,

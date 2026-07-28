@@ -63,12 +63,19 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
         bottom: MediaQuery.of(context).padding.bottom + 20.h,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF0D0D0E),
+        color: const Color(0xFF0A0A0B),
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24.r),
-          topRight: Radius.circular(24.r),
+          topLeft: Radius.circular(28.r),
+          topRight: Radius.circular(28.r),
         ),
-        border: Border.all(color: const Color(0xFF282830), width: 1.5),
+        border: Border.all(color: const Color(0xFF24242A), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -81,7 +88,7 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                 width: 50.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF33333E),
+                  color: const Color(0xFF2A2A32),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
               ),
@@ -103,16 +110,6 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (bookingNo.isNotEmpty) ...[
-                      SizedBox(height: 2.h),
-                      Text(
-                        "Booking no: $bookingNo",
-                        style: GoogleFonts.inter(
-                          color: Colors.grey,
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
                 Row(
@@ -143,9 +140,20 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                         ),
                         tooltip: "Delete Job",
                       ),
-                    IconButton(
-                      onPressed: () => Get.back(),
-                      icon: Icon(Icons.close, color: Colors.white, size: 22.sp),
+                    Container(
+                      margin: EdgeInsets.only(left: 8.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E293B).withOpacity(0.4),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () => Get.back(),
+                        icon: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 18.sp,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -156,44 +164,65 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
             // Card 1: Time & Date
             _buildSectionCard(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(10.r),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E293B),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.access_time,
-                      color: const Color(0xFF38BDF8),
-                      size: 20.sp,
-                    ),
-                  ),
-                  SizedBox(width: 14.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      Text(
-                        dateTimeStr,
+                      Container(
+                        padding: EdgeInsets.all(10.r),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF141416),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color(0xFF24242A),
+                            width: 1,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.calendar_today_rounded,
+                          color: Colors.white70,
+                          size: 18.sp,
+                        ),
+                      ),
+                      SizedBox(width: 14.w),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            dateTimeStr,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  if (status != null && status!.isNotEmpty)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD08700).withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: const Color(0xFFD08700).withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        status!.toUpperCase(),
                         style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 15.sp,
+                          color: const Color(0xFFD08700),
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (status != null && status!.isNotEmpty) ...[
-                        SizedBox(height: 2.h),
-                        Text(
-                          "Status: ${status!.toUpperCase()}",
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFFD08700),
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                    ),
                 ],
               ),
             ),
@@ -201,16 +230,14 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
 
             // Card 2: Detailed Route Layout
             _buildSectionCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Pickup Location
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 3.h),
-                        child: Container(
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(height: 4.h),
+                        Container(
                           width: 12.r,
                           height: 12.r,
                           decoration: BoxDecoration(
@@ -218,66 +245,13 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                             border: Border.all(color: Colors.white, width: 2.5),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              pickupLocation,
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (pickupNotes != null &&
-                                pickupNotes!.isNotEmpty) ...[
-                              SizedBox(height: 2.h),
-                              Text(
-                                pickupNotes!,
-                                style: GoogleFonts.inter(
-                                  color: Colors.grey[400],
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Connecting Line with Distance Estimate
-                  Padding(
-                    padding: EdgeInsets.only(left: 5.w, top: 4.h, bottom: 4.h),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 2.w,
-                          height: 24.h,
-                          color: const Color(0xFF33333E),
-                        ),
-                        SizedBox(width: 20.w),
-                        Text(
-                          "6.2 mi • 16 min est.",
-                          style: GoogleFonts.inter(
-                            color: Colors.grey[500],
-                            fontSize: 11.sp,
+                        Expanded(
+                          child: Container(
+                            width: 2.w,
+                            color: const Color(0xFF2E2E38),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-
-                  // Dropoff Location
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 3.h),
-                        child: Container(
+                        Container(
                           width: 12.r,
                           height: 12.r,
                           decoration: const BoxDecoration(
@@ -285,72 +259,69 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                             color: Color(0xFF3B82F6),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              dropoffLocation.isNotEmpty
-                                  ? dropoffLocation
-                                  : "As Directed",
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (dropoffNotes != null &&
-                                dropoffNotes!.isNotEmpty) ...[
-                              SizedBox(height: 2.h),
+                        SizedBox(height: 4.h),
+                      ],
+                    ),
+                    SizedBox(width: 14.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Text(
-                                dropoffNotes!,
+                                "PICKUP",
                                 style: GoogleFonts.inter(
-                                  color: Colors.grey[400],
-                                  fontSize: 12.sp,
+                                  color: const Color(0xFF94A3B8),
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                pickupLocation,
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: 20.h),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "DROP-OFF",
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFF94A3B8),
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                dropoffLocation.isNotEmpty
+                                    ? dropoffLocation
+                                    : "As Directed",
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 12.h),
-
-            // Card 3: Passenger Contact Info
-            _buildSectionCard(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.account_circle_outlined,
-                        color: Colors.white70,
-                        size: 22.sp,
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        passengerName,
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Icon(
-                    Icons.chat_bubble_outline,
-                    color: const Color(0xFF38BDF8),
-                    size: 20.sp,
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 12.h),
@@ -361,41 +332,99 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        Icons.person_outline,
-                        color: Colors.white70,
-                        size: 20.sp,
+                      Container(
+                        padding: EdgeInsets.all(8.r),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1C1C1F),
+                          borderRadius: BorderRadius.circular(8.r),
+                          border: Border.all(
+                            color: const Color(0xFF2A2A32),
+                            width: 1,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.person_outline_rounded,
+                          color: Colors.white70,
+                          size: 20.sp,
+                        ),
                       ),
                       SizedBox(width: 12.w),
-                      Text(
-                        driverName,
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "CHAUFFEUR",
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF94A3B8),
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            driverName,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    child: Divider(
+                      color: const Color(0xFF22222A),
+                      thickness: 1,
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.directions_car_outlined,
-                            color: Colors.white70,
-                            size: 20.sp,
+                          Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1C1C1F),
+                              borderRadius: BorderRadius.circular(8.r),
+                              border: Border.all(
+                                color: const Color(0xFF2A2A32),
+                                width: 1,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.directions_car_outlined,
+                              color: Colors.white70,
+                              size: 20.sp,
+                            ),
                           ),
                           SizedBox(width: 12.w),
-                          Text(
-                            vehicleInfo,
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "VEHICLE",
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFF94A3B8),
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                              SizedBox(height: 2.h),
+                              Text(
+                                vehicleInfo,
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -409,7 +438,7 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                           gradient: vehicleStyle is Gradient
                               ? vehicleStyle
                               : null,
-                          borderRadius: BorderRadius.circular(10.r),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Text(
                           vehicleType,
@@ -442,33 +471,36 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Total Fare:",
+                            "Total Fare",
                             style: GoogleFonts.inter(
-                              color: Colors.grey,
+                              color: const Color(0xFF94A3B8),
                               fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
                             "\$$amount",
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFFD08700),
-                              fontSize: 18.sp,
+                            style: GoogleFonts.outfit(
+                              color: const Color(0xFFFEDB9B),
+                              fontSize: 20.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 8.h),
                     ],
                     if (paymentType != null && paymentType!.isNotEmpty) ...[
+                      if (amount != null && amount!.isNotEmpty)
+                        SizedBox(height: 12.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Payment Method:",
+                            "Payment Method",
                             style: GoogleFonts.inter(
-                              color: Colors.grey,
+                              color: const Color(0xFF94A3B8),
                               fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
@@ -476,30 +508,33 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                             style: GoogleFonts.inter(
                               color: Colors.white,
                               fontSize: 13.sp,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
                     ],
                     if (flightNumber != null && flightNumber!.isNotEmpty) ...[
-                      SizedBox(height: 8.h),
+                      if ((amount != null && amount!.isNotEmpty) ||
+                          (paymentType != null && paymentType!.isNotEmpty))
+                        SizedBox(height: 12.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Flight Number:",
+                            "Flight Number",
                             style: GoogleFonts.inter(
-                              color: Colors.grey,
+                              color: const Color(0xFF94A3B8),
                               fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
                             flightNumber!,
                             style: GoogleFonts.inter(
-                              color: const Color(0xFF38BDF8),
+                              color: Colors.white,
                               fontSize: 13.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -507,27 +542,34 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                     ],
                     if (specialInstructions != null &&
                         specialInstructions!.isNotEmpty) ...[
-                      SizedBox(height: 10.h),
+                      if ((amount != null && amount!.isNotEmpty) ||
+                          (paymentType != null && paymentType!.isNotEmpty) ||
+                          (flightNumber != null && flightNumber!.isNotEmpty))
+                        SizedBox(height: 14.h),
                       Text(
-                        "Special Instructions:",
+                        "SPECIAL INSTRUCTIONS",
                         style: GoogleFonts.inter(
-                          color: Colors.grey,
-                          fontSize: 12.sp,
+                          color: const Color(0xFF94A3B8),
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.0,
                         ),
                       ),
-                      SizedBox(height: 4.h),
+                      SizedBox(height: 6.h),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(10.r),
+                        padding: EdgeInsets.all(12.r),
                         decoration: BoxDecoration(
-                          color: Colors.black38,
-                          borderRadius: BorderRadius.circular(8.r),
+                          color: const Color(0xFF0F0F11),
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(color: const Color(0xFF22222A)),
                         ),
                         child: Text(
                           specialInstructions!,
                           style: GoogleFonts.inter(
                             color: Colors.white70,
                             fontSize: 12.sp,
+                            height: 1.4,
                           ),
                         ),
                       ),
@@ -543,12 +585,15 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
             if (actionButtonText != null) ...[
               SizedBox(
                 width: double.infinity,
-                height: 48.h,
+                height: 50.h,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD08700),
+                    foregroundColor: Colors.black,
+                    elevation: 2,
+                    shadowColor: const Color(0xFFD08700).withOpacity(0.3),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r),
+                      borderRadius: BorderRadius.circular(16.r),
                     ),
                   ),
                   onPressed: () {
@@ -560,9 +605,9 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                   child: Text(
                     actionButtonText!,
                     style: GoogleFonts.inter(
-                      color: Colors.white,
                       fontSize: 15.sp,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
@@ -577,11 +622,18 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
   Widget _buildSectionCard({required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(14.r),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        color: const Color(0xFF161619),
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: const Color(0xFF24242A)),
+        color: const Color(0xFF141416),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFF24242A), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: child,
     );

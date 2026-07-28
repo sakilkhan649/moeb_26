@@ -593,37 +593,19 @@ class CreateInvoiceView extends GetView<InvoiceController> {
 
   Widget _buildCurrencyDropdown(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
         color: const Color(0xFF111111),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: controller.selectedCurrency.value,
-          dropdownColor: const Color(0xFF111111),
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: const Color(0xFFD5C4AB),
-            size: 24.sp,
-          ),
-          isExpanded: true,
-          style: GoogleFonts.inter(
-            color: Colors.white,
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w500,
-          ),
-          onChanged: (newValue) {
-            if (newValue != null) {
-              controller.selectedCurrency.value = newValue;
-            }
-          },
-          items: controller.currencyOptions.map<DropdownMenuItem<String>>((
-            String value,
-          ) {
-            return DropdownMenuItem<String>(value: value, child: Text(value));
-          }).toList(),
+      child: Text(
+        controller.selectedCurrency.value,
+        style: GoogleFonts.inter(
+          color: Colors.white38,
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
@@ -632,10 +614,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
   Widget _buildCountryDropdown(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
         color: const Color(0xFF111111),
         borderRadius: BorderRadius.circular(12.r),
@@ -644,7 +623,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
       child: Text(
         'United States',
         style: GoogleFonts.inter(
-          color: Colors.white,
+          color: Colors.white38,
           fontSize: 15.sp,
           fontWeight: FontWeight.w500,
         ),

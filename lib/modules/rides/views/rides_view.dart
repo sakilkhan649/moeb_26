@@ -218,7 +218,7 @@ class _RidesViewState extends State<RidesView> {
                   child: Text(
                     _tabs[index],
                     style: GoogleFonts.inter(
-                      color: Colors.white,
+                      color: isSelected ? Colors.black : Colors.white,
                       fontSize: 14.sp,
                       fontWeight: isSelected
                           ? FontWeight.w700

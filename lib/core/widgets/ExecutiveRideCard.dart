@@ -76,7 +76,7 @@ class ExecutiveRideCard extends StatelessWidget {
                         Text(
                           "\$$price",
                           style: GoogleFonts.inter(
-                            color: const Color(0xFFD08700),
+                            color: const Color(0xFFFEDB9B),
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
                           ),
