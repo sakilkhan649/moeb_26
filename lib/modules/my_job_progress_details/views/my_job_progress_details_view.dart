@@ -8,12 +8,9 @@ import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/Custom_Card_Ditails.dart';
-import 'package:moeb_26/core/widgets/Custom_Driver_Card.dart';
 import 'package:moeb_26/data/models/my_jobs_model.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
-import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
-import '../../../core/widgets/RideProgressCard.dart';
 import '../../my_jobs/controllers/my_jobs_controller.dart';
 
 class MyJobProgressDetailsView extends StatefulWidget {
@@ -61,7 +58,38 @@ class _MyJobProgressDetailsViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
+      backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Job Details',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
       body: SafeArea(
         top: false,
         bottom: true,
@@ -141,55 +169,43 @@ class _MyJobProgressDetailsViewState
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: CustomDriverCard(
-                          profileImage:
-                              driver?.profilePicture ?? AppImages.profile_image,
-                          name: driverName,
-                          rating: "${driver?.averageRating ?? 0.0}",
-                          vehicleNumber: vehicle?.licensePlate ?? "N/A",
-                          vehicleInfo: vehicleInfo,
-                          buttonText: "Chat with Driver",
-                          buttonIcon: Icons.chat_bubble_outline,
-                          onButtonPressed: () async {
-                            final String? participantId =
-                                job?.assignedTo?.id ??
-                                job?.applicant?.driver?.id;
-                            if (participantId != null && job?.id != null) {
-                              try {
-                                final chat = await Get.find<SocketRepository>()
-                                    .createChat(participantId, job!.id!);
-                                if (chat != null) {
-                                  Get.toNamed(
-                                    Routes.chatDetailView,
-                                    arguments: chat,
-                                  );
-                                }
-                              } catch (e) {
-                                Get.snackbar(
-                                  "Error",
-                                  "Failed to open chat",
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
+                      _buildOwnerProgressTracker(
+                        job?.rideStatus ?? "",
+                        job?.status ?? "",
+                      ),
+                      SizedBox(height: 6.h),
+                      _buildDriverSection(
+                        driverName: driverName,
+                        driverImage:
+                            driver?.profilePicture ?? AppImages.profile_image,
+                        rating: "${driver?.averageRating ?? 0.0}",
+                        onChatPressed: () async {
+                          final String? participantId =
+                              job?.assignedTo?.id ??
+                              job?.applicant?.driver?.id;
+                          if (participantId != null && job?.id != null) {
+                            try {
+                              final chat = await Get.find<SocketRepository>()
+                                  .createChat(participantId, job!.id!);
+                              if (chat != null) {
+                                Get.toNamed(
+                                  Routes.chatDetailView,
+                                  arguments: chat,
                                 );
                               }
+                            } catch (e) {
+                              Get.snackbar(
+                                "Error",
+                                "Failed to open chat",
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: const Color(0xFFEF4444),
+                                colorText: Colors.white,
+                              );
                             }
-                          },
-                        ),
+                          }
+                        },
                       ),
-                      SizedBox(height: 10.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: RideProgressCard(
-                          title: "Ride Progress",
-                          statusLabel: "Current Status : ",
-                          statusValue: (job?.rideStatus ?? "N/A").toUpperCase(),
-                          iconPath: AppIcons.current_icon,
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
+                      SizedBox(height: 12.h),
 
                       // Status Steps Container
                       Padding(
@@ -214,12 +230,13 @@ class _MyJobProgressDetailsViewState
                               ? "\$${job.paymentAmount}"
                               : "N/A",
 
-                          // Optional: Custom colors
-                          backgroundColor: const Color(0xFF1C1C1C),
-                          borderColor: const Color(0xFF2A2A2A),
-                          labelColor: Colors.grey,
+                          // Optional: Custom colors matching Invoice Theme
+                          backgroundColor: const Color(0xFF1A1A1A),
+                          borderColor: const Color(0xFF2C2C2C),
+                          labelColor: const Color(0xFFA1A1A1),
                           valueColor: Colors.white,
-                          iconColor: Colors.grey,
+                          iconColor: Colors.white70,
+                          amountColor: const Color(0xFFFEDB9B),
                         ),
                       ),
                       SizedBox(height: 16.h),
@@ -232,12 +249,42 @@ class _MyJobProgressDetailsViewState
                             final rideStatus =
                                 job?.rideStatus?.toUpperCase() ?? "";
 
-                            if (rideStatus == "FINISHED" ||
-                                status == "COMPLETED") {
+                            bool isCancelled =
+                                status == "CANCELLED" || rideStatus == "CANCELLED";
+                            bool isCompleted =
+                                rideStatus == "FINISHED" ||
+                                rideStatus == "COMPLETED" ||
+                                status == "COMPLETED";
+
+                            if (isCompleted) {
                               if (job?.hasReview == true) {
-                                return const SizedBox.shrink();
+                                return Container(
+                                  padding: EdgeInsets.all(16.w),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    border: Border.all(
+                                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.star, color: Color(0xFFFEDB9B)),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        "Review Submitted",
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
                               }
-                              // Ride is either in final stage or finished, show Review button
+                              // Ride finished, show Review button
                               return CustomButton(
                                 text: "Review Driver",
                                 backgroundColor: AppColors.orange100,
@@ -249,18 +296,21 @@ class _MyJobProgressDetailsViewState
                                   );
                                 },
                               );
-                            } else {
-                              // Ride can still be cancelled
+                            } else if (!isCancelled && rideStatus != "POB") {
+                              // Ride can still be cancelled before POB
                               return CustomButton(
                                 text: "Cancel Ride",
-                                backgroundColor: AppColors.orange100,
-                                textColor: Colors.black,
+                                backgroundColor: const Color(0xFF2A1C1C),
+                                borderColor: const Color(0xFFEF4444).withValues(alpha: 0.5),
+                                textColor: const Color(0xFFEF4444),
                                 onPressed: () {
                                   if (job?.id != null) {
                                     _showDeleteDialog(job!.id!);
                                   }
                                 },
                               );
+                            } else {
+                              return const SizedBox.shrink();
                             }
                           },
                         ),
@@ -277,6 +327,263 @@ class _MyJobProgressDetailsViewState
     );
   }
 
+  Widget _buildOwnerProgressTracker(String rideStatus, String status) {
+    final rStatus = rideStatus.toUpperCase();
+    final jStatus = status.toUpperCase();
+
+    if (jStatus == "CANCELLED" || rStatus == "CANCELLED") {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.cancel_outlined, color: const Color(0xFFEF4444), size: 24.sp),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Text(
+                "This job has been cancelled.",
+                style: GoogleFonts.inter(
+                  color: const Color(0xFFEF4444),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    int activeStep = 0;
+    if (rStatus == "ON THE WAY") {
+      activeStep = 1;
+    } else if (rStatus == "AT THE LOCATION") {
+      activeStep = 2;
+    } else if (rStatus == "POB") {
+      activeStep = 3;
+    } else if (rStatus == "FINISHED" ||
+        rStatus == "COMPLETED" ||
+        jStatus == "COMPLETED") {
+      activeStep = 4;
+    }
+
+    final steps = [
+      {"label": "Assigned", "icon": Icons.assignment_turned_in_outlined},
+      {"label": "On The Way", "icon": Icons.directions_car_outlined},
+      {"label": "At Location", "icon": Icons.location_on_outlined},
+      {"label": "POB", "icon": Icons.person_pin_circle_outlined},
+      {"label": "Completed", "icon": Icons.task_alt},
+    ];
+
+    final isFinished = activeStep == 4;
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFF2C2C2C)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Driver Live Status",
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: isFinished
+                      ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                      : AppColors.orange100.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(
+                    color: isFinished
+                        ? const Color(0xFF10B981)
+                        : AppColors.orange100,
+                  ),
+                ),
+                child: Text(
+                  rStatus.isEmpty ? "ASSIGNED" : rStatus,
+                  style: GoogleFonts.inter(
+                    color: isFinished
+                        ? const Color(0xFF10B981)
+                        : AppColors.orange100,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          Row(
+            children: List.generate(steps.length, (index) {
+              final isCompletedStep = index < activeStep;
+              final isCurrentStep = index == activeStep;
+              final isLastStep = index == steps.length - 1;
+
+              final Color color = isCompletedStep
+                  ? const Color(0xFF10B981)
+                  : (isCurrentStep
+                      ? AppColors.orange100
+                      : const Color(0xFF52525B));
+
+              return Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 32.w,
+                            height: 32.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isCompletedStep
+                                  ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                                  : (isCurrentStep
+                                      ? AppColors.orange100.withValues(alpha: 0.15)
+                                      : Colors.white.withValues(alpha: 0.05)),
+                              border: Border.all(
+                                color: color,
+                                width: isCurrentStep ? 2 : 1,
+                              ),
+                            ),
+                            child: Icon(
+                              isCompletedStep
+                                  ? Icons.check
+                                  : (steps[index]["icon"] as IconData),
+                              color: color,
+                              size: 16.sp,
+                            ),
+                          ),
+                          SizedBox(height: 6.h),
+                          Text(
+                            steps[index]["label"] as String,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: isCurrentStep
+                                  ? Colors.white
+                                  : (isCompletedStep
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFFA1A1A1)),
+                              fontSize: 10.sp,
+                              fontWeight: isCurrentStep
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!isLastStep)
+                      Container(
+                        width: 10.w,
+                        height: 2.h,
+                        margin: EdgeInsets.only(bottom: 20.h),
+                        color: index < activeStep
+                            ? const Color(0xFF10B981)
+                            : Colors.white12,
+                      ),
+                  ],
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDriverSection({
+    required String driverName,
+    required String driverImage,
+    required String rating,
+    required VoidCallback onChatPressed,
+  }) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: const Color(0xFF2C2C2C)),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20.r,
+            backgroundImage: driverImage.startsWith('http')
+                ? NetworkImage(driverImage)
+                : AssetImage(driverImage) as ImageProvider,
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  driverName,
+                  style: GoogleFonts.inter(
+                    fontSize: 15.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  "Assigned Driver • ⭐ $rating",
+                  style: GoogleFonts.inter(
+                    fontSize: 12.sp,
+                    color: const Color(0xFFA1A1A1),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: onChatPressed,
+            icon: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: AppColors.orange100.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.orange100),
+              ),
+              child: const Icon(
+                Icons.chat_bubble_outline,
+                color: AppColors.orange100,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// ================= DELETE DIALOG =================
   void _showDeleteDialog(String jobId) {
     Get.dialog(
@@ -288,9 +595,9 @@ class _MyJobProgressDetailsViewState
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: const Color(0xFF1A1A1A),
             borderRadius: BorderRadius.circular(24.r),
-            border: Border.all(color: Colors.white10),
+            border: Border.all(color: const Color(0xFF2C2C2C)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -314,14 +621,15 @@ class _MyJobProgressDetailsViewState
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 16.h),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Colors.white10,
                           borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(color: const Color(0xFF2C2C2C)),
                         ),
                         child: Center(
                           child: Text(
                             "Cancel",
                             style: GoogleFonts.inter(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w600,
                             ),
@@ -341,7 +649,7 @@ class _MyJobProgressDetailsViewState
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 16.h),
                         decoration: BoxDecoration(
-                          color: AppColors.orange100,
+                          color: const Color(0xFFEF4444),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Center(

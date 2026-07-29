@@ -25,6 +25,7 @@ class CustomJobDetailsCard extends StatelessWidget {
   final Color? labelColor;
   final Color? valueColor;
   final Color? iconColor;
+  final Color? amountColor;
 
   // Optional callback for card tap
   final VoidCallback? onTap;
@@ -45,6 +46,7 @@ class CustomJobDetailsCard extends StatelessWidget {
     this.labelColor,
     this.valueColor,
     this.iconColor,
+    this.amountColor,
     this.onTap,
   });
 
@@ -144,6 +146,8 @@ class CustomJobDetailsCard extends StatelessWidget {
               icon: Icons.attach_money,
               label: "Amount",
               value: amount,
+              customValueColor: amountColor ?? const Color(0xFFFEDB9B),
+              customFontWeight: FontWeight.bold,
             ),
           ],
         ),
@@ -158,13 +162,15 @@ class CustomJobDetailsCard extends StatelessWidget {
     required IconData icon,
     required String label,
     required String value,
+    Color? customValueColor,
+    FontWeight? customFontWeight,
   }) {
     return Row(
       children: [
         /// Icon on the left
         Icon(
           icon,
-          color: iconColor ?? Colors.grey,
+          color: iconColor ?? Colors.white70,
           size: 20.sp,
         ),
         SizedBox(width: 12.w),
@@ -189,9 +195,9 @@ class CustomJobDetailsCard extends StatelessWidget {
             value,
             textAlign: TextAlign.right,
             style: GoogleFonts.inter(
-              color: valueColor ?? Colors.white,
+              color: customValueColor ?? (valueColor ?? Colors.white),
               fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
+              fontWeight: customFontWeight ?? FontWeight.w500,
             ),
           ),
         ),

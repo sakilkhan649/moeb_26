@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/Data/models/finish_rides_model.dart';
 import 'package:moeb_26/Data/models/my_rides_model.dart';
@@ -13,19 +14,16 @@ import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
-import 'package:moeb_26/core/widgets/CustomTextGary.dart';
-import 'package:moeb_26/core/widgets/Custom_Back_Button.dart';
 import 'package:moeb_26/core/widgets/Custom_InfoBox.dart';
-import '../../../core/widgets/Custom_AppBar.dart';
 import '../../../core/widgets/Custom_Card_Ditails.dart';
-import '../../../core/widgets/Custom_Driver_Card.dart';
 import '../controllers/my_ride_progress_details_controller.dart';
 
 class MyRideProgressDetailsView extends StatelessWidget {
   MyRideProgressDetailsView({super.key});
 
-  final MyRideProgressDetailsController controller =
-      Get.put(MyRideProgressDetailsController());
+  final MyRideProgressDetailsController controller = Get.put(
+    MyRideProgressDetailsController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +32,37 @@ class MyRideProgressDetailsView extends StatelessWidget {
 
     if (ride == null) {
       return Scaffold(
-        appBar: CustomAppBar(
-          logoPath: AppImages.app_logo,
-          notificationCount: 0,
+        backgroundColor: Colors.black,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60.h),
+          child: Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+              ),
+            ),
+            child: AppBar(
+              backgroundColor: Colors.black,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: 20.sp,
+                ),
+                onPressed: () => Get.back(),
+              ),
+              title: Text(
+                'Ride Details',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              centerTitle: true,
+            ),
+          ),
         ),
         body: const Center(
           child: Text(
@@ -60,36 +86,59 @@ class MyRideProgressDetailsView extends StatelessWidget {
     controller.setInitialStatus(data.id, initialRideStatus);
 
     return Scaffold(
-      appBar: CustomAppBar(logoPath: AppImages.app_logo, notificationCount: 3),
+      backgroundColor: Colors.black,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.sp,
+              ),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Ride Details',
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
       body: SafeArea(
         top: false,
         bottom: true,
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Divider(color: Colors.white38, thickness: 1.h),
-              Padding(
-                padding: EdgeInsets.only(left: 20.w),
-                child: const CustomBackButton(title: "Ride Details"),
-              ),
-              Divider(color: Colors.white38, thickness: 1.h),
-              SizedBox(height: 5.h),
+              SizedBox(height: 10.h),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _buildRideProgressTracker(),
+                  SizedBox(height: 6.h),
                   _buildDriverSection(data),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 12.h),
                   _buildJobDetailsSection(data),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 6.h),
                   _buildSpecialInstructionsSection(data),
-                  SizedBox(height: 10.h),
-                  Divider(color: Colors.white38, thickness: 1.h),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 12.h),
                   _buildActionButtonsSection(data, ride),
                   SizedBox(height: 20.h),
-                  _buildBackToJobsButton(),
-                  SizedBox(height: 30.h),
                 ],
               ),
             ],
@@ -100,37 +149,86 @@ class MyRideProgressDetailsView extends StatelessWidget {
   }
 
   Widget _buildDriverSection(_RideDetailsData data) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: CustomDriverCard(
-        profileImage: data.posterImage,
-        name: data.posterName,
-        rating: data.rating,
-        vehicleNumber: data.vehicleNumber,
-        vehicleInfo: data.vehicleInfo,
-        buttonText: "Chat with Job Poster",
-        buttonIcon: Icons.chat_bubble_outline,
-        onButtonPressed: () async {
-          if (data.participantId.isNotEmpty && data.id.isNotEmpty) {
-            try {
-              final chat = await Get.find<SocketRepository>().createChat(
-                data.participantId,
-                data.id,
-              );
-              if (chat != null) {
-                Get.toNamed(Routes.chatDetailView, arguments: chat);
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: const Color(0xFF2C2C2C)),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20.r,
+            backgroundImage: data.posterImage.startsWith('http')
+                ? NetworkImage(data.posterImage)
+                : AssetImage(data.posterImage) as ImageProvider,
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  data.posterName,
+                  style: GoogleFonts.inter(
+                    fontSize: 15.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  "Job Poster",
+                  style: GoogleFonts.inter(
+                    fontSize: 12.sp,
+                    color: const Color(0xFFA1A1A1),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () async {
+              if (data.participantId.isNotEmpty && data.id.isNotEmpty) {
+                try {
+                  final chat = await Get.find<SocketRepository>().createChat(
+                    data.participantId,
+                    data.id,
+                  );
+                  if (chat != null) {
+                    Get.toNamed(Routes.chatDetailView, arguments: chat);
+                  }
+                } catch (e) {
+                  Get.snackbar(
+                    "Error",
+                    "Failed to open chat",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: const Color(0xFFEF4444),
+                    colorText: Colors.white,
+                  );
+                }
               }
-            } catch (e) {
-              Get.snackbar(
-                "Error",
-                "Failed to open chat",
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
-            }
-          }
-        },
+            },
+            icon: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: AppColors.orange100.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.orange100),
+              ),
+              child: const Icon(
+                Icons.chat_bubble_outline,
+                color: AppColors.orange100,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -148,11 +246,12 @@ class MyRideProgressDetailsView extends StatelessWidget {
         company: data.posterCompany,
         payment: data.paymentType,
         amount: data.amount,
-        backgroundColor: const Color(0xFF1C1C1C),
-        borderColor: const Color(0xFF2A2A2A),
-        labelColor: Colors.grey,
+        backgroundColor: const Color(0xFF1A1A1A),
+        borderColor: const Color(0xFF2C2C2C),
+        labelColor: const Color(0xFFA1A1A1),
         valueColor: Colors.white,
-        iconColor: Colors.grey,
+        iconColor: Colors.white70,
+        amountColor: const Color(0xFFFEDB9B),
       ),
     );
   }
@@ -163,9 +262,16 @@ class MyRideProgressDetailsView extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: CustomTextgray(text: "Special Instructions"),
+          child: Text(
+            "Special Instructions",
+            style: GoogleFonts.inter(
+              color: const Color(0xFFA1A1A1),
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
-        SizedBox(height: 10.h),
+        SizedBox(height: 8.h),
         CustomInfoBox(text: data.instruction),
       ],
     );
@@ -324,26 +430,176 @@ class MyRideProgressDetailsView extends StatelessWidget {
             : CustomButton(
                 text: buttonText,
                 backgroundColor: AppColors.orange100,
-                textColor: Colors.white,
+                textColor: Colors.black,
                 onPressed: () => controller.updateStatus(data.id, nextStatus),
               ),
       );
     });
   }
 
-  Widget _buildBackToJobsButton() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: CustomButton(
-        text: "Back to Jobs",
-        backgroundColor: const Color(0xFF1C1C1C),
-        borderColor: const Color(0xFF2A2A2A),
-        textColor: Colors.white,
-        onPressed: () {
-          Get.back();
-        },
-      ),
-    );
+  Widget _buildRideProgressTracker() {
+    return Obx(() {
+      String currentStatus = controller.currentRideStatus.value.toUpperCase();
+
+      int activeStep = 0;
+      if (currentStatus == "ON THE WAY") {
+        activeStep = 1;
+      } else if (currentStatus == "AT THE LOCATION") {
+        activeStep = 2;
+      } else if (currentStatus == "POB") {
+        activeStep = 3;
+      } else if (currentStatus == "FINISHED" || currentStatus == "COMPLETED") {
+        activeStep = 4;
+      }
+
+      final steps = [
+        {"label": "Assigned", "icon": Icons.assignment_turned_in_outlined},
+        {"label": "On The Way", "icon": Icons.directions_car_outlined},
+        {"label": "At Location", "icon": Icons.location_on_outlined},
+        {"label": "POB", "icon": Icons.person_pin_circle_outlined},
+        {"label": "Finished", "icon": Icons.task_alt},
+      ];
+
+      final isFinished = activeStep == 4;
+
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: const Color(0xFF2C2C2C)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Ride Status Flow",
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isFinished
+                        ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                        : AppColors.orange100.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(
+                      color: isFinished
+                          ? const Color(0xFF10B981)
+                          : AppColors.orange100,
+                    ),
+                  ),
+                  child: Text(
+                    currentStatus.isEmpty ? "ASSIGNED" : currentStatus,
+                    style: GoogleFonts.inter(
+                      color: isFinished
+                          ? const Color(0xFF10B981)
+                          : AppColors.orange100,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              children: List.generate(steps.length, (index) {
+                final isCompletedStep = index < activeStep;
+                final isCurrentStep = index == activeStep;
+                final isLastStep = index == steps.length - 1;
+
+                final Color color = isCompletedStep
+                    ? const Color(0xFF10B981)
+                    : (isCurrentStep
+                          ? AppColors.orange100
+                          : const Color(0xFF52525B));
+
+                return Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 32.w,
+                              height: 32.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isCompletedStep
+                                    ? const Color(
+                                        0xFF10B981,
+                                      ).withValues(alpha: 0.15)
+                                    : (isCurrentStep
+                                          ? AppColors.orange100.withValues(
+                                              alpha: 0.15,
+                                            )
+                                          : Colors.white.withValues(
+                                              alpha: 0.05,
+                                            )),
+                                border: Border.all(
+                                  color: color,
+                                  width: isCurrentStep ? 2 : 1,
+                                ),
+                              ),
+                              child: Icon(
+                                isCompletedStep
+                                    ? Icons.check
+                                    : (steps[index]["icon"] as IconData),
+                                color: color,
+                                size: 16.sp,
+                              ),
+                            ),
+                            SizedBox(height: 6.h),
+                            Text(
+                              steps[index]["label"] as String,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                color: isCurrentStep
+                                    ? Colors.white
+                                    : (isCompletedStep
+                                          ? const Color(0xFF10B981)
+                                          : const Color(0xFFA1A1A1)),
+                                fontSize: 10.sp,
+                                fontWeight: isCurrentStep
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (!isLastStep)
+                        Container(
+                          width: 10.w,
+                          height: 2.h,
+                          margin: EdgeInsets.only(bottom: 20.h),
+                          color: index < activeStep
+                              ? const Color(0xFF10B981)
+                              : Colors.white12,
+                        ),
+                    ],
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -410,7 +666,8 @@ class _RideDetailsData {
       pickupLocation = r.pickupLocation ?? "N/A";
       dropoffLocation = r.dropoffLocation ?? "N/A";
       vehicleType = r.vehicleType ?? "N/A";
-      paymentType = (r.paymentType == 'NO_COLLECT' || r.paymentType == 'NO COLLECT')
+      paymentType =
+          (r.paymentType == 'NO_COLLECT' || r.paymentType == 'NO COLLECT')
           ? 'Credit Card on File'
           : (r.paymentType == 'COLLECT'
                 ? 'Collect Payment'
@@ -443,7 +700,8 @@ class _RideDetailsData {
       pickupLocation = r.pickupLocation;
       dropoffLocation = r.dropoffLocation;
       vehicleType = r.vehicleType;
-      paymentType = (r.paymentType == 'NO_COLLECT' || r.paymentType == 'NO COLLECT')
+      paymentType =
+          (r.paymentType == 'NO_COLLECT' || r.paymentType == 'NO COLLECT')
           ? 'Credit Card on File'
           : (r.paymentType == 'COLLECT'
                 ? 'Collect Payment'
@@ -468,11 +726,17 @@ class _RideDetailsData {
       pickupLocation = ride['pickup'] ?? ride['pickupLocation'] ?? 'N/A';
       dropoffLocation = ride['dropoff'] ?? ride['dropoffLocation'] ?? 'N/A';
       vehicleType = ride['type'] ?? ride['vehicleType'] ?? 'N/A';
-      paymentType = ride['payment'] ?? ride['paymentType'] ?? 'Credit Card on File';
+      paymentType =
+          ride['payment'] ?? ride['paymentType'] ?? 'Credit Card on File';
       amount = ride['price'] != null ? "\$${ride['price']}" : "N/A";
       flightNumber = ride['flight'] ?? ride['flightNumber'] ?? 'N/A';
-      instruction = ride['instructions'] ?? ride['specialInstructions'] ?? 'N/A';
-      posterName = ride['jobPoster'] ?? ride['passenger'] ?? ride['driver'] ?? 'Mohamed El Bakkali';
+      instruction =
+          ride['instructions'] ?? ride['specialInstructions'] ?? 'N/A';
+      posterName =
+          ride['jobPoster'] ??
+          ride['passenger'] ??
+          ride['driver'] ??
+          'Mohamed El Bakkali';
       vehicleInfo = ride['vehicle'] ?? vehicleType;
       vehicleNumber = ride['vehicle'] ?? 'N/A';
       dateRaw = ride['dateHeader'] ?? ride['date'] ?? '';
