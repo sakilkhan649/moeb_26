@@ -150,7 +150,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
 
   Widget _buildDriverSection(_RideDetailsData data) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      margin: EdgeInsets.symmetric(horizontal: 14.w),
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
@@ -235,7 +235,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
 
   Widget _buildJobDetailsSection(_RideDetailsData data) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
       child: CustomJobDetailsCard(
         pickupLocation: data.pickupLocation,
         dropoffLocation: data.dropoffLocation,
@@ -261,7 +261,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
           child: Text(
             "Special Instructions",
             style: GoogleFonts.inter(
@@ -272,7 +272,10 @@ class MyRideProgressDetailsView extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8.h),
-        CustomInfoBox(text: data.instruction),
+        CustomInfoBox(
+          text: data.instruction,
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
+        ),
       ],
     );
   }
@@ -284,7 +287,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
       if (status == "POB") {
         // --- FINISH RIDE DRAGGABLE SECTION ---
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
           child: Row(
             children: [
               Draggable<String>(
@@ -422,7 +425,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
       if (!isVisible) return const SizedBox.shrink();
 
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        padding: EdgeInsets.symmetric(horizontal: 14.w),
         child: controller.isLoading.value
             ? const Center(
                 child: CircularProgressIndicator(color: AppColors.orange100),
@@ -463,7 +466,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
       final isFinished = activeStep == 4;
 
       return Container(
-        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        margin: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: const Color(0xFF1A1A1A),

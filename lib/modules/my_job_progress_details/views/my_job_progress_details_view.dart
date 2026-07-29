@@ -21,8 +21,7 @@ class MyJobProgressDetailsView extends StatefulWidget {
       _MyJobProgressDetailsViewState();
 }
 
-class _MyJobProgressDetailsViewState
-    extends State<MyJobProgressDetailsView> {
+class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
   final BookingController controller = Get.find<BookingController>();
   JobData? initialJob;
   String? jobId;
@@ -165,6 +164,7 @@ class _MyJobProgressDetailsViewState
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
+                  SizedBox(height: 10.h),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,8 +181,7 @@ class _MyJobProgressDetailsViewState
                         rating: "${driver?.averageRating ?? 0.0}",
                         onChatPressed: () async {
                           final String? participantId =
-                              job?.assignedTo?.id ??
-                              job?.applicant?.driver?.id;
+                              job?.assignedTo?.id ?? job?.applicant?.driver?.id;
                           if (participantId != null && job?.id != null) {
                             try {
                               final chat = await Get.find<SocketRepository>()
@@ -209,7 +208,7 @@ class _MyJobProgressDetailsViewState
 
                       // Status Steps Container
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
                         child: CustomJobDetailsCard(
                           // Location details
                           pickupLocation: job?.pickupLocation ?? "N/A",
@@ -239,10 +238,10 @@ class _MyJobProgressDetailsViewState
                           amountColor: const Color(0xFFFEDB9B),
                         ),
                       ),
-                      SizedBox(height: 16.h),
+                      SizedBox(height: 12.h),
 
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
                         child: Builder(
                           builder: (context) {
                             final status = job?.status?.toUpperCase() ?? "";
@@ -250,7 +249,8 @@ class _MyJobProgressDetailsViewState
                                 job?.rideStatus?.toUpperCase() ?? "";
 
                             bool isCancelled =
-                                status == "CANCELLED" || rideStatus == "CANCELLED";
+                                status == "CANCELLED" ||
+                                rideStatus == "CANCELLED";
                             bool isCompleted =
                                 rideStatus == "FINISHED" ||
                                 rideStatus == "COMPLETED" ||
@@ -261,16 +261,23 @@ class _MyJobProgressDetailsViewState
                                 return Container(
                                   padding: EdgeInsets.all(16.w),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                                    color: const Color(
+                                      0xFF10B981,
+                                    ).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(16.r),
                                     border: Border.all(
-                                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                                      color: const Color(
+                                        0xFF10B981,
+                                      ).withValues(alpha: 0.3),
                                     ),
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(Icons.star, color: Color(0xFFFEDB9B)),
+                                      const Icon(
+                                        Icons.star,
+                                        color: Color(0xFFFEDB9B),
+                                      ),
                                       SizedBox(width: 8.w),
                                       Text(
                                         "Review Submitted",
@@ -301,7 +308,9 @@ class _MyJobProgressDetailsViewState
                               return CustomButton(
                                 text: "Cancel Ride",
                                 backgroundColor: const Color(0xFF2A1C1C),
-                                borderColor: const Color(0xFFEF4444).withValues(alpha: 0.5),
+                                borderColor: const Color(
+                                  0xFFEF4444,
+                                ).withValues(alpha: 0.5),
                                 textColor: const Color(0xFFEF4444),
                                 onPressed: () {
                                   if (job?.id != null) {
@@ -315,7 +324,7 @@ class _MyJobProgressDetailsViewState
                           },
                         ),
                       ),
-                      SizedBox(height: 30.h),
+                      SizedBox(height: 20.h),
                     ],
                   ),
                 ],
@@ -333,16 +342,22 @@ class _MyJobProgressDetailsViewState
 
     if (jStatus == "CANCELLED" || rStatus == "CANCELLED") {
       return Container(
-        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        margin: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: const Color(0xFFEF4444).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
+          border: Border.all(
+            color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+          ),
         ),
         child: Row(
           children: [
-            Icon(Icons.cancel_outlined, color: const Color(0xFFEF4444), size: 24.sp),
+            Icon(
+              Icons.cancel_outlined,
+              color: const Color(0xFFEF4444),
+              size: 24.sp,
+            ),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
@@ -383,7 +398,7 @@ class _MyJobProgressDetailsViewState
     final isFinished = activeStep == 4;
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      margin: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
@@ -440,8 +455,8 @@ class _MyJobProgressDetailsViewState
               final Color color = isCompletedStep
                   ? const Color(0xFF10B981)
                   : (isCurrentStep
-                      ? AppColors.orange100
-                      : const Color(0xFF52525B));
+                        ? AppColors.orange100
+                        : const Color(0xFF52525B));
 
               return Expanded(
                 child: Row(
@@ -455,10 +470,14 @@ class _MyJobProgressDetailsViewState
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: isCompletedStep
-                                  ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                                  ? const Color(
+                                      0xFF10B981,
+                                    ).withValues(alpha: 0.15)
                                   : (isCurrentStep
-                                      ? AppColors.orange100.withValues(alpha: 0.15)
-                                      : Colors.white.withValues(alpha: 0.05)),
+                                        ? AppColors.orange100.withValues(
+                                            alpha: 0.15,
+                                          )
+                                        : Colors.white.withValues(alpha: 0.05)),
                               border: Border.all(
                                 color: color,
                                 width: isCurrentStep ? 2 : 1,
@@ -482,8 +501,8 @@ class _MyJobProgressDetailsViewState
                               color: isCurrentStep
                                   ? Colors.white
                                   : (isCompletedStep
-                                      ? const Color(0xFF10B981)
-                                      : const Color(0xFFA1A1A1)),
+                                        ? const Color(0xFF10B981)
+                                        : const Color(0xFFA1A1A1)),
                               fontSize: 10.sp,
                               fontWeight: isCurrentStep
                                   ? FontWeight.bold
@@ -519,7 +538,7 @@ class _MyJobProgressDetailsViewState
     required VoidCallback onChatPressed,
   }) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      margin: EdgeInsets.symmetric(horizontal: 14.w),
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
