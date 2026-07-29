@@ -157,7 +157,7 @@ class ExecutiveRideCard extends StatelessWidget {
                             height: 10.r,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Color(0xFF3B82F6),
+                              color: Color(0xFFFEDB9B),
                             ),
                           ),
                           SizedBox(width: 10.w),

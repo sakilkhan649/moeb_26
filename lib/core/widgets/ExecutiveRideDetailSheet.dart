@@ -256,7 +256,7 @@ class ExecutiveRideDetailSheet extends StatelessWidget {
                           height: 12.r,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color(0xFF3B82F6),
+                            color: Color(0xFFFEDB9B),
                           ),
                         ),
                         SizedBox(height: 4.h),
