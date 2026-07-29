@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
-import 'package:moeb_26/core/widgets/ExecutiveRideCard.dart';
-import 'package:moeb_26/core/widgets/ExecutiveRideDetailSheet.dart';
+import 'package:moeb_26/modules/jobs_offers/widgets/JobOfferCard.dart';
+import 'package:moeb_26/modules/jobs_offers/widgets/JobOfferDetailSheet.dart';
 import 'package:moeb_26/core/widgets/Custom_Job_Button.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../../jobs_posts/views/job_post_sheet_tabbar_view.dart';
@@ -176,19 +176,19 @@ class _JobOfferViewState extends State<JobOfferView> {
                         ),
                       ),
                       ...offers.map((job) {
-                        return ExecutiveRideCard(
+                        return JobOfferCard(
                           time: job['time'],
                           pickupLocation: job['pickup'],
                           dropoffLocation: job['dropoff'],
-                          passengerOrDriverName: job['passenger'],
-                          vehicleInfo: job['company'],
+                          passengerName: job['passenger'],
+                          companyName: job['company'],
                           vehicleType: job['type'],
                           price: job['price'],
                           paymentType: job['payment'],
                           status: 'OFFER',
                           onTap: () {
                             Get.bottomSheet(
-                              ExecutiveRideDetailSheet(
+                              JobOfferDetailSheet(
                                 title: "Job Offer Details",
                                 bookingNo: job['bookingNo'],
                                 dateTimeStr: "$dateHeader • ${job['time']}",
@@ -197,18 +197,16 @@ class _JobOfferViewState extends State<JobOfferView> {
                                 dropoffLocation: job['dropoff'],
                                 dropoffNotes: job['dropoffNotes'],
                                 passengerName: job['passenger'],
-                                driverName: job['company'],
-                                vehicleInfo: job['vehicle'],
+                                companyName: job['company'],
                                 vehicleType: job['type'],
                                 paymentType: job['payment'],
                                 amount: job['price'],
                                 flightNumber: job['flight'],
                                 specialInstructions: job['instructions'],
-                                status: "AVAILABLE",
-                                actionButtonText: "Accept Job Offer",
-                                onActionButtonPressed: () {
+                                actionButtonText: "Apply to Job",
+                                onApplyPressed: () {
                                   Get.snackbar(
-                                    "Job Accepted",
+                                    "Application Submitted",
                                     "Successfully applied for Job Offer #${job['bookingNo']}",
                                     backgroundColor: const Color(0xFFD08700),
                                     colorText: Colors.white,

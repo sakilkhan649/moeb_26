@@ -16,16 +16,16 @@ import 'package:moeb_26/data/repositories/socket_repository.dart';
 import '../../../core/widgets/RideProgressCard.dart';
 import '../../my_jobs/controllers/my_jobs_controller.dart';
 
-class RideProgressWayLocationView extends StatefulWidget {
-  const RideProgressWayLocationView({super.key});
+class MyJobProgressDetailsView extends StatefulWidget {
+  const MyJobProgressDetailsView({super.key});
 
   @override
-  State<RideProgressWayLocationView> createState() =>
-      _RideProgressWayLocationViewState();
+  State<MyJobProgressDetailsView> createState() =>
+      _MyJobProgressDetailsViewState();
 }
 
-class _RideProgressWayLocationViewState
-    extends State<RideProgressWayLocationView> {
+class _MyJobProgressDetailsViewState
+    extends State<MyJobProgressDetailsView> {
   final BookingController controller = Get.find<BookingController>();
   JobData? initialJob;
   String? jobId;
@@ -44,17 +44,17 @@ class _RideProgressWayLocationViewState
 
   Future<void> _refreshJob() async {
     if (jobId == null) {
-      debugPrint("⚠️ RideProgressWayLocation: jobId is null, cannot refresh");
+      debugPrint("⚠️ MyJobProgressDetails: jobId is null, cannot refresh");
       return;
     }
     debugPrint(
-      "🔄 RideProgressWayLocation: Refreshing job details for jobId: $jobId",
+      "🔄 MyJobProgressDetails: Refreshing job details for jobId: $jobId",
     );
     try {
       await controller.fetchJobDetails(jobId: jobId!);
-      debugPrint("✨ RideProgressWayLocation: Refresh completed");
+      debugPrint("✨ MyJobProgressDetails: Refresh completed");
     } catch (e) {
-      debugPrint("❌ RideProgressWayLocation: Refresh failed: $e");
+      debugPrint("❌ MyJobProgressDetails: Refresh failed: $e");
     }
   }
 

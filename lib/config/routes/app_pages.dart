@@ -15,7 +15,7 @@ import 'package:moeb_26/modules/job_edit/bindings/job_edit_binding.dart';
 import 'package:moeb_26/modules/my_jobs/bindings/my_jobs_binding.dart';
 import 'package:moeb_26/modules/my_items/bindings/my_items_binding.dart';
 import 'package:moeb_26/modules/ride_completed/bindings/ride_completed_binding.dart';
-import 'package:moeb_26/modules/ride_details/bindings/ride_details_binding.dart';
+import 'package:moeb_26/modules/my_ride_progress_details/bindings/my_ride_progress_details_binding.dart';
 import 'package:moeb_26/modules/service_Area/views/Service_Area_view.dart';
 import 'package:moeb_26/modules/service_area/bindings/service_area_binding.dart';
 import 'package:moeb_26/modules/auth/authentication/views/all_vehicle_view.dart';
@@ -45,13 +45,14 @@ import 'package:moeb_26/modules/chat_support_detail/views/chat_support_detail_vi
 import 'package:moeb_26/modules/jobs_approve/views/job_approve_view.dart';
 import 'package:moeb_26/modules/job_edit/views/job_edit_view.dart';
 import 'package:moeb_26/modules/ratings_feedback/views/ratings_feedback_view.dart';
-import 'package:moeb_26/modules/ride_progress_way_location/views/ride_progress_way_location_view.dart';
+import 'package:moeb_26/modules/my_job_progress_details/views/my_job_progress_details_view.dart';
+import 'package:moeb_26/modules/my_job_progress_details/bindings/my_job_progress_details_binding.dart';
 import 'package:moeb_26/modules/my_jobs/views/my_jobs_view.dart';
 import 'package:moeb_26/modules/request_submitted/views/request_submitted_view.dart';
 import 'package:moeb_26/modules/my_items/views/my_Items_view.dart';
 import 'package:moeb_26/modules/request_under_review/views/request_under_review_view.dart';
 import 'package:moeb_26/modules/ride_completed/views/ride_completed_view.dart';
-import 'package:moeb_26/modules/ride_details/views/ride_details_view.dart';
+import 'package:moeb_26/modules/my_ride_progress_details/views/my_ride_progress_details_view.dart';
 import 'package:moeb_26/modules/deals/views/deals_view.dart';
 import 'package:moeb_26/modules/deals/bindings/deals_binding.dart';
 import 'package:moeb_26/modules/invoice/bindings/invoice_binding.dart';
@@ -98,6 +99,8 @@ class Routes {
   static const String rideProgressWay = "/RideProgressWay";
   static const String rideProgressWayLocationView =
       "/RideProgressWayLocationView";
+  static const String myJobProgressDetailsView =
+      "/MyJobProgressDetailsView";
   static const String rideProgressBoard = "/RideProgressBoard";
   static const String rideCompleteJob = "/RideCompleteJob";
   static const String profileView = "/ProfileView";
@@ -256,9 +259,9 @@ class Routes {
     ),
     GetPage(
       name: rideDetailsView,
-      page: () => RideDetailsView(),
+      page: () => MyRideProgressDetailsView(),
       transition: Transition.noTransition,
-      binding: RideDetailsBinding(),
+      binding: MyRideProgressDetailsBinding(),
     ),
     GetPage(
       name: rideCompletedView,
@@ -273,8 +276,15 @@ class Routes {
     ),
     GetPage(
       name: rideProgressWayLocationView,
-      page: () => RideProgressWayLocationView(),
+      page: () => const MyJobProgressDetailsView(),
       transition: Transition.noTransition,
+      binding: MyJobProgressDetailsBinding(),
+    ),
+    GetPage(
+      name: myJobProgressDetailsView,
+      page: () => const MyJobProgressDetailsView(),
+      transition: Transition.noTransition,
+      binding: MyJobProgressDetailsBinding(),
     ),
 
     GetPage(

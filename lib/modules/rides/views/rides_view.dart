@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:moeb_26/core/widgets/ExecutiveRideCard.dart';
-import 'package:moeb_26/core/widgets/ExecutiveRideDetailSheet.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/modules/rides/widgets/RideCard.dart';
+import 'package:moeb_26/modules/rides/widgets/RideDetailSheet.dart';
+import 'package:moeb_26/data/models/chat_model.dart';
+import 'package:moeb_26/modules/my_ride_progress_details/views/my_ride_progress_details_view.dart';
+import 'package:moeb_26/modules/my_job_progress_details/views/my_job_progress_details_view.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/rides_controller.dart';
 
@@ -31,12 +35,14 @@ class _RidesViewState extends State<RidesView> {
           'pickupNotes': 'Terminal 1 Exit after baggage claim',
           'dropoff': 'West Palm Beach Marriott',
           'dropoffNotes': 'Main Lobby Entrance',
-          'passenger': 'Mohamed El Bakkali',
-          'driver': 'Mohamed El Bakkali',
+          'jobPoster': 'Mohamed El Bakkali',
+          'driver': 'Bayzid',
           'vehicle': '48EIML',
           'type': 'SEDAN',
           'price': '150.00',
           'payment': 'Credit Card on File',
+          'flight': 'N482AP',
+          'instructions': 'Guest requires meet & greet sign in terminal. Please assist with luggage.',
           'status': 'CONFIRMED',
         },
         {
@@ -46,12 +52,14 @@ class _RidesViewState extends State<RidesView> {
           'pickupNotes': 'Private Gate Access Code #4920',
           'dropoff': 'PBI Airport Terminal 2',
           'dropoffNotes': 'Departures Dropoff Level',
-          'passenger': 'Mohamed El Bakkali',
-          'driver': 'Mohamed El Bakkali',
-          'vehicle': '48EIML',
-          'type': 'SEDAN',
+          'jobPoster': 'Mohamed El Bakkali',
+          'driver': 'Bayzid',
+          'vehicle': '52K92L',
+          'type': 'SUV',
           'price': '120.00',
           'payment': 'Credit Card on File',
+          'flight': 'AA-1042',
+          'instructions': 'Curbside drop-off near AA check-in counter.',
           'status': 'CONFIRMED',
         },
       ],
@@ -66,12 +74,14 @@ class _RidesViewState extends State<RidesView> {
           'pickupNotes': 'All terminals, Exit after baggage claim',
           'dropoff': 'The Breakers Palm Beach hotel',
           'dropoffNotes': 'County Rd 1, South Palm Beach',
-          'passenger': 'Mr. Murray Fulgham',
-          'driver': 'Mohamed El Bakkali',
+          'jobPoster': 'Mr. Murray Fulgham',
+          'driver': 'Bayzid',
           'vehicle': '48EIML',
           'type': 'SUV',
           'price': '210.00',
           'payment': 'Credit Card on File',
+          'flight': 'DL-842',
+          'instructions': 'Please meet client inside baggage claim.',
           'status': 'UPCOMING',
         },
       ],
@@ -86,12 +96,14 @@ class _RidesViewState extends State<RidesView> {
           'pickupNotes': 'Valet Stand Pickup',
           'dropoff': 'Boca Raton Executive Airport',
           'dropoffNotes': 'Signature Flight Support FBO',
-          'passenger': 'Alexander Wright',
-          'driver': 'Mohamed El Bakkali',
+          'jobPoster': 'Alexander Wright',
+          'driver': 'Bayzid',
           'vehicle': '52K92L',
           'type': 'SPRINTER',
           'price': '280.00',
           'payment': 'Credit Card on File',
+          'flight': 'N482AP',
+          'instructions': 'Guest requires assistance with 4 large suitcases.',
           'status': 'CONFIRMED',
         },
       ],
@@ -109,16 +121,19 @@ class _RidesViewState extends State<RidesView> {
           'pickupNotes': 'Front entrance valet',
           'dropoff': '900 S Ocean Blvd',
           'dropoffNotes': 'Private Residence Driveway',
-          'passenger': 'Mohamed El Bakkali',
-          'driver': 'Mohamed El Bakkali',
+          'jobPoster': 'Mohamed El Bakkali',
+          'driver': 'Bayzid',
           'vehicle': '48EIML',
           'type': 'SEDAN/SUV',
           'price': '180.00',
           'payment': 'Credit Card on File',
+          'flight': 'N482AP',
+          'instructions': 'Guest requires meet & greet sign in terminal. Please assist with luggage.',
           'status': 'COMPLETED',
         },
       ],
     },
+
     {
       'dateHeader': 'Wed, Jun 24',
       'rides': [
@@ -129,12 +144,14 @@ class _RidesViewState extends State<RidesView> {
           'pickupNotes': 'Hall B Main Entrance',
           'dropoff': 'Fort Lauderdale Airport (FLL)',
           'dropoffNotes': 'Terminal 3 JetBlue Departures',
-          'passenger': 'Sarah Jenkins',
-          'driver': 'Mohamed El Bakkali',
+          'jobPoster': 'Sarah Jenkins',
+          'driver': 'Bayzid',
           'vehicle': '52K92L',
           'type': 'SEDAN',
           'price': '140.00',
           'payment': 'Credit Card on File',
+          'flight': 'B6-921',
+          'instructions': 'Assisted with trade show equipment bags.',
           'status': 'COMPLETED',
         },
       ],
@@ -149,8 +166,8 @@ class _RidesViewState extends State<RidesView> {
           'pickupNotes': 'Château Tower Lobby',
           'dropoff': 'Miami International Airport (MIA)',
           'dropoffNotes': 'Terminal D Gate 20',
-          'passenger': 'Jonathan Reed',
-          'driver': 'Mohamed El Bakkali',
+          'jobPoster': 'Jonathan Reed',
+          'driver': 'Bayzid',
           'vehicle': '48EIML',
           'type': 'LIMO STRETCH',
           'price': '165.00',
@@ -261,16 +278,18 @@ class _RidesViewState extends State<RidesView> {
               ),
             ),
             ...rides.map((ride) {
-              return ExecutiveRideCard(
+              return RideCard(
                 time: ride['time'],
                 pickupLocation: ride['pickup'],
                 dropoffLocation: ride['dropoff'],
-                passengerOrDriverName: ride['passenger'],
+                jobPosterName: ride['jobPoster'] ?? ride['passenger'] ?? '',
+                driverName: ride['driver'],
                 vehicleInfo: ride['vehicle'],
                 vehicleType: ride['type'],
                 price: ride['price'],
                 paymentType: ride['payment'],
                 status: ride['status'],
+                onChatTap: () => _openChatWithDriver(ride),
                 onTap: () => _openDetailSheet(ride, dateHeader, isPast: false),
               );
             }),
@@ -307,11 +326,12 @@ class _RidesViewState extends State<RidesView> {
               ),
             ),
             ...rides.map((ride) {
-              return ExecutiveRideCard(
+              return RideCard(
                 time: ride['time'],
                 pickupLocation: ride['pickup'],
                 dropoffLocation: ride['dropoff'],
-                passengerOrDriverName: ride['passenger'],
+                jobPosterName: ride['jobPoster'] ?? ride['passenger'] ?? '',
+                driverName: ride['driver'],
                 vehicleInfo: ride['vehicle'],
                 vehicleType: ride['type'],
                 price: ride['price'],
@@ -326,13 +346,28 @@ class _RidesViewState extends State<RidesView> {
     );
   }
 
+  void _openChatWithDriver(Map<String, dynamic> ride) {
+    final chat = ChatPreview(
+      id: "demo_chat_${ride['bookingNo']}",
+      participants: [
+        ChatParticipant(id: "driver_1", name: ride['driver'] ?? "Chauffeur"),
+      ],
+      lastMessage: "Hi, I am assigned to your ride #${ride['bookingNo']}.",
+      lastMessageAt: DateTime.now().toIso8601String(),
+      createdBy: "current_user",
+      createdAt: DateTime.now().toIso8601String(),
+      updatedAt: DateTime.now().toIso8601String(),
+    );
+    Get.toNamed(Routes.chatDetailView, arguments: chat);
+  }
+
   void _openDetailSheet(
     Map<String, dynamic> ride,
     String dateHeader, {
     required bool isPast,
   }) {
     Get.bottomSheet(
-      ExecutiveRideDetailSheet(
+      RideDetailSheet(
         title: isPast ? "Completed Ride" : "Upcoming Ride Details",
         bookingNo: ride['bookingNo'],
         dateTimeStr: "$dateHeader • ${ride['time']}",
@@ -340,24 +375,29 @@ class _RidesViewState extends State<RidesView> {
         pickupNotes: ride['pickupNotes'],
         dropoffLocation: ride['dropoff'],
         dropoffNotes: ride['dropoffNotes'],
-        passengerName: ride['passenger'],
+        jobPosterName: ride['jobPoster'] ?? ride['passenger'] ?? '',
         driverName: ride['driver'],
         vehicleInfo: ride['vehicle'],
         vehicleType: ride['type'],
         paymentType: ride['payment'],
         amount: ride['price'],
+        flightNumber: ride['flight'],
+        specialInstructions: ride['instructions'],
         status: ride['status'],
+        onChatPressed: !isPast ? () => _openChatWithDriver(ride) : null,
         actionButtonText: isPast ? null : "View Ride Progress",
         onActionButtonPressed: isPast
             ? null
             : () {
-                Get.snackbar(
-                  "Ride Progress",
-                  "Tracking active route for Booking #${ride['bookingNo']}",
-                  backgroundColor: const Color(0xFFD08700),
-                  colorText: Colors.white,
-                );
+                final Map<String, dynamic> rideData = Map<String, dynamic>.from(ride);
+                rideData['dateHeader'] = dateHeader;
+                Get.toNamed(Routes.rideDetailsView, arguments: rideData);
               },
+        onReviewPressed: isPast
+            ? () {
+                Get.toNamed(Routes.ratingsFeedbackView);
+              }
+            : null,
       ),
       isScrollControlled: true,
       ignoreSafeArea: false,

@@ -19,13 +19,13 @@ import 'package:moeb_26/core/widgets/Custom_InfoBox.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../../../core/widgets/Custom_Card_Ditails.dart';
 import '../../../core/widgets/Custom_Driver_Card.dart';
-import 'package:moeb_26/modules/my_ride_progress_details/controllers/my_ride_progress_details_controller.dart';
+import '../controllers/my_ride_progress_details_controller.dart';
 
+class MyRideProgressDetailsView extends StatelessWidget {
+  MyRideProgressDetailsView({super.key});
 
-class RideDetailsView extends StatelessWidget {
-  RideDetailsView({super.key});
-
- final MyRideProgressDetailsController controller = Get.put(MyRideProgressDetailsController());
+  final MyRideProgressDetailsController controller =
+      Get.put(MyRideProgressDetailsController());
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class RideDetailsView extends StatelessWidget {
               Divider(color: Colors.white38, thickness: 1.h),
               Padding(
                 padding: EdgeInsets.only(left: 20.w),
-                child: const CustomBackButton(title: "My Ride Progress Details"),
+                child: const CustomBackButton(title: "Ride Details"),
               ),
               Divider(color: Colors.white38, thickness: 1.h),
               SizedBox(height: 5.h),
@@ -280,7 +280,7 @@ class RideDetailsView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: isOver
                               ? const Color(0xFFE1C16E)
-                              : const Color(0xFF2A2A2A),
+                              : const Color(0xFF2A2A32),
                           borderRadius: BorderRadius.circular(40.r),
                         ),
                         child: CustomText(

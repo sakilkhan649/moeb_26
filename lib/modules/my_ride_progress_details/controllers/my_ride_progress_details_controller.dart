@@ -5,7 +5,7 @@ import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/repositories/job_repository.dart';
 import 'package:moeb_26/modules/rides/controllers/rides_controller.dart';
 
-class RideDetailsController extends GetxController {
+class MyRideProgressDetailsController extends GetxController {
   final JobRepo _jobRepo = Get.find<JobRepo>();
 
   var isLoading = false.obs;
@@ -13,7 +13,6 @@ class RideDetailsController extends GetxController {
   String? _initializedRideId;
 
   void setInitialStatus(String? rideId, String? status) {
-    // Only set if we haven't initialized for THIS ride yet
     if (_initializedRideId != rideId) {
       _initializedRideId = rideId;
       currentRideStatus.value = status ?? "PENDING";
@@ -35,7 +34,6 @@ class RideDetailsController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         currentRideStatus.value = nextStatus;
 
-        // Refresh the main rides list so data is fresh when we go back
         try {
           if (Get.isRegistered<RidesController>()) {
             Get.find<RidesController>().refreshCurrentTab();

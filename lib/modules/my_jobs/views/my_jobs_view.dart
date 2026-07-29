@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
-import 'package:moeb_26/core/widgets/ExecutiveRideCard.dart';
-import 'package:moeb_26/core/widgets/ExecutiveRideDetailSheet.dart';
-import 'package:moeb_26/modules/ride_progress_way_location/views/ride_progress_way_location_view.dart';
+import 'package:moeb_26/data/models/chat_model.dart';
+import 'package:moeb_26/modules/my_jobs/widgets/MyJobCard.dart';
+import 'package:moeb_26/modules/my_jobs/widgets/MyJobDetailSheet.dart';
+import 'package:moeb_26/modules/my_job_progress_details/views/my_job_progress_details_view.dart';
 import '../controllers/my_jobs_controller.dart';
 
 class MyJobsView extends StatefulWidget {
@@ -41,7 +40,7 @@ class _MyJobsViewState extends State<MyJobsView> {
           'flight': 'CR-8821',
           'instructions':
               'Provide child booster seat in back row. Assistance with 4 large suitcases.',
-          'assignedDriver': '2 Applicants Available',
+          'assignedDriver': '1 Applicant Available',
         },
         {
           'id': 'JOB-884211',
@@ -152,15 +151,14 @@ class _MyJobsViewState extends State<MyJobsView> {
                   ),
                 ),
                 ...jobs.map((job) {
-                  return ExecutiveRideCard(
+                  return MyJobCard(
                     time: job['time'],
                     pickupLocation: job['pickup'],
                     dropoffLocation: job['dropoff'],
-                    passengerOrDriverName: job['company'],
-                    vehicleInfo: job['assignedDriver'],
+                    companyName: job['company'],
+                    assignedDriver: job['assignedDriver'],
                     vehicleType: job['type'],
                     price: job['price'],
-                    paymentType: job['payment'],
                     status: job['status'],
                     onTap: () => _openJobDetails(job, dateHeader),
                   );
@@ -174,29 +172,13 @@ class _MyJobsViewState extends State<MyJobsView> {
   }
 
   void _openJobDetails(Map<String, dynamic> job, String dateHeader) {
-    final String status = job['status'];
-    String? actionText;
-    VoidCallback? actionCallback;
-
-    if (status == 'PENDING') {
-      actionText = "Review 2 Applicant Drivers";
-      actionCallback = () {
-        Get.snackbar(
-          "Applicants",
-          "Opening applicant list for Job #${job['id']}",
-          backgroundColor: const Color(0xFFD08700),
-          colorText: Colors.white,
-        );
-      };
-    } else if (status == 'ASSIGNED' || status == 'COMPLETED') {
-      actionText = "View Ride Progress";
-      actionCallback = () {
-        Get.to(() => const RideProgressWayLocationView());
-      };
-    }
+    final String status = job['status'] ?? '';
+    final String upperStatus = status.toUpperCase();
+    final bool canEdit = upperStatus == 'PENDING';
+    final bool canDelete = upperStatus == 'PENDING' || upperStatus == 'CANCELLED';
 
     Get.bottomSheet(
-      ExecutiveRideDetailSheet(
+      MyJobDetailSheet(
         title: "Created Job Details",
         bookingNo: job['id'],
         dateTimeStr: "$dateHeader • ${job['time']}",
@@ -213,19 +195,70 @@ class _MyJobsViewState extends State<MyJobsView> {
         flightNumber: job['flight'],
         specialInstructions: job['instructions'],
         status: status,
-        actionButtonText: actionText,
-        onActionButtonPressed: actionCallback,
-        onEditPressed: () {
+        onAcceptPressed: () {
+          setState(() {
+            job['status'] = 'ASSIGNED';
+            job['assignedDriver'] = 'Mohamed El Bakkali';
+          });
           Get.snackbar(
-            "Edit Job",
-            "Opening Job Editor for #${job['id']}",
-            backgroundColor: const Color(0xFFD08700),
+            "Driver Assigned",
+            "Accepted applicant for Job #${job['id']}. Driver assigned!",
+            backgroundColor: const Color(0xFF22C55E),
             colorText: Colors.white,
           );
         },
-        onDeletePressed: () {
-          _showDeleteDialog(jobId: job['id']);
+        onRejectPressed: () {
+          setState(() {
+            job['assignedDriver'] = 'Awaiting Driver';
+          });
+          Get.snackbar(
+            "Applicant Declined",
+            "Applicant declined for Job #${job['id']}. Job is open again.",
+            backgroundColor: Colors.redAccent,
+            colorText: Colors.white,
+          );
         },
+        onChatPressed: () {
+          final driverName = (job['assignedDriver'] != null &&
+                  job['assignedDriver'] != '1 Applicant Available')
+              ? job['assignedDriver']
+              : "Mohamed El Bakkali";
+          final chat = ChatPreview(
+            id: "demo_chat_${job['id']}",
+            participants: [
+              ChatParticipant(id: "driver_1", name: driverName),
+            ],
+            lastMessage: "Hello, I am ready for this job assignment.",
+            lastMessageAt: DateTime.now().toIso8601String(),
+            createdBy: "current_user",
+            createdAt: DateTime.now().toIso8601String(),
+            updatedAt: DateTime.now().toIso8601String(),
+          );
+          Get.toNamed(Routes.chatDetailView, arguments: chat);
+        },
+        onActionButtonPressed: () {
+          if (job['status'] == 'ASSIGNED') {
+            Get.to(() => const MyJobProgressDetailsView());
+          }
+        },
+        onReviewPressed: () {
+          Get.toNamed(Routes.ratingsFeedbackView);
+        },
+        onEditPressed: canEdit
+            ? () {
+                Get.snackbar(
+                  "Edit Job",
+                  "Opening Job Editor for #${job['id']}",
+                  backgroundColor: const Color(0xFFD08700),
+                  colorText: Colors.white,
+                );
+              }
+            : null,
+        onDeletePressed: canDelete
+            ? () {
+                _showDeleteDialog(jobId: job['id']);
+              }
+            : null,
       ),
       isScrollControlled: true,
       ignoreSafeArea: false,

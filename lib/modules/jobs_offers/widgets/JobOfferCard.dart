@@ -3,27 +3,27 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 
-class ExecutiveRideCard extends StatelessWidget {
+class JobOfferCard extends StatelessWidget {
   final String time;
   final String pickupLocation;
   final String dropoffLocation;
-  final String passengerOrDriverName;
-  final String vehicleInfo; // License plate or vehicle model
-  final String vehicleType; // Business, Van/SUV, Sedan, etc.
-  final String? price;
+  final String passengerName;
+  final String companyName;
+  final String vehicleType;
+  final String price;
   final String? paymentType;
   final String? status;
   final VoidCallback? onTap;
 
-  const ExecutiveRideCard({
+  const JobOfferCard({
     super.key,
     required this.time,
     required this.pickupLocation,
     required this.dropoffLocation,
-    required this.passengerOrDriverName,
-    required this.vehicleInfo,
+    required this.passengerName,
+    required this.companyName,
     required this.vehicleType,
-    this.price,
+    required this.price,
     this.paymentType,
     this.status,
     this.onTap,
@@ -53,11 +53,11 @@ class ExecutiveRideCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Main Row: Time on Left, Route Connector on Right
+            // Top Main Row: Time & Price on Left, Route Connector on Right
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left Column: Time & Status
+                // Left Column: Time, Price, Offer Badge
                 SizedBox(
                   width: 75.w,
                   child: Column(
@@ -71,35 +71,34 @@ class ExecutiveRideCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (price != null && price!.isNotEmpty) ...[
-                        SizedBox(height: 6.h),
-                        Text(
-                          "\$$price",
+                      SizedBox(height: 6.h),
+                      Text(
+                        "\$$price",
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFFEDB9B),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 6.h),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getStatusBg(status ?? 'OFFER'),
+                          borderRadius: BorderRadius.circular(6.r),
+                        ),
+                        child: Text(
+                          (status ?? 'OFFER').toUpperCase(),
                           style: GoogleFonts.inter(
-                            color: const Color(0xFFFEDB9B),
-                            fontSize: 14.sp,
+                            color: _getStatusText(status ?? 'OFFER'),
+                            fontSize: 9.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
-                      if (status != null && status!.isNotEmpty) ...[
-                        SizedBox(height: 6.h),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                          decoration: BoxDecoration(
-                            color: _getStatusBg(status!),
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
-                          child: Text(
-                            status!.toUpperCase(),
-                            style: GoogleFonts.inter(
-                              color: _getStatusText(status!),
-                              fontSize: 9.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
@@ -119,7 +118,10 @@ class ExecutiveRideCard extends StatelessWidget {
                             height: 10.r,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white70, width: 2),
+                              border: Border.all(
+                                color: Colors.white70,
+                                width: 2,
+                              ),
                               color: Colors.transparent,
                             ),
                           ),
@@ -141,7 +143,11 @@ class ExecutiveRideCard extends StatelessWidget {
 
                       // Connecting Vertical Line
                       Padding(
-                        padding: EdgeInsets.only(left: 4.w, top: 3.h, bottom: 3.h),
+                        padding: EdgeInsets.only(
+                          left: 4.w,
+                          top: 3.h,
+                          bottom: 3.h,
+                        ),
                         child: Container(
                           width: 2.w,
                           height: 16.h,
@@ -163,7 +169,9 @@ class ExecutiveRideCard extends StatelessWidget {
                           SizedBox(width: 10.w),
                           Expanded(
                             child: Text(
-                              dropoffLocation.isNotEmpty ? dropoffLocation : "As Directed",
+                              dropoffLocation.isNotEmpty
+                                  ? dropoffLocation
+                                  : "As Directed",
                               style: GoogleFonts.inter(
                                 color: Colors.white70,
                                 fontSize: 13.sp,
@@ -185,20 +193,24 @@ class ExecutiveRideCard extends StatelessWidget {
             Divider(color: const Color(0xFF22222A), height: 1.h, thickness: 1),
             SizedBox(height: 12.h),
 
-            // Bottom Sub-Info Row: Passenger/Driver, Vehicle Plate/ID, Category Badge
+            // Bottom Sub-Info Row: Company Name & Vehicle Category Badge
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Driver/Passenger Name
+                // Company / Posted by Info
                 Expanded(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.person_outline, color: Colors.grey[400], size: 16.sp),
+                      Icon(
+                        Icons.business_outlined,
+                        color: Colors.grey[400],
+                        size: 16.sp,
+                      ),
                       SizedBox(width: 5.w),
                       Flexible(
                         child: Text(
-                          passengerOrDriverName,
+                          companyName.isNotEmpty ? companyName : passengerName,
                           style: GoogleFonts.inter(
                             color: Colors.white70,
                             fontSize: 12.sp,
@@ -212,29 +224,14 @@ class ExecutiveRideCard extends StatelessWidget {
                   ),
                 ),
 
-                // Vehicle Info / Plate
-                if (vehicleInfo.isNotEmpty) ...[
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.directions_car_outlined, color: Colors.grey[400], size: 16.sp),
-                      SizedBox(width: 5.w),
-                      Text(
-                        vehicleInfo,
-                        style: GoogleFonts.inter(
-                          color: Colors.white70,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 12.w),
-                ],
+                SizedBox(width: 12.w),
 
                 // Vehicle Category Badge
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
                   decoration: BoxDecoration(
                     color: vehicleStyle is Color ? vehicleStyle : null,
                     gradient: vehicleStyle is Gradient ? vehicleStyle : null,
