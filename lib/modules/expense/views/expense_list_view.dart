@@ -36,14 +36,11 @@ class ExpenseListView extends GetView<ExpenseController> {
       return Scaffold(
         backgroundColor: backgroundColor,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60.h),
+          preferredSize: Size.fromHeight(52.h),
           child: Container(
             decoration: const BoxDecoration(
               border: Border(
-                bottom: BorderSide(
-                  color: borderColor,
-                  width: 1.5,
-                ),
+                bottom: BorderSide(color: borderColor, width: 1.5),
               ),
             ),
             child: AppBar(
@@ -53,7 +50,7 @@ class ExpenseListView extends GetView<ExpenseController> {
                 icon: Icon(
                   Icons.arrow_back_ios_new,
                   color: Colors.white,
-                  size: 20.sp,
+                  size: 18.sp,
                 ),
                 onPressed: () => Get.back(),
               ),
@@ -61,7 +58,7 @@ class ExpenseListView extends GetView<ExpenseController> {
                 'Expense Tracker',
                 style: GoogleFonts.inter(
                   color: Colors.white,
-                  fontSize: 18.sp,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -69,7 +66,10 @@ class ExpenseListView extends GetView<ExpenseController> {
               actions: [
                 // Monthly/Yearly Filter Option
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.filter_alt_outlined, color: Colors.white),
+                  icon: const Icon(
+                    Icons.filter_alt_outlined,
+                    color: Colors.white,
+                  ),
                   tooltip: "Filter Period",
                   offset: Offset(0, 48.h),
                   color: const Color(0xFF1E1E20),
@@ -78,9 +78,7 @@ class ExpenseListView extends GetView<ExpenseController> {
                     borderRadius: BorderRadius.circular(12.r),
                     side: const BorderSide(color: Color(0xFF2C2C2C), width: 1),
                   ),
-                  constraints: BoxConstraints(
-                    maxWidth: 165.w,
-                  ),
+                  constraints: BoxConstraints(maxWidth: 165.w),
                   onSelected: (val) {
                     controller.filterPeriod.value = val;
                   },
@@ -95,15 +93,21 @@ class ExpenseListView extends GetView<ExpenseController> {
                           children: [
                             Icon(
                               Icons.calendar_month_outlined,
-                              color: current == 'Monthly' ? activeColor : Colors.white70,
+                              color: current == 'Monthly'
+                                  ? activeColor
+                                  : Colors.white70,
                               size: 16.sp,
                             ),
                             SizedBox(width: 8.w),
                             Text(
                               'Monthly View',
                               style: GoogleFonts.inter(
-                                color: current == 'Monthly' ? activeColor : Colors.white70,
-                                fontWeight: current == 'Monthly' ? FontWeight.w600 : FontWeight.w400,
+                                color: current == 'Monthly'
+                                    ? activeColor
+                                    : Colors.white70,
+                                fontWeight: current == 'Monthly'
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
                                 fontSize: 13.sp,
                               ),
                             ),
@@ -117,15 +121,21 @@ class ExpenseListView extends GetView<ExpenseController> {
                           children: [
                             Icon(
                               Icons.calendar_today_outlined,
-                              color: current == 'Yearly' ? activeColor : Colors.white70,
+                              color: current == 'Yearly'
+                                  ? activeColor
+                                  : Colors.white70,
                               size: 16.sp,
                             ),
                             SizedBox(width: 8.w),
                             Text(
                               'Yearly View',
                               style: GoogleFonts.inter(
-                                color: current == 'Yearly' ? activeColor : Colors.white70,
-                                fontWeight: current == 'Yearly' ? FontWeight.w600 : FontWeight.w400,
+                                color: current == 'Yearly'
+                                    ? activeColor
+                                    : Colors.white70,
+                                fontWeight: current == 'Yearly'
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
                                 fontSize: 13.sp,
                               ),
                             ),
@@ -146,9 +156,7 @@ class ExpenseListView extends GetView<ExpenseController> {
                     borderRadius: BorderRadius.circular(12.r),
                     side: const BorderSide(color: Color(0xFF2C2C2C), width: 1),
                   ),
-                  constraints: BoxConstraints(
-                    maxWidth: 150.w,
-                  ),
+                  constraints: BoxConstraints(maxWidth: 150.w),
                   onSelected: (val) {
                     if (val == 'csv') {
                       controller.exportToCSV();
@@ -214,11 +222,16 @@ class ExpenseListView extends GetView<ExpenseController> {
               _buildPeriodSwitcher(borderColor),
 
               // Summary Card
-              _buildSummaryCard(totalAmount, periodLabel, borderColor, accentColor),
+              _buildSummaryCard(
+                totalAmount,
+                periodLabel,
+                borderColor,
+                accentColor,
+              ),
 
               // History list title
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -226,17 +239,18 @@ class ExpenseListView extends GetView<ExpenseController> {
                       "Categories Breakdown",
                       style: GoogleFonts.inter(
                         color: Colors.white,
-                        fontSize: 15.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     CustomTextgray(
                       text: "${controller.filteredExpenses.length} record(s)",
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                     ),
                   ],
                 ),
               ),
+              SizedBox(height: 6.h),
 
               // Excel-style Categories List (Expandable)
               Expanded(
@@ -250,14 +264,14 @@ class ExpenseListView extends GetView<ExpenseController> {
                             Icon(
                               Icons.receipt_long_outlined,
                               color: AppColors.gray100,
-                              size: 50.sp,
+                              size: 44.sp,
                             ),
-                            SizedBox(height: 10.h),
+                            SizedBox(height: 8.h),
                             Text(
                               "No expenses for this period",
                               style: GoogleFonts.inter(
                                 color: AppColors.gray100,
-                                fontSize: 14.sp,
+                                fontSize: 13.sp,
                               ),
                             ),
                           ],
@@ -308,24 +322,28 @@ class ExpenseListView extends GetView<ExpenseController> {
 
     return Container(
       color: Colors.black26,
-      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 16.w),
+      padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 16.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            icon: Icon(Icons.chevron_left, color: Colors.white, size: 24.sp),
+            constraints: const BoxConstraints(),
+            padding: EdgeInsets.all(4.r),
+            icon: Icon(Icons.chevron_left, color: Colors.white, size: 20.sp),
             onPressed: () => controller.previousPeriod(),
           ),
           Text(
             dateStr,
             style: GoogleFonts.inter(
               color: Colors.white,
-              fontSize: 15.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
           IconButton(
-            icon: Icon(Icons.chevron_right, color: Colors.white, size: 24.sp),
+            constraints: const BoxConstraints(),
+            padding: EdgeInsets.all(4.r),
+            icon: Icon(Icons.chevron_right, color: Colors.white, size: 20.sp),
             onPressed: () => controller.nextPeriod(),
           ),
         ],
@@ -340,12 +358,12 @@ class ExpenseListView extends GetView<ExpenseController> {
     Color accentColor,
   ) {
     return Container(
-      margin: EdgeInsets.all(16.r),
-      padding: EdgeInsets.all(20.r),
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFF2C2C2C), width: 1.5),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: const Color(0xFF2C2C2C), width: 1.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,33 +375,33 @@ class ExpenseListView extends GetView<ExpenseController> {
                 "Total $periodLabel Expenses",
                 style: GoogleFonts.inter(
                   color: const Color(0xFFD5C4AB),
-                  fontSize: 13.sp,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
                   color: accentColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
                   periodLabel == 'Monthly' ? 'Monthly' : 'Yearly',
                   style: GoogleFonts.inter(
                     color: accentColor,
-                    fontSize: 11.sp,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 6.h),
           Text(
             "\$${totalAmount.toStringAsFixed(2)}",
             style: GoogleFonts.inter(
               color: const Color(0xFFFEDB9B),
-              fontSize: 30.sp,
+              fontSize: 22.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -402,54 +420,52 @@ class ExpenseListView extends GetView<ExpenseController> {
     final categoryTotal = items.fold(0.0, (sum, item) => sum + item.amount);
 
     return Container(
-      margin: EdgeInsets.only(bottom: 8.h),
+      margin: EdgeInsets.only(bottom: 10.h),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: const Color(0xFF2C2C2C), width: 1),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
           dividerColor: Colors.transparent,
           unselectedWidgetColor: Colors.white54,
-          colorScheme: const ColorScheme.dark(
-            primary: Colors.white,
-          ),
+          visualDensity: const VisualDensity(vertical: -1.5),
+          colorScheme: const ColorScheme.dark(primary: Colors.white),
         ),
         child: ExpansionTile(
-          tilePadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
+          dense: true,
+          visualDensity: const VisualDensity(vertical: -1.5),
+          tilePadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
           leading: Container(
-            padding: EdgeInsets.all(8.r),
+            padding: EdgeInsets.all(6.r),
             decoration: BoxDecoration(
               color: const Color(0xFFFFDCA1).withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(6.r),
             ),
             child: Icon(
               controller.getCategoryIcon(category),
               color: const Color(0xFFFFDCA1),
-              size: 20.sp,
+              size: 16.sp,
             ),
           ),
           title: Text(
             category,
             style: GoogleFonts.inter(
               color: Colors.white,
-              fontSize: 13.sp,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
           subtitle: Text(
             "${items.length} records",
-            style: GoogleFonts.inter(
-              color: AppColors.gray100,
-              fontSize: 11.sp,
-            ),
+            style: GoogleFonts.inter(color: AppColors.gray100, fontSize: 10.sp),
           ),
           trailing: Text(
             "\$${categoryTotal.toStringAsFixed(2)}",
             style: GoogleFonts.inter(
               color: const Color(0xFFFEDB9B),
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -457,21 +473,29 @@ class ExpenseListView extends GetView<ExpenseController> {
             // Excel-style subheader
             Container(
               color: Colors.black26,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
               child: Row(
                 children: [
                   Expanded(
                     flex: 2,
                     child: Text(
                       "Date",
-                      style: TextStyle(color: Colors.grey, fontSize: 10.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Expanded(
                     flex: 4,
                     child: Text(
                       "Description",
-                      style: TextStyle(color: Colors.grey, fontSize: 10.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -479,7 +503,11 @@ class ExpenseListView extends GetView<ExpenseController> {
                     child: Text(
                       "Amount",
                       textAlign: TextAlign.right,
-                      style: TextStyle(color: Colors.grey, fontSize: 10.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -487,7 +515,11 @@ class ExpenseListView extends GetView<ExpenseController> {
                     child: Text(
                       "Actions",
                       textAlign: TextAlign.right,
-                      style: TextStyle(color: Colors.grey, fontSize: 10.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -501,14 +533,14 @@ class ExpenseListView extends GetView<ExpenseController> {
                     bottom: BorderSide(color: Colors.white10, width: 0.5),
                   ),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 child: Row(
                   children: [
                     Expanded(
                       flex: 2,
                       child: Text(
                         DateFormat('dd MMM').format(e.date),
-                        style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                        style: TextStyle(color: Colors.white, fontSize: 11.sp),
                       ),
                     ),
                     Expanded(
@@ -520,10 +552,12 @@ class ExpenseListView extends GetView<ExpenseController> {
                           ignoreSafeArea: false,
                         ),
                         child: Text(
-                          e.description.isNotEmpty ? e.description : "No description",
+                          e.description.isNotEmpty
+                              ? e.description
+                              : "No description",
                           style: TextStyle(
                             color: Colors.grey[400],
-                            fontSize: 12.sp,
+                            fontSize: 11.sp,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -534,7 +568,11 @@ class ExpenseListView extends GetView<ExpenseController> {
                       flex: 2,
                       child: Text(
                         "\$${e.amount.toStringAsFixed(2)}",
-                        style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                         textAlign: TextAlign.right,
                       ),
                     ),
@@ -549,11 +587,16 @@ class ExpenseListView extends GetView<ExpenseController> {
                             },
                             behavior: HitTestBehavior.opaque,
                             child: Padding(
-                              padding: EdgeInsets.only(left: 6.r, top: 6.r, bottom: 6.r, right: 4.r),
+                              padding: EdgeInsets.only(
+                                left: 4.r,
+                                top: 4.r,
+                                bottom: 4.r,
+                                right: 3.r,
+                              ),
                               child: SvgPicture.asset(
                                 AppIcons.edit_icon,
-                                width: 14.sp,
-                                height: 14.sp,
+                                width: 13.sp,
+                                height: 13.sp,
                                 colorFilter: const ColorFilter.mode(
                                   Colors.white70,
                                   BlendMode.srcIn,
@@ -572,7 +615,9 @@ class ExpenseListView extends GetView<ExpenseController> {
                                       color: const Color(0xFF1A1A1E),
                                       borderRadius: BorderRadius.circular(20.r),
                                       border: Border.all(
-                                        color: AppColors.black200.withValues(alpha: 0.5),
+                                        color: AppColors.black200.withValues(
+                                          alpha: 0.5,
+                                        ),
                                         width: 1.5,
                                       ),
                                     ),
@@ -582,7 +627,9 @@ class ExpenseListView extends GetView<ExpenseController> {
                                         Container(
                                           padding: EdgeInsets.all(12.r),
                                           decoration: BoxDecoration(
-                                            color: Colors.redAccent.withValues(alpha: 0.1),
+                                            color: Colors.redAccent.withValues(
+                                              alpha: 0.1,
+                                            ),
                                             shape: BoxShape.circle,
                                           ),
                                           child: SvgPicture.asset(
@@ -621,11 +668,19 @@ class ExpenseListView extends GetView<ExpenseController> {
                                               child: TextButton(
                                                 onPressed: () => Get.back(),
                                                 style: TextButton.styleFrom(
-                                                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12.h,
+                                                  ),
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(12.r),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12.r,
+                                                        ),
                                                     side: BorderSide(
-                                                      color: AppColors.black200.withValues(alpha: 0.5),
+                                                      color: AppColors.black200
+                                                          .withValues(
+                                                            alpha: 0.5,
+                                                          ),
                                                     ),
                                                   ),
                                                 ),
@@ -643,16 +698,24 @@ class ExpenseListView extends GetView<ExpenseController> {
                                             Expanded(
                                               child: ElevatedButton(
                                                 onPressed: () {
-                                                  controller.deleteExpense(e.id);
+                                                  controller.deleteExpense(
+                                                    e.id,
+                                                  );
                                                   Get.back();
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.redAccent,
+                                                  backgroundColor:
+                                                      Colors.redAccent,
                                                   foregroundColor: Colors.white,
                                                   elevation: 0,
-                                                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12.h,
+                                                  ),
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(12.r),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12.r,
+                                                        ),
                                                   ),
                                                 ),
                                                 child: Text(
@@ -675,11 +738,16 @@ class ExpenseListView extends GetView<ExpenseController> {
                             },
                             behavior: HitTestBehavior.opaque,
                             child: Padding(
-                              padding: EdgeInsets.only(left: 4.r, top: 6.r, bottom: 6.r, right: 0),
+                              padding: EdgeInsets.only(
+                                left: 3.r,
+                                top: 4.r,
+                                bottom: 4.r,
+                                right: 0,
+                              ),
                               child: SvgPicture.asset(
                                 AppIcons.delete_icon,
-                                width: 14.sp,
-                                height: 14.sp,
+                                width: 13.sp,
+                                height: 13.sp,
                                 colorFilter: ColorFilter.mode(
                                   Colors.redAccent.withValues(alpha: 0.8),
                                   BlendMode.srcIn,

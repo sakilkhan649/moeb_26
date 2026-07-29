@@ -189,58 +189,58 @@ class _MeetGreetFullscreenViewState extends State<MeetGreetFullscreenView> {
                 SafeArea(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isLandscape ? 8.w : 24.w,
-                      vertical: isLandscape ? 4.h : 16.h,
+                      horizontal: isLandscape ? 16.w : 24.w,
+                      vertical: isLandscape ? 8.h : 20.h,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // --- TOP BAR (Logo) ---
-                        if (controller.showCompanyLogo.value &&
-                            controller.customLogoPath.value != null)
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.r),
-                              child: Image.file(
-                                File(controller.customLogoPath.value!),
-                                height: isLandscape ? 55.h : 45.h,
-                                fit: BoxFit.contain,
+                        const SizedBox.shrink(),
+                        Expanded(
+                          child: Center(
+                            child: _buildNameCard(
+                              theme,
+                              isLandscape: isLandscape,
+                            ),
+                          ),
+                        ),
+                        if (controller.subtitleText.value.isNotEmpty)
+                          Padding(
+                            padding: EdgeInsets.only(bottom: isLandscape ? 4.h : 8.h),
+                            child: Text(
+                              controller.subtitleText.value.toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.inter(
+                                color: theme.subtitleColor,
+                                fontSize: isLandscape ? 22.sp : 20.sp,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.5.w,
                               ),
                             ),
                           ),
-
-                        // --- MAIN CONTENT ---
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: _buildNameCard(
-                                  theme,
-                                  isLandscape: isLandscape,
-                                ),
-                              ),
-                              if (controller.subtitleText.value.isNotEmpty) ...[
-                                SizedBox(height: isLandscape ? 6.h : 10.h),
-                                Text(
-                                  controller.subtitleText.value.toUpperCase(),
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
-                                    color: theme.subtitleColor,
-                                    fontSize: isLandscape ? 22.sp : 20.sp,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.5.w,
-                                  ),
-                                ),
-                              ],
-                              SizedBox(height: isLandscape ? 4.h : 8.h),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ),
                 ),
+
+                // Top-Left Logo (Positioned Overlay)
+                if (controller.showCompanyLogo.value &&
+                    controller.customLogoPath.value != null)
+                  Positioned(
+                    top: isLandscape ? 12.h : 20.h,
+                    left: isLandscape ? 16.w : 24.w,
+                    child: SafeArea(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Image.file(
+                          File(controller.customLogoPath.value!),
+                          width: isLandscape ? 100.h : 75.h,
+                          height: isLandscape ? 100.h : 75.h,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
 
                 // --- FLOATING CONTROLS OVERLAY ---
                 AnimatedOpacity(

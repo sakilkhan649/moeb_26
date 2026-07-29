@@ -405,48 +405,55 @@ class MeetGreetView extends GetView<MeetGreetController> {
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
           children: [
-            if (controller.showCompanyLogo.value)
-              Align(
-                alignment: Alignment.centerLeft,
-                child: controller.customLogoPath.value != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(4.r),
-                        child: Image.file(
-                          File(controller.customLogoPath.value!),
-                          height: 18.h,
-                          fit: BoxFit.contain,
+            // Center Main Content (Name & Subtitle)
+            Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox.shrink(),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        pName,
+                        style: GoogleFonts.outfit(
+                          color: theme.nameColor,
+                          fontSize: 28.sp,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.2.w,
                         ),
-                      )
-                    : const SizedBox.shrink(),
-              )
-            else
-              const SizedBox.shrink(),
-            Expanded(
-              child: Center(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    pName,
-                    style: GoogleFonts.outfit(
-                      color: theme.nameColor,
-                      fontSize: 28.sp,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.2.w,
+                      ),
                     ),
-                  ),
+                    if (pSubtitle.isNotEmpty)
+                      Text(
+                        pSubtitle,
+                        style: GoogleFonts.inter(
+                          color: theme.subtitleColor,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
-            if (pSubtitle.isNotEmpty)
-              Text(
-                pSubtitle,
-                style: GoogleFonts.inter(
-                  color: theme.subtitleColor,
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w600,
+            // Top-Left Logo Overlay
+            if (controller.showCompanyLogo.value &&
+                controller.customLogoPath.value != null)
+              Positioned(
+                top: 10.h,
+                left: 12.w,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6.r),
+                  child: Image.file(
+                    File(controller.customLogoPath.value!),
+                    width: 34.h,
+                    height: 34.h,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
           ],
