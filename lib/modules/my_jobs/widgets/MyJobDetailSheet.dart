@@ -62,8 +62,11 @@ class MyJobDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String currentStatus = status.toUpperCase();
-    final bool canEdit = (currentStatus == 'PENDING') && (onEditPressed != null);
-    final bool canDelete = (currentStatus == 'PENDING' || currentStatus == 'CANCELLED') && (onDeletePressed != null);
+    final bool canEdit =
+        (currentStatus == 'PENDING') && (onEditPressed != null);
+    final bool canDelete =
+        (currentStatus == 'PENDING' || currentStatus == 'CANCELLED') &&
+        (onDeletePressed != null);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
@@ -342,7 +345,8 @@ class MyJobDetailSheet extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              if (status == 'PENDING' || status == 'ASSIGNED') ...[
+                              if (status == 'PENDING' ||
+                                  status == 'ASSIGNED') ...[
                                 SizedBox(height: 2.h),
                                 Row(
                                   children: [
@@ -353,7 +357,7 @@ class MyJobDetailSheet extends StatelessWidget {
                                     ),
                                     SizedBox(width: 4.w),
                                     Text(
-                                      "4.9 (120 rides)",
+                                      "4.9",
                                       style: GoogleFonts.inter(
                                         color: Colors.white70,
                                         fontSize: 11.sp,
@@ -543,7 +547,9 @@ class MyJobDetailSheet extends StatelessWidget {
                           backgroundColor: const Color(0xFFD08700),
                           foregroundColor: Colors.black,
                           elevation: 2,
-                          shadowColor: const Color(0xFFD08700).withValues(alpha: 0.3),
+                          shadowColor: const Color(
+                            0xFFD08700,
+                          ).withValues(alpha: 0.3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14.r),
                           ),

@@ -86,6 +86,58 @@ class InvoiceHistoryRecord {
   }
 }
 
+class SavedClient {
+  final String id;
+  final String name;
+  final String businessName;
+  final String email;
+  final String phone;
+  final String streetAddress;
+  final String city;
+  final String state;
+  final String zip;
+  final String country;
+
+  SavedClient({
+    required this.id,
+    required this.name,
+    required this.businessName,
+    required this.email,
+    required this.phone,
+    required this.streetAddress,
+    required this.city,
+    required this.state,
+    required this.zip,
+    required this.country,
+  });
+
+  SavedClient copyWith({
+    String? id,
+    String? name,
+    String? businessName,
+    String? email,
+    String? phone,
+    String? streetAddress,
+    String? city,
+    String? state,
+    String? zip,
+    String? country,
+  }) {
+    return SavedClient(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      businessName: businessName ?? this.businessName,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      streetAddress: streetAddress ?? this.streetAddress,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      zip: zip ?? this.zip,
+      country: country ?? this.country,
+    );
+  }
+}
+
 class InvoiceController extends GetxController {
   // Navigation / Page Step
   var currentStep = 1.obs;
@@ -125,8 +177,10 @@ class InvoiceController extends GetxController {
   var businessLogoPath = RxnString();
   var savedBusinessName = 'Kali Ride LLC'.obs;
 
-  // --- INVOICE HISTORY ---
+  // --- INVOICE HISTORY & SAVED CLIENTS ---
   var invoiceHistory = <InvoiceHistoryRecord>[].obs;
+  var savedClients = <SavedClient>[].obs;
+  var selectedSavedClient = Rxn<SavedClient>();
   var selectedFilter = 'All'.obs;
   var selectedTemplateIndex = 0.obs;
   var selectedColorIndex = 0.obs;
@@ -241,6 +295,107 @@ class InvoiceController extends GetxController {
         businessLogoPath: '',
       ),
     ]);
+
+    // Initial mock saved clients
+    savedClients.addAll([
+      SavedClient(
+        id: '1',
+        name: 'Acme Corp',
+        businessName: 'Acme Corp',
+        email: 'billing@acme.com',
+        phone: '561-555-0199',
+        streetAddress: '100 Industrial Parkway',
+        city: 'Metropolis',
+        state: 'NY',
+        zip: '10001',
+        country: 'United States',
+      ),
+      SavedClient(
+        id: '2',
+        name: 'Globex Inc',
+        businessName: 'Globex Inc',
+        email: 'accounts@globex.com',
+        phone: '800-555-0144',
+        streetAddress: '500 Corporate Blvd',
+        city: 'Gotham',
+        state: 'NJ',
+        zip: '07001',
+        country: 'United States',
+      ),
+    ]);
+  }
+
+  // --- SAVED CLIENTS ACTIONS ---
+  void selectSavedClient(SavedClient client) {
+    selectedSavedClient.value = client;
+    clientNameController.text = client.name;
+    clientBusinessNameController.text = client.businessName;
+    clientEmailController.text = client.email;
+    clientPhoneController.text = client.phone;
+    clientStreetAddressController.text = client.streetAddress;
+    clientCityController.text = client.city;
+    clientStateController.text = client.state;
+    clientZipController.text = client.zip;
+    if (countryOptions.contains(client.country)) {
+      clientCountry.value = client.country;
+    }
+    Get.snackbar(
+      'Client Selected',
+      'Loaded details for ${client.name}',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: const Color(0xFFD08700),
+      colorText: Colors.black,
+      duration: const Duration(seconds: 2),
+    );
+  }
+
+  void autoSaveClientFromControllers() {
+    final name = clientNameController.text.trim();
+    final email = clientEmailController.text.trim();
+    if (name.isEmpty) return;
+
+    final existingIndex = savedClients.indexWhere(
+      (c) =>
+          c.name.toLowerCase() == name.toLowerCase() ||
+          (email.isNotEmpty && c.email.toLowerCase() == email.toLowerCase()),
+    );
+
+    final client = SavedClient(
+      id: existingIndex != -1
+          ? savedClients[existingIndex].id
+          : DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name,
+      businessName: clientBusinessNameController.text.trim(),
+      email: email,
+      phone: clientPhoneController.text.trim(),
+      streetAddress: clientStreetAddressController.text.trim(),
+      city: clientCityController.text.trim(),
+      state: clientStateController.text.trim(),
+      zip: clientZipController.text.trim(),
+      country: clientCountry.value,
+    );
+
+    if (existingIndex != -1) {
+      savedClients[existingIndex] = client;
+    } else {
+      savedClients.add(client);
+    }
+  }
+
+  void addOrUpdateSavedClient(SavedClient client) {
+    final existingIndex = savedClients.indexWhere((c) => c.id == client.id);
+    if (existingIndex != -1) {
+      savedClients[existingIndex] = client;
+    } else {
+      savedClients.add(client);
+    }
+  }
+
+  void deleteSavedClient(String id) {
+    savedClients.removeWhere((c) => c.id == id);
+    if (selectedSavedClient.value?.id == id) {
+      selectedSavedClient.value = null;
+    }
   }
 
   @override
@@ -520,6 +675,9 @@ class InvoiceController extends GetxController {
   void submitInvoice() {
     final wasEditing = editingRecordIndex.value != -1;
     final double amount = double.tryParse(invoiceAmountController.text) ?? 0.0;
+
+    // Auto save client details for future invoices
+    autoSaveClientFromControllers();
 
     final record = InvoiceHistoryRecord(
       invoiceNumber: invoiceNumberController.text.trim(),

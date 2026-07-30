@@ -24,48 +24,25 @@ class MyRideProgressDetailsController extends GetxController {
     String nextStatus, {
     dynamic rideData,
   }) async {
+    // Static frontend state transition for demo/testing
+    currentRideStatus.value = nextStatus;
+
     try {
-      isLoading.value = true;
-      final response = await _jobRepo.updateRideStatus(
-        jobId: jobId,
-        rideStatus: nextStatus,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        currentRideStatus.value = nextStatus;
-
-        try {
-          if (Get.isRegistered<RidesController>()) {
-            Get.find<RidesController>().refreshCurrentTab();
-          }
-        } catch (_) {}
-
-        if (nextStatus == "FINISHED") {
-          Get.toNamed(
-            Routes.rideCompletedView,
-            arguments: rideData ?? {"id": jobId},
-          );
-        } else {
-          Helpers.showCustomSnackBar(
-            "Ride status updated to $nextStatus",
-            isError: false,
-          );
-        }
-      } else {
-        Helpers.showCustomSnackBar(
-          response.data['message'] ?? "Failed to update status",
-          isError: true,
-        );
+      if (Get.isRegistered<RidesController>()) {
+        Get.find<RidesController>().refreshCurrentTab();
       }
-    } on DioException catch (e) {
-      Helpers.showCustomSnackBar(
-        e.response?.data['message'] ?? "Error updating status",
-        isError: true,
+    } catch (_) {}
+
+    if (nextStatus == "FINISHED") {
+      Get.toNamed(
+        Routes.rideCompletedView,
+        arguments: rideData ?? {"id": jobId},
       );
-    } catch (e) {
-      Helpers.showCustomSnackBar("Something went wrong", isError: true);
-    } finally {
-      isLoading.value = false;
+    } else {
+      Helpers.showCustomSnackBar(
+        "Ride status updated to $nextStatus",
+        isError: false,
+      );
     }
   }
 }

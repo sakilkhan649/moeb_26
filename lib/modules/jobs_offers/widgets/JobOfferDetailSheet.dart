@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/core/widgets/custom_swipe_button.dart';
 
 class JobOfferDetailSheet extends StatelessWidget {
   final String title;
@@ -378,33 +379,15 @@ class JobOfferDetailSheet extends StatelessWidget {
 
             SizedBox(height: 20.h),
 
-            // Action Button: Apply to Job
-            SizedBox(
-              width: double.infinity,
-              height: 52.h,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD08700),
-                  foregroundColor: Colors.black,
-                  elevation: 2,
-                  shadowColor: const Color(0xFFD08700).withValues(alpha: 0.3),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                ),
-                onPressed: () {
-                  Get.back();
-                  onApplyPressed();
-                },
-                child: Text(
-                  actionButtonText,
-                  style: GoogleFonts.inter(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
+            // Action Button: Swipe to Apply
+            CustomSwipeButton(
+              text: actionButtonText == "Apply to Job"
+                  ? "Swipe to Apply"
+                  : actionButtonText,
+              onSwipeComplete: () {
+                Get.back();
+                onApplyPressed();
+              },
             ),
           ],
         ),

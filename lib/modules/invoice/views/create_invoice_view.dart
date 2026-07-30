@@ -215,16 +215,99 @@ class CreateInvoiceView extends GetView<InvoiceController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // --- CLIENT INFORMATION ---
-        Text(
-          'CLIENT INFORMATION',
-          style: GoogleFonts.inter(
-            color: const Color(0xFFD5C4AB),
-            fontSize: 13.sp,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'CLIENT INFORMATION',
+              style: GoogleFonts.inter(
+                color: const Color(0xFFD5C4AB),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+            Obx(() {
+              if (controller.savedClients.isEmpty) return const SizedBox.shrink();
+              return GestureDetector(
+                onTap: () => _showSavedClientPickerBottomSheet(context),
+                child: Text(
+                  'Select Saved Client',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFFD08700),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }),
+          ],
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: 12.h),
+
+        // Select Saved Client Card/Dropdown
+        Obx(() {
+          if (controller.savedClients.isEmpty) return const SizedBox.shrink();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () => _showSavedClientPickerBottomSheet(context),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF161410),
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(
+                      color: const Color(0xFFD08700).withValues(alpha: 0.5),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(6.r),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD08700).withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.person_pin_rounded,
+                          color: const Color(0xFFFEDB9B),
+                          size: 18.sp,
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Text(
+                          controller.selectedSavedClient.value != null
+                              ? 'Selected: ${controller.selectedSavedClient.value!.name}'
+                              : 'Choose from saved clients...',
+                          style: GoogleFonts.inter(
+                            color: controller.selectedSavedClient.value != null
+                                ? const Color(0xFFFEDB9B)
+                                : const Color(0xFFA1A1AA),
+                            fontSize: 13.5.sp,
+                            fontWeight: controller.selectedSavedClient.value != null
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: const Color(0xFFFEDB9B),
+                        size: 22.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.h),
+            ],
+          );
+        }),
 
         // Client Name
         _buildFieldLabel('Client Name*'),
@@ -702,6 +785,153 @@ class CreateInvoiceView extends GetView<InvoiceController> {
           ),
         ],
       ),
+    );
+  }
+  // --- SAVED CLIENT PICKER BOTTOM SHEET ---
+  void _showSavedClientPickerBottomSheet(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        constraints: BoxConstraints(maxHeight: 450.h),
+        padding: EdgeInsets.all(20.r),
+        decoration: BoxDecoration(
+          color: const Color(0xFF161616),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          border: Border.all(color: const Color(0xFF2C2C2C), width: 1),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Select Saved Client',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white70),
+                  onPressed: () => Get.back(),
+                ),
+              ],
+            ),
+            SizedBox(height: 10.h),
+            Expanded(
+              child: Obx(() {
+                if (controller.savedClients.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No saved clients available',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF71717A),
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  );
+                }
+                return ListView.separated(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: controller.savedClients.length,
+                  separatorBuilder: (context, index) => SizedBox(height: 10.h),
+                  itemBuilder: (context, index) {
+                    final client = controller.savedClients[index];
+                    final isSelected =
+                        controller.selectedSavedClient.value?.id == client.id;
+
+                    return GestureDetector(
+                      onTap: () {
+                        controller.selectSavedClient(client);
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(14.r),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFF2A1C08)
+                              : const Color(0xFF1F1F1F),
+                          borderRadius: BorderRadius.circular(14.r),
+                          border: Border.all(
+                            color: isSelected
+                                ? const Color(0xFFD08700)
+                                : const Color(0xFF2C2C2C),
+                            width: isSelected ? 1.5 : 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(10.r),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD08700)
+                                    .withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.person_outline_rounded,
+                                color: const Color(0xFFFEDB9B),
+                                size: 20.sp,
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    client.name,
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  if (client.businessName.isNotEmpty &&
+                                      client.businessName != client.name) ...[
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      client.businessName,
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFFFEDB9B),
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                  if (client.email.isNotEmpty) ...[
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      client.email,
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFFA1A1AA),
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            if (isSelected)
+                              Icon(
+                                Icons.check_circle,
+                                color: const Color(0xFFD08700),
+                                size: 22.sp,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
     );
   }
 }

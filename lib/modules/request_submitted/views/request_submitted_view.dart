@@ -2,156 +2,198 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/core/widgets/CustomText.dart';
-import 'package:moeb_26/core/widgets/CustomTextGary.dart';
-import '../../../core/widgets/Custom_Card_Ditails.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
 
-/// Review Status Screen
-/// Shows application submission status with animated steps
 class RequestSubmittedView extends StatelessWidget {
   const RequestSubmittedView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Get the job data from arguments
-    // Get the job data from arguments as dynamic to handle different model types (Job or JobData)
-    final dynamic job = Get.arguments;
+    final dynamic rawJobData = Get.arguments;
+    final data = _JobSubmittedData.from(rawJobData);
 
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Application Status",
+          style: GoogleFonts.inter(
+            color: Colors.white70,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Container(
-              width: 40.w,
-              height: 40.w,
-              padding: EdgeInsets.all(10.w),
-              decoration: BoxDecoration(
-                color: Color(0xFF1C1C1C),
-                shape: BoxShape.circle,
-              ),
-              child: SvgPicture.asset(
-                AppIcons.cross_icon,
-                height: 20.w,
-                width: 20.w,
+          Padding(
+            padding: EdgeInsets.only(right: 14.w),
+            child: IconButton(
+              onPressed: () => Get.back(),
+              icon: Container(
+                width: 36.w,
+                height: 36.w,
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF161616),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFF262626)),
+                ),
+                child: SvgPicture.asset(
+                  AppIcons.cross_icon,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white70,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
-              SizedBox(height: 40.h),
+              SizedBox(height: 16.h),
 
-              // Clock Icon with pulse animation
-              _buildClockIcon(),
+              // Hero Status Circle with subtle ring
+              _buildHeroBadge(),
 
-              SizedBox(height: 30.h),
+              SizedBox(height: 20.h),
 
-              // Title
-              CustomText(
-                text: "Request Submitted",
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
+              // Status Pill Tag
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1C1810),
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(color: const Color(0xFFD08700).withValues(alpha: 0.6), width: 1),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 7.w,
+                      height: 7.w,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFD08700),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(width: 7.w),
+                    Text(
+                      "UNDER REVIEW",
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFFEDB9B),
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               SizedBox(height: 16.h),
 
+              // Title
+              Text(
+                "Application Submitted!",
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              SizedBox(height: 8.h),
+
               // Description
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: CustomTextgray(
-                  text:
-                      "Your application is currently under review by the job poster. Once they approve it, you will receive a notification and will be able to proceed with this ride.",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
+                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                child: Text(
+                  "Your application has been sent to the job poster. Once they review and accept your offer, you will be notified immediately.",
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFFA1A1AA),
+                    fontSize: 13.sp,
+                    height: 1.45,
+                  ),
                   textAlign: TextAlign.center,
-                  color: Color(0xFFF2F2F2),
                 ),
               ),
-              SizedBox(height: 30.h),
 
-              // Status Steps Container
-              Builder(
-                builder: (context) {
-                  String displayDateTime = "ASAP";
-                  if (job.asap == true) {
-                    displayDateTime = "ASAP";
-                  } else {
-                    String dateStr = "";
-                    if (job.date != null) {
-                      try {
-                        DateTime parsed;
-                        if (job.date is DateTime) {
-                          parsed = job.date as DateTime;
-                        } else {
-                          parsed = DateTime.parse(job.date.toString());
-                        }
-                        dateStr = DateFormat('EEE MMM dd').format(parsed);
-                      } catch (_) {
-                        dateStr = job!.date.toString();
-                      }
-                    }
+              SizedBox(height: 24.h),
 
-                    String timeStr = job?.time ?? "";
-                    if (timeStr.contains(':')) {
-                      try {
-                        final parts = timeStr.split(':');
-                        int hour = int.parse(parts[0]);
-                        int minute = int.parse(parts[1].split(' ')[0]);
-                        final period = hour >= 12 ? "PM" : "AM";
-                        final hour12 = hour == 0
-                            ? 12
-                            : (hour > 12 ? hour - 12 : hour);
-                        timeStr =
-                            "${hour12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
-                      } catch (_) {}
-                    }
-                    displayDateTime = dateStr.isNotEmpty
-                        ? "$dateStr . $timeStr"
-                        : timeStr;
-                  }
+              // Timeline Stepper Card
+              _buildTimelineCard(),
 
-                  return CustomJobDetailsCard(
-                    // Location details
-                    pickupLocation: job.pickupLocation ?? "Unknown",
-                    dropoffLocation: job.dropoffLocation ?? "N/A",
+              SizedBox(height: 18.h),
 
-                    // Job information
-                    flightNumber: job.flightNumber ?? "N/A",
-                    dateTime: displayDateTime,
-                    vehicleType: job.vehicleType ?? "Unknown",
-                    jobPoster: job.createdBy is String
-                        ? "Unknown"
-                        : (job.createdBy?.nickname != null &&
-                                  job.createdBy!.nickname.isNotEmpty
-                              ? job.createdBy!.nickname
-                              : (job.createdBy?.name ?? "Unknown")),
-                    company: job.createdBy is String
-                        ? "Unknown"
-                        : (job.createdBy?.company ?? "Unknown"),
-                    payment: job.paymentType ?? "Unknown",
-                    amount: "\$${job.paymentAmount ?? 0}",
+              // Job Details Card
+              _buildJobDetailsCard(data),
 
-                    // Optional: Custom colors
-                    backgroundColor: const Color(0xFF1C1C1C),
-                    borderColor: const Color(0xFF2A2A2A),
-                    labelColor: Colors.grey,
-                    valueColor: Colors.white,
-                    iconColor: Colors.grey,
-                  );
-                },
+              SizedBox(height: 28.h),
+
+              // Bottom Action Buttons
+              SizedBox(
+                width: double.infinity,
+                height: 50.h,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFD08700),
+                    foregroundColor: Colors.black,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14.r),
+                    ),
+                  ),
+                  onPressed: () {
+                    Get.offAllNamed(Routes.bottomNabbarView);
+                  },
+                  child: Text(
+                    "Go to My Jobs",
+                    style: GoogleFonts.inter(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
-              SizedBox(height: 80.h),
+
+              SizedBox(height: 10.h),
+
+              SizedBox(
+                width: double.infinity,
+                height: 48.h,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Color(0xFF262626), width: 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14.r),
+                    ),
+                  ),
+                  onPressed: () => Get.back(),
+                  child: Text(
+                    "Browse More Jobs",
+                    style: GoogleFonts.inter(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFFA1A1AA),
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 24.h),
             ],
           ),
         ),
@@ -159,16 +201,344 @@ class RequestSubmittedView extends StatelessWidget {
     );
   }
 
-  /// Builds clock icon with circular background
-  Widget _buildClockIcon() {
+  /// Builds Hero Badge with clean gold palette
+  Widget _buildHeroBadge() {
     return Container(
-      width: 100.w,
-      height: 100.w,
+      width: 84.w,
+      height: 84.w,
       decoration: BoxDecoration(
-        color: Color(0xFF413A3A),
         shape: BoxShape.circle,
+        color: const Color(0xFF161616),
+        border: Border.all(
+          color: const Color(0xFFD08700).withValues(alpha: 0.4),
+          width: 2,
+        ),
       ),
-      child: Icon(Icons.access_time_rounded, color: Colors.white, size: 50.sp),
+      padding: EdgeInsets.all(12.r),
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color(0xFFD08700),
+        ),
+        child: Icon(
+          Icons.task_alt_rounded,
+          color: Colors.black,
+          size: 38.sp,
+        ),
+      ),
     );
+  }
+
+  /// Builds Progress Timeline Stepper in clean monochrome/gold palette
+  Widget _buildTimelineCard() {
+    return Container(
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: const Color(0xFF141414),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFF222222), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Application Progress",
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 14.h),
+          _buildTimelineItem(
+            icon: Icons.check_circle_outline_rounded,
+            iconColor: const Color(0xFFD08700),
+            title: "Application Sent",
+            subtitle: "Submitted just now",
+            isDone: true,
+            showLine: true,
+          ),
+          _buildTimelineItem(
+            icon: Icons.hourglass_empty_rounded,
+            iconColor: const Color(0xFFFEDB9B),
+            title: "Poster Reviewing",
+            subtitle: "Job poster is considering applicants",
+            isDone: false,
+            isActive: true,
+            showLine: true,
+          ),
+          _buildTimelineItem(
+            icon: Icons.directions_car_outlined,
+            iconColor: const Color(0xFF52525B),
+            title: "Approval & Ride Start",
+            subtitle: "Ride details unlocked upon approval",
+            isDone: false,
+            showLine: false,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimelineItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    bool isDone = false,
+    bool isActive = false,
+    bool showLine = true,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Container(
+              width: 26.w,
+              height: 26.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isDone || isActive
+                    ? const Color(0xFF1C1810)
+                    : const Color(0xFF1E1E1E),
+                border: Border.all(
+                  color: isDone || isActive
+                      ? const Color(0xFFD08700).withValues(alpha: 0.5)
+                      : Colors.transparent,
+                ),
+              ),
+              child: Icon(icon, color: iconColor, size: 16.sp),
+            ),
+            if (showLine)
+              Container(
+                width: 2.w,
+                height: 26.h,
+                color: isDone
+                    ? const Color(0xFFD08700).withValues(alpha: 0.6)
+                    : const Color(0xFF262626),
+              ),
+          ],
+        ),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.inter(
+                  color: isDone || isActive ? Colors.white : const Color(0xFF71717A),
+                  fontSize: 13.sp,
+                  fontWeight: isDone || isActive ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+              SizedBox(height: 2.h),
+              Text(
+                subtitle,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF71717A),
+                  fontSize: 11.sp,
+                ),
+              ),
+              SizedBox(height: 8.h),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds Job Overview Details Card
+  Widget _buildJobDetailsCard(_JobSubmittedData data) {
+    return Container(
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: const Color(0xFF141414),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFF222222), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Job Offer",
+                style: GoogleFonts.inter(
+                  color: const Color(0xFFFEDB9B),
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                data.amount,
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          const Divider(color: Color(0xFF222222), height: 1),
+          SizedBox(height: 12.h),
+
+          // Route Column
+          Row(
+            children: [
+              Column(
+                children: [
+                  Icon(Icons.circle, color: const Color(0xFFD08700), size: 10.sp),
+                  Container(
+                    width: 2.w,
+                    height: 22.h,
+                    color: const Color(0xFF262626),
+                  ),
+                  Icon(Icons.location_on, color: const Color(0xFFD08700), size: 12.sp),
+                ],
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data.pickup,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 14.h),
+                    Text(
+                      data.dropoff,
+                      style: GoogleFonts.inter(
+                        color: Colors.white70,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 14.h),
+          Wrap(
+            spacing: 6.w,
+            runSpacing: 6.h,
+            children: [
+              _buildMiniChip(Icons.directions_car_outlined, data.vehicleType),
+              _buildMiniChip(Icons.access_time_rounded, data.dateTime),
+              _buildMiniChip(Icons.payments_outlined, data.paymentType),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMiniChip(IconData icon, String label) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(6.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: const Color(0xFFD08700), size: 12.sp),
+          SizedBox(width: 4.w),
+          Flexible(
+            child: Text(
+              label,
+              style: GoogleFonts.inter(
+                color: Colors.white70,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _JobSubmittedData {
+  final String bookingNo;
+  final String pickup;
+  final String dropoff;
+  final String dateTime;
+  final String vehicleType;
+  final String amount;
+  final String paymentType;
+
+  _JobSubmittedData({
+    required this.bookingNo,
+    required this.pickup,
+    required this.dropoff,
+    required this.dateTime,
+    required this.vehicleType,
+    required this.amount,
+    required this.paymentType,
+  });
+
+  factory _JobSubmittedData.from(dynamic job) {
+    if (job == null) {
+      return _JobSubmittedData(
+        bookingNo: "1094",
+        pickup: "123 Main Street, Beverly Hills",
+        dropoff: "LAX International Airport",
+        dateTime: "Today • 04:30 PM",
+        vehicleType: "Luxury Sedan",
+        amount: "\$185",
+        paymentType: "Credit Card",
+      );
+    }
+    if (job is Map) {
+      return _JobSubmittedData(
+        bookingNo: job['bookingNo']?.toString() ?? "1094",
+        pickup: job['pickup']?.toString() ?? "Pickup Location",
+        dropoff: job['dropoff']?.toString() ?? "Dropoff Location",
+        dateTime: "${job['date'] ?? ''} • ${job['time'] ?? 'ASAP'}".trim(),
+        vehicleType: job['type']?.toString() ?? job['vehicleType']?.toString() ?? "Standard",
+        amount: job['price']?.toString() ?? job['amount']?.toString() ?? "\$150",
+        paymentType: job['payment']?.toString() ?? "Cash",
+      );
+    }
+    try {
+      return _JobSubmittedData(
+        bookingNo: (job.id ?? job.bookingNo ?? "1094").toString(),
+        pickup: (job.pickupLocation ?? "Pickup Location").toString(),
+        dropoff: (job.dropoffLocation ?? "Dropoff Location").toString(),
+        dateTime: (job.time ?? "ASAP").toString(),
+        vehicleType: (job.vehicleType ?? "Standard").toString(),
+        amount: "\$${job.paymentAmount ?? job.price ?? 150}",
+        paymentType: (job.paymentType ?? "Cash").toString(),
+      );
+    } catch (_) {
+      return _JobSubmittedData(
+        bookingNo: "1094",
+        pickup: "Pickup Location",
+        dropoff: "Dropoff Location",
+        dateTime: "ASAP",
+        vehicleType: "Standard",
+        amount: "\$150",
+        paymentType: "Cash",
+      );
+    }
   }
 }

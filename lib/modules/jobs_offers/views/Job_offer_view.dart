@@ -205,11 +205,9 @@ class _JobOfferViewState extends State<JobOfferView> {
                                 specialInstructions: job['instructions'],
                                 actionButtonText: "Apply to Job",
                                 onApplyPressed: () {
-                                  Get.snackbar(
-                                    "Application Submitted",
-                                    "Successfully applied for Job Offer #${job['bookingNo']}",
-                                    backgroundColor: const Color(0xFFD08700),
-                                    colorText: Colors.white,
+                                  Get.toNamed(
+                                    Routes.requestSubmittedView,
+                                    arguments: job,
                                   );
                                 },
                               ),

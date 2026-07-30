@@ -15,6 +15,7 @@ import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/Custom_InfoBox.dart';
+import 'package:moeb_26/core/widgets/custom_swipe_button.dart';
 import '../../../core/widgets/Custom_Card_Ditails.dart';
 import '../controllers/my_ride_progress_details_controller.dart';
 
@@ -270,124 +271,14 @@ class MyRideProgressDetailsView extends StatelessWidget {
       String status = controller.currentRideStatus.value;
 
       if (status == "POB") {
-        // --- FINISH RIDE DRAGGABLE SECTION ---
+        // --- FINISH RIDE CUSTOM SWIPE SECTION ---
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.w),
-          child: Row(
-            children: [
-              Draggable<String>(
-                data: 'finish',
-                axis: Axis.horizontal,
-                feedback: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    width: 60.w,
-                    height: 60.w,
-                    padding: EdgeInsets.all(16.w),
-                    decoration: const BoxDecoration(
-                      color: AppColors.orange100,
-                      shape: BoxShape.circle,
-                    ),
-                    child: SvgPicture.asset(
-                      AppIcons.arre_right_icon,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-                childWhenDragging: SvgPicture.asset(
-                  AppIcons.arre_right_icon,
-                  // ignore: deprecated_member_use
-                  color: Colors.transparent,
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    controller.updateStatus(
-                      data.id,
-                      "FINISHED",
-                      rideData: ride,
-                    );
-                  },
-                  child: Container(
-                    width: 60.w,
-                    height: 60.w,
-                    padding: EdgeInsets.all(16.w),
-                    decoration: const BoxDecoration(
-                      color: AppColors.orange100,
-                      shape: BoxShape.circle,
-                    ),
-                    child: SvgPicture.asset(
-                      AppIcons.arre_right_icon,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Row(
-                children: [
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    color: Colors.white,
-                    size: 30.sp,
-                  ),
-                  Transform.translate(
-                    offset: Offset(-8.w, 0),
-                    child: Icon(
-                      Icons.chevron_right_rounded,
-                      color: const Color(0xFF6B6B6B),
-                      size: 30.sp,
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: DragTarget<String>(
-                  onAcceptWithDetails: (details) {
-                    if (details.data == 'finish') {
-                      controller.updateStatus(
-                        data.id,
-                        "FINISHED",
-                        rideData: ride,
-                      );
-                    }
-                  },
-                  builder: (context, candidateData, rejectedData) {
-                    bool isOver = candidateData.isNotEmpty;
-                    return GestureDetector(
-                      onTap: () {
-                        controller.updateStatus(
-                          data.id,
-                          "FINISHED",
-                          rideData: ride,
-                        );
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        height: 60.w,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: isOver
-                              ? const Color(0xFFE1C16E)
-                              : const Color(0xFF2A2A32),
-                          borderRadius: BorderRadius.circular(40.r),
-                        ),
-                        child: CustomText(
-                          text: "Finish ride",
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+          child: CustomSwipeButton(
+            text: "Swipe to Finish Ride",
+            onSwipeComplete: () {
+              controller.updateStatus(data.id, "FINISHED", rideData: ride);
+            },
           ),
         );
       }
@@ -403,7 +294,9 @@ class MyRideProgressDetailsView extends StatelessWidget {
       } else if (status == "AT THE LOCATION") {
         buttonText = "POB";
         nextStatus = "POB";
-      } else if (status != "PENDING" && status != "") {
+      } else if (status == "FINISHED" ||
+          status == "COMPLETED" ||
+          status == "CANCELLED") {
         isVisible = false;
       }
 
