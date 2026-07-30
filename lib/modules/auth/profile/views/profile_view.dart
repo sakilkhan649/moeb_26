@@ -161,6 +161,106 @@ class ProfileView extends StatelessWidget {
                   }),
                   SizedBox(height: 14.h),
 
+                  // --- EKKALI PREMIUM SUBSCRIPTION BANNER ---
+                  GestureDetector(
+                    onTap: () => Get.toNamed(Routes.subscriptionView),
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(16.r),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFF2A1C08),
+                            Color(0xFF191307),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          color: const Color(0xFFD08700),
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFD08700).withValues(alpha: 0.2),
+                            blurRadius: 10,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10.r),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFD08700),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.workspace_premium_rounded,
+                              color: Colors.black,
+                              size: 24.sp,
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Ekkali Premium',
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFFFEDB9B),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 6.w),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 6.w,
+                                        vertical: 2.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFD08700),
+                                        borderRadius: BorderRadius.circular(6.r),
+                                      ),
+                                      child: Text(
+                                        '\$29/YR',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.black,
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  '0% Fee • VIP Badge • Priority Jobs',
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFFD5C4AB),
+                                    fontSize: 11.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: const Color(0xFFFEDB9B),
+                            size: 16.sp,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+
                   // --- CATEGORY 1: ACCOUNT & CHAUFFEUR DETAILS ---
                   Align(
                     alignment: Alignment.centerLeft,
@@ -187,6 +287,17 @@ class ProfileView extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
+                        _buildSettingTile(
+                          icon: Icons.workspace_premium_outlined,
+                          title: "Ekkali Premium Subscription",
+                          subtitle: "Yearly plan (\$29/Yr) & benefits",
+                          iconColor: const Color(0xFFFEDB9B),
+                          titleColor: const Color(0xFFFEDB9B),
+                          onTap: () {
+                            Get.toNamed(Routes.subscriptionView);
+                          },
+                        ),
+                        _buildTileDivider(),
                         _buildSettingTile(
                           icon: Icons.person_outline_rounded,
                           title: "Chauffeur information",

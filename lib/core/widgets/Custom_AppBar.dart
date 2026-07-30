@@ -166,6 +166,35 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   onSelected: (item) => handleMenuItemSelection(item),
                   itemBuilder: (context) => [
                     PopupMenuItem<int>(
+                      value: 7,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.workspace_premium_rounded,
+                            color: const Color(0xFFFEDB9B),
+                            size: 24.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              'Ekkali Premium',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFFEDB9B),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            CupertinoIcons.chevron_forward,
+                            size: 20.sp,
+                            color: const Color(0xFFFEDB9B),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<int>(
                       value: 3,
                       child: Row(
                         children: [
@@ -329,6 +358,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   void handleMenuItemSelection(int item) {
     switch (item) {
+      case 7:
+        Get.toNamed(Routes.subscriptionView);
+        break;
       case 3:
         Get.toNamed(Routes.invoiceHistoryView);
         break;

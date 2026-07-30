@@ -1,0 +1,448 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/modules/subscription/controllers/subscription_controller.dart';
+
+class SubscriptionView extends StatelessWidget {
+  SubscriptionView({super.key});
+
+  final SubscriptionController controller = Get.put(SubscriptionController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A0A0A),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // --- TOP BAR ---
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    borderRadius: BorderRadius.circular(20.r),
+                    onTap: () => Get.back(),
+                    child: Container(
+                      padding: EdgeInsets.all(10.r),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF181818),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: const Color(0xFF282828),
+                          width: 1,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: Colors.white,
+                        size: 16.sp,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Subscription',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 38.w),
+                ],
+              ),
+            ),
+
+            // --- MAIN CONTENT ---
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 6.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 8.h),
+                    // --- FLOATING ICON BADGE ---
+                    Container(
+                      width: 68.w,
+                      height: 68.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFFFFDF88), Color(0xFFD08700)],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFD08700).withValues(alpha: 0.35),
+                            blurRadius: 20,
+                            spreadRadius: 3,
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.workspace_premium_rounded,
+                        color: Colors.black,
+                        size: 38.sp,
+                      ),
+                    ),
+                    SizedBox(height: 14.h),
+
+                    // --- UNIFIED TITLE & SUBTITLE ---
+                    Text(
+                      controller.planName,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFFEDB9B),
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      'Unlock Chauffeur Privileges & Maximize Earnings',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF9E9E9E),
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                    SizedBox(height: 22.h),
+
+                    // --- PRICING CARD ---
+                    Obx(() {
+                      final isSelected =
+                          controller.selectedPlan.value == 'yearly';
+                      return GestureDetector(
+                        onTap: () => controller.selectPlan('yearly'),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: EdgeInsets.all(18.r),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFF231808),
+                                Color(0xFF17130C),
+                                Color(0xFF111111),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(
+                              color: isSelected
+                                  ? const Color(0xFFD08700)
+                                  : const Color(0xFF2C2C2C),
+                              width: isSelected ? 1.5 : 1,
+                            ),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: const Color(0xFFD08700)
+                                          .withValues(alpha: 0.2),
+                                      blurRadius: 16,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10.w,
+                                      vertical: 4.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFFD08700),
+                                          Color(0xFFB87600),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Text(
+                                      'YEARLY PLAN • SAVE 60%',
+                                      style: GoogleFonts.inter(
+                                        color: Colors.black,
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 0.4,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 22.w,
+                                    height: 22.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isSelected
+                                          ? const Color(0xFFD08700)
+                                          : Colors.transparent,
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? const Color(0xFFD08700)
+                                            : const Color(0xFF555555),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: isSelected
+                                        ? Icon(
+                                            Icons.check,
+                                            size: 14.sp,
+                                            color: Colors.black,
+                                          )
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 14.h),
+
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    controller.planPrice,
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 34.sp,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' USD',
+                                    style: GoogleFonts.inter(
+                                      color: const Color(0xFFFEDB9B),
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    controller.planPeriod,
+                                    style: GoogleFonts.inter(
+                                      color: const Color(0xFFA1A1AA),
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 4.h),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  controller.billingDescription,
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFF71717A),
+                                    fontSize: 11.sp,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                    SizedBox(height: 22.h),
+
+                    // --- FEATURES LIST ---
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Included Privileges',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFD5C4AB),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF141414),
+                        borderRadius: BorderRadius.circular(18.r),
+                        border: Border.all(
+                          color: const Color(0xFF242424),
+                          width: 1,
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 14.w,
+                        vertical: 6.h,
+                      ),
+                      child: Column(
+                        children: controller.features.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final feature = entry.value;
+                          final isLast = index == controller.features.length - 1;
+
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10.h),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(8.r),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFD08700)
+                                            .withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(10.r),
+                                      ),
+                                      child: Icon(
+                                        _getFeatureIcon(feature['icon']!),
+                                        color: Colors.white70,
+                                        size: 19.sp,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            feature['title']!,
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white,
+                                              fontSize: 13.5.sp,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(height: 1.h),
+                                          Text(
+                                            feature['subtitle']!,
+                                            style: GoogleFonts.inter(
+                                              color: const Color(0xFF8E8E93),
+                                              fontSize: 11.sp,
+                                              height: 1.2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (!isLast)
+                                const Divider(
+                                  color: Color(0xFF222222),
+                                  height: 1,
+                                  thickness: 1,
+                                ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                  ],
+                ),
+              ),
+            ),
+
+            // --- BOTTOM CTA BUTTON ---
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+              decoration: const BoxDecoration(
+                color: Color(0xFF111111),
+                border: Border(
+                  top: BorderSide(color: Color(0xFF222222), width: 1),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Obx(() {
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 52.h,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD08700),
+                          foregroundColor: Colors.black,
+                          elevation: 6,
+                          shadowColor: const Color(0xFFD08700).withValues(alpha: 0.35),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                        ),
+                        onPressed: controller.isLoading.value
+                            ? null
+                            : () => controller.subscribe(),
+                        child: controller.isLoading.value
+                            ? SizedBox(
+                                width: 22.w,
+                                height: 22.w,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.black,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.workspace_premium_rounded,
+                                    color: Colors.black,
+                                    size: 20.sp,
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    'Subscribe Now • \$29/Year',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    );
+                  }),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Auto-renews at \$29/year. Cancel anytime in App Settings.',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF71717A),
+                      fontSize: 11.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getFeatureIcon(String iconName) {
+    switch (iconName) {
+      case 'crown':
+        return Icons.workspace_premium_rounded;
+      case 'percent':
+        return Icons.percent_rounded;
+      case 'badge':
+        return Icons.verified_user_rounded;
+      case 'support':
+        return Icons.support_agent_rounded;
+      default:
+        return Icons.star_rounded;
+    }
+  }
+}

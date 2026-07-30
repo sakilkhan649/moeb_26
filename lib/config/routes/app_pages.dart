@@ -68,6 +68,8 @@ import 'package:moeb_26/modules/notifications/views/notifications_view.dart';
 import 'package:moeb_26/modules/meet_greet/bindings/meet_greet_binding.dart';
 import 'package:moeb_26/modules/meet_greet/views/meet_greet_view.dart';
 import 'package:moeb_26/modules/meet_greet/views/meet_greet_fullscreen_view.dart';
+import 'package:moeb_26/modules/subscription/bindings/subscription_binding.dart';
+import 'package:moeb_26/modules/subscription/views/subscription_view.dart';
 
 class Routes {
   static const String splashView = "/SplashView";
@@ -126,6 +128,7 @@ class Routes {
   static const String meetGreetView = "/MeetGreetView";
   static const String meetGreetFullscreenView = "/MeetGreetFullscreenView";
   static const String expenseListView = "/ExpenseListView";
+  static const String subscriptionView = "/SubscriptionView";
 
   static List<GetPage> routes = [
     GetPage(
@@ -414,6 +417,12 @@ class Routes {
       page: () => const ExpenseListView(),
       transition: Transition.noTransition,
       binding: ExpenseBinding(),
+    ),
+    GetPage(
+      name: subscriptionView,
+      page: () => SubscriptionView(),
+      transition: Transition.noTransition,
+      binding: SubscriptionBinding(),
     ),
   ];
 }
