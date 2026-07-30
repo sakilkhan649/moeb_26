@@ -8,6 +8,7 @@ import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/Custom_Card_Ditails.dart';
+import 'package:moeb_26/core/widgets/Custom_InfoBox.dart';
 import 'package:moeb_26/data/models/my_jobs_model.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
@@ -238,7 +239,17 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                           amountColor: const Color(0xFFFEDB9B),
                         ),
                       ),
-                      SizedBox(height: 12.h),
+                      SizedBox(height: 20.h),
+
+                      if (job?.instruction != null &&
+                          job!.instruction!.trim().isNotEmpty) ...[
+                        CustomInfoBox(
+                          text: job!.instruction!,
+                          title: "Special Instructions",
+                          padding: EdgeInsets.symmetric(horizontal: 14.w),
+                        ),
+                        SizedBox(height: 12.h),
+                      ],
 
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 14.w),

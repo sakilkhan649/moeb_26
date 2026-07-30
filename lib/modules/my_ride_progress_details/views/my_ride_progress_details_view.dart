@@ -134,7 +134,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
                   _buildDriverSection(data),
                   SizedBox(height: 12.h),
                   _buildJobDetailsSection(data),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 12.h),
                   _buildSpecialInstructionsSection(data),
                   SizedBox(height: 12.h),
                   _buildActionButtonsSection(data, ride),
@@ -257,26 +257,11 @@ class MyRideProgressDetailsView extends StatelessWidget {
   }
 
   Widget _buildSpecialInstructionsSection(_RideDetailsData data) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14.w),
-          child: Text(
-            "Special Instructions",
-            style: GoogleFonts.inter(
-              color: const Color(0xFFA1A1A1),
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        SizedBox(height: 8.h),
-        CustomInfoBox(
-          text: data.instruction,
-          padding: EdgeInsets.symmetric(horizontal: 14.w),
-        ),
-      ],
+    if (data.instruction.trim().isEmpty) return const SizedBox.shrink();
+    return CustomInfoBox(
+      text: data.instruction,
+      title: "Special Instructions",
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
     );
   }
 
