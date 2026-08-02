@@ -16,7 +16,7 @@ class PersonalInformationView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: CustomAppBar(
-        title: 'Personal & Chauffeur Info',
+        title: 'My Information',
         showBackButton: true,
         showActions: false,
       ),

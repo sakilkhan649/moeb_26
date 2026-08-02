@@ -323,9 +323,7 @@ class MyJobDetailSheet extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                status == 'PENDING'
-                                    ? "APPLICANT DRIVER"
-                                    : "CHAUFFEUR",
+                                "CHAUFFEUR",
                                 style: GoogleFonts.inter(
                                   color: const Color(0xFF94A3B8),
                                   fontSize: 9.sp,
@@ -568,7 +566,7 @@ class MyJobDetailSheet extends StatelessWidget {
                             ),
                             SizedBox(width: 6.w),
                             Text(
-                              "Accept & Assign",
+                              "Accept",
                               style: GoogleFonts.inter(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.bold,

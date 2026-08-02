@@ -202,6 +202,7 @@ class SavedClientsView extends GetView<InvoiceController> {
                 if (client.streetAddress.isNotEmpty) client.streetAddress,
                 if (client.city.isNotEmpty) client.city,
                 if (client.state.isNotEmpty) client.state,
+                if (client.zip.isNotEmpty) client.zip,
                 if (client.country.isNotEmpty) client.country,
               ].join(', '),
             ),
@@ -344,6 +345,51 @@ class SavedClientsView extends GetView<InvoiceController> {
                         ),
                       ],
                     ),
+                    SizedBox(height: 12.h),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildModalFieldLabel('ZIP/Postal Code'),
+                              _buildModalInput(
+                                zipController,
+                                'e.g. 90210',
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildModalFieldLabel('Country'),
+                              TextField(
+                                enabled: false,
+                                controller: TextEditingController(text: 'United States'),
+                                style: GoogleFonts.inter(color: Colors.white38, fontSize: 14.sp),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: const Color(0xFF1E1E1E),
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: 16.h),
                   ],
                 ),
@@ -459,7 +505,7 @@ class SavedClientsView extends GetView<InvoiceController> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
-          borderSide: const BorderSide(color: Color(0xFFD08700)),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
         ),
       ),
     );

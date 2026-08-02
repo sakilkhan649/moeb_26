@@ -36,7 +36,7 @@ class PersonalDocumentView extends GetView<PersonalDocumentController> {
               onPressed: () => Get.back(),
             ),
             title: Text(
-              'Personal Documents',
+              'My Personal Documents',
               style: GoogleFonts.inter(
                 color: Colors.white,
                 fontSize: 18.sp,

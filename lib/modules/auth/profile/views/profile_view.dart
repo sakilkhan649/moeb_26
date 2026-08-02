@@ -300,7 +300,7 @@ class ProfileView extends StatelessWidget {
                         _buildTileDivider(),
                         _buildSettingTile(
                           icon: Icons.person_outline_rounded,
-                          title: "Chauffeur information",
+                          title: "My information",
                           subtitle: "Manage email, phone, company & languages",
                           onTap: () {
                             Get.to(() => const PersonalInformationView());
@@ -333,7 +333,7 @@ class ProfileView extends StatelessWidget {
                         _buildTileDivider(),
                         _buildSettingTile(
                           icon: Icons.document_scanner_outlined,
-                          title: "Personal Documents",
+                          title: "My Personal Documents",
                           subtitle: "License and verification documents",
                           onTap: () {
                             Get.toNamed(Routes.personalDocumentView);
