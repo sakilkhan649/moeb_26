@@ -6,10 +6,16 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:moeb_26/core/services/expense_service.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import '../models/expense_model.dart';
 
 class ExpenseController extends GetxController {
+  late ExpenseService _expenseService;
+
   var expenses = <ExpenseModel>[].obs;
+  var isLoading = false.obs;
+  var totalAmount = 0.0.obs;
 
   // Input fields controllers
   final amountController = TextEditingController();
@@ -50,44 +56,69 @@ class ExpenseController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    populateMockExpenses();
+    _expenseService = Get.find<ExpenseService>();
+    fetchExpenses();
   }
 
-  void populateMockExpenses() {
-    expenses.assignAll([
-      ExpenseModel(
-        id: '1',
-        userId: 'user_1',
-        category: 'Fuel',
-        amount: 85.50,
-        date: DateTime.now().subtract(const Duration(days: 1)),
-        description: 'Fuel up Mercedes S-Class',
-      ),
-      ExpenseModel(
-        id: '2',
-        userId: 'user_1',
-        category: 'Toll Expenses',
-        amount: 15.00,
-        date: DateTime.now().subtract(const Duration(days: 3)),
-        description: 'Bridge toll on highway',
-      ),
-      ExpenseModel(
-        id: '3',
-        userId: 'user_1',
-        category: 'Maintenance & Repairs',
-        amount: 120.00,
-        date: DateTime.now().subtract(const Duration(days: 15)),
-        description: 'Regular maintenance at service center',
-      ),
-      ExpenseModel(
-        id: '4',
-        userId: 'user_1',
-        category: 'Parking',
-        amount: 25.00,
-        date: DateTime.now().subtract(const Duration(days: 20)),
-        description: 'Airport VIP parking lot',
-      ),
-    ]);
+  /// Calculates start and end dates based on selected filterPeriod & filterDate
+  ({DateTime start, DateTime end}) _getDateRange() {
+    if (filterPeriod.value == 'Monthly') {
+      final start = DateTime.utc(filterDate.value.year, filterDate.value.month, 1, 0, 0, 0);
+      final end = DateTime.utc(filterDate.value.year, filterDate.value.month + 1, 0, 23, 59, 59, 999);
+      return (start: start, end: end);
+    } else {
+      final start = DateTime.utc(filterDate.value.year, 1, 1, 0, 0, 0);
+      final end = DateTime.utc(filterDate.value.year, 12, 31, 23, 59, 59, 999);
+      return (start: start, end: end);
+    }
+  }
+
+  /// Fetch expenses from backend API using date range filter
+  Future<void> fetchExpenses() async {
+    try {
+      isLoading.value = true;
+      final range = _getDateRange();
+      final response = await _expenseService.fetchExpenses(
+        startDate: range.start,
+        endDate: range.end,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final List<dynamic> dataList = response.data['data'] is List ? response.data['data'] : [];
+        final loadedExpenses = dataList
+            .map((item) => ExpenseModel.fromJson(item as Map<String, dynamic>))
+            .toList();
+        expenses.assignAll(loadedExpenses);
+      }
+      fetchTotalExpenses();
+    } catch (e) {
+      Helpers.debug('Error fetching expenses: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch total expense amount from backend API
+  Future<void> fetchTotalExpenses() async {
+    try {
+      final range = _getDateRange();
+      final response = await _expenseService.fetchTotalExpenses(
+        startDate: range.start,
+        endDate: range.end,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final totalVal = response.data['data']?['total'];
+        if (totalVal != null) {
+          totalAmount.value = (totalVal as num).toDouble();
+          return;
+        }
+      }
+      totalAmount.value = expenses.fold(0.0, (sum, item) => sum + item.amount);
+    } catch (e) {
+      Helpers.debug('Error fetching total expenses: $e');
+      totalAmount.value = expenses.fold(0.0, (sum, item) => sum + item.amount);
+    }
   }
 
   IconData getCategoryIcon(String category) {
@@ -130,19 +161,11 @@ class ExpenseController extends GetxController {
   }
 
   // Filtered expenses based on selection
-  List<ExpenseModel> get filteredExpenses {
-    return expenses.where((e) {
-      if (filterPeriod.value == 'Monthly') {
-        return e.date.year == filterDate.value.year &&
-            e.date.month == filterDate.value.month;
-      } else {
-        return e.date.year == filterDate.value.year;
-      }
-    }).toList();
-  }
+  List<ExpenseModel> get filteredExpenses => expenses;
 
   // Filtered total amount
   double get filteredTotalAmount {
+    if (totalAmount.value > 0) return totalAmount.value;
     return filteredExpenses.fold(0.0, (sum, item) => sum + item.amount);
   }
 
@@ -160,6 +183,7 @@ class ExpenseController extends GetxController {
     } else {
       filterPeriod.value = 'Monthly';
     }
+    fetchExpenses();
   }
 
   void previousPeriod() {
@@ -171,6 +195,7 @@ class ExpenseController extends GetxController {
     } else {
       filterDate.value = DateTime(filterDate.value.year - 1);
     }
+    fetchExpenses();
   }
 
   void nextPeriod() {
@@ -182,6 +207,7 @@ class ExpenseController extends GetxController {
     } else {
       filterDate.value = DateTime(filterDate.value.year + 1);
     }
+    fetchExpenses();
   }
 
   Future<void> pickImage(ImageSource source) async {
@@ -217,14 +243,15 @@ class ExpenseController extends GetxController {
     selectedCategory.value = expense.category;
     selectedDate.value = expense.date;
     if (expense.receiptImageUrl != null &&
-        expense.receiptImageUrl!.isNotEmpty) {
+        expense.receiptImageUrl!.isNotEmpty &&
+        !expense.receiptImageUrl!.startsWith('http')) {
       selectedImage.value = File(expense.receiptImageUrl!);
     } else {
       selectedImage.value = null;
     }
   }
 
-  void addExpense() {
+  Future<void> addExpense() async {
     final amountText = amountController.text.trim();
     final amount = double.tryParse(amountText);
 
@@ -238,29 +265,50 @@ class ExpenseController extends GetxController {
       return;
     }
 
-    final newExpense = ExpenseModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: 'user_1',
-      category: selectedCategory.value,
-      amount: amount,
-      date: selectedDate.value,
-      description: descriptionController.text.trim(),
-      receiptImageUrl: selectedImage.value?.path,
-    );
+    try {
+      isLoading.value = true;
+      final response = await _expenseService.createExpense(
+        category: selectedCategory.value,
+        amount: amount,
+        date: selectedDate.value,
+        description: descriptionController.text.trim(),
+        receiptFile: selectedImage.value,
+      );
 
-    expenses.insert(0, newExpense);
-    clearForm();
-    Get.back(); // close modal
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final addedDate = selectedDate.value;
+        clearForm();
+        Get.back(); // close modal
+        filterDate.value = addedDate;
+        fetchExpenses();
 
-    Get.snackbar(
-      "Success",
-      "Expense added successfully",
-      backgroundColor: const Color(0xFFD08700),
-      colorText: Colors.white,
-    );
+        Get.snackbar(
+          "Success",
+          "Expense added successfully",
+          backgroundColor: const Color(0xFFD08700),
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          response.data?['message'] ?? "Failed to add expense",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Failed to add expense: $e",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  void updateExpense(ExpenseModel oldExpense) {
+  Future<void> updateExpense(ExpenseModel oldExpense) async {
     final amountText = amountController.text.trim();
     final amount = double.tryParse(amountText);
 
@@ -274,39 +322,80 @@ class ExpenseController extends GetxController {
       return;
     }
 
-    final updatedExpense = ExpenseModel(
-      id: oldExpense.id,
-      userId: oldExpense.userId,
-      category: selectedCategory.value,
-      amount: amount,
-      date: selectedDate.value,
-      description: descriptionController.text.trim(),
-      receiptImageUrl: selectedImage.value?.path ?? oldExpense.receiptImageUrl,
-    );
+    try {
+      isLoading.value = true;
+      final response = await _expenseService.updateExpense(
+        oldExpense.id,
+        category: selectedCategory.value,
+        amount: amount,
+        date: selectedDate.value,
+        description: descriptionController.text.trim(),
+        receiptFile: selectedImage.value,
+      );
 
-    final idx = expenses.indexWhere((e) => e.id == oldExpense.id);
-    if (idx != -1) {
-      expenses[idx] = updatedExpense;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        clearForm();
+        Get.back(); // close modal
+        fetchExpenses();
+
+        Get.snackbar(
+          "Success",
+          "Expense updated successfully",
+          backgroundColor: const Color(0xFFD08700),
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          response.data?['message'] ?? "Failed to update expense",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Failed to update expense: $e",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
     }
-    clearForm();
-    Get.back(); // close modal
-
-    Get.snackbar(
-      "Success",
-      "Expense updated successfully",
-      backgroundColor: const Color(0xFFD08700),
-      colorText: Colors.white,
-    );
   }
 
-  void deleteExpense(String id) {
-    expenses.removeWhere((e) => e.id == id);
-    Get.snackbar(
-      "Deleted",
-      "Expense deleted successfully",
-      backgroundColor: Colors.redAccent,
-      colorText: Colors.white,
-    );
+  Future<void> deleteExpense(String id) async {
+    try {
+      isLoading.value = true;
+      final response = await _expenseService.deleteExpense(id);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        expenses.removeWhere((e) => e.id == id);
+        fetchTotalExpenses();
+        Get.snackbar(
+          "Deleted",
+          "Expense deleted successfully",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          response.data?['message'] ?? "Failed to delete expense",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Failed to delete expense: $e",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> exportToCSV() async {

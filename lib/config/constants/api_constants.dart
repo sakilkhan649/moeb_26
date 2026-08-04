@@ -1,7 +1,7 @@
 class ApiConstants {
   // Base URL
-  // static const String baseUrl = 'https://nayem5000.binarybards.online/api/v1';
-  static const String baseUrl = 'https://api.ekkali.app/api/v1';
+  static const String baseUrl = 'https://nayem5000.binarybards.online/api/v1';
+  // static const String baseUrl = 'https://api.ekkali.app/api/v1';
   // static const String baseUrl = 'http://10.10.7.47:5003/api/v1';
 
   // Auth Endpoints
@@ -70,4 +70,8 @@ class ApiConstants {
   // Driver Endpoints
   static const String deleteVehicle = '/user/vehicles/{{vehicleId}}';
   static const String deleteAccount = '/user/delete-account';
+
+  // Expense Endpoints
+  static const String expenses = '/expenses';
+  static const String expensesTotal = '/expenses/total';
 }

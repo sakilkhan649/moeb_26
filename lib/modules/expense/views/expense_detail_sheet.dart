@@ -141,7 +141,9 @@ class ExpenseDetailSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16.r),
                     border: Border.all(color: borderColor.withValues(alpha: 0.5)),
                     image: DecorationImage(
-                      image: FileImage(File(expense.receiptImageUrl!)),
+                      image: expense.receiptImageUrl!.startsWith('http')
+                          ? NetworkImage(expense.receiptImageUrl!) as ImageProvider
+                          : FileImage(File(expense.receiptImageUrl!)),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -248,10 +250,21 @@ class ExpenseDetailSheet extends StatelessWidget {
                     bottomLeft: Radius.circular(16.r),
                     bottomRight: Radius.circular(16.r),
                   ),
-                  child: Image.file(
-                    File(imagePath),
-                    fit: BoxFit.contain,
-                  ),
+                  child: imagePath.startsWith('http')
+                      ? Image.network(
+                          imagePath,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Icon(Icons.broken_image,
+                                color: Colors.white54, size: 40),
+                          ),
+                        )
+                      : Image.file(
+                          File(imagePath),
+                          fit: BoxFit.contain,
+                        ),
                 ),
               ],
             ),

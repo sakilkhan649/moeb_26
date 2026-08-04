@@ -1,3 +1,5 @@
+import 'package:moeb_26/config/constants/api_constants.dart';
+
 class ExpenseModel {
   final String id;
   final String userId;
@@ -18,14 +20,29 @@ class ExpenseModel {
   });
 
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
+    String rawReceipt = json['receipt'] ?? json['receiptImageUrl'] ?? '';
+    String? parsedReceiptUrl;
+    if (rawReceipt.isNotEmpty) {
+      if (rawReceipt.startsWith('http://') || rawReceipt.startsWith('https://')) {
+        parsedReceiptUrl = rawReceipt;
+      } else if (rawReceipt.startsWith('//')) {
+        parsedReceiptUrl = 'https:$rawReceipt';
+      } else if (rawReceipt.startsWith('/')) {
+        final serverBase = ApiConstants.baseUrl.replaceAll('/api/v1', '');
+        parsedReceiptUrl = '$serverBase$rawReceipt';
+      } else {
+        parsedReceiptUrl = rawReceipt;
+      }
+    }
+
     return ExpenseModel(
-      id: json['id'] ?? '',
-      userId: json['userId'] ?? '',
+      id: json['id'] ?? json['_id'] ?? '',
+      userId: json['user'] ?? json['userId'] ?? '',
       category: json['category'] ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
       description: json['description'] ?? '',
-      receiptImageUrl: json['receiptImageUrl'],
+      receiptImageUrl: parsedReceiptUrl,
     );
   }
 

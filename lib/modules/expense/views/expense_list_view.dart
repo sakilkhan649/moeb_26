@@ -80,7 +80,10 @@ class ExpenseListView extends GetView<ExpenseController> {
                   ),
                   constraints: BoxConstraints(maxWidth: 165.w),
                   onSelected: (val) {
-                    controller.filterPeriod.value = val;
+                    if (controller.filterPeriod.value != val) {
+                      controller.filterPeriod.value = val;
+                      controller.fetchExpenses();
+                    }
                   },
                   itemBuilder: (context) {
                     final current = controller.filterPeriod.value;
@@ -254,47 +257,52 @@ class ExpenseListView extends GetView<ExpenseController> {
 
               // Excel-style Categories List (Expandable)
               Expanded(
-                child: Builder(
-                  builder: (context) {
-                    if (groupedExpenses.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.receipt_long_outlined,
-                              color: AppColors.gray100,
-                              size: 44.sp,
-                            ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              "No expenses for this period",
-                              style: GoogleFonts.inter(
-                                color: AppColors.gray100,
-                                fontSize: 13.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      itemCount: groupedExpenses.keys.length,
-                      itemBuilder: (context, index) {
-                        final category = groupedExpenses.keys.elementAt(index);
-                        final items = groupedExpenses[category]!;
-                        return _buildCategoryExpansionTile(
-                          context,
-                          category,
-                          items,
-                          borderColor,
-                          accentColor,
-                        );
-                      },
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.orange100,
+                      ),
                     );
-                  },
-                ),
+                  }
+                  if (groupedExpenses.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.receipt_long_outlined,
+                            color: AppColors.gray100,
+                            size: 44.sp,
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            "No expenses for this period",
+                            style: GoogleFonts.inter(
+                              color: AppColors.gray100,
+                              fontSize: 13.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    itemCount: groupedExpenses.keys.length,
+                    itemBuilder: (context, index) {
+                      final category = groupedExpenses.keys.elementAt(index);
+                      final items = groupedExpenses[category]!;
+                      return _buildCategoryExpansionTile(
+                        context,
+                        category,
+                        items,
+                        borderColor,
+                        accentColor,
+                      );
+                    },
+                  );
+                }),
               ),
             ],
           ),
@@ -426,343 +434,365 @@ class ExpenseListView extends GetView<ExpenseController> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: const Color(0xFF2C2C2C), width: 1),
       ),
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          dividerColor: Colors.transparent,
-          unselectedWidgetColor: Colors.white54,
-          visualDensity: const VisualDensity(vertical: -1.5),
-          colorScheme: const ColorScheme.dark(primary: Colors.white),
-        ),
-        child: ExpansionTile(
-          dense: true,
-          visualDensity: const VisualDensity(vertical: -1.5),
-          tilePadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
-          leading: Container(
-            padding: EdgeInsets.all(6.r),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFDCA1).withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(6.r),
-            ),
-            child: Icon(
-              controller.getCategoryIcon(category),
-              color: const Color(0xFFFFDCA1),
-              size: 16.sp,
-            ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10.r),
+        clipBehavior: Clip.antiAlias,
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            dividerColor: Colors.transparent,
+            unselectedWidgetColor: Colors.white54,
+            visualDensity: const VisualDensity(vertical: -1.5),
+            colorScheme: const ColorScheme.dark(primary: Colors.white),
           ),
-          title: Text(
-            category,
-            style: GoogleFonts.inter(
-              color: Colors.white,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          subtitle: Text(
-            "${items.length} records",
-            style: GoogleFonts.inter(color: AppColors.gray100, fontSize: 10.sp),
-          ),
-          trailing: Text(
-            "\$${categoryTotal.toStringAsFixed(2)}",
-            style: GoogleFonts.inter(
-              color: const Color(0xFFFEDB9B),
-              fontSize: 13.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          children: [
-            // Excel-style subheader
-            Container(
-              color: Colors.black26,
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Date",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Text(
-                      "Description",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Amount",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Actions",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+          child: ExpansionTile(
+            dense: true,
+            visualDensity: const VisualDensity(vertical: -1.5),
+            tilePadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
+            leading: Container(
+              padding: EdgeInsets.all(6.r),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFDCA1).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+              child: Icon(
+                controller.getCategoryIcon(category),
+                color: const Color(0xFFFFDCA1),
+                size: 16.sp,
               ),
             ),
-            // Excel-style individual rows
-            ...items.map((e) {
-              return Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.white10, width: 0.5),
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+            title: Text(
+              category,
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            subtitle: Text(
+              "${items.length} records",
+              style: GoogleFonts.inter(
+                color: AppColors.gray100,
+                fontSize: 10.sp,
+              ),
+            ),
+            trailing: Text(
+              "\$${categoryTotal.toStringAsFixed(2)}",
+              style: GoogleFonts.inter(
+                color: const Color(0xFFFEDB9B),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            children: [
+              // Excel-style subheader
+              Container(
+                color: Colors.black26,
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
                 child: Row(
                   children: [
                     Expanded(
                       flex: 2,
                       child: Text(
-                        DateFormat('dd MMM').format(e.date),
-                        style: TextStyle(color: Colors.white, fontSize: 11.sp),
+                        "Date",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     Expanded(
                       flex: 4,
-                      child: GestureDetector(
-                        onTap: () => Get.bottomSheet(
-                          ExpenseDetailSheet(expense: e),
-                          isScrollControlled: true,
-                          ignoreSafeArea: false,
-                        ),
-                        child: Text(
-                          e.description.isNotEmpty
-                              ? e.description
-                              : "No description",
-                          style: TextStyle(
-                            color: Colors.grey[400],
-                            fontSize: 11.sp,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      child: Text(
+                        "Description",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "\$${e.amount.toStringAsFixed(2)}",
+                        "Amount",
+                        textAlign: TextAlign.right,
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11.sp,
+                          color: Colors.grey,
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.bold,
                         ),
-                        textAlign: TextAlign.right,
                       ),
                     ),
                     Expanded(
                       flex: 2,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.to(() => AddExpenseView(expenseToEdit: e));
-                            },
-                            behavior: HitTestBehavior.opaque,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: 4.r,
-                                top: 4.r,
-                                bottom: 4.r,
-                                right: 3.r,
-                              ),
-                              child: SvgPicture.asset(
-                                AppIcons.edit_icon,
-                                width: 13.sp,
-                                height: 13.sp,
-                                colorFilter: const ColorFilter.mode(
-                                  Colors.white70,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Get.dialog(
-                                Dialog(
-                                  backgroundColor: Colors.transparent,
-                                  child: Container(
-                                    padding: EdgeInsets.all(24.r),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF1A1A1E),
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      border: Border.all(
-                                        color: AppColors.black200.withValues(
-                                          alpha: 0.5,
-                                        ),
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(12.r),
-                                          decoration: BoxDecoration(
-                                            color: Colors.redAccent.withValues(
-                                              alpha: 0.1,
-                                            ),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: SvgPicture.asset(
-                                            AppIcons.delete_icon,
-                                            width: 24.sp,
-                                            height: 24.sp,
-                                            colorFilter: const ColorFilter.mode(
-                                              Colors.redAccent,
-                                              BlendMode.srcIn,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 16.h),
-                                        Text(
-                                          "Delete Expense",
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white,
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        SizedBox(height: 8.h),
-                                        Text(
-                                          "Are you sure you want to delete this expense? This action cannot be undone.",
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.inter(
-                                            color: AppColors.gray100,
-                                            fontSize: 13.sp,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        SizedBox(height: 24.h),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextButton(
-                                                onPressed: () => Get.back(),
-                                                style: TextButton.styleFrom(
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12.h,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12.r,
-                                                        ),
-                                                    side: BorderSide(
-                                                      color: AppColors.black200
-                                                          .withValues(
-                                                            alpha: 0.5,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  "Cancel",
-                                                  style: GoogleFonts.inter(
-                                                    color: Colors.white70,
-                                                    fontSize: 13.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: 12.w),
-                                            Expanded(
-                                              child: ElevatedButton(
-                                                onPressed: () {
-                                                  controller.deleteExpense(
-                                                    e.id,
-                                                  );
-                                                  Get.back();
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Colors.redAccent,
-                                                  foregroundColor: Colors.white,
-                                                  elevation: 0,
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12.h,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12.r,
-                                                        ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  "Delete",
-                                                  style: GoogleFonts.inter(
-                                                    color: Colors.white,
-                                                    fontSize: 13.sp,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            behavior: HitTestBehavior.opaque,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: 3.r,
-                                top: 4.r,
-                                bottom: 4.r,
-                                right: 0,
-                              ),
-                              child: SvgPicture.asset(
-                                AppIcons.delete_icon,
-                                width: 13.sp,
-                                height: 13.sp,
-                                colorFilter: ColorFilter.mode(
-                                  Colors.redAccent.withValues(alpha: 0.8),
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        "Actions",
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              );
-            }).toList(),
-          ],
+              ),
+              // Excel-style individual rows
+              ...items.map((e) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Colors.white10, width: 0.5),
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          DateFormat('dd MMM').format(e.date),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.sp,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: GestureDetector(
+                          onTap: () => Get.bottomSheet(
+                            ExpenseDetailSheet(expense: e),
+                            isScrollControlled: true,
+                            ignoreSafeArea: false,
+                          ),
+                          child: Text(
+                            e.description.isNotEmpty
+                                ? e.description
+                                : "No description",
+                            style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 11.sp,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          "\$${e.amount.toStringAsFixed(2)}",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => AddExpenseView(expenseToEdit: e));
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 4.r,
+                                  top: 4.r,
+                                  bottom: 4.r,
+                                  right: 3.r,
+                                ),
+                                child: SvgPicture.asset(
+                                  AppIcons.edit_icon,
+                                  width: 13.sp,
+                                  height: 13.sp,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.white70,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Get.dialog(
+                                  Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: Container(
+                                      padding: EdgeInsets.all(24.r),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF1A1A1E),
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
+                                        border: Border.all(
+                                          color: AppColors.black200.withValues(
+                                            alpha: 0.5,
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(12.r),
+                                            decoration: BoxDecoration(
+                                              color: Colors.redAccent
+                                                  .withValues(alpha: 0.1),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: SvgPicture.asset(
+                                              AppIcons.delete_icon,
+                                              width: 24.sp,
+                                              height: 24.sp,
+                                              colorFilter:
+                                                  const ColorFilter.mode(
+                                                    Colors.redAccent,
+                                                    BlendMode.srcIn,
+                                                  ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 16.h),
+                                          Text(
+                                            "Delete Expense",
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(height: 8.h),
+                                          Text(
+                                            "Are you sure you want to delete this expense? This action cannot be undone.",
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.inter(
+                                              color: AppColors.gray100,
+                                              fontSize: 13.sp,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          SizedBox(height: 24.h),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextButton(
+                                                  onPressed: () => Get.back(),
+                                                  style: TextButton.styleFrom(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          vertical: 12.h,
+                                                        ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12.r,
+                                                          ),
+                                                      side: BorderSide(
+                                                        color: AppColors
+                                                            .black200
+                                                            .withValues(
+                                                              alpha: 0.5,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    "Cancel",
+                                                    style: GoogleFonts.inter(
+                                                      color: Colors.white70,
+                                                      fontSize: 13.sp,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 12.w),
+                                              Expanded(
+                                                child: ElevatedButton(
+                                                  onPressed: () {
+                                                    controller.deleteExpense(
+                                                      e.id,
+                                                    );
+                                                    Get.back();
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.redAccent,
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    elevation: 0,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          vertical: 12.h,
+                                                        ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12.r,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    "Delete",
+                                                    style: GoogleFonts.inter(
+                                                      color: Colors.white,
+                                                      fontSize: 13.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 3.r,
+                                  top: 4.r,
+                                  bottom: 4.r,
+                                  right: 0,
+                                ),
+                                child: SvgPicture.asset(
+                                  AppIcons.delete_icon,
+                                  width: 13.sp,
+                                  height: 13.sp,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.redAccent.withValues(alpha: 0.8),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
         ),
       ),
     );

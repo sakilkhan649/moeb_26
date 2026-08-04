@@ -19,6 +19,7 @@ import 'package:moeb_26/core/services/user_service.dart';
 import 'package:moeb_26/core/services/support_service.dart';
 import 'package:moeb_26/core/services/community_service.dart';
 import 'package:moeb_26/core/services/notifications_service.dart';
+import 'package:moeb_26/core/services/expense_service.dart';
 
 class InitialBinding extends Bindings {
   @override
@@ -46,6 +47,7 @@ class InitialBinding extends Bindings {
     Get.put(UserProfileService(userProfileRepo: Get.find()), permanent: true);
     Get.put(JobService(), permanent: true);
     Get.put(NotificationsService(), permanent: true);
+    Get.put(ExpenseService(), permanent: true);
     Get.put(
       RatingsFeedbackService(ratingsFeedbackRepo: Get.find()),
       permanent: true,
