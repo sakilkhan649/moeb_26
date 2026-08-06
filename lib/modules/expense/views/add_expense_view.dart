@@ -254,69 +254,120 @@ class AddExpenseView extends StatelessWidget {
 
                   // Receipt Attachment
                   _buildFieldLabel("Receipt Attachment (Optional)"),
-                  Builder(
-                    builder: (context) {
-                      final file = controller.selectedImage.value;
-                      if (file != null) {
-                        return Container(
-                          height: 150.h,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16.r),
-                            border: Border.all(color: borderColor),
-                            image: DecorationImage(
-                              image: FileImage(file),
-                              fit: BoxFit.cover,
+                  Obx(() {
+                    final file = controller.selectedImage.value;
+                    final networkUrl = controller.existingImageUrl.value;
+
+                    if (file != null) {
+                      return Container(
+                        height: 150.h,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(color: borderColor),
+                          image: DecorationImage(
+                            image: FileImage(file),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: GestureDetector(
+                            onTap: () =>
+                                controller.selectedImage.value = null,
+                            child: Container(
+                              margin: EdgeInsets.all(8.r),
+                              padding: EdgeInsets.all(4.r),
+                              decoration: const BoxDecoration(
+                                color: Colors.black54,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: Colors.redAccent,
+                                size: 20.sp,
+                              ),
                             ),
                           ),
-                          child: Align(
-                            alignment: Alignment.topRight,
-                            child: GestureDetector(
+                        ),
+                      );
+                    } else if (networkUrl != null && networkUrl.isNotEmpty) {
+                      return Container(
+                        height: 150.h,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.r),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: Image.network(
+                                  networkUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Center(
+                                      child: Icon(
+                                        Icons.broken_image_outlined,
+                                        color: Colors.grey,
+                                        size: 40.sp,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: GestureDetector(
+                                  onTap: () =>
+                                      controller.existingImageUrl.value = null,
+                                  child: Container(
+                                    margin: EdgeInsets.all(8.r),
+                                    padding: EdgeInsets.all(4.r),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.black54,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.redAccent,
+                                      size: 20.sp,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: _buildAttachmentButton(
+                              icon: Icons.camera_alt_outlined,
+                              label: "Camera",
+                              borderColor: borderColor,
                               onTap: () =>
-                                  controller.selectedImage.value = null,
-                              child: Container(
-                                margin: EdgeInsets.all(8.r),
-                                padding: EdgeInsets.all(4.r),
-                                decoration: const BoxDecoration(
-                                  color: Colors.black54,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.delete_outline,
-                                  color: Colors.redAccent,
-                                  size: 20.sp,
-                                ),
-                              ),
+                                  controller.pickImage(ImageSource.camera),
                             ),
                           ),
-                        );
-                      } else {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: _buildAttachmentButton(
-                                icon: Icons.camera_alt_outlined,
-                                label: "Camera",
-                                borderColor: borderColor,
-                                onTap: () =>
-                                    controller.pickImage(ImageSource.camera),
-                              ),
+                          SizedBox(width: 15.w),
+                          Expanded(
+                            child: _buildAttachmentButton(
+                              icon: Icons.photo_library_outlined,
+                              label: "Gallery",
+                              borderColor: borderColor,
+                              onTap: () =>
+                                  controller.pickImage(ImageSource.gallery),
                             ),
-                            SizedBox(width: 15.w),
-                            Expanded(
-                              child: _buildAttachmentButton(
-                                icon: Icons.photo_library_outlined,
-                                label: "Gallery",
-                                borderColor: borderColor,
-                                onTap: () =>
-                                    controller.pickImage(ImageSource.gallery),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                    },
-                  ),
+                          ),
+                        ],
+                      );
+                    }
+                  }),
                   SizedBox(height: 40.h),
 
                   // Submit Button
@@ -324,6 +375,7 @@ class AddExpenseView extends StatelessWidget {
                     text: expenseToEdit != null
                         ? "Update Expense"
                         : "Add Expense",
+                    loading: controller.isLoading.value,
                     backgroundColor: accentColor,
                     textColor: Colors.black,
                     onPressed: () {

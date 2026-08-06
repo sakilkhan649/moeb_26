@@ -25,6 +25,7 @@ class ExpenseController extends GetxController {
   var selectedCategory = 'Fuel'.obs;
   var selectedDate = DateTime.now().obs;
   var selectedImage = Rxn<File>();
+  var existingImageUrl = Rxn<String>();
 
   // Filter states
   var filterPeriod = 'Monthly'.obs; // 'Monthly' or 'Yearly'
@@ -81,6 +82,7 @@ class ExpenseController extends GetxController {
       final response = await _expenseService.fetchExpenses(
         startDate: range.start,
         endDate: range.end,
+        limit: 1000,
       );
 
       if (response.statusCode == 200 && response.data != null) {
@@ -218,6 +220,7 @@ class ExpenseController extends GetxController {
       );
       if (pickedFile != null) {
         selectedImage.value = File(pickedFile.path);
+        existingImageUrl.value = null;
       }
     } catch (e) {
       Get.snackbar(
@@ -235,6 +238,7 @@ class ExpenseController extends GetxController {
     selectedCategory.value = categories.first;
     selectedDate.value = DateTime.now();
     selectedImage.value = null;
+    existingImageUrl.value = null;
   }
 
   void loadExpenseForEdit(ExpenseModel expense) {
@@ -243,11 +247,18 @@ class ExpenseController extends GetxController {
     selectedCategory.value = expense.category;
     selectedDate.value = expense.date;
     if (expense.receiptImageUrl != null &&
-        expense.receiptImageUrl!.isNotEmpty &&
-        !expense.receiptImageUrl!.startsWith('http')) {
-      selectedImage.value = File(expense.receiptImageUrl!);
+        expense.receiptImageUrl!.isNotEmpty) {
+      if (expense.receiptImageUrl!.startsWith('http://') ||
+          expense.receiptImageUrl!.startsWith('https://')) {
+        existingImageUrl.value = expense.receiptImageUrl;
+        selectedImage.value = null;
+      } else {
+        selectedImage.value = File(expense.receiptImageUrl!);
+        existingImageUrl.value = null;
+      }
     } else {
       selectedImage.value = null;
+      existingImageUrl.value = null;
     }
   }
 
@@ -365,20 +376,29 @@ class ExpenseController extends GetxController {
   }
 
   Future<void> deleteExpense(String id) async {
+    final index = expenses.indexWhere((e) => e.id == id);
+    if (index == -1) return;
+
+    final removedExpense = expenses[index];
+    // Smoothly remove item locally without full-screen loading state
+    expenses.removeAt(index);
+    fetchTotalExpenses();
+
     try {
-      isLoading.value = true;
       final response = await _expenseService.deleteExpense(id);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        expenses.removeWhere((e) => e.id == id);
-        fetchTotalExpenses();
         Get.snackbar(
           "Deleted",
           "Expense deleted successfully",
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
+          duration: const Duration(seconds: 2),
         );
       } else {
+        // Rollback if server call fails
+        expenses.insert(index, removedExpense);
+        fetchTotalExpenses();
         Get.snackbar(
           "Error",
           response.data?['message'] ?? "Failed to delete expense",
@@ -387,14 +407,15 @@ class ExpenseController extends GetxController {
         );
       }
     } catch (e) {
+      // Rollback on network failure
+      expenses.insert(index, removedExpense);
+      fetchTotalExpenses();
       Get.snackbar(
         "Error",
         "Failed to delete expense: $e",
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 

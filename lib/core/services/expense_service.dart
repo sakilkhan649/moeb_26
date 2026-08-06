@@ -22,7 +22,7 @@ class ExpenseService extends GetxService {
     DateTime? startDate,
     DateTime? endDate,
     int page = 1,
-    int limit = 50,
+    int limit = 1000,
   }) async {
     final Map<String, dynamic> query = {
       'page': page,
