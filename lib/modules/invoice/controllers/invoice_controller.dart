@@ -1,10 +1,15 @@
+import 'dart:io';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:moeb_26/data/models/invoice_model.dart';
+import 'package:moeb_26/data/repositories/invoice_repository.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_preview_view.dart';
 
 class InvoiceHistoryRecord {
+  final String? id;
   final String invoiceNumber;
   final String clientName;
   final String clientEmail;
@@ -32,6 +37,7 @@ class InvoiceHistoryRecord {
   final String businessLogoPath;
 
   InvoiceHistoryRecord({
+    this.id,
     required this.invoiceNumber,
     required this.clientName,
     required this.clientEmail,
@@ -57,8 +63,9 @@ class InvoiceHistoryRecord {
     required this.businessLogoPath,
   });
 
-  InvoiceHistoryRecord copyWith({String? status}) {
+  InvoiceHistoryRecord copyWith({String? status, String? id}) {
     return InvoiceHistoryRecord(
+      id: id ?? this.id,
       invoiceNumber: invoiceNumber,
       clientName: clientName,
       clientEmail: clientEmail,
@@ -139,6 +146,9 @@ class SavedClient {
 }
 
 class InvoiceController extends GetxController {
+  final InvoiceRepository _invoiceRepo = Get.find<InvoiceRepository>();
+  var isLoading = false.obs;
+
   // Navigation / Page Step
   var currentStep = 1.obs;
   var editingRecordIndex = (-1).obs;
@@ -175,7 +185,7 @@ class InvoiceController extends GetxController {
   late TextEditingController businessWebsiteController;
   late TextEditingController businessAddressController;
   var businessLogoPath = RxnString();
-  var savedBusinessName = 'Kali Ride LLC'.obs;
+  var savedBusinessName = ''.obs;
 
   // --- INVOICE HISTORY & SAVED CLIENTS ---
   var invoiceHistory = <InvoiceHistoryRecord>[].obs;
@@ -213,8 +223,8 @@ class InvoiceController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    invoiceNumberController = TextEditingController(text: 'Invoice 004');
-    invoiceAmountController = TextEditingController(text: '0.00');
+    invoiceNumberController = TextEditingController();
+    invoiceAmountController = TextEditingController();
 
     // Step 2: Client Details
     clientNameController = TextEditingController();
@@ -235,94 +245,15 @@ class InvoiceController extends GetxController {
     );
 
     // Profile Settings controllers
-    businessNameController = TextEditingController(text: 'Kali Ride LLC');
-    businessEmailController = TextEditingController(text: 'Info@kaliride.com');
-    businessPhoneController = TextEditingController(text: '5617793674');
-    businessWebsiteController = TextEditingController(text: 'www.kaliride.com');
-    businessAddressController = TextEditingController(text: '');
+    businessNameController = TextEditingController();
+    businessEmailController = TextEditingController();
+    businessPhoneController = TextEditingController();
+    businessWebsiteController = TextEditingController();
+    businessAddressController = TextEditingController();
 
-    // Add mock invoice history records
-    invoiceHistory.addAll([
-      InvoiceHistoryRecord(
-        invoiceNumber: 'Invoice 002',
-        clientName: 'Acme Corp',
-        clientEmail: 'billing@acme.com',
-        issuedDate: DateTime.now().subtract(const Duration(days: 10)),
-        currency: 'USD',
-        status: 'Paid',
-        totalAmount: 450.00,
-        clientBusinessName: 'Acme Corp',
-        clientPhone: '561-555-0199',
-        invoiceDescription:
-            'Consulting services and software development work.',
-        clientStreetAddress: '100 Industrial Parkway',
-        clientCity: 'Metropolis',
-        clientState: 'NY',
-        clientZip: '10001',
-        clientCountry: 'United States',
-        messageToClient: 'Thank you for your business!',
-        dueDate: '15 days',
-        businessName: 'Kali Ride LLC',
-        businessEmail: 'Info@kaliride.com',
-        businessPhone: '5617793674',
-        businessWebsite: 'www.kaliride.com',
-        businessAddress: '123 Luxury Road, Palm Beach, FL 33480',
-        businessLogoPath: '',
-      ),
-      InvoiceHistoryRecord(
-        invoiceNumber: 'Invoice 001',
-        clientName: 'Globex Inc',
-        clientEmail: 'accounts@globex.com',
-        issuedDate: DateTime.now().subtract(const Duration(days: 25)),
-        currency: 'USD',
-        status: 'Paid',
-        totalAmount: 120.00,
-        clientBusinessName: 'Globex Inc',
-        clientPhone: '800-555-0144',
-        invoiceDescription: 'Graphic design and brand identity development.',
-        clientStreetAddress: '500 Corporate Blvd',
-        clientCity: 'Gotham',
-        clientState: 'NJ',
-        clientZip: '07001',
-        clientCountry: 'United States',
-        messageToClient: 'Services rendered for month of May.',
-        dueDate: '30 days',
-        businessName: 'Kali Ride LLC',
-        businessEmail: 'Info@kaliride.com',
-        businessPhone: '5617793674',
-        businessWebsite: 'www.kaliride.com',
-        businessAddress: '123 Luxury Road, Palm Beach, FL 33480',
-        businessLogoPath: '',
-      ),
-    ]);
-
-    // Initial mock saved clients
-    savedClients.addAll([
-      SavedClient(
-        id: '1',
-        name: 'Acme Corp',
-        businessName: 'Acme Corp',
-        email: 'billing@acme.com',
-        phone: '561-555-0199',
-        streetAddress: '100 Industrial Parkway',
-        city: 'Metropolis',
-        state: 'NY',
-        zip: '10001',
-        country: 'United States',
-      ),
-      SavedClient(
-        id: '2',
-        name: 'Globex Inc',
-        businessName: 'Globex Inc',
-        email: 'accounts@globex.com',
-        phone: '800-555-0144',
-        streetAddress: '500 Corporate Blvd',
-        city: 'Gotham',
-        state: 'NJ',
-        zip: '07001',
-        country: 'United States',
-      ),
-    ]);
+    // Fetch invoices & profile from backend API
+    fetchInvoicesFromApi();
+    fetchInvoiceProfileFromApi();
   }
 
   // --- SAVED CLIENTS ACTIONS ---
@@ -552,7 +483,43 @@ class InvoiceController extends GetxController {
     }
   }
 
-  void saveProfileSettings() {
+  Future<void> fetchInvoiceProfileFromApi() async {
+    try {
+      final response = await _invoiceRepo.fetchInvoiceProfile();
+      if (response.statusCode == 200 && response.data != null) {
+        final body = response.data;
+        if (body['success'] == true && body['data'] != null) {
+          final profile = InvoiceProfileModel.fromJson(
+            body['data'] as Map<String, dynamic>,
+          );
+          if (profile.businessName != null &&
+              profile.businessName!.isNotEmpty) {
+            businessNameController.text = profile.businessName!;
+            savedBusinessName.value = profile.businessName!;
+          }
+          if (profile.email != null && profile.email!.isNotEmpty) {
+            businessEmailController.text = profile.email!;
+          }
+          if (profile.phoneNumber != null && profile.phoneNumber!.isNotEmpty) {
+            businessPhoneController.text = profile.phoneNumber!;
+          }
+          if (profile.website != null && profile.website!.isNotEmpty) {
+            businessWebsiteController.text = profile.website!;
+          }
+          if (profile.address != null && profile.address!.isNotEmpty) {
+            businessAddressController.text = profile.address!;
+          }
+          if (profile.logo != null && profile.logo!.isNotEmpty) {
+            businessLogoPath.value = profile.logo;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching invoice profile from API: $e');
+    }
+  }
+
+  Future<void> saveProfileSettings() async {
     if (businessNameController.text.trim().isEmpty) {
       Get.snackbar(
         'Required',
@@ -564,18 +531,91 @@ class InvoiceController extends GetxController {
       return;
     }
 
-    savedBusinessName.value = businessNameController.text.trim();
+    File? logoFile;
+    if (businessLogoPath.value != null &&
+        businessLogoPath.value!.isNotEmpty &&
+        !businessLogoPath.value!.startsWith('http://') &&
+        !businessLogoPath.value!.startsWith('https://')) {
+      final file = File(businessLogoPath.value!);
+      if (file.existsSync()) {
+        logoFile = file;
+      }
+    }
 
-    Get.snackbar(
-      'Success',
-      'Profile settings saved successfully.',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFFFEDB9B), // Soft peach-yellow
-      colorText: Colors.black,
-      duration: const Duration(seconds: 2),
+    final profile = InvoiceProfileModel(
+      businessName: businessNameController.text.trim(),
+      email: businessEmailController.text.trim(),
+      phoneNumber: businessPhoneController.text.trim(),
+      website: businessWebsiteController.text.trim(),
+      address: businessAddressController.text.trim(),
+      logo: businessLogoPath.value ?? '',
     );
 
-    Get.back(); // Return to settings page
+    try {
+      isLoading.value = true;
+      final response = await _invoiceRepo.upsertInvoiceProfile(
+        profile,
+        logoFile: logoFile,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = response.data;
+        if (body != null && body['data'] != null) {
+          final updatedProfile = InvoiceProfileModel.fromJson(body['data']);
+          if (updatedProfile.businessName != null &&
+              updatedProfile.businessName!.isNotEmpty) {
+            savedBusinessName.value = updatedProfile.businessName!;
+          }
+          if (updatedProfile.logo != null && updatedProfile.logo!.isNotEmpty) {
+            businessLogoPath.value = updatedProfile.logo!;
+          }
+        } else {
+          savedBusinessName.value = businessNameController.text.trim();
+        }
+
+        Get.back(); // Return to settings page
+
+        Get.snackbar(
+          'Success',
+          'Profile settings saved successfully.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFFFEDB9B), // Soft peach-yellow
+          colorText: Colors.black,
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        String errorMsg =
+            'Failed to save profile. Code: ${response.statusCode}';
+        if (response.data != null && response.data is Map) {
+          final body = response.data as Map<String, dynamic>;
+          if (body['errorMessages'] is List &&
+              (body['errorMessages'] as List).isNotEmpty) {
+            final firstErr = (body['errorMessages'] as List)[0];
+            if (firstErr is Map && firstErr['message'] != null) {
+              errorMsg = "${firstErr['path']}: ${firstErr['message']}";
+            }
+          } else if (body['message'] != null) {
+            errorMsg = body['message'].toString();
+          }
+        }
+        Get.snackbar(
+          'Validation Error',
+          errorMsg,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Profile update failed: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void populateFromRecord(InvoiceHistoryRecord record) {
@@ -611,7 +651,7 @@ class InvoiceController extends GetxController {
 
   void prepareNewInvoice() {
     editingRecordIndex.value = -1;
-    invoiceAmountController.text = '0.00';
+    invoiceAmountController.clear();
     clientNameController.clear();
     clientBusinessNameController.clear();
     clientEmailController.clear();
@@ -622,11 +662,7 @@ class InvoiceController extends GetxController {
     clientZipController.clear();
     invoiceDescriptionController.clear();
     messageToClientController.text = 'Thank you for your business!';
-
-    // Generate next invoice number based on history count
-    final nextNum = invoiceHistory.isEmpty ? 1 : (invoiceHistory.length + 1);
-    invoiceNumberController.text =
-        'Invoice ${nextNum.toString().padLeft(3, '0')}';
+    invoiceNumberController.clear();
 
     issuedDate.value = DateTime.now();
     selectedDueDateOption.value = 'On Receipt';
@@ -634,10 +670,24 @@ class InvoiceController extends GetxController {
     currentStep.value = 1;
   }
 
-  void deleteInvoice() {
+  Future<void> deleteInvoiceAtIndex(int index) async {
+    if (index >= 0 && index < invoiceHistory.length) {
+      final record = invoiceHistory[index];
+      if (record.id != null && record.id!.isNotEmpty) {
+        try {
+          await _invoiceRepo.deleteInvoice(record.id!);
+        } catch (e) {
+          debugPrint('Error deleting invoice from backend: $e');
+        }
+      }
+      invoiceHistory.removeAt(index);
+    }
+  }
+
+  Future<void> deleteInvoice() async {
     final wasEditing = editingRecordIndex.value != -1;
-    if (wasEditing) {
-      invoiceHistory.removeAt(editingRecordIndex.value);
+    if (wasEditing && editingRecordIndex.value < invoiceHistory.length) {
+      await deleteInvoiceAtIndex(editingRecordIndex.value);
     }
 
     // Reset fields for the next invoice
@@ -672,48 +722,244 @@ class InvoiceController extends GetxController {
     );
   }
 
-  void submitInvoice() {
+  Future<void> fetchInvoicesFromApi() async {
+    try {
+      isLoading.value = true;
+      final response = await _invoiceRepo.fetchInvoices();
+      if (response.statusCode == 200 && response.data != null) {
+        final body = response.data;
+        if (body['success'] == true && body['data'] is List) {
+          final List list = body['data'];
+          final records = list.map((item) {
+            final model = InvoiceModel.fromJson(item as Map<String, dynamic>);
+            return _mapInvoiceModelToRecord(model);
+          }).toList();
+
+          invoiceHistory.assignAll(records);
+
+          // Populate saved clients from fetched invoices
+          for (final r in records) {
+            if (r.clientName.isNotEmpty && r.clientName != 'N/A') {
+              final client = SavedClient(
+                id: r.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                name: r.clientName,
+                businessName: r.clientBusinessName,
+                email: r.clientEmail,
+                phone: r.clientPhone,
+                streetAddress: r.clientStreetAddress,
+                city: r.clientCity,
+                state: r.clientState,
+                zip: r.clientZip,
+                country: r.clientCountry,
+              );
+              addOrUpdateSavedClient(client);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching invoices from API: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  InvoiceHistoryRecord _mapInvoiceModelToRecord(InvoiceModel model) {
+    String dueDateStr = 'On Receipt';
+    if (model.dueDateType == 'custom' && model.customDueDate != null) {
+      dueDateStr = 'Custom Due Date';
+    } else if (model.dueDateType == 'on_receipt') {
+      dueDateStr = 'On Receipt';
+    } else if (model.dueDateType != null && model.dueDateType!.isNotEmpty) {
+      dueDateStr = model.dueDateType!;
+    }
+
+    return InvoiceHistoryRecord(
+      id: model.id,
+      invoiceNumber: model.invoiceNumber ?? 'INV-000',
+      clientName: model.clientName ?? 'N/A',
+      clientEmail: model.emailAddress ?? '',
+      issuedDate: model.issueDate ?? DateTime.now(),
+      currency: model.currency ?? 'USD',
+      status: model.status != null
+          ? (model.status!.toLowerCase() == 'draft'
+                ? 'Unpaid'
+                : model.status!.capitalizeFirst!)
+          : 'Unpaid',
+      totalAmount: model.invoiceAmount ?? 0.0,
+      clientBusinessName: model.businessName ?? '',
+      clientPhone: model.phoneNumber ?? '',
+      invoiceDescription: model.description ?? '',
+      clientStreetAddress: model.billingAddress?.streetAddress ?? '',
+      clientCity: model.billingAddress?.city ?? '',
+      clientState: model.billingAddress?.state ?? '',
+      clientZip: model.billingAddress?.zipCode ?? '',
+      clientCountry: model.billingAddress?.country ?? 'United States',
+      messageToClient: model.messageToClient ?? '',
+      dueDate: dueDateStr,
+      businessName:
+          model.senderDetails?.businessName ??
+          (savedBusinessName.value.isNotEmpty
+              ? savedBusinessName.value
+              : businessNameController.text),
+      businessEmail: model.senderDetails?.email ?? businessEmailController.text,
+      businessPhone:
+          model.senderDetails?.phoneNumber ?? businessPhoneController.text,
+      businessWebsite:
+          model.senderDetails?.website ?? businessWebsiteController.text,
+      businessAddress:
+          model.senderDetails?.address ?? businessAddressController.text,
+      businessLogoPath:
+          model.senderDetails?.logo ?? (businessLogoPath.value ?? ''),
+    );
+  }
+
+  Future<void> submitInvoice() async {
     final wasEditing = editingRecordIndex.value != -1;
     final double amount = double.tryParse(invoiceAmountController.text) ?? 0.0;
 
     // Auto save client details for future invoices
     autoSaveClientFromControllers();
 
-    final record = InvoiceHistoryRecord(
-      invoiceNumber: invoiceNumberController.text.trim(),
+    final String dueDateTypeStr = selectedDueDateOption.value == 'On Receipt'
+        ? 'on_receipt'
+        : 'custom';
+
+    final invoicePayload = InvoiceModel(
+      invoiceAmount: amount,
+      issueDate: issuedDate.value,
+      dueDateType: dueDateTypeStr,
+      customDueDate: selectedDueDateOption.value == 'Custom Due Date'
+          ? customDueDate.value
+          : null,
       clientName: clientNameController.text.trim(),
-      clientEmail: clientEmailController.text.trim(),
-      issuedDate: issuedDate.value,
-      currency: selectedCurrency.value.split(' ')[0],
-      status: wasEditing
-          ? invoiceHistory[editingRecordIndex.value].status
-          : 'Unpaid',
-      totalAmount: amount,
-      clientBusinessName: clientBusinessNameController.text.trim(),
-      clientPhone: clientPhoneController.text.trim(),
-      clientStreetAddress: clientStreetAddressController.text.trim(),
-      clientCity: clientCityController.text.trim(),
-      clientState: clientStateController.text.trim(),
-      clientZip: clientZipController.text.trim(),
-      clientCountry: clientCountry.value,
-      invoiceDescription: invoiceDescriptionController.text.trim(),
+      businessName: clientBusinessNameController.text.trim(),
+      emailAddress: clientEmailController.text.trim(),
+      phoneNumber: clientPhoneController.text.trim(),
+      billingAddress: BillingAddressModel(
+        streetAddress: clientStreetAddressController.text.trim(),
+        city: clientCityController.text.trim(),
+        state: clientStateController.text.trim(),
+        zipCode: clientZipController.text.trim(),
+        country: clientCountry.value,
+      ),
+      description: invoiceDescriptionController.text.trim(),
       messageToClient: messageToClientController.text.trim(),
-      dueDate: selectedDueDateOption.value,
-      businessName: businessNameController.text.trim(),
-      businessEmail: businessEmailController.text.trim(),
-      businessPhone: businessPhoneController.text.trim(),
-      businessWebsite: businessWebsiteController.text.trim(),
-      businessAddress: businessAddressController.text.trim(),
-      businessLogoPath: businessLogoPath.value ?? '',
     );
 
-    if (wasEditing) {
-      invoiceHistory[editingRecordIndex.value] = record;
-    } else {
-      invoiceHistory.insert(0, record);
-    }
+    try {
+      isLoading.value = true;
+      final dio.Response response;
+      if (wasEditing &&
+          editingRecordIndex.value < invoiceHistory.length &&
+          invoiceHistory[editingRecordIndex.value].id != null) {
+        final existingId = invoiceHistory[editingRecordIndex.value].id!;
+        response = await _invoiceRepo.updateInvoice(
+          existingId,
+          invoicePayload.toJson(),
+        );
+      } else {
+        response = await _invoiceRepo.createInvoice(invoicePayload);
+      }
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = response.data;
+        InvoiceHistoryRecord record;
+        if (body != null && body['success'] == true && body['data'] != null) {
+          final createdModel = InvoiceModel.fromJson(body['data']);
+          record = _mapInvoiceModelToRecord(createdModel);
+        } else {
+          record = InvoiceHistoryRecord(
+            invoiceNumber: invoiceNumberController.text.trim(),
+            clientName: clientNameController.text.trim(),
+            clientEmail: clientEmailController.text.trim(),
+            issuedDate: issuedDate.value,
+            currency: selectedCurrency.value.split(' ')[0],
+            status: wasEditing
+                ? invoiceHistory[editingRecordIndex.value].status
+                : 'Unpaid',
+            totalAmount: amount,
+            clientBusinessName: clientBusinessNameController.text.trim(),
+            clientPhone: clientPhoneController.text.trim(),
+            clientStreetAddress: clientStreetAddressController.text.trim(),
+            clientCity: clientCityController.text.trim(),
+            clientState: clientStateController.text.trim(),
+            clientZip: clientZipController.text.trim(),
+            clientCountry: clientCountry.value,
+            invoiceDescription: invoiceDescriptionController.text.trim(),
+            messageToClient: messageToClientController.text.trim(),
+            dueDate: selectedDueDateOption.value,
+            businessName: businessNameController.text.trim(),
+            businessEmail: businessEmailController.text.trim(),
+            businessPhone: businessPhoneController.text.trim(),
+            businessWebsite: businessWebsiteController.text.trim(),
+            businessAddress: businessAddressController.text.trim(),
+            businessLogoPath: businessLogoPath.value ?? '',
+          );
+        }
 
-    // Success dialog
+        if (wasEditing) {
+          invoiceHistory[editingRecordIndex.value] = record;
+        } else {
+          invoiceHistory.insert(0, record);
+        }
+
+        // Reset fields & navigate back
+        invoiceAmountController.clear();
+        clientNameController.clear();
+        clientBusinessNameController.clear();
+        clientEmailController.clear();
+        clientPhoneController.clear();
+        clientStreetAddressController.clear();
+        clientCityController.clear();
+        clientStateController.clear();
+        clientZipController.clear();
+        invoiceDescriptionController.clear();
+        messageToClientController.text = 'Thank you for your business!';
+        invoiceNumberController.clear();
+        currentStep.value = 1;
+        editingRecordIndex.value = -1;
+
+        Get.back(); // close preview screen
+        Get.back(); // close create screen
+        if (wasEditing) {
+          Get.back(); // close detail screen
+        }
+
+        Get.snackbar(
+          'Success',
+          wasEditing
+              ? 'Invoice updated successfully.'
+              : 'Invoice created successfully.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFFFEDB9B),
+          colorText: Colors.black,
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to create invoice. Code: ${response.statusCode}',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Invoice submission failed: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void showSaveConfirmDialog() {
+    final wasEditing = editingRecordIndex.value != -1;
+
     Get.dialog(
       Dialog(
         backgroundColor: const Color(0xFF1E1E1E),
@@ -734,14 +980,14 @@ class InvoiceController extends GetxController {
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  Icons.check_circle_outline,
+                  Icons.receipt_long_outlined,
                   color: Colors.black,
-                  size: 45,
+                  size: 40,
                 ),
               ),
               const SizedBox(height: 20),
               Text(
-                wasEditing ? 'Invoice Updated!' : 'Invoice Created!',
+                wasEditing ? 'Update Invoice?' : 'Save Invoice?',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -751,8 +997,8 @@ class InvoiceController extends GetxController {
               const SizedBox(height: 12),
               Text(
                 wasEditing
-                    ? '${invoiceNumberController.text} has been successfully updated for ${clientNameController.text}.'
-                    : '${invoiceNumberController.text} has been successfully created for ${clientNameController.text}.',
+                    ? 'Do you want to save changes to this invoice?'
+                    : 'Do you want to save this invoice to your records?',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
@@ -762,15 +1008,8 @@ class InvoiceController extends GetxController {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // Delete logic
-                        if (wasEditing) {
-                          invoiceHistory.removeAt(editingRecordIndex.value);
-                        } else {
-                          invoiceHistory.removeAt(0);
-                        }
-
-                        // Reset fields for the next invoice
-                        invoiceAmountController.text = '0.00';
+                        // Cancel/Delete without calling API
+                        invoiceAmountController.clear();
                         clientNameController.clear();
                         clientBusinessNameController.clear();
                         clientEmailController.clear();
@@ -779,22 +1018,22 @@ class InvoiceController extends GetxController {
                         clientCityController.clear();
                         clientStateController.clear();
                         clientZipController.clear();
-                        messageToClientController.clear();
-
-                        invoiceNumberController.text =
-                            'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
+                        invoiceDescriptionController.clear();
+                        messageToClientController.text =
+                            'Thank you for your business!';
+                        invoiceNumberController.clear();
                         currentStep.value = 1;
                         editingRecordIndex.value = -1;
 
                         Get.back(); // close dialog
                         Get.back(); // close preview screen
-                        Get.back(); // close create screen (returns to history/detail screen)
+                        Get.back(); // close create screen
                         if (wasEditing) {
-                          Get.back(); // close details view screen
+                          Get.back(); // close detail screen
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2C2C2C), // Dark gray
+                        backgroundColor: const Color(0xFF2C2C2C),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -810,36 +1049,12 @@ class InvoiceController extends GetxController {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Save (Same as Done)
-                        // Reset fields for the next invoice
-                        invoiceAmountController.text = '0.00';
-                        clientNameController.clear();
-                        clientBusinessNameController.clear();
-                        clientEmailController.clear();
-                        clientPhoneController.clear();
-                        clientStreetAddressController.clear();
-                        clientCityController.clear();
-                        clientStateController.clear();
-                        clientZipController.clear();
-                        messageToClientController.clear();
-
-                        invoiceNumberController.text =
-                            'Invoice ${int.parse(invoiceNumberController.text.replaceAll(RegExp(r'\D'), '')) + 1}';
-                        currentStep.value = 1;
-                        editingRecordIndex.value = -1;
-
-                        Get.back(); // close dialog
-                        Get.back(); // close preview screen
-                        Get.back(); // close create screen (returns to history/detail screen)
-                        if (wasEditing) {
-                          Get.back(); // close details view screen
-                        }
+                      onPressed: () async {
+                        Get.back(); // close dialog first
+                        await submitInvoice(); // NOW call API!
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                          0xFFD08700,
-                        ), // Bright orange-yellow
+                        backgroundColor: const Color(0xFFD08700),
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

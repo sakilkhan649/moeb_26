@@ -74,4 +74,10 @@ class ApiConstants {
   // Expense Endpoints
   static const String expenses = '/expenses';
   static const String expensesTotal = '/expenses/total';
+
+  // Invoice Endpoints
+  static const String invoices = '/invoices';
+  static const String invoiceProfile = '/invoices/profile';
 }
+
+

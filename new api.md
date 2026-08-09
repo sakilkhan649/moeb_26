@@ -1,430 +1,246 @@
-4:17:56 PM | Expense BDD Flow > STEP 1 — Add a required expense (fuel) successfully | stdout
 📝 USER STORY:
 As a user
-I want to log a basic office expense
-So that the company can track my spending
-📖 BDD SCENARIO: 1. ADD REQUIRED EXPENSE
-Feature: Expenses
-Given I am an authenticated user
-When I POST /api/v1/expenses with Office Supplies category and amount
-Then I receive a 201 Created response
-And the response contains the newly created expense
- 
-4:17:56 PM | Expense BDD Flow > STEP 1 — Add a required expense (fuel) successfully | stdout
- POST   /api/v1/expenses [BDD-01-OFFICE-EXPENSE] - Create a required expense REQUEST {  "params": {},  "query": {},  "body": {    "category": "Office Supplies",    "amount": 50.5,    "date": "2026-08-04T10:17:56.102Z"  },  "headers": {    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFiYzUzMDQ4Nzc0ZDI5OWU4YWEzZiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTgzODY3NiwiZXhwIjoxNzg1ODQyMjc2fQ.EdfTFjJFPUxKUPXE2bSAQ1oFQx4j15ncdaVw1WEpXdo"  }} RESPONSE SUCCESS {  "success": true,  "message": "Expense created successfully",  "data": {    "user": "6a71bc53048774d299e8aa3f",    "category": "Office Supplies",    "amount": 50.5,    "date": "2026-08-04T10:17:56.102Z",    "createdAt": "2026-08-04T10:17:56.148Z",    "updatedAt": "2026-08-04T10:17:56.148Z",    "id": "6a71bc54048774d299e8aa67"  }}
-4:17:56 PM | Expense BDD Flow > STEP 2 — Add an expense with all optional fields (insurance) | stdout
-📝 USER STORY:
-As a user
-I want to log a software subscription expense with a receipt and description
-So that I have full proof of my expenditure
-📖 BDD SCENARIO: 2. ADD OPTIONAL EXPENSE FIELDS
-Feature: Expenses
-Given I am an authenticated user
-When I POST /api/v1/expenses with Software Subscription category, description, and receipt
-Then I receive a 201 Created response
-And the response contains all the optional fields
- 
-4:17:56 PM | Expense BDD Flow > STEP 2 — Add an expense with all optional fields (insurance) | stdout
- POST   /api/v1/expenses [BDD-02-SOFTWARE-EXPENSE] - Create an expense with optional fields REQUEST {  "params": {},  "query": {},  "body": {    "category": "Software Subscription",    "amount": 150,    "date": "2026-08-04T10:17:56.165Z",    "description": "Monthly premium",    "receipt": "[FILE: receipt.pdf]"  },  "headers": {    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFiYzUzMDQ4Nzc0ZDI5OWU4YWEzZiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTgzODY3NiwiZXhwIjoxNzg1ODQyMjc2fQ.EdfTFjJFPUxKUPXE2bSAQ1oFQx4j15ncdaVw1WEpXdo"  }} RESPONSE SUCCESS {  "success": true,  "message": "Expense created successfully",  "data": {    "user": "6a71bc53048774d299e8aa3f",    "category": "Software Subscription",    "amount": 150,    "date": "2026-08-04T10:17:56.165Z",    "description": "Monthly premium",    "receipt": "//uploads/documents/1785838676176-aw7cqd.pdf",    "createdAt": "2026-08-04T10:17:56.179Z",    "updatedAt": "2026-08-04T10:17:56.179Z",    "id": "6a71bc54048774d299e8aa6b"  }}
- 
-ei gula intrgte kori peln bhai moeb26 e
- 
-ok
- 
+I want to create an invoice
+So that I can bill my clients
 
-
- 4:52:27 PM | Expense BDD Flow > STEP 1 — Add a required expense (fuel) successfully | stdout
-
-📝 USER STORY:
-As a user
-I want to log a basic office expense
-So that the company can track my spending
-
-📖 BDD SCENARIO: 1. ADD REQUIRED EXPENSE
-Feature: Expenses
+📖 BDD SCENARIO: 1. CREATE INVOICE
+Feature: Invoices
 
 Given I am an authenticated user
-When I POST /api/v1/expenses with Office Supplies category and amount
+When I POST /api/v1/invoices with valid payload
 Then I receive a 201 Created response
-And the response contains the newly created expense
+And the response contains the newly created invoice
 
-4:52:27 PM | Expense BDD Flow > STEP 1 — Add a required expense (fuel) successfully | stdout
+10:07:23 AM | Invoice BDD Flow > STEP 1 — Add an invoice successfully | stdout
 
 
- POST   /api/v1/expenses [BDD-01-OFFICE-EXPENSE] - Create a required expense
+ POST   /api/v1/invoices [BDD-01-CREATE-INVOICE] - Create an invoice
  REQUEST 
 {
   "params": {},
   "query": {},
   "body": {
-    "category": "Office Supplies",
-    "amount": 50.5,
-    "date": "2026-08-04T10:52:27.666Z"
+    "invoiceAmount": 500,
+    "issueDate": "2026-08-09T04:07:23.654Z",
+    "dueDateType": "custom",
+    "customDueDate": "2026-08-16T04:07:23.654Z",
+    "clientName": "Acme Corp",
+    "businessName": "Acme LLC",
+    "emailAddress": "client@acme.com",
+    "phoneNumber": "+1-555-0198",
+    "billingAddress": {
+      "streetAddress": "123 Main St",
+      "city": "Metropolis",
+      "state": "NY",
+      "zipCode": "10001",
+      "country": "USA"
+    },
+    "description": "Web development services",
+    "messageToClient": "Thank you for your business!"
   },
   "headers": {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFjNDZiM2Y1MjJhNWQ5NjNiYWZlNiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTg0MDc0NywiZXhwIjoxNzg1ODQ0MzQ3fQ.fIdGMmr1iYXfgOKLljE1eYVGR5o8XwH8Z_arpp1xwJM"
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzdmY2ZiNWU2OTQ2NjY1MGY5OWM3MiIsInJvbGUiOiJPV05FUiIsImVtYWlsIjoib3duZXJAdGVzdC5jb20iLCJpYXQiOjE3ODYyNDg0NDMsImV4cCI6MTc4NjI1MjA0M30.Cv5gkea_7HuldXKh9dt5_VlVl_QZcx2BUWj_dfYxAnQ"
   }
 }
  RESPONSE SUCCESS 
 {
   "success": true,
-  "message": "Expense created successfully",
+  "message": "Invoice created successfully",
   "data": {
-    "user": "6a71c46b3f522a5d963bafe6",
-    "category": "Office Supplies",
-    "amount": 50.5,
-    "date": "2026-08-04T10:52:27.666Z",
-    "createdAt": "2026-08-04T10:52:27.709Z",
-    "updatedAt": "2026-08-04T10:52:27.709Z",
-    "id": "6a71c46b3f522a5d963bb00e"
+    "invoiceAmount": 500,
+    "issueDate": "2026-08-09T04:07:23.654Z",
+    "dueDateType": "custom",
+    "customDueDate": "2026-08-16T04:07:23.654Z",
+    "currency": "USD",
+    "clientName": "Acme Corp",
+    "businessName": "Acme LLC",
+    "emailAddress": "client@acme.com",
+    "phoneNumber": "+1-555-0198",
+    "billingAddress": {
+      "streetAddress": "123 Main St",
+      "city": "Metropolis",
+      "state": "NY",
+      "zipCode": "10001",
+      "country": "USA"
+    },
+    "description": "Web development services",
+    "messageToClient": "Thank you for your business!",
+    "status": "draft",
+    "user": "6a77fcfb5e69466650f99c72",
+    "createdAt": "2026-08-09T04:07:23.698Z",
+    "updatedAt": "2026-08-09T04:07:23.698Z",
+    "invoiceNumber": "INV-000001",
+    "id": "6a77fcfb5e69466650f99c9b"
   }
 }
 
 
-4:52:27 PM | Expense BDD Flow > STEP 2 — Add an expense with all optional fields (insurance) | stdout
+
+
+10:07:23 AM | Invoice BDD Flow > STEP 2 — Fetch summary of invoices | stdout
 
 📝 USER STORY:
 As a user
-I want to log a software subscription expense with a receipt and description
-So that I have full proof of my expenditure
-
-📖 BDD SCENARIO: 2. ADD OPTIONAL EXPENSE FIELDS
-Feature: Expenses
-
-Given I am an authenticated user
-When I POST /api/v1/expenses with Software Subscription category, description, and receipt
-Then I receive a 201 Created response
-And the response contains all the optional fields
-
-4:52:27 PM | Expense BDD Flow > STEP 2 — Add an expense with all optional fields (insurance) | stdout
-
-
- POST   /api/v1/expenses [BDD-02-SOFTWARE-EXPENSE] - Create an expense with optional fields
- REQUEST 
-{
-  "params": {},
-  "query": {},
-  "body": {
-    "category": "Software Subscription",
-    "amount": 150,
-    "date": "2026-08-04T10:52:27.726Z",
-    "description": "Monthly premium",
-    "receipt": "[FILE: receipt.pdf]"
-  },
-  "headers": {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFjNDZiM2Y1MjJhNWQ5NjNiYWZlNiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTg0MDc0NywiZXhwIjoxNzg1ODQ0MzQ3fQ.fIdGMmr1iYXfgOKLljE1eYVGR5o8XwH8Z_arpp1xwJM"
-  }
-}
- RESPONSE SUCCESS 
-{
-  "success": true,
-  "message": "Expense created successfully",
-  "data": {
-    "user": "6a71c46b3f522a5d963bafe6",
-    "category": "Software Subscription",
-    "amount": 150,
-    "date": "2026-08-04T10:52:27.726Z",
-    "description": "Monthly premium",
-    "receipt": "//uploads/documents/1785840747737-thnrzl.pdf",
-    "createdAt": "2026-08-04T10:52:27.741Z",
-    "updatedAt": "2026-08-04T10:52:27.741Z",
-    "id": "6a71c46b3f522a5d963bb012"
-  }
-}
-
-
-4:52:27 PM | Expense BDD Flow > STEP 3 — Fetch summary of expenses and validate DTOs map correctly | stdout
-
-📝 USER STORY:
-As a user
-I want to view all my submitted expenses
+I want to view all my invoices
 So that I can verify my records
 
-📖 BDD SCENARIO: 3. FETCH EXPENSE SUMMARY
-Feature: Expenses
+📖 BDD SCENARIO: 2. FETCH INVOICES
+Feature: Invoices
 
 Given I am an authenticated user
-When I GET /api/v1/expenses
+When I GET /api/v1/invoices
 Then I receive a 200 OK response
-And the response contains a list of my expenses
+And the response contains a list of my invoices
 
-4:52:27 PM | Expense BDD Flow > STEP 3 — Fetch summary of expenses and validate DTOs map correctly | stdout
+10:07:23 AM | Invoice BDD Flow > STEP 2 — Fetch summary of invoices | stdout
 
 
- GET   /api/v1/expenses [BDD-03-FETCH-EXPENSES] - Retrieve a list of expenses
+ GET   /api/v1/invoices [BDD-02-FETCH-INVOICES] - Retrieve a list of invoices
  REQUEST 
 {
   "params": {},
   "query": {},
   "body": {},
   "headers": {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFjNDZiM2Y1MjJhNWQ5NjNiYWZlNiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTg0MDc0NywiZXhwIjoxNzg1ODQ0MzQ3fQ.fIdGMmr1iYXfgOKLljE1eYVGR5o8XwH8Z_arpp1xwJM"
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzdmY2ZiNWU2OTQ2NjY1MGY5OWM3MiIsInJvbGUiOiJPV05FUiIsImVtYWlsIjoib3duZXJAdGVzdC5jb20iLCJpYXQiOjE3ODYyNDg0NDMsImV4cCI6MTc4NjI1MjA0M30.Cv5gkea_7HuldXKh9dt5_VlVl_QZcx2BUWj_dfYxAnQ"
   }
 }
  RESPONSE SUCCESS 
 {
   "success": true,
-  "message": "Expenses retrieved successfully",
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 2,
-    "totalPage": 1
-  },
+  "message": "Invoices retrieved successfully",
   "data": [
     {
-      "user": "6a71c46b3f522a5d963bafe6",
-      "category": "Software Subscription",
-      "amount": 150,
-      "date": "2026-08-04T10:52:27.726Z",
-      "description": "Monthly premium",
-      "receipt": "//uploads/documents/1785840747737-thnrzl.pdf",
-      "createdAt": "2026-08-04T10:52:27.741Z",
-      "updatedAt": "2026-08-04T10:52:27.741Z",
-      "id": "6a71c46b3f522a5d963bb012"
-    },
-    {
-      "user": "6a71c46b3f522a5d963bafe6",
-      "category": "Office Supplies",
-      "amount": 50.5,
-      "date": "2026-08-04T10:52:27.666Z",
-      "createdAt": "2026-08-04T10:52:27.709Z",
-      "updatedAt": "2026-08-04T10:52:27.709Z",
-      "id": "6a71c46b3f522a5d963bb00e"
+      "invoiceAmount": 500,
+      "issueDate": "2026-08-09T04:07:23.654Z",
+      "dueDateType": "custom",
+      "customDueDate": "2026-08-16T04:07:23.654Z",
+      "currency": "USD",
+      "clientName": "Acme Corp",
+      "businessName": "Acme LLC",
+      "emailAddress": "client@acme.com",
+      "phoneNumber": "+1-555-0198",
+      "billingAddress": {
+        "streetAddress": "123 Main St",
+        "city": "Metropolis",
+        "state": "NY",
+        "zipCode": "10001",
+        "country": "USA"
+      },
+      "description": "Web development services",
+      "messageToClient": "Thank you for your business!",
+      "status": "draft",
+      "user": "6a77fcfb5e69466650f99c72",
+      "createdAt": "2026-08-09T04:07:23.698Z",
+      "updatedAt": "2026-08-09T04:07:23.698Z",
+      "invoiceNumber": "INV-000001",
+      "id": "6a77fcfb5e69466650f99c9b"
     }
   ]
 }
 
 
-4:52:27 PM | Expense BDD Flow > STEP 4 — Fetch total of expenses | stdout
+
+
+
+
+11:20:27 AM | Invoice BDD Flow > STEP 0.1 — Upsert an invoice profile | stdout
 
 📝 USER STORY:
 As a user
-I want to view my total expenses
-So that I can see my overall spending
+I want to create or update my invoice profile
+So that my business details are automatically attached to new invoices
 
-📖 BDD SCENARIO: 4. FETCH TOTAL EXPENSES
-Feature: Expenses
-
-Given I am an authenticated user
-When I GET /api/v1/expenses/total
-Then I receive a 200 OK response
-And the response contains the total amount of my expenses
-
-4:52:27 PM | Expense BDD Flow > STEP 4 — Fetch total of expenses | stdout
-
-
- GET   /api/v1/expenses/total [BDD-04-FETCH-TOTAL] - Retrieve total of expenses
- REQUEST 
-{
-  "params": {},
-  "query": {},
-  "body": {},
-  "headers": {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFjNDZiM2Y1MjJhNWQ5NjNiYWZlNiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTg0MDc0NywiZXhwIjoxNzg1ODQ0MzQ3fQ.fIdGMmr1iYXfgOKLljE1eYVGR5o8XwH8Z_arpp1xwJM"
-  }
-}
- RESPONSE SUCCESS 
-{
-  "success": true,
-  "message": "Total expenses calculated successfully",
-  "data": {
-    "total": 200.5
-  }
-}
-
-
-4:52:27 PM | Expense BDD Flow > STEP 5 — Fetch monthly expenses | stdout
-
-📝 USER STORY:
-As a user
-I want to view my monthly expenses
-So that I can see my spending for the current month
-
-📖 BDD SCENARIO: 5. FETCH MONTHLY EXPENSES
-Feature: Expenses
+📖 BDD SCENARIO: 0.1. UPSERT INVOICE PROFILE
+Feature: Invoices
 
 Given I am an authenticated user
-When I GET /api/v1/expenses?period=monthly
+When I PUT /api/v1/invoices/profile with valid payload
 Then I receive a 200 OK response
-And the response contains a list of my expenses for the month
+And the response contains my updated profile details
 
-4:52:27 PM | Expense BDD Flow > STEP 5 — Fetch monthly expenses | stdout
-
-
- GET   /api/v1/expenses?startDate=2026-08-01T10:52:27.779Z&endDate=2026-08-31T17:59:59.999Z [BDD-05-FETCH-MONTHLY-EXPENSES] - Retrieve a list of expenses by date range
- REQUEST 
-{
-  "params": {},
-  "query": {},
-  "body": {},
-  "headers": {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFjNDZiM2Y1MjJhNWQ5NjNiYWZlNiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTg0MDc0NywiZXhwIjoxNzg1ODQ0MzQ3fQ.fIdGMmr1iYXfgOKLljE1eYVGR5o8XwH8Z_arpp1xwJM"
-  }
-}
- RESPONSE SUCCESS 
-{
-  "success": true,
-  "message": "Expenses retrieved successfully",
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 2,
-    "totalPage": 1
-  },
-  "data": [
-    {
-      "user": "6a71c46b3f522a5d963bafe6",
-      "category": "Software Subscription",
-      "amount": 150,
-      "date": "2026-08-04T10:52:27.726Z",
-      "description": "Monthly premium",
-      "receipt": "//uploads/documents/1785840747737-thnrzl.pdf",
-      "createdAt": "2026-08-04T10:52:27.741Z",
-      "updatedAt": "2026-08-04T10:52:27.741Z",
-      "id": "6a71c46b3f522a5d963bb012"
-    },
-    {
-      "user": "6a71c46b3f522a5d963bafe6",
-      "category": "Office Supplies",
-      "amount": 50.5,
-      "date": "2026-08-04T10:52:27.666Z",
-      "createdAt": "2026-08-04T10:52:27.709Z",
-      "updatedAt": "2026-08-04T10:52:27.709Z",
-      "id": "6a71c46b3f522a5d963bb00e"
-    }
-  ]
-}
+11:20:27 AM | Invoice BDD Flow > STEP 0.1 — Upsert an invoice profile | stdout
 
 
-4:52:27 PM | Expense BDD Flow > STEP 6 — Fetch monthly total of expenses | stdout
-
-📝 USER STORY:
-As a user
-I want to view my total expenses for the current month
-So that I can monitor my monthly budget
-
-📖 BDD SCENARIO: 6. FETCH MONTHLY TOTAL EXPENSES
-Feature: Expenses
-
-Given I am an authenticated user
-When I GET /api/v1/expenses/total?period=monthly
-Then I receive a 200 OK response
-And the response contains the total amount of my monthly expenses
-
-4:52:27 PM | Expense BDD Flow > STEP 6 — Fetch monthly total of expenses | stdout
-
-
- GET   /api/v1/expenses/total?startDate=2026-08-01T10:52:27.795Z&endDate=2026-08-31T17:59:59.999Z [BDD-06-FETCH-MONTHLY-TOTAL] - Retrieve total of expenses by date range
- REQUEST 
-{
-  "params": {},
-  "query": {},
-  "body": {},
-  "headers": {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFjNDZiM2Y1MjJhNWQ5NjNiYWZlNiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTg0MDc0NywiZXhwIjoxNzg1ODQ0MzQ3fQ.fIdGMmr1iYXfgOKLljE1eYVGR5o8XwH8Z_arpp1xwJM"
-  }
-}
- RESPONSE SUCCESS 
-{
-  "success": true,
-  "message": "Total expenses calculated successfully",
-  "data": {
-    "total": 200.5
-  }
-}
-
-
-4:52:27 PM | Expense BDD Flow > STEP 7 — Update an expense | stdout
-
-📝 USER STORY:
-As a user
-I want to update an existing expense
-So that I can correct mistakes or add details
-
-📖 BDD SCENARIO: 7. UPDATE EXPENSE
-Feature: Expenses
-
-Given I am an authenticated user
-And I have an existing expense ID
-When I PATCH /api/v1/expenses/:expenseId
-Then I receive a 200 OK response
-And the response contains the updated expense details
-
-4:52:27 PM | Expense BDD Flow > STEP 7 — Update an expense | stdout
-
-
- PATCH   /api/v1/expenses/6a71c46b3f522a5d963bb00e [BDD-07-UPDATE-EXPENSE] - Update an existing expense
+ PUT   /api/v1/invoices/profile [BDD-00-1-UPSERT-INVOICE-PROFILE] - Create or update an invoice profile
  REQUEST 
 {
   "params": {},
   "query": {},
   "body": {
-    "amount": 200,
-    "description": "Updated premium"
+    "businessName": "My Awesome Biz",
+    "email": "contact@mybiz.com",
+    "phoneNumber": "9876543210",
+    "website": "https://mybiz.com",
+    "address": "456 Tech Park, Sillicon Valley",
+    "logo": "https://mybiz.com/logo.png"
   },
   "headers": {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFjNDZiM2Y1MjJhNWQ5NjNiYWZlNiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTg0MDc0NywiZXhwIjoxNzg1ODQ0MzQ3fQ.fIdGMmr1iYXfgOKLljE1eYVGR5o8XwH8Z_arpp1xwJM"
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzgwZTFiMzkwYzgzMjllNTQxYmMzOSIsInJvbGUiOiJPV05FUiIsImVtYWlsIjoib3duZXJAdGVzdC5jb20iLCJpYXQiOjE3ODYyNTI4MjcsImV4cCI6MTc4NjI1NjQyN30.eU1PiMthoeXd-532RwbA6C_jW0VKKfEzCdjR_8WbG9g"
   }
 }
  RESPONSE SUCCESS 
 {
   "success": true,
-  "message": "Expense updated successfully",
+  "message": "Invoice profile saved successfully",
   "data": {
-    "user": "6a71c46b3f522a5d963bafe6",
-    "category": "Office Supplies",
-    "amount": 200,
-    "date": "2026-08-04T10:52:27.666Z",
-    "createdAt": "2026-08-04T10:52:27.709Z",
-    "updatedAt": "2026-08-04T10:52:27.811Z",
-    "description": "Updated premium",
-    "id": "6a71c46b3f522a5d963bb00e"
+    "user": "6a780e1b390c8329e541bc39",
+    "address": "456 Tech Park, Sillicon Valley",
+    "businessName": "My Awesome Biz",
+    "createdAt": "2026-08-09T05:20:27.753Z",
+    "email": "contact@mybiz.com",
+    "logo": "https://mybiz.com/logo.png",
+    "phoneNumber": "9876543210",
+    "updatedAt": "2026-08-09T05:20:27.753Z",
+    "website": "https://mybiz.com",
+    "id": "6a780e1bdfb619a9021e2c30"
   }
 }
 
 
-4:52:27 PM | Expense BDD Flow > STEP 8 — Delete an expense | stdout
+11:20:27 AM | Invoice BDD Flow > STEP 0.2 — Fetch my invoice profile | stdout
 
 📝 USER STORY:
 As a user
-I want to delete an existing expense
-So that I can remove incorrect records
+I want to view my invoice profile
+So that I can verify my business details
 
-📖 BDD SCENARIO: 8. DELETE EXPENSE
-Feature: Expenses
+📖 BDD SCENARIO: 0.2. FETCH INVOICE PROFILE
+Feature: Invoices
 
 Given I am an authenticated user
-And I have an existing expense ID
-When I DELETE /api/v1/expenses/:expenseId
+And I have an existing invoice profile
+When I GET /api/v1/invoices/profile
 Then I receive a 200 OK response
-And the expense is removed from my list
+And the response contains my profile details
 
-4:52:27 PM | Expense BDD Flow > STEP 8 — Delete an expense | stdout
+11:20:27 AM | Invoice BDD Flow > STEP 0.2 — Fetch my invoice profile | stdout
 
 
- DELETE   /api/v1/expenses/6a71c46b3f522a5d963bb00e [BDD-08-DELETE-EXPENSE] - Delete an existing expense
+ GET   /api/v1/invoices/profile [BDD-00-2-FETCH-INVOICE-PROFILE] - Retrieve invoice profile
  REQUEST 
 {
   "params": {},
   "query": {},
   "body": {},
   "headers": {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzFjNDZiM2Y1MjJhNWQ5NjNiYWZlNiIsInJvbGUiOiJEUklWRVIiLCJlbWFpbCI6ImRyaXZlckB0ZXN0LmNvbSIsImlhdCI6MTc4NTg0MDc0NywiZXhwIjoxNzg1ODQ0MzQ3fQ.fIdGMmr1iYXfgOKLljE1eYVGR5o8XwH8Z_arpp1xwJM"
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNzgwZTFiMzkwYzgzMjllNTQxYmMzOSIsInJvbGUiOiJPV05FUiIsImVtYWlsIjoib3duZXJAdGVzdC5jb20iLCJpYXQiOjE3ODYyNTI4MjcsImV4cCI6MTc4NjI1NjQyN30.eU1PiMthoeXd-532RwbA6C_jW0VKKfEzCdjR_8WbG9g"
   }
 }
  RESPONSE SUCCESS 
 {
   "success": true,
-  "message": "Expense deleted successfully",
+  "message": "Invoice profile retrieved successfully",
   "data": {
-    "user": "6a71c46b3f522a5d963bafe6",
-    "category": "Office Supplies",
-    "amount": 200,
-    "date": "2026-08-04T10:52:27.666Z",
-    "createdAt": "2026-08-04T10:52:27.709Z",
-    "updatedAt": "2026-08-04T10:52:27.811Z",
-    "description": "Updated premium",
-    "id": "6a71c46b3f522a5d963bb00e"
+    "user": "6a780e1b390c8329e541bc39",
+    "address": "456 Tech Park, Sillicon Valley",
+    "businessName": "My Awesome Biz",
+    "createdAt": "2026-08-09T05:20:27.753Z",
+    "email": "contact@mybiz.com",
+    "logo": "https://mybiz.com/logo.png",
+    "phoneNumber": "9876543210",
+    "updatedAt": "2026-08-09T05:20:27.753Z",
+    "website": "https://mybiz.com",
+    "id": "6a780e1bdfb619a9021e2c30"
   }
 }

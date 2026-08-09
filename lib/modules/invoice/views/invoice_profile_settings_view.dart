@@ -66,13 +66,28 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                                 borderRadius: BorderRadius.circular(16.r),
                                 border: Border.all(color: const Color(0xFF27272A), width: 1.5),
                               ),
-                              child: controller.businessLogoPath.value != null
+                              child: controller.businessLogoPath.value != null &&
+                                      controller.businessLogoPath.value!.isNotEmpty
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.circular(14.r),
-                                      child: Image.file(
-                                        File(controller.businessLogoPath.value!),
-                                        fit: BoxFit.cover,
-                                      ),
+                                      child: (controller.businessLogoPath.value!
+                                                  .startsWith('http://') ||
+                                              controller.businessLogoPath.value!
+                                                  .startsWith('https://'))
+                                          ? Image.network(
+                                              controller.businessLogoPath.value!,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) =>
+                                                      const Icon(
+                                                Icons.broken_image,
+                                                color: Colors.grey,
+                                              ),
+                                            )
+                                          : Image.file(
+                                              File(controller.businessLogoPath.value!),
+                                              fit: BoxFit.cover,
+                                            ),
                                     )
                                   : Center(
                                       child: Column(

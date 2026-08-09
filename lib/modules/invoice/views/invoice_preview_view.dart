@@ -74,13 +74,16 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                       // Prepare logo image if available
                       pw.ImageProvider? logoImage;
                       final logoPath = controller.businessLogoPath.value;
-                      if (logoPath != null &&
-                          logoPath.isNotEmpty &&
-                          File(logoPath).existsSync()) {
+                      if (logoPath != null && logoPath.isNotEmpty) {
                         try {
-                          logoImage = pw.MemoryImage(
-                            File(logoPath).readAsBytesSync(),
-                          );
+                          if (logoPath.startsWith('http://') ||
+                              logoPath.startsWith('https://')) {
+                            logoImage = await networkImage(logoPath);
+                          } else if (File(logoPath).existsSync()) {
+                            logoImage = pw.MemoryImage(
+                              File(logoPath).readAsBytesSync(),
+                            );
+                          }
                         } catch (e) {
                           debugPrint('Error loading logo: $e');
                         }
@@ -445,11 +448,14 @@ class InvoicePreviewView extends GetView<InvoiceController> {
     // Prepare logo image if available
     pw.ImageProvider? logoImage;
     final logoPath = controller.businessLogoPath.value;
-    if (logoPath != null &&
-        logoPath.isNotEmpty &&
-        File(logoPath).existsSync()) {
+    if (logoPath != null && logoPath.isNotEmpty) {
       try {
-        logoImage = pw.MemoryImage(File(logoPath).readAsBytesSync());
+        if (logoPath.startsWith('http://') ||
+            logoPath.startsWith('https://')) {
+          logoImage = await networkImage(logoPath);
+        } else if (File(logoPath).existsSync()) {
+          logoImage = pw.MemoryImage(File(logoPath).readAsBytesSync());
+        }
       } catch (e) {
         debugPrint('Error loading logo: $e');
       }
@@ -491,8 +497,8 @@ class InvoicePreviewView extends GetView<InvoiceController> {
           'invoice_${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text.replaceAll(RegExp(r'\s+'), '_') : "999"}.pdf',
     );
 
-    // Save to history and display success
-    controller.submitInvoice();
+    // Show confirm dialog to user FIRST
+    controller.showSaveConfirmDialog();
   }
 
   // PDF LAYOUT 0: Delta (Classic)

@@ -22,7 +22,8 @@ class ApiClient extends GetxService {
   static final String _bearerToken = '';
   static Future<bool>? _refreshFuture;
 
-  static const String _fallbackMessage = 'Something went wrong, please try again';
+  static const String _fallbackMessage =
+      'Something went wrong, please try again';
   static const int _timeoutSeconds = 30;
 
   /// Expose static temporaryToken for specialized authentication override (e.g. Socket/Auth Service)
@@ -66,9 +67,7 @@ class ApiClient extends GetxService {
     if (temporaryToken != null && temporaryToken!.isNotEmpty) {
       tokenToUse = temporaryToken;
     } else {
-      tokenToUse = await StorageService.getString(
-        StorageConstants.bearerToken,
-      );
+      tokenToUse = await StorageService.getString(StorageConstants.bearerToken);
     }
 
     if (tokenToUse != null &&
@@ -160,10 +159,12 @@ class ApiClient extends GetxService {
     try {
       Options? options;
       if (resetToken != null) {
-        options = Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': resetToken,
-        });
+        options = Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': resetToken,
+          },
+        );
       } else if (extraHeaders != null) {
         options = Options(headers: extraHeaders);
       }
@@ -251,6 +252,7 @@ class ApiClient extends GetxService {
         data: formData,
         onSendProgress: onSendProgress,
         cancelToken: cancelToken,
+        options: Options(contentType: 'multipart/form-data'),
       );
     } on DioException catch (e) {
       return _buildErrorResponse(e);
@@ -272,6 +274,29 @@ class ApiClient extends GetxService {
         data: formData,
         onSendProgress: onSendProgress,
         cancelToken: cancelToken,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+    } on DioException catch (e) {
+      return _buildErrorResponse(e);
+    }
+  }
+
+  /// Multipart PUT with progress tracking
+  Future<Response> putMultipartData(
+    String uri,
+    Map<String, dynamic> body, {
+    required List<MultipartBody> multipartBody,
+    ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final formData = await _buildFormData(body, multipartBody);
+      return await _dio.put(
+        uri,
+        data: formData,
+        onSendProgress: onSendProgress,
+        cancelToken: cancelToken,
+        options: Options(contentType: 'multipart/form-data'),
       );
     } on DioException catch (e) {
       return _buildErrorResponse(e);
@@ -341,7 +366,8 @@ class ApiClient extends GetxService {
             if (data is Map && data['message'] != null) {
               message = data['message'].toString();
             } else {
-              message = 'Bad response: ${e.response?.statusMessage ?? 'Unknown'}';
+              message =
+                  'Bad response: ${e.response?.statusMessage ?? 'Unknown'}';
             }
           }
           break;

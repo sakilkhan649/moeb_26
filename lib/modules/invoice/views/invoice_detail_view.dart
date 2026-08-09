@@ -492,10 +492,17 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        controller.invoiceHistory.removeAt(index);
+                      onPressed: () async {
+                        await controller.deleteInvoiceAtIndex(index);
                         Get.back(); // close dialog
                         Get.back(); // close details page (returns to history view)
+                        Get.snackbar(
+                          'Deleted',
+                          'Invoice has been deleted.',
+                          backgroundColor: Colors.redAccent,
+                          colorText: Colors.white,
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFEF4444),
