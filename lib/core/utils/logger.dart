@@ -79,7 +79,8 @@ class AppLogger {
 
     debugPrint('');
     debugPrint('┌ ❌❌❌❌ ERROR $_divider ❌❌❌❌ ');
-    debugPrint('│ ${e.type.name}: ${e.message}');
+    final errorMsg = e.message ?? e.error?.toString() ?? e.type.name;
+    debugPrint('│ ${e.type.name}: $errorMsg');
     debugPrint('│  ${e.requestOptions.method} : ${e.requestOptions.uri}');
     if (e.response != null) {
       debugPrint('│ Status: ${e.response?.statusCode}');

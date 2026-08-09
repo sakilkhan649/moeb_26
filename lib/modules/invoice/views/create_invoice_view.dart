@@ -772,14 +772,26 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                     ),
                   ],
                 ),
-                child: Text(
-                  nextButtonText,
-                  style: GoogleFonts.inter(
-                    color: Colors.black,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return SizedBox(
+                      width: 20.w,
+                      height: 20.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Colors.black,
+                      ),
+                    );
+                  }
+                  return Text(
+                    nextButtonText,
+                    style: GoogleFonts.inter(
+                      color: Colors.black,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }),
               ),
             ),
           ),

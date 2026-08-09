@@ -63,55 +63,77 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
 
           // List Content
           Expanded(
-            child: Obx(() {
-              // Apply dynamic filter
-              final filteredList = controller.invoiceHistory.where((record) {
-                if (controller.selectedFilter.value == 'All') return true;
-                return record.status.toLowerCase() ==
-                    controller.selectedFilter.value.toLowerCase();
-              }).toList();
+            child: RefreshIndicator(
+              color: const Color(0xFFD08700),
+              backgroundColor: Colors.black,
+              onRefresh: () => controller.fetchInvoicesFromApi(),
+              child: Obx(() {
+                if (controller.isLoading.value &&
+                    controller.invoiceHistory.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFFD08700),
+                    ),
+                  );
+                }
 
-              if (filteredList.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                // Apply dynamic filter
+                final filteredList = controller.invoiceHistory.where((record) {
+                  if (controller.selectedFilter.value == 'All') return true;
+                  return record.status.toLowerCase() ==
+                      controller.selectedFilter.value.toLowerCase();
+                }).toList();
+
+                if (filteredList.isEmpty) {
+                  return ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     children: [
-                      Icon(
-                        Icons.receipt_long_outlined,
-                        color: const Color(0xFF364153),
-                        size: 64.sp,
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        'No invoices found',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFD5C4AB),
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        'Create an invoice to get started.',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF52525B),
-                          fontSize: 12.sp,
+                      SizedBox(height: 150.h),
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.receipt_long_outlined,
+                              color: const Color(0xFF364153),
+                              size: 64.sp,
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              'No invoices found',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFD5C4AB),
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'Create an invoice to get started.',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF52525B),
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                );
-              }
+                  );
+                }
 
-              return ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                itemCount: filteredList.length,
-                separatorBuilder: (context, index) => SizedBox(height: 12.h),
-                itemBuilder: (context, index) {
-                  return _buildInvoiceCard(filteredList[index]);
-                },
-              );
-            }),
+                return ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  itemCount: filteredList.length,
+                  separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                  itemBuilder: (context, index) {
+                    return _buildInvoiceCard(filteredList[index]);
+                  },
+                );
+              }),
+            ),
           ),
         ],
       ),

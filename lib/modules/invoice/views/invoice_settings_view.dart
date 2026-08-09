@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../controllers/invoice_controller.dart';
 import 'invoice_profile_settings_view.dart';
-
 import 'saved_clients_view.dart';
 
 class InvoiceSettingsView extends StatelessWidget {
@@ -51,14 +51,20 @@ class InvoiceSettingsView extends StatelessWidget {
             icon: Icons.business_outlined,
             title: 'Profile Settings',
             subtitle: 'Update business logo, name, email and address',
-            onTap: () => Get.to(() => const InvoiceProfileSettingsView()),
+            onTap: () {
+              Get.find<InvoiceController>().fetchInvoiceProfileFromApi();
+              Get.to(() => const InvoiceProfileSettingsView());
+            },
           ),
           SizedBox(height: 14.h),
           _buildSettingsItem(
             icon: Icons.people_outline_rounded,
             title: 'Saved Clients',
             subtitle: 'View, add and manage your saved client list',
-            onTap: () => Get.to(() => const SavedClientsView()),
+            onTap: () {
+              Get.find<InvoiceController>().fetchClientsFromApi();
+              Get.to(() => const SavedClientsView());
+            },
           ),
         ],
       ),

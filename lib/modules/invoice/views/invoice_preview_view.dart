@@ -78,7 +78,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                         try {
                           if (logoPath.startsWith('http://') ||
                               logoPath.startsWith('https://')) {
-                            logoImage = await networkImage(logoPath);
+                            logoImage = await networkImage(logoPath).timeout(
+                              const Duration(seconds: 3),
+                            );
                           } else if (File(logoPath).existsSync()) {
                             logoImage = pw.MemoryImage(
                               File(logoPath).readAsBytesSync(),
@@ -92,7 +94,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                       final selectedColor =
                           controller.templateColors[colorIndex];
                       final pdfAccentColor = PdfColor.fromInt(
-                        selectedColor.toARGB32(),
+                        selectedColor.value,
                       );
 
                       doc.addPage(
@@ -194,14 +196,26 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   ),
                 ],
               ),
-              child: Text(
-                'Send Invoice',
-                style: GoogleFonts.inter(
-                  color: Colors.black, // Dark text for contrast
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return SizedBox(
+                    width: 20.w,
+                    height: 20.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: Colors.black,
+                    ),
+                  );
+                }
+                return Text(
+                  'Send Invoice',
+                  style: GoogleFonts.inter(
+                    color: Colors.black,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              }),
             ),
           ),
         ),
@@ -452,7 +466,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
       try {
         if (logoPath.startsWith('http://') ||
             logoPath.startsWith('https://')) {
-          logoImage = await networkImage(logoPath);
+          logoImage = await networkImage(logoPath).timeout(
+                              const Duration(seconds: 3),
+                            );
         } else if (File(logoPath).existsSync()) {
           logoImage = pw.MemoryImage(File(logoPath).readAsBytesSync());
         }
@@ -463,7 +479,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
 
     final selectedColor =
         controller.templateColors[controller.selectedColorIndex.value];
-    final pdfAccentColor = PdfColor.fromInt(selectedColor.toARGB32());
+    final pdfAccentColor = PdfColor.fromInt(selectedColor.value);
     final templateIndex = controller.selectedTemplateIndex.value;
 
     doc.addPage(

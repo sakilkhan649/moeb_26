@@ -10,10 +10,7 @@ import 'create_invoice_view.dart';
 class InvoiceDetailView extends GetView<InvoiceController> {
   final int index;
 
-  const InvoiceDetailView({
-    super.key,
-    required this.index,
-  });
+  const InvoiceDetailView({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +59,14 @@ class InvoiceDetailView extends GetView<InvoiceController> {
         }
         final record = controller.invoiceHistory[index];
         final bool isPaid = record.status.toLowerCase() == 'paid';
-        final Color statusColor = isPaid ? const Color(0xFF10B981) : const Color(0xFFEF4444);
+        final Color statusColor = isPaid
+            ? const Color(0xFF10B981)
+            : const Color(0xFFEF4444);
 
         // Format dates
-        final String issuedStr = DateFormat('MMM dd, yyyy').format(record.issuedDate);
+        final String issuedStr = DateFormat(
+          'MMM dd, yyyy',
+        ).format(record.issuedDate);
         String dueStr = 'On Receipt';
         if (record.dueDate != 'On Receipt') {
           if (record.dueDate == 'Custom Due Date') {
@@ -74,7 +75,9 @@ class InvoiceDetailView extends GetView<InvoiceController> {
             // Check if it's dynamic
             final days = int.tryParse(record.dueDate.split(' ')[0]) ?? 0;
             if (days > 0) {
-              dueStr = DateFormat('MMM dd, yyyy').format(record.issuedDate.add(Duration(days: days)));
+              dueStr = DateFormat(
+                'MMM dd, yyyy',
+              ).format(record.issuedDate.add(Duration(days: days)));
             } else {
               dueStr = record.dueDate;
             }
@@ -86,81 +89,79 @@ class InvoiceDetailView extends GetView<InvoiceController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- HEADER DETAILS CARD ---
+              // --- HEADER DETAILS CARD (COMPACT) ---
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(20.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
                   color: const Color(0xFF111111),
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
+                  borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(
+                    color: const Color(0xFF1E1E1E),
+                    width: 1.5,
+                  ),
                 ),
-                child: Column(
+                child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 30.r,
-                      backgroundColor: const Color(0xFF27272A),
-                      child: Text(
-                        record.clientName.isNotEmpty
-                            ? record.clientName.trim().split(' ').map((e) => e[0]).take(2).join('').toUpperCase()
-                            : 'C',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            record.clientName,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (record.clientBusinessName.isNotEmpty) ...[
+                            SizedBox(height: 2.h),
+                            Text(
+                              record.clientBusinessName,
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFD5C4AB),
+                                fontSize: 12.sp,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'TOTAL AMOUNT',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFFD5C4AB),
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
+                          ),
                         ),
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    Text(
-                      record.clientName,
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    if (record.clientBusinessName.isNotEmpty) ...[
-                      SizedBox(height: 4.h),
-                      Text(
-                        record.clientBusinessName,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFD5C4AB),
-                          fontSize: 13.sp,
+                        SizedBox(height: 2.h),
+                        Text(
+                          'USD ${record.totalAmount.toStringAsFixed(2)}',
+                          style: GoogleFonts.inter(
+                            color: isPaid
+                                ? const Color(0xFFFEDB9B)
+                                : Colors.white,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                    SizedBox(height: 20.h),
-                    Container(
-                      width: double.infinity,
-                      height: 1.h,
-                      color: const Color(0xFF1E1E1E),
-                    ),
-                    SizedBox(height: 20.h),
-                    Text(
-                      'TOTAL AMOUNT',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFFD5C4AB),
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    Text(
-                      'USD ${record.totalAmount.toStringAsFixed(2)}',
-                      style: GoogleFonts.inter(
-                        color: isPaid ? const Color(0xFFFEDB9B) : Colors.white,
-                        fontSize: 26.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 20.h),
 
               // --- INTERACTIVE STATUS TOGGLE ROW ---
               Text(
@@ -178,7 +179,10 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF111111),
                   borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
+                  border: Border.all(
+                    color: const Color(0xFF1E1E1E),
+                    width: 1.5,
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,7 +196,9 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            isPaid ? Icons.check_circle_outline : Icons.error_outline,
+                            isPaid
+                                ? Icons.check_circle_outline
+                                : Icons.error_outline,
                             color: statusColor,
                             size: 20.sp,
                           ),
@@ -225,11 +231,14 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                       value: isPaid,
                       activeThumbColor: const Color(0xFF10B981),
                       inactiveThumbColor: const Color(0xFFEF4444),
-                      activeTrackColor: const Color(0xFF10B981).withValues(alpha: 0.2),
-                      inactiveTrackColor: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                      activeTrackColor: const Color(
+                        0xFF10B981,
+                      ).withValues(alpha: 0.2),
+                      inactiveTrackColor: const Color(
+                        0xFFEF4444,
+                      ).withValues(alpha: 0.2),
                       onChanged: (value) {
-                        final updated = record.copyWith(status: value ? 'Paid' : 'Unpaid');
-                        controller.invoiceHistory[index] = updated;
+                        controller.toggleInvoiceStatus(index, value);
                       },
                     ),
                   ],
@@ -243,7 +252,10 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF111111),
                   borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
+                  border: Border.all(
+                    color: const Color(0xFF1E1E1E),
+                    width: 1.5,
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -325,6 +337,7 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                 subtitle: 'View, share or print the generated PDF',
                 onTap: () {
                   controller.populateFromRecord(record);
+                  controller.fetchInvoiceProfileFromApi();
                   Get.to(() => const InvoicePreviewView());
                 },
               ),
@@ -336,6 +349,8 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                 subtitle: 'Modify document entries or templates',
                 onTap: () {
                   controller.populateFromRecord(record);
+                  controller.fetchInvoiceProfileFromApi();
+                  controller.fetchClientsFromApi();
                   controller.editingRecordIndex.value = index;
                   Get.to(() => const CreateInvoiceView());
                 },
@@ -363,7 +378,9 @@ class InvoiceDetailView extends GetView<InvoiceController> {
     required VoidCallback onTap,
     bool isDestructive = false,
   }) {
-    final Color mainColor = isDestructive ? const Color(0xFFEF4444) : const Color(0xFFFEDB9B);
+    final Color mainColor = isDestructive
+        ? const Color(0xFFEF4444)
+        : const Color(0xFFFEDB9B);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -372,7 +389,9 @@ class InvoiceDetailView extends GetView<InvoiceController> {
           color: const Color(0xFF111111),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: isDestructive ? const Color(0xFFEF4444).withValues(alpha: 0.2) : const Color(0xFF1E1E1E),
+            color: isDestructive
+                ? const Color(0xFFEF4444).withValues(alpha: 0.2)
+                : const Color(0xFF1E1E1E),
             width: 1.5,
           ),
         ),
@@ -381,14 +400,12 @@ class InvoiceDetailView extends GetView<InvoiceController> {
             Container(
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: isDestructive ? const Color(0xFFEF4444).withValues(alpha: 0.1) : const Color(0xFF1E1E1E),
+                color: isDestructive
+                    ? const Color(0xFFEF4444).withValues(alpha: 0.1)
+                    : const Color(0xFF1E1E1E),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: mainColor,
-                size: 22.sp,
-              ),
+              child: Icon(icon, color: mainColor, size: 22.sp),
             ),
             SizedBox(width: 16.w),
             Expanded(
@@ -398,7 +415,9 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                   Text(
                     title,
                     style: GoogleFonts.inter(
-                      color: isDestructive ? const Color(0xFFEF4444) : Colors.white,
+                      color: isDestructive
+                          ? const Color(0xFFEF4444)
+                          : Colors.white,
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                     ),

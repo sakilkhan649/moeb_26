@@ -47,8 +47,14 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
         return Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+              child: RefreshIndicator(
+                color: const Color(0xFFD08700),
+                backgroundColor: Colors.black,
+                onRefresh: () => controller.fetchInvoiceProfileFromApi(),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -231,6 +237,7 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                 ),
               ),
             ),
+          ),
             
             // --- SAVE BUTTON ---
             Container(
@@ -252,13 +259,22 @@ class InvoiceProfileSettingsView extends GetView<InvoiceController> {
                     ),
                     padding: EdgeInsets.symmetric(vertical: 16.h),
                   ),
-                  child: Text(
-                    'Save',
-                    style: GoogleFonts.inter(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: controller.isLoading.value
+                      ? SizedBox(
+                          width: 20.w,
+                          height: 20.w,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.black,
+                          ),
+                        )
+                      : Text(
+                          'Save',
+                          style: GoogleFonts.inter(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ),

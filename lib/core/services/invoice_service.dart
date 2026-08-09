@@ -74,6 +74,26 @@ class InvoiceService extends GetxService {
   Future<Response> deleteInvoice(String id) async {
     return await _apiClient.deleteData('${ApiConstants.invoices}/$id');
   }
+
+  /// Fetch all saved clients via API
+  Future<Response> fetchClients() async {
+    return await _apiClient.getData(ApiConstants.invoiceClient);
+  }
+
+  /// Create client via API
+  Future<Response> createClient(Map<String, dynamic> data) async {
+    return await _apiClient.postData(ApiConstants.invoiceClient, data);
+  }
+
+  /// Update client by ID via API
+  Future<Response> updateClient(String id, Map<String, dynamic> data) async {
+    return await _apiClient.patchData('${ApiConstants.invoiceClient}/$id', data);
+  }
+
+  /// Delete client by ID via API
+  Future<Response> deleteClient(String id) async {
+    return await _apiClient.deleteData('${ApiConstants.invoiceClient}/$id');
+  }
 }
 
 

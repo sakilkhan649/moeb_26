@@ -45,6 +45,26 @@ class InvoiceRepository {
   Future<Response> deleteInvoice(String id) async {
     return await invoiceService.deleteInvoice(id);
   }
+
+  /// Fetch all clients via API
+  Future<Response> fetchClients() async {
+    return await invoiceService.fetchClients();
+  }
+
+  /// Create client via API
+  Future<Response> createClient(Map<String, dynamic> data) async {
+    return await invoiceService.createClient(data);
+  }
+
+  /// Update client by ID via API
+  Future<Response> updateClient(String id, Map<String, dynamic> data) async {
+    return await invoiceService.updateClient(id, data);
+  }
+
+  /// Delete client by ID via API
+  Future<Response> deleteClient(String id) async {
+    return await invoiceService.deleteClient(id);
+  }
 }
 
 

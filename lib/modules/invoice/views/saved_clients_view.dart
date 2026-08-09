@@ -44,50 +44,70 @@ class SavedClientsView extends GetView<InvoiceController> {
           ),
         ),
       ),
-      body: Obx(() {
-        if (controller.savedClients.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: RefreshIndicator(
+        color: const Color(0xFFD08700),
+        backgroundColor: Colors.black,
+        onRefresh: () => controller.fetchClientsFromApi(),
+        child: Obx(() {
+          if (controller.isLoading.value && controller.savedClients.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFFD08700),
+              ),
+            );
+          }
+
+          if (controller.savedClients.isEmpty) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
-                Icon(
-                  Icons.people_outline,
-                  color: const Color(0xFF364153),
-                  size: 64.sp,
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  'No Saved Clients',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFFD5C4AB),
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Clients are saved automatically when creating invoices.',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF52525B),
-                    fontSize: 12.sp,
+                SizedBox(height: 150.h),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.people_outline,
+                        color: const Color(0xFF364153),
+                        size: 64.sp,
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        'No Saved Clients',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFD5C4AB),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Clients are saved automatically when creating invoices.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF52525B),
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
-            ),
-          );
-        }
+            );
+          }
 
-        return ListView.separated(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          itemCount: controller.savedClients.length,
-          separatorBuilder: (context, index) => SizedBox(height: 14.h),
-          itemBuilder: (context, index) {
-            final client = controller.savedClients[index];
-            return _buildClientCard(context, client);
-          },
-        );
-      }),
+          return ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+            itemCount: controller.savedClients.length,
+            separatorBuilder: (context, index) => SizedBox(height: 14.h),
+            itemBuilder: (context, index) {
+              final client = controller.savedClients[index];
+              return _buildClientCard(context, client);
+            },
+          );
+        }),
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFFD08700),
         foregroundColor: Colors.black,
@@ -172,16 +192,7 @@ class SavedClientsView extends GetView<InvoiceController> {
                     BlendMode.srcIn,
                   ),
                 ),
-                onPressed: () {
-                  controller.deleteSavedClient(client.id);
-                  Get.snackbar(
-                    'Deleted',
-                    'Client removed from saved list',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.redAccent,
-                    colorText: Colors.white,
-                  );
-                },
+                onPressed: () => _showDeleteConfirmDialog(context, client),
               ),
             ],
           ),
@@ -407,7 +418,7 @@ class SavedClientsView extends GetView<InvoiceController> {
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (nameController.text.trim().isEmpty) {
                     Get.snackbar(
                       'Required',
@@ -420,9 +431,7 @@ class SavedClientsView extends GetView<InvoiceController> {
                   }
 
                   final newClient = SavedClient(
-                    id: isEditing
-                        ? client.id
-                        : DateTime.now().millisecondsSinceEpoch.toString(),
+                    id: isEditing ? client.id : '',
                     name: nameController.text.trim(),
                     businessName: businessController.text.trim(),
                     email: emailController.text.trim(),
@@ -434,25 +443,31 @@ class SavedClientsView extends GetView<InvoiceController> {
                     country: selectedCountry,
                   );
 
-                  controller.addOrUpdateSavedClient(newClient);
-                  Get.back();
-                  Get.snackbar(
-                    'Success',
-                    isEditing
-                        ? 'Client updated successfully'
-                        : 'New client added successfully',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: const Color(0xFFD08700),
-                    colorText: Colors.black,
-                  );
+                  final success =
+                      await controller.addOrUpdateSavedClient(newClient);
+                  if (success) {
+                    Get.back();
+                  }
                 },
-                child: Text(
-                  isEditing ? 'Save Changes' : 'Add Client',
-                  style: GoogleFonts.inter(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return SizedBox(
+                      width: 20.w,
+                      height: 20.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Colors.black,
+                      ),
+                    );
+                  }
+                  return Text(
+                    isEditing ? 'Save Changes' : 'Add Client',
+                    style: GoogleFonts.inter(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }),
               ),
             ),
           ],
@@ -506,6 +521,110 @@ class SavedClientsView extends GetView<InvoiceController> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
           borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmDialog(BuildContext context, SavedClient client) {
+    Get.dialog(
+      Dialog(
+        backgroundColor: const Color(0xFF18181B),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          side: const BorderSide(color: Color(0xFF27272A), width: 1),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF271515),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.delete_outline,
+                  color: const Color(0xFFEF4444),
+                  size: 28.sp,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                'Delete Client',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                'Are you sure you want to delete ${client.name}? This action cannot be undone.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFFA1A1AA),
+                  fontSize: 13.sp,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFF3F3F46)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                      ),
+                      onPressed: () => Get.back(),
+                      child: Text(
+                        'Cancel',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEF4444),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                      ),
+                      onPressed: () async {
+                        Get.back();
+                        await controller.deleteSavedClient(client.id);
+                        Get.snackbar(
+                          'Deleted',
+                          'Client removed successfully',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.redAccent,
+                          colorText: Colors.white,
+                        );
+                      },
+                      child: Text(
+                        'Delete',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

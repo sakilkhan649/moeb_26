@@ -143,6 +143,44 @@ class SavedClient {
       country: country ?? this.country,
     );
   }
+
+  factory SavedClient.fromJson(Map<String, dynamic> json) {
+    final billing = json['billingAddress'] as Map<String, dynamic>?;
+    return SavedClient(
+      id: json['id'] as String? ?? json['_id'] as String? ?? '',
+      name: json['clientName'] as String? ?? json['name'] as String? ?? '',
+      businessName: json['businessName'] as String? ?? '',
+      email: json['emailAddress'] as String? ?? json['email'] as String? ?? '',
+      phone: json['phoneNumber'] as String? ?? json['phone'] as String? ?? '',
+      streetAddress:
+          billing?['streetAddress'] as String? ??
+          json['streetAddress'] as String? ??
+          '',
+      city: billing?['city'] as String? ?? json['city'] as String? ?? '',
+      state: billing?['state'] as String? ?? json['state'] as String? ?? '',
+      zip: billing?['zipCode'] as String? ?? json['zip'] as String? ?? '',
+      country:
+          billing?['country'] as String? ??
+          json['country'] as String? ??
+          'United States',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'clientName': name,
+      'businessName': businessName,
+      'emailAddress': email,
+      'phoneNumber': phone,
+      'billingAddress': {
+        'streetAddress': streetAddress,
+        'city': city,
+        'state': state,
+        'zipCode': zip,
+        'country': country,
+      },
+    };
+  }
 }
 
 class InvoiceController extends GetxController {
@@ -251,9 +289,8 @@ class InvoiceController extends GetxController {
     businessWebsiteController = TextEditingController();
     businessAddressController = TextEditingController();
 
-    // Fetch invoices & profile from backend API
+    // Fetch invoices from backend API
     fetchInvoicesFromApi();
-    fetchInvoiceProfileFromApi();
   }
 
   // --- SAVED CLIENTS ACTIONS ---
@@ -292,9 +329,7 @@ class InvoiceController extends GetxController {
     );
 
     final client = SavedClient(
-      id: existingIndex != -1
-          ? savedClients[existingIndex].id
-          : DateTime.now().millisecondsSinceEpoch.toString(),
+      id: existingIndex != -1 ? savedClients[existingIndex].id : '',
       name: name,
       businessName: clientBusinessNameController.text.trim(),
       email: email,
@@ -306,26 +341,125 @@ class InvoiceController extends GetxController {
       country: clientCountry.value,
     );
 
-    if (existingIndex != -1) {
-      savedClients[existingIndex] = client;
-    } else {
-      savedClients.add(client);
+    addOrUpdateSavedClient(client);
+  }
+
+  Future<void> fetchClientsFromApi() async {
+    try {
+      isLoading.value = true;
+      final response = await _invoiceRepo.fetchClients();
+      if (response.statusCode == 200 && response.data != null) {
+        final body = response.data;
+        if (body['success'] == true && body['data'] is List) {
+          final List list = body['data'];
+          final clients = list
+              .map((item) => SavedClient.fromJson(item as Map<String, dynamic>))
+              .toList();
+          savedClients.assignAll(clients);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching clients from API: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  void addOrUpdateSavedClient(SavedClient client) {
-    final existingIndex = savedClients.indexWhere((c) => c.id == client.id);
-    if (existingIndex != -1) {
-      savedClients[existingIndex] = client;
-    } else {
-      savedClients.add(client);
+  Future<bool> addOrUpdateSavedClient(SavedClient client) async {
+    // Only genuine 24-character MongoDB hex ObjectIDs represent existing backend clients
+    final isEditing =
+        client.id.isNotEmpty &&
+        !client.id.startsWith('temp_') &&
+        RegExp(r'^[a-fA-F0-9]{24}$').hasMatch(client.id);
+
+    try {
+      isLoading.value = true;
+      if (isEditing) {
+        final response = await _invoiceRepo.updateClient(
+          client.id,
+          client.toJson(),
+        );
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          if (response.data != null && response.data['data'] != null) {
+            final updated = SavedClient.fromJson(response.data['data']);
+            final idx = savedClients.indexWhere((c) => c.id == client.id);
+            if (idx != -1) savedClients[idx] = updated;
+          }
+          Get.snackbar(
+            'Success',
+            'Client updated successfully',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color(0xFFD08700),
+            colorText: Colors.black,
+            duration: const Duration(seconds: 2),
+          );
+          return true;
+        }
+      } else {
+        // Send POST /api/v1/invoices/client to create new client on backend
+        final response = await _invoiceRepo.createClient(client.toJson());
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          if (response.data != null && response.data['data'] != null) {
+            final created = SavedClient.fromJson(response.data['data']);
+            final existingIndex = savedClients.indexWhere(
+              (c) =>
+                  c.id == created.id ||
+                  (c.name.toLowerCase() == created.name.toLowerCase() &&
+                      created.name.isNotEmpty),
+            );
+            if (existingIndex != -1) {
+              savedClients[existingIndex] = created;
+            } else {
+              savedClients.add(created);
+            }
+          }
+          Get.snackbar(
+            'Success',
+            'New client added successfully',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color(0xFFD08700),
+            colorText: Colors.black,
+            duration: const Duration(seconds: 2),
+          );
+          return true;
+        }
+      }
+      Get.snackbar(
+        'Error',
+        'Failed to save client.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    } catch (e) {
+      debugPrint('Error saving client to API: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to save client.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  void deleteSavedClient(String id) {
+  Future<void> deleteSavedClient(String id) async {
     savedClients.removeWhere((c) => c.id == id);
     if (selectedSavedClient.value?.id == id) {
       selectedSavedClient.value = null;
+    }
+    if (id.isNotEmpty &&
+        !id.startsWith('temp_') &&
+        RegExp(r'^[a-fA-F0-9]{24}$').hasMatch(id)) {
+      try {
+        await _invoiceRepo.deleteClient(id);
+      } catch (e) {
+        debugPrint('Error deleting client from API: $e');
+      }
     }
   }
 
@@ -668,6 +802,10 @@ class InvoiceController extends GetxController {
     selectedDueDateOption.value = 'On Receipt';
     customDueDate.value = null;
     currentStep.value = 1;
+
+    // Fetch fresh profile & client data for invoice creation
+    fetchInvoiceProfileFromApi();
+    fetchClientsFromApi();
   }
 
   Future<void> deleteInvoiceAtIndex(int index) async {
@@ -681,6 +819,61 @@ class InvoiceController extends GetxController {
         }
       }
       invoiceHistory.removeAt(index);
+    }
+  }
+
+  Future<void> toggleInvoiceStatus(int index, bool isPaid) async {
+    if (index >= 0 && index < invoiceHistory.length) {
+      final record = invoiceHistory[index];
+      final newStatus = isPaid ? 'Paid' : 'Unpaid';
+
+      // Immediate UI feedback
+      final updated = record.copyWith(status: newStatus);
+      invoiceHistory[index] = updated;
+
+      if (record.id != null && record.id!.isNotEmpty) {
+        try {
+          final response = await _invoiceRepo.updateInvoice(record.id!, {
+            'invoiceAmount': record.totalAmount,
+            'status': isPaid ? 'paid' : 'unpaid',
+          });
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            Get.snackbar(
+              'Status Updated',
+              'Invoice marked as $newStatus.',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: isPaid
+                  ? const Color(0xFF10B981)
+                  : const Color(0xFFEF4444),
+              colorText: Colors.white,
+              duration: const Duration(seconds: 2),
+            );
+          } else {
+            final reverted = record.copyWith(
+              status: isPaid ? 'Unpaid' : 'Paid',
+            );
+            invoiceHistory[index] = reverted;
+            Get.snackbar(
+              'Error',
+              'Failed to update status. Code: ${response.statusCode}',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
+          }
+        } catch (e) {
+          final reverted = record.copyWith(status: isPaid ? 'Unpaid' : 'Paid');
+          invoiceHistory[index] = reverted;
+          debugPrint('Error updating invoice status on backend: $e');
+          Get.snackbar(
+            'Error',
+            'Failed to update invoice status.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      }
     }
   }
 
@@ -736,25 +929,6 @@ class InvoiceController extends GetxController {
           }).toList();
 
           invoiceHistory.assignAll(records);
-
-          // Populate saved clients from fetched invoices
-          for (final r in records) {
-            if (r.clientName.isNotEmpty && r.clientName != 'N/A') {
-              final client = SavedClient(
-                id: r.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-                name: r.clientName,
-                businessName: r.clientBusinessName,
-                email: r.clientEmail,
-                phone: r.clientPhone,
-                streetAddress: r.clientStreetAddress,
-                city: r.clientCity,
-                state: r.clientState,
-                zip: r.clientZip,
-                country: r.clientCountry,
-              );
-              addOrUpdateSavedClient(client);
-            }
-          }
         }
       }
     } catch (e) {
@@ -1061,10 +1235,22 @@ class InvoiceController extends GetxController {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      child: Obx(() {
+                        if (isLoading.value) {
+                          return const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.black,
+                            ),
+                          );
+                        }
+                        return const Text(
+                          'Save',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        );
+                      }),
                     ),
                   ),
                 ],
