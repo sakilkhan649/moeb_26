@@ -2,13 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import '../../../../core/widgets/CustomButton.dart';
 import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signup_controller.dart';
-
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 
 class DocumentsuploadView extends GetView<SignupController> {
@@ -20,6 +20,7 @@ class DocumentsuploadView extends GetView<SignupController> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.showErrors.value = false;
     });
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: const CustomSubAppBar(title: "Documents Upload"),
@@ -33,56 +34,42 @@ class DocumentsuploadView extends GetView<SignupController> {
               children: [
                 SizedBox(height: 15.h),
                 CustomTextgray(
-                  text: "Upload required documents for verification",
+                  text:
+                      "Upload required documents & set expiration dates for verification",
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w400,
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 24.h),
 
-                _buildDocumentSection(
+                // 1. Driving License Card
+                _buildUnifiedDocumentCard(
                   context: context,
                   title: "Driving License",
                   isRequired: true,
                   fileRx: controller.licensePlateFile,
-                ),
-                SizedBox(height: 16.h),
-                _buildFieldLabel("Expire Date"),
-                _buildExpireDateField(
-                  context,
-                  controller.licensePlateExpireController,
+                  expireController: controller.licensePlateExpireController,
                 ),
 
-                SizedBox(height: 24.h),
-                _buildDocumentSection(
+                // 2. Hack License Card
+                _buildUnifiedDocumentCard(
                   context: context,
                   title: "Hack License",
                   isRequired: true,
                   fileRx: controller.hackLicenseFile,
-                ),
-                SizedBox(height: 16.h),
-                _buildFieldLabel("Expire Date"),
-                _buildExpireDateField(
-                  context,
-                  controller.hackLicenseExpireController,
+                  expireController: controller.hackLicenseExpireController,
                 ),
 
-                SizedBox(height: 24.h),
-                _buildDocumentSection(
+                // 3. Local Permit Card
+                _buildUnifiedDocumentCard(
                   context: context,
                   title: "Local Permit",
                   isRequired: true,
                   fileRx: controller.localPermitFile,
-                ),
-                SizedBox(height: 16.h),
-                _buildFieldLabel("Expire Date"),
-                _buildExpireDateField(
-                  context,
-                  controller.localPermitExpireController,
-                  isRequired: true,
+                  expireController: controller.localPermitExpireController,
                 ),
 
-                SizedBox(height: 24.h),
-                _buildDocumentSection(
+                // 4. Profile Picture Card
+                _buildUnifiedDocumentCard(
                   context: context,
                   title: "Profile Picture",
                   isRequired: true,
@@ -90,20 +77,34 @@ class DocumentsuploadView extends GetView<SignupController> {
                   onlyCamera: true,
                 ),
 
-                SizedBox(height: 30.h),
+                SizedBox(height: 10.h),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(18.w),
+                  padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E2939),
+                    color: const Color(0xFF141414),
                     borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(color: const Color(0xFF262626)),
                   ),
-                  child: const CustomTextgray(
-                    text:
-                        "All documents will be reviewed by our admin team. This process typically takes 24-48 hours. You'll be notified via email once approved.",
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline_rounded,
+                        color: const Color(0xFF9EA3AE),
+                        size: 20.sp,
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: CustomTextgray(
+                          text:
+                              "All documents will be reviewed by our admin team. This process typically takes 24-48 hours. You'll be notified via email once approved.",
+                          fontSize: 11.sp,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 40.h),
+                SizedBox(height: 32.h),
 
                 CustomButton(
                   text: "Submit for Review",
@@ -120,43 +121,41 @@ class DocumentsuploadView extends GetView<SignupController> {
     );
   }
 
-  // --- UI Helpers ---
-
-  Widget _buildFieldLabel(String text) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: CustomText(
-        text: text,
-        fontWeight: FontWeight.w500,
-        fontSize: 13.sp,
-      ),
-    );
-  }
-
-  Widget _buildDocumentSection({
+  // --- Unified Document & Expiry Card ---
+  Widget _buildUnifiedDocumentCard({
     required BuildContext context,
     required String title,
     required bool isRequired,
     required Rx<File?> fileRx,
+    TextEditingController? expireController,
     bool onlyCamera = false,
   }) {
     return Obx(() {
       final hasFile = fileRx.value != null;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: AppColors.black200),
-            ),
-            child: Row(
+      return Container(
+        margin: EdgeInsets.only(bottom: 20.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF141414),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: hasFile
+                ? const Color(0xFFD08700).withValues(alpha: 0.6)
+                : const Color(0xFF262626),
+            width: 1.2,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top Section: Icon + Title + Upload Actions
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _buildIcon(
                   title == "Profile Picture"
-                      ? Icons.image_outlined
-                      : Icons.description_outlined,
+                      ? Icons.account_box_outlined
+                      : Icons.badge_outlined,
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
@@ -165,10 +164,14 @@ class DocumentsuploadView extends GetView<SignupController> {
                     children: [
                       Row(
                         children: [
-                          CustomText(
-                            text: title,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13.sp,
+                          Flexible(
+                            child: CustomText(
+                              text: title,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13.sp,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           if (isRequired)
                             const Text(
@@ -177,63 +180,124 @@ class DocumentsuploadView extends GetView<SignupController> {
                             ),
                         ],
                       ),
+                      SizedBox(height: 4.h),
                       if (hasFile)
-                        Text(
-                          controller.getFileName(fileRx),
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 11.sp,
-                          ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle_rounded,
+                              color: Colors.greenAccent,
+                              size: 14.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Expanded(
+                              child: Text(
+                                controller.getFileName(fileRx),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.greenAccent,
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         )
                       else if (title == "Profile Picture")
                         CustomTextgray(
                           text:
                               "Black suit, white shirt, tie, white background",
-                          fontSize: 10.sp,
+                          fontSize: 11.sp,
+                        )
+                      else
+                        CustomTextgray(
+                          text: "No document attached",
+                          fontSize: 11.sp,
                         ),
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () => controller.pickFromCamera(fileRx),
-                  icon: const Icon(
-                    Icons.camera_alt_outlined,
-                    color: Colors.white,
-                  ),
-                ),
 
-                if (!onlyCamera)
-                  IconButton(
-                    onPressed: () => controller.pickFromFile(context, fileRx),
-                    icon: const Icon(
-                      Icons.file_upload_outlined,
-                      color: Colors.white,
+                // Action Buttons
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                      onPressed: () => controller.pickFromCamera(fileRx),
+                      icon: Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.white,
+                        size: 18.sp,
+                      ),
+                      tooltip: "Camera",
                     ),
-                  ),
+                    if (!onlyCamera) ...[
+                      SizedBox(width: 4.w),
+                      IconButton(
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                        onPressed: () =>
+                            controller.pickFromFile(context, fileRx),
+                        icon: Icon(
+                          Icons.file_upload_outlined,
+                          color: Colors.white,
+                          size: 18.sp,
+                        ),
+                        tooltip: "Upload File",
+                      ),
+                    ],
+                  ],
+                ),
               ],
             ),
-          ),
-          if (controller.showErrors.value && isRequired && !hasFile)
-            Padding(
-              padding: EdgeInsets.only(top: 4.h),
-              child: Text(
-                "Please upload $title",
-                style: TextStyle(color: Colors.red, fontSize: 12.sp),
+
+            if (controller.showErrors.value && isRequired && !hasFile)
+              Padding(
+                padding: EdgeInsets.only(top: 8.h),
+                child: Text(
+                  "Please upload $title",
+                  style: TextStyle(color: Colors.redAccent, fontSize: 12.sp),
+                ),
               ),
-            ),
-        ],
+
+            // Optional Expiration Date Field
+            if (expireController != null) ...[
+              SizedBox(height: 14.h),
+              const Divider(color: Color(0xFF262626), height: 1),
+              SizedBox(height: 14.h),
+              _buildFieldLabel("Expiration Date"),
+              _buildExpireDateField(context, expireController),
+            ],
+          ],
+        ),
       );
     });
   }
 
   Widget _buildIcon(IconData icon) {
     return Container(
-      padding: EdgeInsets.all(8.r),
+      padding: EdgeInsets.all(6.r),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E2939),
-        borderRadius: BorderRadius.circular(12.r),
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: const Color(0xFF2C2C2C)),
       ),
-      child: Icon(icon, color: Colors.white, size: 22.sp),
+      child: Icon(icon, color: Colors.white, size: 16.sp),
+    );
+  }
+
+  Widget _buildFieldLabel(String text) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6.h),
+      child: CustomText(
+        text: text,
+        fontWeight: FontWeight.w500,
+        fontSize: 12.sp,
+        color: const Color(0xFF9EA3AE),
+      ),
     );
   }
 
@@ -246,29 +310,32 @@ class DocumentsuploadView extends GetView<SignupController> {
       controller: textController,
       readOnly: true,
       onTap: () => controller.selectDate(context, textController),
-      style: TextStyle(color: Colors.white, fontSize: 14.sp),
+      style: TextStyle(color: Colors.white, fontSize: 13.sp),
       validator: isRequired
           ? (v) => (v == null || v.isEmpty) ? "Date required" : null
           : null,
       decoration: InputDecoration(
         hintText: "Select Expiry Date",
-        hintStyle: TextStyle(color: AppColors.gray100, fontSize: 14.sp),
+        hintStyle: TextStyle(color: AppColors.gray100, fontSize: 13.sp),
+        contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+        filled: true,
+        fillColor: const Color(0xFF1E1E1E),
         suffixIcon: Icon(
-          Icons.calendar_month,
-          color: AppColors.gray100,
-          size: 20.sp,
+          Icons.calendar_month_outlined,
+          color: const Color(0xFF9EA3AE),
+          size: 18.sp,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: const BorderSide(color: AppColors.black200),
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: const BorderSide(color: AppColors.black200),
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.r),
-          borderSide: const BorderSide(color: AppColors.black200),
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: Color(0xFF9EA3AE)),
         ),
       ),
     );

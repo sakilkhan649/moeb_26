@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
-import 'package:moeb_26/modules/jobs_offers/views/Job_offer_view.dart';
 
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 

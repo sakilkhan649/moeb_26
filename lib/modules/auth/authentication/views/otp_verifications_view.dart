@@ -70,12 +70,12 @@ class OtpVerificationView extends GetView<OtpController> {
                       color: const Color(0xFF1E1E1E),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFFD08700).withValues(alpha: 0.4),
+                        color: Colors.white.withValues(alpha: 0.2),
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFD08700).withValues(alpha: 0.15),
+                          color: Colors.white.withValues(alpha: 0.05),
                           blurRadius: 20,
                           spreadRadius: 2,
                         ),
@@ -83,7 +83,7 @@ class OtpVerificationView extends GetView<OtpController> {
                     ),
                     child: Icon(
                       Icons.mark_email_read_outlined,
-                      color: const Color(0xFFD08700),
+                      color: Colors.white,
                       size: 36.sp,
                     ),
                   ),
@@ -169,13 +169,13 @@ class OtpVerificationView extends GetView<OtpController> {
                           Icon(
                             Icons.timer_outlined,
                             size: 16.sp,
-                            color: const Color(0xFFD08700),
+                            color: const Color(0xFF9EA3AE),
                           ),
                           SizedBox(width: 6.w),
                           Text(
                             controller.timerText,
                             style: GoogleFonts.inter(
-                              color: const Color(0xFFD08700),
+                              color: const Color(0xFF9EA3AE),
                               fontSize: 13.sp,
                               fontWeight: FontWeight.bold,
                             ),

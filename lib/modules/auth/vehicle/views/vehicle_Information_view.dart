@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,7 +30,7 @@ class VehicleInformationView extends StatelessWidget {
         body: Form(
           key: _formKey,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -81,7 +82,6 @@ class VehicleInformationView extends StatelessWidget {
     );
   }
 
-  // --- Vehicle Card ---
   Widget _buildVehicleCard(
     BuildContext context,
     int index,
@@ -89,44 +89,86 @@ class VehicleInformationView extends StatelessWidget {
   ) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 20.h),
-      padding: EdgeInsets.all(15.w),
+      margin: EdgeInsets.only(bottom: 24.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.black200, width: 1),
+        color: const Color(0xFF161616),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomText(text: "Vehicle ${index + 1}", fontSize: 15.sp),
-              if (controller.vehiclesList.length > 1)
-                GestureDetector(
-                  onTap: () => controller.removeVehicle(index),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 8.h,
-                      horizontal: 15.w,
+          // Sleek Vehicle Header Banner
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.only(bottom: 20.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+            decoration: BoxDecoration(
+              color: const Color(0xFF222222),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: const Color(0xFF333333)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.directions_car_filled_rounded,
+                      color: Colors.white,
+                      size: 20.sp,
                     ),
-                    decoration: BoxDecoration(
-                      color: AppColors.black200,
-                      borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(color: AppColors.black200, width: 1),
+                    SizedBox(width: 10.w),
+                    Text(
+                      "VEHICLE ${index + 1}",
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                      ),
                     ),
-                    child: Text(
-                      'Delete',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
+                  ],
+                ),
+                if (controller.vehiclesList.length > 1)
+                  GestureDetector(
+                    onTap: () => controller.removeVehicle(index),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 6.h,
+                        horizontal: 12.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.redAccent,
+                            size: 16.sp,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            'Remove',
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
           SizedBox(height: 15.h),
           Row(
@@ -179,12 +221,13 @@ class VehicleInformationView extends StatelessWidget {
             final cars = vehicleMakeModelMap[type] ?? [];
             final currentSelection =
                 (model.makeController.text.isEmpty &&
-                        model.modelController.text.isEmpty)
-                    ? null
-                    : "${model.makeController.text} ${model.modelController.text}"
-                        .trim();
-            final value =
-                cars.contains(currentSelection) ? currentSelection : null;
+                    model.modelController.text.isEmpty)
+                ? null
+                : "${model.makeController.text} ${model.modelController.text}"
+                      .trim();
+            final value = cars.contains(currentSelection)
+                ? currentSelection
+                : null;
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +243,10 @@ class VehicleInformationView extends StatelessWidget {
                     color: Color(0xFFD5C4AB),
                     size: 22,
                   ),
-                  style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp),
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                  ),
                   validator: (value) => (value == null || value.isEmpty)
                       ? "Select Make & Model"
                       : null,
@@ -213,8 +259,10 @@ class VehicleInformationView extends StatelessWidget {
                       fontSize: 14.sp,
                     ),
                     errorStyle: TextStyle(color: Colors.red, fontSize: 11.sp),
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 14.h,
+                      horizontal: 16.w,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
                       borderSide: const BorderSide(color: AppColors.black200),
@@ -225,7 +273,10 @@ class VehicleInformationView extends StatelessWidget {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(color: Color(0xFFD08700), width: 1.5),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFD08700),
+                        width: 1.5,
+                      ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
@@ -233,7 +284,10 @@ class VehicleInformationView extends StatelessWidget {
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFEF4444),
+                        width: 1.5,
+                      ),
                     ),
                   ),
                   items: cars.map((car) {
@@ -258,8 +312,9 @@ class VehicleInformationView extends StatelessWidget {
                           if (val != null) {
                             final parts = val.split(' ');
                             model.makeController.text = parts.first;
-                            model.modelController.text =
-                                parts.sublist(1).join(' ');
+                            model.modelController.text = parts
+                                .sublist(1)
+                                .join(' ');
                           }
                         },
                 ),
@@ -322,7 +377,10 @@ class VehicleInformationView extends StatelessWidget {
                           color: Color(0xFFD5C4AB),
                           size: 22,
                         ),
-                        style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp),
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                        ),
                         validator: (value) => (value == null || value.isEmpty)
                             ? "Select Color"
                             : null,
@@ -332,36 +390,45 @@ class VehicleInformationView extends StatelessWidget {
                             color: AppColors.gray100,
                             fontSize: 14.sp,
                           ),
-                          errorStyle:
-                              TextStyle(color: Colors.red, fontSize: 11.sp),
+                          errorStyle: TextStyle(
+                            color: Colors.red,
+                            fontSize: 11.sp,
+                          ),
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 14.h,
                             horizontal: 16.w,
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
-                            borderSide:
-                                const BorderSide(color: AppColors.black200),
+                            borderSide: const BorderSide(
+                              color: AppColors.black200,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
-                            borderSide:
-                                const BorderSide(color: AppColors.black200),
+                            borderSide: const BorderSide(
+                              color: AppColors.black200,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
-                            borderSide:
-                                const BorderSide(color: Color(0xFFD08700), width: 1.5),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFD08700),
+                              width: 1.5,
+                            ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
-                            borderSide:
-                                const BorderSide(color: Color(0xFFEF4444)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFEF4444),
+                            ),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
-                            borderSide:
-                                const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFEF4444),
+                              width: 1.5,
+                            ),
                           ),
                         ),
                         items: colors.map((c) {
@@ -440,34 +507,22 @@ class VehicleInformationView extends StatelessWidget {
           ),
           SizedBox(height: 24.h),
 
-          _buildFileSection(
+          _buildUnifiedDocumentCard(
             context: context,
             title: "Commercial Insurance",
             fileRx: model.commercialInsuranceFile,
+            expireController: model.commercialInsuranceExpireController,
             isRequired: true,
           ),
           SizedBox(height: 16.h),
-          _buildFieldLabel("Expire Date"),
-          _buildExpireDateField(
-            context,
-            model.commercialInsuranceExpireController,
-          ),
 
-          SizedBox(height: 24.h),
-
-          _buildFileSection(
+          _buildUnifiedDocumentCard(
             context: context,
             title: "Vehicle Registration",
             fileRx: model.vehicleRegistrationFile,
+            expireController: model.vehicleRegistrationExpireController,
             isRequired: true,
           ),
-          SizedBox(height: 16.h),
-          _buildFieldLabel("Expire Date"),
-          _buildExpireDateField(
-            context,
-            model.vehicleRegistrationExpireController,
-          ),
-
           SizedBox(height: 24.h),
           CustomText(
             text: "Vehicle Photos",
@@ -604,24 +659,31 @@ class VehicleInformationView extends StatelessWidget {
     );
   }
 
-  Widget _buildFileSection({
+  Widget _buildUnifiedDocumentCard({
     required BuildContext context,
     required String title,
     required Rx<File?> fileRx,
-    bool isRequired = false,
+    required TextEditingController expireController,
+    bool isRequired = true,
   }) {
     return Obx(() {
       final hasFile = fileRx.value != null;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: AppColors.black200),
-            ),
-            child: Row(
+      return Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF141414),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: hasFile
+                ? const Color(0xFFD08700).withValues(alpha: 0.6)
+                : const Color(0xFF262626),
+            width: 1.2,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
                 _buildIcon(Icons.description_outlined),
                 SizedBox(width: 12.w),
@@ -629,48 +691,102 @@ class VehicleInformationView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomText(
-                        text: title,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13.sp,
-                      ),
-                      if (hasFile)
-                        Text(
-                          controller.getFileName(fileRx),
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 11.sp,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: CustomText(
+                              text: title,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13.sp,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
+                          if (isRequired)
+                            const Text(
+                              " *",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: 4.h),
+                      if (hasFile)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle_rounded,
+                              color: Colors.greenAccent,
+                              size: 14.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Expanded(
+                              child: Text(
+                                controller.getFileName(fileRx),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.greenAccent,
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        CustomTextgray(
+                          text: "No file attached",
+                          fontSize: 11.sp,
                         ),
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () => controller.pickFromCamera(fileRx),
-                  icon: const Icon(
-                    Icons.camera_alt_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => controller.pickFromFile(context, fileRx),
-                  icon: const Icon(
-                    Icons.file_upload_outlined,
-                    color: Colors.white,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+                      onPressed: () => controller.pickFromCamera(fileRx),
+                      icon: Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.white,
+                        size: 18.sp,
+                      ),
+                      tooltip: "Camera",
+                    ),
+                    SizedBox(width: 4.w),
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+                      onPressed: () =>
+                          controller.pickFromFile(context, fileRx),
+                      icon: Icon(
+                        Icons.file_upload_outlined,
+                        color: Colors.white,
+                        size: 18.sp,
+                      ),
+                      tooltip: "Upload File",
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-          if (controller.showErrors.value && isRequired && !hasFile)
-            Padding(
-              padding: EdgeInsets.only(top: 4.h),
-              child: Text(
-                "Please upload $title",
-                style: TextStyle(color: Colors.red, fontSize: 12.sp),
+            if (controller.showErrors.value && isRequired && !hasFile)
+              Padding(
+                padding: EdgeInsets.only(top: 8.h),
+                child: Text(
+                  "Please upload $title",
+                  style: TextStyle(color: Colors.redAccent, fontSize: 12.sp),
+                ),
               ),
-            ),
-        ],
+            SizedBox(height: 14.h),
+            const Divider(color: Color(0xFF262626), height: 1),
+            SizedBox(height: 14.h),
+            _buildFieldLabel("Expiration Date"),
+            _buildExpireDateField(context, expireController),
+          ],
+        ),
       );
     });
   }
@@ -687,25 +803,29 @@ class VehicleInformationView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: AppColors.black200),
             ),
             child: Row(
               children: [
                 _buildIcon(Icons.image_outlined),
-                SizedBox(width: 12.w),
+                SizedBox(width: 10.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          CustomText(
-                            text: title,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13.sp,
+                          Flexible(
+                            child: CustomText(
+                              text: title,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13.sp,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           if (isRequired)
                             const Text(
@@ -717,6 +837,8 @@ class VehicleInformationView extends StatelessWidget {
                       if (hasFile)
                         Text(
                           controller.getFileName(fileRx),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.green,
                             fontSize: 11.sp,
@@ -726,11 +848,15 @@ class VehicleInformationView extends StatelessWidget {
                   ),
                 ),
                 IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
                   onPressed: () => controller.pickFromCamera(fileRx),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.camera_alt_outlined,
                     color: Colors.white,
+                    size: 18.sp,
                   ),
+                  tooltip: "Camera",
                 ),
               ],
             ),
@@ -750,12 +876,12 @@ class VehicleInformationView extends StatelessWidget {
 
   Widget _buildIcon(IconData icon) {
     return Container(
-      padding: EdgeInsets.all(8.r),
+      padding: EdgeInsets.all(6.r),
       decoration: BoxDecoration(
         color: const Color(0xFF1E2939),
         borderRadius: BorderRadius.circular(8.r),
       ),
-      child: Icon(icon, color: Colors.white, size: 20.sp),
+      child: Icon(icon, color: Colors.white, size: 16.sp),
     );
   }
 
@@ -858,9 +984,7 @@ const Map<String, List<String>> vehicleMakeModelMap = {
     "Ford Expedition MAX",
     "Jeep Grand Wagoneer L",
   ],
-  "Sprinter": [
-    "Mercedes-Benz Sprinter",
-  ],
+  "Sprinter": ["Mercedes-Benz Sprinter"],
   "LimoStretch": [
     "Chrysler 300 Stretch",
     "Lincoln MKT Stretch",

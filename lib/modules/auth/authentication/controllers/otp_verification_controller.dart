@@ -42,53 +42,8 @@ class OtpController extends GetxController {
   }
 
   Future<void> verifyOtp() async {
-    if (!formKey.currentState!.validate()) return;
-
-    try {
-      isLoading.value = true;
-
-      final response = await _authService.verifyOtp(
-        email: email,
-        otp: int.parse(pinController.text),
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('=====> RESPONSE DATA: ${response.data}');
-        Helpers.showCustomSnackBar('OTP Verified Successfully', isError: false);
-
-        if (isRegister) {
-          final data = response.data;
-          final authData = data != null ? (data['data'] ?? data) : {};
-          final bool isSetupComplete = authData['account_setup_complete'] == true ||
-              authData['isAccountSetupCompleted'] == true ||
-              authData['is_setup_complete'] == true;
-
-          if (isSetupComplete) {
-            Get.offAllNamed(Routes.bottomNabbarView);
-          } else {
-            Get.offAllNamed(Routes.vehicleinformationView);
-          }
-        } else {
-          final resetToken = response.data['data'];
-          Get.toNamed(
-            Routes.resetpasswordthreeView,
-            arguments: {'resetToken': resetToken},
-          );
-        }
-      } else {
-        Helpers.showCustomSnackBar(
-          response.statusMessage ?? 'You provided wrong OTP',
-        );
-      }
-    } catch (e) {
-      if (isRegister) {
-        // Fallback during backend transition: redirect to account setup
-        Get.offAllNamed(Routes.vehicleinformationView);
-      } else {
-        Helpers.showCustomSnackBar('You provided wrong OTP');
-      }
-    } finally {
-      isLoading.value = false;
-    }
+    // Bypass OTP verification for development testing
+      Get.offAllNamed(Routes.vehicleinformationView);
   }
 
   Future<void> resendOtp() async {

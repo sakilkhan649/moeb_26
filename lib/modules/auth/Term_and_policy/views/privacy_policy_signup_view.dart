@@ -314,7 +314,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                         child: CustomButton(
                           text: currentSectionIndex.value == sections.length - 1
                               ? "Submit Application"
-                              : "Next Section",
+                              : "Continue",
                           fontSize: 14.sp,
                           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
                           onPressed: () {
@@ -322,7 +322,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                             if (!_isAllSectionChecked(activeSection)) {
                               Get.snackbar(
                                 "Agreement Required",
-                                "Please agree to all terms in this section to continue.",
+                                "Please agree to all items above to continue.",
                                 backgroundColor: Colors.red,
                                 colorText: Colors.white,
                                 snackPosition: SnackPosition.BOTTOM,
@@ -333,13 +333,8 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                             if (currentSectionIndex.value < sections.length - 1) {
                               currentSectionIndex.value++;
                             } else {
-                              Get.toNamed(
-                                Routes.otpVerificationView,
-                                arguments: {
-                                  'email': controller.emailController.text,
-                                  'isRegister': true,
-                                },
-                              );
+                              // Bypass OTP and navigate directly to Account Setup (Vehicle Information)
+                              Get.toNamed(Routes.vehicleinformationView);
                             }
                           },
                         ),
@@ -356,52 +351,25 @@ class PrivacyPolicySignUpView extends StatelessWidget {
   }
 
   Widget _buildProgressIndicator(double progress) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Section ${currentSectionIndex.value + 1} of ${sections.length}",
-              style: GoogleFonts.inter(
-                color: const Color(0xFF9EA3AE),
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Text(
-              "${((currentSectionIndex.value + 1) * 100 ~/ sections.length)}%",
-              style: GoogleFonts.inter(
-                color: const Color(0xFFD08700),
-                fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        Container(
+          width: double.infinity,
+          height: 4.h,
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E1E1E),
+            borderRadius: BorderRadius.circular(2.r),
+          ),
         ),
-        SizedBox(height: 8.h),
-        Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(2.r),
-              ),
+        FractionallySizedBox(
+          widthFactor: progress,
+          child: Container(
+            height: 4.h,
+            decoration: BoxDecoration(
+              color: const Color(0xFFD08700),
+              borderRadius: BorderRadius.circular(2.r),
             ),
-            FractionallySizedBox(
-              widthFactor: progress,
-              child: Container(
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD08700),
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );
