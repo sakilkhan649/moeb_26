@@ -129,20 +129,20 @@ class PersonalDocumentView extends GetView<PersonalDocumentController> {
           color: const Color(0xFF141414),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: hasLocalFile
-                ? const Color(0xFFD08700).withValues(alpha: 0.6)
-                : const Color(0xFF262626),
+            color: const Color(0xFF262626),
             width: 1.2,
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Row: Icon + Title & File Status + Action Buttons
+            // Header Row: Icon/Thumbnail + Title & File Status + Action Buttons
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildIcon(Icons.badge_outlined),
+                canPreview
+                    ? _buildDocumentThumbnail(context, fileRx, urlRx, title)
+                    : _buildIcon(Icons.badge_outlined),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
@@ -164,46 +164,24 @@ class PersonalDocumentView extends GetView<PersonalDocumentController> {
                       ),
                       SizedBox(height: 4.h),
                       if (hasLocalFile)
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle_rounded,
-                              color: Colors.greenAccent,
-                              size: 14.sp,
-                            ),
-                            SizedBox(width: 4.w),
-                            Expanded(
-                              child: Text(
-                                controller.getFileName(fileRx),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.greenAccent,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
+                        Text(
+                          controller.getFileName(fileRx),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
                         )
                       else if (hasServerUrl)
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.verified_rounded,
-                              color: const Color(0xFF9EA3AE),
-                              size: 14.sp,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              "Current file on record",
-                              style: TextStyle(
-                                color: const Color(0xFF9EA3AE),
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          "Current file on record",
+                          style: TextStyle(
+                            color: const Color(0xFF9EA3AE),
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
                         )
                       else
                         CustomTextgray(
@@ -214,29 +192,10 @@ class PersonalDocumentView extends GetView<PersonalDocumentController> {
                   ),
                 ),
 
-                // Action Buttons Group (Preview, Camera, Upload)
+                // Action Buttons Group (Camera, Upload)
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (canPreview) ...[
-                      IconButton(
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-                        onPressed: () => controller.previewImage(
-                          context,
-                          fileRx,
-                          urlRx,
-                          title: title,
-                        ),
-                        icon: Icon(
-                          Icons.remove_red_eye_outlined,
-                          color: const Color(0xFFD08700),
-                          size: 18.sp,
-                        ),
-                        tooltip: "Preview",
-                      ),
-                      SizedBox(width: 2.w),
-                    ],
                     IconButton(
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
@@ -278,6 +237,69 @@ class PersonalDocumentView extends GetView<PersonalDocumentController> {
         ),
       );
     });
+  }
+
+  Widget _buildDocumentThumbnail(
+    BuildContext context,
+    Rx<File?> fileRx,
+    RxnString urlRx,
+    String title,
+  ) {
+    final file = fileRx.value;
+    final url = urlRx.value;
+    final hasLocal = file != null;
+    final hasUrl = url != null && url.isNotEmpty;
+
+    final isLocalImage = hasLocal &&
+        (file.path.toLowerCase().endsWith('.jpg') ||
+            file.path.toLowerCase().endsWith('.jpeg') ||
+            file.path.toLowerCase().endsWith('.png'));
+
+    final isNetworkImage = hasUrl &&
+        (url.toLowerCase().contains('.jpg') ||
+            url.toLowerCase().contains('.jpeg') ||
+            url.toLowerCase().contains('.png') ||
+            url.toLowerCase().startsWith('http'));
+
+    Widget child;
+    if (isLocalImage) {
+      child = Image.file(file, fit: BoxFit.cover);
+    } else if (isNetworkImage) {
+      child = Image.network(
+        url,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return const Icon(
+            Icons.description_outlined,
+            color: Color(0xFFD08700),
+            size: 16,
+          );
+        },
+      );
+    } else {
+      child = const Icon(
+        Icons.description_outlined,
+        color: Color(0xFFD08700),
+        size: 16,
+      );
+    }
+
+    return GestureDetector(
+      onTap: () => controller.previewImage(context, fileRx, urlRx, title: title),
+      child: Container(
+        width: 38.r,
+        height: 38.r,
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E1E),
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: const Color(0xFF2C2C2C)),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8.r),
+          child: child,
+        ),
+      ),
+    );
   }
 
   Widget _buildIcon(IconData icon) {

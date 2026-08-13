@@ -675,9 +675,7 @@ class VehicleInformationView extends StatelessWidget {
           color: const Color(0xFF141414),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: hasFile
-                ? const Color(0xFFD08700).withValues(alpha: 0.6)
-                : const Color(0xFF262626),
+            color: const Color(0xFF262626),
             width: 1.2,
           ),
         ),
@@ -686,7 +684,9 @@ class VehicleInformationView extends StatelessWidget {
           children: [
             Row(
               children: [
-                _buildIcon(Icons.description_outlined),
+                hasFile
+                    ? _buildDocumentThumbnail(context, fileRx, title)
+                    : _buildIcon(Icons.description_outlined),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
@@ -712,27 +712,15 @@ class VehicleInformationView extends StatelessWidget {
                       ),
                       SizedBox(height: 4.h),
                       if (hasFile)
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle_rounded,
-                              color: Colors.greenAccent,
-                              size: 14.sp,
-                            ),
-                            SizedBox(width: 4.w),
-                            Expanded(
-                              child: Text(
-                                controller.getFileName(fileRx),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.greenAccent,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
+                        Text(
+                          controller.getFileName(fileRx),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
                         )
                       else
                         CustomTextgray(
@@ -809,15 +797,15 @@ class VehicleInformationView extends StatelessWidget {
               color: const Color(0xFF1E1E1E),
               borderRadius: BorderRadius.circular(14.r),
               border: Border.all(
-                color: hasFile
-                    ? const Color(0xFFD08700).withValues(alpha: 0.6)
-                    : const Color(0xFF2C2C2C),
+                color: const Color(0xFF2C2C2C),
                 width: 1.2,
               ),
             ),
             child: Row(
               children: [
-                _buildIcon(Icons.image_outlined),
+                hasFile
+                    ? _buildDocumentThumbnail(context, fileRx, title)
+                    : _buildIcon(Icons.image_outlined),
                 SizedBox(width: 10.w),
                 Expanded(
                   child: Column(
@@ -842,13 +830,16 @@ class VehicleInformationView extends StatelessWidget {
                         ],
                       ),
                       if (hasFile)
-                        Text(
-                          controller.getFileName(fileRx),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 11.sp,
+                        Padding(
+                          padding: EdgeInsets.only(top: 4.h),
+                          child: Text(
+                            controller.getFileName(fileRx),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 11.sp,
+                            ),
                           ),
                         ),
                     ],
@@ -879,6 +870,96 @@ class VehicleInformationView extends StatelessWidget {
         ],
       );
     });
+  }
+
+  void _previewLocalImage(BuildContext context, File file, String title) {
+    Get.dialog(
+      Dialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppBar(
+              title: Text(title, style: const TextStyle(color: Colors.white)),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Get.back(),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.w),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: file.path.toLowerCase().endsWith('.pdf')
+                    ? Container(
+                        padding: EdgeInsets.all(24.w),
+                        color: const Color(0xFF141414),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.picture_as_pdf, color: Colors.red, size: 48),
+                            SizedBox(height: 12.h),
+                            Text(
+                              file.path.split('/').last.split('\\').last,
+                              style: const TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Image.file(
+                        file,
+                        fit: BoxFit.contain,
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDocumentThumbnail(
+    BuildContext context,
+    Rx<File?> fileRx,
+    String title,
+  ) {
+    final file = fileRx.value;
+    if (file == null) return const SizedBox.shrink();
+
+    final isImage = file.path.toLowerCase().endsWith('.jpg') ||
+        file.path.toLowerCase().endsWith('.jpeg') ||
+        file.path.toLowerCase().endsWith('.png');
+
+    Widget child = isImage
+        ? Image.file(file, fit: BoxFit.cover)
+        : const Icon(
+            Icons.description_outlined,
+            color: Color(0xFFD08700),
+            size: 16,
+          );
+
+    return GestureDetector(
+      onTap: () => _previewLocalImage(context, file, title),
+      child: Container(
+        width: 38.r,
+        height: 38.r,
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E1E),
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: const Color(0xFF2C2C2C)),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8.r),
+          child: child,
+        ),
+      ),
+    );
   }
 
   Widget _buildIcon(IconData icon) {
