@@ -1,18 +1,17 @@
-import 'package:moeb_26/config/routes/app_pages.dart';
-import 'package:moeb_26/config/themes/app_theme.dart';
-import 'package:moeb_26/core/utils/validators.dart';
-import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
-import 'package:moeb_26/modules/auth/authentication/controllers/signup_controller.dart';
-import 'package:moeb_26/core/widgets/Custom_dropdown.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../../core/widgets/CustomButton.dart';
-import '../../../../core/widgets/CustomText.dart';
-import '../../../../core/widgets/CustomTextField.dart';
-import '../../../../core/widgets/CustomTextGary.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/utils/validators.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
+import 'package:moeb_26/core/widgets/CustomText.dart';
+import 'package:moeb_26/core/widgets/CustomTextField.dart';
+import 'package:moeb_26/core/widgets/Custom_dropdown.dart';
+import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
+import 'package:moeb_26/modules/auth/authentication/controllers/signup_controller.dart';
 
 class CreateAccountView extends StatefulWidget {
   const CreateAccountView({super.key});
@@ -61,17 +60,23 @@ class _CreateAccountViewState extends State<CreateAccountView> {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
+              physics: const ClampingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20.h),
-                  CustomTextgray(
-                    text: "Tell us about yourself to get started",
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
+                  SizedBox(height: 16.h),
+                  Center(
+                    child: Text(
+                      "Tell us about yourself to get started",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFD5C4AB),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                   ),
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 24.h),
 
                   // ========== Full Name ==========
                   _buildInputField(
@@ -234,29 +239,21 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                                   ),
                                 ),
                                 selected: isSelected,
-                                onSelected: isEnglish
-                                    ? null
-                                    : (selected) {
-                                        if (selected) {
-                                          controller.selectedLanguages.add(
-                                            lang,
-                                          );
-                                        } else {
-                                          controller.selectedLanguages.remove(
-                                            lang,
-                                          );
-                                        }
-                                      },
-                                selectedColor: AppColors.orange100,
+                                onSelected: (selected) {
+                                  if (isEnglish) return;
+                                  if (selected) {
+                                    controller.selectedLanguages.add(lang);
+                                  } else {
+                                    controller.selectedLanguages.remove(lang);
+                                  }
+                                },
+                                selectedColor: const Color(0xFFFFDCA1),
                                 backgroundColor: const Color(0xFF1E1E1E),
-                                disabledColor: AppColors.orange100.withValues(
-                                  alpha: 0.6,
-                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.r),
                                   side: BorderSide(
                                     color: isSelected
-                                        ? AppColors.orange100
+                                        ? const Color(0xFFFFDCA1)
                                         : const Color(0xFF2C2C2C),
                                     width: 1.w,
                                   ),
@@ -359,7 +356,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
             if (isRequired)
               Text(
                 " *",
-                style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                style: TextStyle(color: AppColors.orange100, fontSize: 14.sp),
               ),
           ],
         ),
@@ -370,10 +367,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
     );
   }
 
-  Widget _buildDropdownField({
-    required Widget child,
-    String? error,
-  }) {
+  Widget _buildDropdownField({required Widget child, String? error}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

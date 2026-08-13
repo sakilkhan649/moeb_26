@@ -38,7 +38,7 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: loading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? Colors.white,
+          backgroundColor: backgroundColor ?? const Color(0xFFD08700),
           foregroundColor: textColor ?? Colors.black,
           elevation: 0,
           padding:
@@ -50,7 +50,7 @@ class CustomButton extends StatelessWidget {
                 ? BorderSide(color: borderColor!)
                 : BorderSide.none,
           ),
-          disabledBackgroundColor: (backgroundColor ?? Colors.white).withValues(alpha: 0.6),
+          disabledBackgroundColor: (backgroundColor ?? const Color(0xFFD08700)).withValues(alpha: 0.6),
         ),
         child: loading
             ? SizedBox(
