@@ -22,6 +22,14 @@ class TermSection {
   });
 }
 
+class TermStep {
+  final List<TermSection> subsections;
+
+  TermStep({
+    required this.subsections,
+  });
+}
+
 class PrivacyPolicySignUpView extends StatelessWidget {
   PrivacyPolicySignUpView({super.key});
 
@@ -30,7 +38,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
   // Reactive section index tracking
   final RxInt currentSectionIndex = 0.obs;
 
-  final List<TermSection> sections = [
+  final List<TermSection> originalSections = [
     TermSection(
       title: "APPEARANCE & DRESS CODE",
       items: [
@@ -188,6 +196,22 @@ class PrivacyPolicySignUpView extends StatelessWidget {
     ),
   ];
 
+  late final List<TermStep> steps = [
+    TermStep(subsections: [originalSections[0]]), // 1. Appearance & Dress Code (6 items)
+    TermStep(subsections: [originalSections[1]]), // 2. Fragrance & Hygiene (3 items)
+    TermStep(subsections: [originalSections[2]]), // 3. Vehicle Standards (6 items)
+    TermStep(subsections: [originalSections[3]]), // 4. Client Amenities (5 items)
+    TermStep(subsections: [originalSections[4]]), // 5. Service & Professional Behavior (5 items)
+    TermStep(subsections: [originalSections[5]]), // 6. Strict Professional Boundaries (5 items)
+    TermStep(subsections: [originalSections[6]]), // 7. Safety & Communication (4 items)
+    TermStep(subsections: [originalSections[7]]), // 8. Punctuality & Reliability (4 items)
+    TermStep(subsections: [originalSections[8]]), // 9. Confidentiality & Respect (4 items)
+    TermStep(subsections: [originalSections[9]]), // 10. Job Acceptance & Responsibility (9 items)
+    TermStep(subsections: [originalSections[10], originalSections[11]]), // 11. ASAP Jobs & Payment Standards (3 items)
+    TermStep(subsections: [originalSections[12], originalSections[13]]), // 12. Agreement & Enforcement (5 items)
+    TermStep(subsections: [originalSections[14]]), // 13. Independent Payment Responsibility (6 items)
+  ];
+
   bool _isAllSectionChecked(TermSection section) {
     for (int i = 0; i < section.items.length; i++) {
       if (!controller.termChecks[section.startIndex + i]) return false;
@@ -201,11 +225,18 @@ class PrivacyPolicySignUpView extends StatelessWidget {
     }
   }
 
-  void _checkAndAutoAdvance(TermSection activeSection) {
+  bool _isAllStepChecked(TermStep step) {
+    for (var section in step.subsections) {
+      if (!_isAllSectionChecked(section)) return false;
+    }
+    return true;
+  }
+
+  void _checkAndAutoAdvance(TermStep activeStep) {
     // 300ms delay for smooth visual feedback before advancing
     Future.delayed(const Duration(milliseconds: 300), () {
-      if (_isAllSectionChecked(activeSection)) {
-        if (currentSectionIndex.value < sections.length - 1) {
+      if (_isAllStepChecked(activeStep)) {
+        if (currentSectionIndex.value < steps.length - 1) {
           currentSectionIndex.value++;
         }
       }
@@ -221,8 +252,8 @@ class PrivacyPolicySignUpView extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Obx(() {
-            final activeSection = sections[currentSectionIndex.value];
-            final progress = (currentSectionIndex.value + 1) / sections.length;
+            final activeStep = steps[currentSectionIndex.value];
+            final progress = (currentSectionIndex.value + 1) / steps.length;
 
             return Column(
               children: [
@@ -248,20 +279,20 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                 _buildProgressIndicator(progress),
                 SizedBox(height: 15.h),
 
-                // Active section and its items
+                // Active step and its subsections
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const ClampingScrollPhysics(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Section Header
+                      children: activeStep.subsections.expand((section) => [
+                        // Subsection Header
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Text(
-                                activeSection.title,
+                                section.title,
                                 style: GoogleFonts.inter(
                                   color: const Color(0xFFD5C4AB),
                                   fontSize: 14.sp,
@@ -269,21 +300,22 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            _buildAgreeAllButton(activeSection),
+                            _buildAgreeAllButton(section),
                           ],
                         ),
                         const Divider(color: Color(0xFF1E1E1E), height: 24),
 
                         // Section Items List
                         ...List.generate(
-                          activeSection.items.length,
+                          section.items.length,
                           (i) => _item(
-                            activeSection.startIndex + i,
-                            activeSection.items[i],
-                            activeSection,
+                            section.startIndex + i,
+                            section.items[i],
+                            activeStep,
                           ),
                         ),
-                      ],
+                        SizedBox(height: 20.h),
+                      ]).toList(),
                     ),
                   ),
                 ),
@@ -310,16 +342,16 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                         SizedBox(width: 12.w),
                       ],
                       Expanded(
-                        flex: currentSectionIndex.value == sections.length - 1 ? 2 : 1,
+                        flex: currentSectionIndex.value == steps.length - 1 ? 2 : 1,
                         child: CustomButton(
-                          text: currentSectionIndex.value == sections.length - 1
+                          text: currentSectionIndex.value == steps.length - 1
                               ? "Submit Application"
                               : "Continue",
                           fontSize: 14.sp,
                           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
                           onPressed: () {
-                            // Check if current section items are fully checked
-                            if (!_isAllSectionChecked(activeSection)) {
+                            // Check if current step items are fully checked
+                            if (!_isAllStepChecked(activeStep)) {
                               Get.snackbar(
                                 "Agreement Required",
                                 "Please agree to all items above to continue.",
@@ -328,14 +360,14 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                                 snackPosition: SnackPosition.BOTTOM,
                               );
                               return;
-                            }
+                              }
 
-                            if (currentSectionIndex.value < sections.length - 1) {
-                              currentSectionIndex.value++;
-                            } else {
-                              // Bypass OTP and navigate directly to Account Setup (Vehicle Information)
-                              Get.toNamed(Routes.vehicleinformationView);
-                            }
+                              if (currentSectionIndex.value < steps.length - 1) {
+                                currentSectionIndex.value++;
+                              } else {
+                                // Bypass OTP and navigate directly to Account Setup (Vehicle Information)
+                                Get.toNamed(Routes.vehicleinformationView);
+                              }
                           },
                         ),
                       ),
@@ -375,9 +407,9 @@ class PrivacyPolicySignUpView extends StatelessWidget {
     );
   }
 
-  Widget _buildAgreeAllButton(TermSection activeSection) {
+  Widget _buildAgreeAllButton(TermSection section) {
     return Obx(() {
-      final allChecked = _isAllSectionChecked(activeSection);
+      final allChecked = _isAllSectionChecked(section);
       return TextButton.icon(
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
@@ -385,9 +417,10 @@ class PrivacyPolicySignUpView extends StatelessWidget {
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         onPressed: () {
-          _toggleAllInSection(activeSection, !allChecked);
+          _toggleAllInSection(section, !allChecked);
           if (!allChecked) {
-            _checkAndAutoAdvance(activeSection);
+            final activeStep = steps.firstWhere((step) => step.subsections.contains(section));
+            _checkAndAutoAdvance(activeStep);
           }
         },
         icon: Icon(
@@ -407,13 +440,13 @@ class PrivacyPolicySignUpView extends StatelessWidget {
     });
   }
 
-  Widget _item(int index, String text, TermSection activeSection) {
+  Widget _item(int index, String text, TermStep activeStep) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: GestureDetector(
         onTap: () {
           controller.toggleTermCheck(index);
-          _checkAndAutoAdvance(activeSection);
+          _checkAndAutoAdvance(activeStep);
         },
         child: Container(
           width: double.infinity,
