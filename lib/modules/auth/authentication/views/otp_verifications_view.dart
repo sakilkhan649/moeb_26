@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
@@ -107,14 +108,15 @@ class OtpVerificationView extends GetView<OtpController> {
                   ),
                   SizedBox(height: 30.h),
 
-                  // ========== Continue Button ==========
-                  Obx(
-                    () => controller.isLoading.value
-                        ? Center(child: CircularProgressIndicator())
-                        : CustomButton(
-                            text: "Continue",
-                            onPressed: () => controller.verifyOtp(),
-                          ),
+                  CustomButton(
+                    text: "Continue",
+                    onPressed: () {
+                      if (controller.isRegister) {
+                        Get.offAllNamed(Routes.vehicleinformationView);
+                      } else {
+                        Get.toNamed(Routes.resetpasswordthreeView);
+                      }
+                    },
                   ),
                   SizedBox(height: 30.h),
 

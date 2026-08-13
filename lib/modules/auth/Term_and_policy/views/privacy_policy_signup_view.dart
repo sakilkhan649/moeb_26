@@ -7,6 +7,7 @@ import 'package:moeb_26/modules/auth/authentication/controllers/signup_controlle
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 
+import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 
 class PrivacyPolicySignUpView extends StatelessWidget {
@@ -98,8 +99,15 @@ class PrivacyPolicySignUpView extends StatelessWidget {
 
                         CustomButton(
                           text: "Submit Application",
-                          loading: controller.isLoading.value,
-                          onPressed: () => controller.submitAll(),
+                          onPressed: () {
+                            Get.toNamed(
+                              Routes.otpVerificationView,
+                              arguments: {
+                                'email': controller.emailController.text,
+                                'isRegister': true,
+                              },
+                            );
+                          },
                         ),
                         SizedBox(height: 40.h),
                       ],

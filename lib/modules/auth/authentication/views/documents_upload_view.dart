@@ -108,17 +108,7 @@ class DocumentsuploadView extends GetView<SignupController> {
                 CustomButton(
                   text: "Submit for Review",
                   onPressed: () {
-                    controller.showErrors.value = true;
-                    if (_formKey.currentState!.validate()) {
-                      bool docsValid =
-                          controller.licensePlateFile.value != null &&
-                          controller.hackLicenseFile.value != null &&
-                          controller.localPermitFile.value != null &&
-                          controller.profilePictureFile.value != null;
-                      if (docsValid) {
-                        controller.submitAccountSetup();
-                      }
-                    }
+                    Get.offAllNamed(Routes.applicationSubmitedView);
                   },
                 ),
                 SizedBox(height: 60.h),

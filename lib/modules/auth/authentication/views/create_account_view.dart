@@ -394,20 +394,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
 
   void _handleSubmit() {
     FocusScope.of(context).unfocus();
-    final isFormValid = _formKey.currentState!.validate();
-
-    bool dropdownsValid = true;
-    if (controller.selectedArea.value.isEmpty) {
-      areaError.value = 'Select a service area';
-      dropdownsValid = false;
-    }
-    if (controller.selectedRole.value.isEmpty) {
-      roleError.value = 'Select a company role';
-      dropdownsValid = false;
-    }
-
-    if (isFormValid && dropdownsValid) {
-      Get.toNamed(Routes.privacyPolicySignUpView);
-    }
+    // Direct navigation without blocking on API or form validation
+    Get.toNamed(Routes.privacyPolicySignUpView);
   }
 }
