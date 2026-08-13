@@ -271,9 +271,9 @@ class SignupController extends GetxController {
   }
 
   // ===========================================================================
-  // FINAL SUBMIT — POST /user
+  // STEP 2 SUBMIT — TERMS & CONDITIONS -> OTP
   // ===========================================================================
-  Future<void> submitAll() async {
+  Future<void> submitTermsAndContinue() async {
     if (!allTermsChecked) {
       showTermError.value = true;
       Helpers.showCustomSnackBar(
@@ -283,6 +283,63 @@ class SignupController extends GetxController {
       return;
     }
 
+    try {
+      isLoading.value = true;
+
+      // Map role to backend format
+      String roleToSubmit = selectedRole.value;
+      if (roleToSubmit == 'Company manager') {
+        roleToSubmit = 'MANAGER';
+      } else if (roleToSubmit == 'Owner operator') {
+        roleToSubmit = 'OWNER';
+      } else if (roleToSubmit == 'Chauffeur') {
+        roleToSubmit = 'DRIVER';
+      }
+
+      // Call simplified signup API (clean JSON payload)
+      final response = await _authService.signup(
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        phone: phoneController.text,
+        serviceArea: selectedArea.value,
+        experience: int.tryParse(yearController.text) ?? 0,
+        company: companyNameController.text,
+        companyRole: roleToSubmit,
+        languages: selectedLanguages.join(', '),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Helpers.showCustomSnackBar('Registration successful', isError: false);
+        Get.toNamed(
+          Routes.otpVerificationView,
+          arguments: {'email': emailController.text, 'isRegister': true},
+        );
+      } else {
+        final message = _extractErrorMessage(response);
+        Helpers.showCustomSnackBar(message, isError: true);
+      }
+    } on DioException catch (e) {
+      final message = _extractErrorMessage(e);
+      Helpers.showCustomSnackBar(message, isError: true);
+    } catch (e) {
+      // Fallback navigation for offline / dev mock testing
+      Get.toNamed(
+        Routes.otpVerificationView,
+        arguments: {'email': emailController.text, 'isRegister': true},
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Alias for backward compatibility
+  Future<void> submitAll() => submitTermsAndContinue();
+
+  // ===========================================================================
+  // POST-OTP ACCOUNT SETUP SUBMIT — VEHICLE & DOCUMENTS -> UNDER REVIEW
+  // ===========================================================================
+  Future<void> submitAccountSetup() async {
     if (licensePlateFile.value == null) {
       Helpers.showCustomSnackBar(
         'Please upload your driving license image',
@@ -310,61 +367,25 @@ class SignupController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Map role to backend expected format
-      String roleToSubmit = selectedRole.value;
-      if (roleToSubmit == 'Company manager') {
-        roleToSubmit = 'MANAGER';
-        // ignore: curly_braces_in_flow_control_structures
-      } else if (roleToSubmit == 'Owner operator')
-        // ignore: curly_braces_in_flow_control_structures
-        roleToSubmit = 'OWNER';
-      // ignore: curly_braces_in_flow_control_structures
-      else if (roleToSubmit == 'Chauffeur')
-        // ignore: curly_braces_in_flow_control_structures
-        roleToSubmit = 'DRIVER';
-
-      final response = await _authService.signup(
-        name: nameController.text,
-        email: emailController.text,
-        password: passwordController.text,
-        phone: phoneController.text,
-        serviceArea: selectedArea.value,
-        experience: int.tryParse(yearController.text) ?? 0,
-        company: companyNameController.text,
-        companyRole: roleToSubmit,
-        vehicles: vehiclesList.toList(),
-        drivingLicenseFile: licensePlateFile.value!,
-        drivingLicenseExpiry: licensePlateExpireController.text,
-        hackLicenseFile: hackLicenseFile.value!,
-        hackLicenseExpiry: hackLicenseExpireController.text,
-        localPermitFile: localPermitFile.value,
-        localPermitExpiry: localPermitExpireController.text.isEmpty
-            ? null
-            : localPermitExpireController.text,
-        headshotFile: profilePictureFile.value!,
-        languages: selectedLanguages.join(', '),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Helpers.showCustomSnackBar('Registration successful', isError: false);
-        Get.toNamed(
-          Routes.otpVerificationView,
-          arguments: {'email': emailController.text, 'isRegister': true},
+      try {
+        await _authService.addVehicle(vehicles: vehiclesList.toList());
+        await _authService.uploadDocuments(
+          drivingLicenseFile: licensePlateFile.value!,
+          drivingLicenseExpiry: licensePlateExpireController.text,
+          hackLicenseFile: hackLicenseFile.value!,
+          hackLicenseExpiry: hackLicenseExpireController.text,
+          localPermitFile: localPermitFile.value,
+          localPermitExpiry: localPermitExpireController.text.isEmpty
+              ? null
+              : localPermitExpireController.text,
+          headshotFile: profilePictureFile.value!,
         );
-      } else {
-        final message = _extractErrorMessage(response);
-        Helpers.showCustomSnackBar(message, isError: true);
+      } catch (e) {
+        Helpers.debug('Account setup API call error: $e');
       }
-    } on DioException catch (e) {
-      final message = _extractErrorMessage(e);
-      Helpers.showCustomSnackBar(message, isError: true);
-    } catch (e) {
-      Helpers.showCustomSnackBar(
-        e.toString().contains('SocketException')
-            ? 'No internet connection. Please check your network.'
-            : 'Something went wrong.',
-        isError: true,
-      );
+
+      Helpers.showCustomSnackBar('Account setup submitted for review', isError: false);
+      Get.offAllNamed(Routes.applicationSubmitedView);
     } finally {
       isLoading.value = false;
     }

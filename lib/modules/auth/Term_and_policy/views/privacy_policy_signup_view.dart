@@ -7,6 +7,8 @@ import 'package:moeb_26/modules/auth/authentication/controllers/signup_controlle
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 
+import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
+
 class PrivacyPolicySignUpView extends StatelessWidget {
   PrivacyPolicySignUpView({super.key});
 
@@ -16,6 +18,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: const CustomSubAppBar(title: "Terms & Conditions"),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -27,16 +30,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                     () => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 10.h),
-                        IconButton(
-                          onPressed: () => Get.back(),
-                          icon: Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                            size: 22.sp,
-                          ),
-                        ),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 15.h),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,

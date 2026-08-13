@@ -1,6 +1,7 @@
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/validators.dart';
+import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 import 'package:moeb_26/modules/auth/authentication/controllers/signup_controller.dart';
 import 'package:moeb_26/core/widgets/Custom_dropdown.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,6 +55,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        appBar: const CustomSubAppBar(title: "Account Create"),
         body: Form(
           key: _formKey,
           child: Padding(
@@ -63,22 +65,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 50.h),
-                  IconButton(
-                    onPressed: () => Get.back(),
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 22.sp,
-                    ),
-                  ),
                   SizedBox(height: 20.h),
-                  CustomText(
-                    text: "Account Create",
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(height: 8.h),
                   CustomTextgray(
                     text: "Tell us about yourself to get started",
                     fontSize: 14.sp,
@@ -137,9 +124,9 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                     child: Obx(
                       () => _buildDropdownField(
                         error: areaError.value,
-                        isLoading: controller.isCitiesLoading,
                         child: CustomDropdown(
                           hintText: 'Select service area',
+                          isLoading: controller.isCitiesLoading,
                           value: controller.selectedArea.value.isEmpty
                               ? null
                               : controller.selectedArea.value,
@@ -386,20 +373,11 @@ class _CreateAccountViewState extends State<CreateAccountView> {
   Widget _buildDropdownField({
     required Widget child,
     String? error,
-    bool isLoading = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (isLoading)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(color: AppColors.orange100),
-            ),
-          )
-        else
-          child,
+        child,
         if (error != null && error.isNotEmpty)
           Padding(
             padding: EdgeInsets.only(left: 12.w, top: 6.h),
@@ -429,7 +407,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
     }
 
     if (isFormValid && dropdownsValid) {
-      Get.toNamed(Routes.vehicleinformationView);
+      Get.toNamed(Routes.privacyPolicySignUpView);
     }
   }
 }

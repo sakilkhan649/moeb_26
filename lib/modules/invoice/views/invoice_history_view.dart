@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_settings_view.dart';
+import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 import '../../../config/routes/app_pages.dart';
 import '../controllers/invoice_controller.dart';
 import 'invoice_detail_view.dart';
@@ -15,46 +16,18 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.h),
-        child: Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+      appBar: CustomSubAppBar(
+        title: 'Invoice',
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.settings_outlined,
+              color: Colors.white,
+              size: 22.sp,
             ),
+            onPressed: () => Get.to(() => const InvoiceSettingsView()),
           ),
-          child: AppBar(
-            backgroundColor: Colors.black,
-            elevation: 0,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-                size: 20.sp,
-              ),
-              onPressed: () => Get.back(),
-            ),
-            title: Text(
-              'Invoice',
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.settings_outlined,
-                  color: Colors.white,
-                  size: 22.sp,
-                ),
-                onPressed: () => Get.to(() => const InvoiceSettingsView()),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
       body: Column(
         children: [

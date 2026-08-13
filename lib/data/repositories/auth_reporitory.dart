@@ -23,7 +23,7 @@ class AuthRepo {
   //   }
   // }
 
-  /// ===================== SIGNUP =====================
+  /// ===================== SIGNUP (CLEAN & SIMPLE) =====================
   Future<Response<dynamic>> signup({
     required String name,
     required String email,
@@ -33,72 +33,31 @@ class AuthRepo {
     required int experience,
     required String company,
     required String companyRole,
-    required List<VehicleModel> vehicles,
-    required File drivingLicenseFile,
-    required String drivingLicenseExpiry,
-    required File hackLicenseFile,
-    required String hackLicenseExpiry,
-    File? localPermitFile,
-    String? localPermitExpiry,
-    required File headshotFile,
     String? languages,
   }) async {
+    return await apiClient.postData(ApiConstants.signup, {
+      "name": name,
+      "email": email,
+      "password": password,
+      "phone": phone,
+      "serviceArea": serviceArea,
+      "experience": experience,
+      "company": company,
+      "companyRole": companyRole,
+      "languages": languages ?? 'English',
+    });
+  }
+
+  /// ===================== VEHICLE SETUP (SEPARATE API) =====================
+  Future<Response<dynamic>> addVehicle({
+    required List<VehicleModel> vehicles,
+  }) async {
     final formData = FormData();
-
-    // Text fields
-    formData.fields.addAll([
-      MapEntry('name', name),
-      MapEntry('email', email),
-      MapEntry('password', password),
-      MapEntry('phone', phone),
-      MapEntry('serviceArea', serviceArea),
-      MapEntry('experience', experience.toString()),
-      MapEntry('company', company),
-      MapEntry('companyRole', companyRole),
-      MapEntry('drivingLicenseExpiryDate', drivingLicenseExpiry),
-      MapEntry('hackLicenseExpiryDate', hackLicenseExpiry),
-    ]);
-
-    if (localPermitExpiry != null) {
-      formData.fields.add(MapEntry('localPermitExpiryDate', localPermitExpiry));
-    }
-    if (languages != null) {
-      formData.fields.add(MapEntry('languages', languages));
-    }
-
-    // Vehicle JSON string
     final vehicleJsonList = vehicles.map((v) => v.toJson()).toList();
     formData.fields.add(MapEntry('vehicles', jsonEncode(vehicleJsonList)));
 
-    // User-level files
-    formData.files.addAll([
-      MapEntry(
-        'drivingLicenseImage',
-        await MultipartFile.fromFile(drivingLicenseFile.path),
-      ),
-      MapEntry(
-        'hackLicenseImage',
-        await MultipartFile.fromFile(hackLicenseFile.path),
-      ),
-      MapEntry(
-        'uploadedHeadshot',
-        await MultipartFile.fromFile(headshotFile.path),
-      ),
-    ]);
-
-    if (localPermitFile != null) {
-      formData.files.add(
-        MapEntry(
-          'localPermitImage',
-          await MultipartFile.fromFile(localPermitFile.path),
-        ),
-      );
-    }
-
-    // Vehicle-specific files (Sending with flat keys as expected by backend)
     for (int i = 0; i < vehicles.length; i++) {
       final v = vehicles[i];
-
       if (v.vehicleRegistrationFile.value != null) {
         formData.files.add(
           MapEntry(
@@ -140,8 +99,53 @@ class AuthRepo {
         );
       }
     }
+    return await apiClient.postData('${ApiConstants.signup}/vehicles', formData);
+  }
 
-    return await apiClient.postData(ApiConstants.signup, formData);
+  /// ===================== DOCUMENTS UPLOAD (SEPARATE API) =====================
+  Future<Response<dynamic>> uploadDocuments({
+    required File drivingLicenseFile,
+    required String drivingLicenseExpiry,
+    required File hackLicenseFile,
+    required String hackLicenseExpiry,
+    File? localPermitFile,
+    String? localPermitExpiry,
+    required File headshotFile,
+  }) async {
+    final formData = FormData();
+    formData.fields.addAll([
+      MapEntry('drivingLicenseExpiryDate', drivingLicenseExpiry),
+      MapEntry('hackLicenseExpiryDate', hackLicenseExpiry),
+    ]);
+    if (localPermitExpiry != null) {
+      formData.fields.add(MapEntry('localPermitExpiryDate', localPermitExpiry));
+    }
+
+    formData.files.addAll([
+      MapEntry(
+        'drivingLicenseImage',
+        await MultipartFile.fromFile(drivingLicenseFile.path),
+      ),
+      MapEntry(
+        'hackLicenseImage',
+        await MultipartFile.fromFile(hackLicenseFile.path),
+      ),
+      MapEntry(
+        'uploadedHeadshot',
+        await MultipartFile.fromFile(headshotFile.path),
+      ),
+    ]);
+
+    if (localPermitFile != null) {
+      formData.files.add(
+        MapEntry(
+          'localPermitImage',
+          await MultipartFile.fromFile(localPermitFile.path),
+        ),
+      );
+    }
+
+    return await apiClient.postData('${ApiConstants.signup}/documents', formData);
   }
 
   /// ===================== LOGIN =====================

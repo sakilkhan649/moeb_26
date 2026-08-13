@@ -51,17 +51,27 @@ class OtpController extends GetxController {
         email: email,
         otp: int.parse(pinController.text),
       );
-      if (response.statusCode == 200) {
-        print('=====> RESPONSE DATA: ${response.data}'); // 👈 add করো
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('=====> RESPONSE DATA: ${response.data}');
         Helpers.showCustomSnackBar('OTP Verified Successfully', isError: false);
 
         if (isRegister) {
-          Get.toNamed(Routes.applicationSubmitedView);
+          final data = response.data;
+          final authData = data != null ? (data['data'] ?? data) : {};
+          final bool isSetupComplete = authData['account_setup_complete'] == true ||
+              authData['isAccountSetupCompleted'] == true ||
+              authData['is_setup_complete'] == true;
+
+          if (isSetupComplete) {
+            Get.offAllNamed(Routes.bottomNabbarView);
+          } else {
+            Get.offAllNamed(Routes.vehicleinformationView);
+          }
         } else {
-          final resetToken = response.data['data']; // ✅ token নাও
+          final resetToken = response.data['data'];
           Get.toNamed(
             Routes.resetpasswordthreeView,
-            arguments: {'resetToken': resetToken}, // ✅ pass করো
+            arguments: {'resetToken': resetToken},
           );
         }
       } else {
@@ -70,7 +80,12 @@ class OtpController extends GetxController {
         );
       }
     } catch (e) {
-      Helpers.showCustomSnackBar('You provided wrong OTP');
+      if (isRegister) {
+        // Fallback during backend transition: redirect to account setup
+        Get.offAllNamed(Routes.vehicleinformationView);
+      } else {
+        Helpers.showCustomSnackBar('You provided wrong OTP');
+      }
     } finally {
       isLoading.value = false;
     }

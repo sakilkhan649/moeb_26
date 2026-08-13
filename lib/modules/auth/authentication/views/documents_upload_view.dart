@@ -9,6 +9,8 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signup_controller.dart';
 
+import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
+
 class DocumentsuploadView extends GetView<SignupController> {
   DocumentsuploadView({super.key});
   final _formKey = GlobalKey<FormState>();
@@ -20,6 +22,7 @@ class DocumentsuploadView extends GetView<SignupController> {
     });
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: const CustomSubAppBar(title: "Documents Upload"),
       body: Form(
         key: _formKey,
         child: Padding(
@@ -28,18 +31,7 @@ class DocumentsuploadView extends GetView<SignupController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 50.w),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 22,
-                  ),
-                ),
-                SizedBox(height: 50.w),
-                CustomText(text: "Documents Upload", fontSize: 20.sp),
-                SizedBox(height: 7.h),
+                SizedBox(height: 15.h),
                 CustomTextgray(
                   text: "Upload required documents for verification",
                   fontSize: 13.sp,
@@ -114,7 +106,7 @@ class DocumentsuploadView extends GetView<SignupController> {
                 SizedBox(height: 40.h),
 
                 CustomButton(
-                  text: "Continue",
+                  text: "Submit for Review",
                   onPressed: () {
                     controller.showErrors.value = true;
                     if (_formKey.currentState!.validate()) {
@@ -124,7 +116,7 @@ class DocumentsuploadView extends GetView<SignupController> {
                           controller.localPermitFile.value != null &&
                           controller.profilePictureFile.value != null;
                       if (docsValid) {
-                        Get.toNamed(Routes.privacyPolicySignUpView);
+                        controller.submitAccountSetup();
                       }
                     }
                   },

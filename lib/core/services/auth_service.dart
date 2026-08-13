@@ -54,7 +54,7 @@ class AuthService extends GetxService {
     return this;
   }
 
-  /// ===================== SIGNUP =====================
+  /// ===================== SIGNUP (CLEAN & SIMPLE) =====================
   Future<Response> signup({
     required String name,
     required String email,
@@ -64,14 +64,6 @@ class AuthService extends GetxService {
     required int experience,
     required String company,
     required String companyRole,
-    required List<VehicleModel> vehicles,
-    required File drivingLicenseFile,
-    required String drivingLicenseExpiry,
-    required File hackLicenseFile,
-    required String hackLicenseExpiry,
-    File? localPermitFile,
-    String? localPermitExpiry,
-    required File headshotFile,
     String? languages,
   }) async {
     try {
@@ -84,7 +76,37 @@ class AuthService extends GetxService {
         experience: experience,
         company: company,
         companyRole: companyRole,
-        vehicles: vehicles,
+        languages: languages,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// ===================== VEHICLE SETUP =====================
+  Future<Response> addVehicle({
+    required List<VehicleModel> vehicles,
+  }) async {
+    try {
+      return await _authRepo.addVehicle(vehicles: vehicles);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// ===================== DOCUMENTS UPLOAD =====================
+  Future<Response> uploadDocuments({
+    required File drivingLicenseFile,
+    required String drivingLicenseExpiry,
+    required File hackLicenseFile,
+    required String hackLicenseExpiry,
+    File? localPermitFile,
+    String? localPermitExpiry,
+    required File headshotFile,
+  }) async {
+    try {
+      return await _authRepo.uploadDocuments(
         drivingLicenseFile: drivingLicenseFile,
         drivingLicenseExpiry: drivingLicenseExpiry,
         hackLicenseFile: hackLicenseFile,
@@ -92,9 +114,7 @@ class AuthService extends GetxService {
         localPermitFile: localPermitFile,
         localPermitExpiry: localPermitExpiry,
         headshotFile: headshotFile,
-        languages: languages,
       );
-      return response;
     } catch (e) {
       rethrow;
     }

@@ -10,6 +10,7 @@ class CustomDropdown extends StatefulWidget {
   final List<String> items;
   final Function(String?) onChanged;
   final ScrollController? scrollController;
+  final bool isLoading;
   final bool isLoadingMore;
   final VoidCallback? onLoadMore;
   final bool hasNextPage;
@@ -21,6 +22,7 @@ class CustomDropdown extends StatefulWidget {
     required this.items,
     required this.onChanged,
     this.scrollController,
+    this.isLoading = false,
     this.isLoadingMore = false,
     this.onLoadMore,
     this.hasNextPage = false,
@@ -39,14 +41,14 @@ class _CustomDropdownState extends State<CustomDropdown> {
       child: DropdownButton2<String>(
         isExpanded: true,
         hint: Text(
-          widget.hintText,
+          widget.isLoading ? "Loading service areas..." : widget.hintText,
           style: GoogleFonts.inter(
             color: AppColors.gray100,
             fontSize: 14.sp,
             fontWeight: FontWeight.w400,
           ),
         ),
-        value: (widget.value == null || widget.value!.isEmpty)
+        value: (widget.value == null || widget.value!.isEmpty || widget.isLoading)
             ? null
             : widget.value,
         items: [
@@ -104,11 +106,13 @@ class _CustomDropdownState extends State<CustomDropdown> {
               ),
             ),
         ],
-        onChanged: (val) {
-          if (val != 'loading' && val != 'loadMore') {
-            widget.onChanged(val);
-          }
-        },
+        onChanged: widget.isLoading
+            ? null
+            : (val) {
+                if (val != 'loading' && val != 'loadMore') {
+                  widget.onChanged(val);
+                }
+              },
         buttonStyleData: ButtonStyleData(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
           width: double.infinity,
@@ -119,11 +123,20 @@ class _CustomDropdownState extends State<CustomDropdown> {
           ),
         ),
         iconStyleData: IconStyleData(
-          icon: Icon(
-            _isMenuOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-            size: 24.sp,
-            color: AppColors.gray100,
-          ),
+          icon: widget.isLoading
+              ? SizedBox(
+                  width: 18.w,
+                  height: 18.w,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.orange100,
+                  ),
+                )
+              : Icon(
+                  _isMenuOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  size: 24.sp,
+                  color: AppColors.gray100,
+                ),
         ),
         dropdownStyleData: DropdownStyleData(
           decoration: BoxDecoration(

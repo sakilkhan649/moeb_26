@@ -4,10 +4,11 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
-import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:pinput/pinput.dart';
 import 'package:moeb_26/modules/auth/authentication/controllers/otp_verification_controller.dart';
+
+import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 
 class OtpVerificationView extends GetView<OtpController> {
   const OtpVerificationView({super.key});
@@ -30,6 +31,7 @@ class OtpVerificationView extends GetView<OtpController> {
     );
 
     return Scaffold(
+      appBar: const CustomSubAppBar(title: "OTP Verification"),
       body: Form(
         key: controller.formKey,
         child: Center(
@@ -39,11 +41,7 @@ class OtpVerificationView extends GetView<OtpController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: CustomText(text: "Verification"),
-                  ),
-                  SizedBox(height: 30.h),
+                  SizedBox(height: 10.h),
                   CustomTextgray(
                     text:
                         "Enter your 4 digits code that you received on your email.",

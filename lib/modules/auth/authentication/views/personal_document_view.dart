@@ -9,6 +9,8 @@ import '../../../../core/widgets/CustomText.dart';
 import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/personal_document_controller.dart';
 
+import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
+
 class PersonalDocumentView extends GetView<PersonalDocumentController> {
   const PersonalDocumentView({super.key});
 
@@ -16,37 +18,7 @@ class PersonalDocumentView extends GetView<PersonalDocumentController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.h),
-        child: Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
-            ),
-          ),
-          child: AppBar(
-            backgroundColor: Colors.black,
-            elevation: 0,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-                size: 20.sp,
-              ),
-              onPressed: () => Get.back(),
-            ),
-            title: Text(
-              'My Personal Documents',
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            centerTitle: true,
-          ),
-        ),
-      ),
+      appBar: const CustomSubAppBar(title: "My Personal Documents"),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(

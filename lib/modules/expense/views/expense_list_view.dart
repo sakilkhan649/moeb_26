@@ -14,6 +14,8 @@ import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'add_expense_view.dart';
 import 'expense_detail_sheet.dart';
 
+import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
+
 class ExpenseListView extends GetView<ExpenseController> {
   const ExpenseListView({super.key});
 
@@ -35,188 +37,160 @@ class ExpenseListView extends GetView<ExpenseController> {
 
       return Scaffold(
         backgroundColor: backgroundColor,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(52.h),
-          child: Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: borderColor, width: 1.5),
+        appBar: CustomSubAppBar(
+          title: 'Expenses',
+          actions: [
+            // Monthly/Yearly Filter Option
+            PopupMenuButton<String>(
+              icon: const Icon(
+                Icons.filter_alt_outlined,
+                color: Colors.white,
               ),
+              tooltip: "Filter Period",
+              offset: Offset(0, 48.h),
+              color: const Color(0xFF1E1E20),
+              surfaceTintColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                side: const BorderSide(color: Color(0xFF2C2C2C), width: 1),
+              ),
+              constraints: BoxConstraints(maxWidth: 165.w),
+              onSelected: (val) {
+                if (controller.filterPeriod.value != val) {
+                  controller.filterPeriod.value = val;
+                  controller.fetchExpenses();
+                }
+              },
+              itemBuilder: (context) {
+                final current = controller.filterPeriod.value;
+                final activeColor = const Color(0xFFFFDCA1);
+                return [
+                  PopupMenuItem(
+                    value: 'Monthly',
+                    height: 38.h,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_month_outlined,
+                          color: current == 'Monthly'
+                              ? activeColor
+                              : Colors.white70,
+                          size: 16.sp,
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          'Monthly View',
+                          style: GoogleFonts.inter(
+                            color: current == 'Monthly'
+                                ? activeColor
+                                : Colors.white70,
+                            fontWeight: current == 'Monthly'
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            fontSize: 13.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'Yearly',
+                    height: 38.h,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          color: current == 'Yearly'
+                              ? activeColor
+                              : Colors.white70,
+                          size: 16.sp,
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          'Yearly View',
+                          style: GoogleFonts.inter(
+                            color: current == 'Yearly'
+                                ? activeColor
+                                : Colors.white70,
+                            fontWeight: current == 'Yearly'
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            fontSize: 13.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ];
+              },
             ),
-            child: AppBar(
-              backgroundColor: backgroundColor,
-              elevation: 0,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: Colors.white,
-                  size: 18.sp,
-                ),
-                onPressed: () => Get.back(),
+            // Export PDF/CSV Options
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.ios_share, color: Colors.white),
+              tooltip: "Export Options",
+              offset: Offset(0, 48.h),
+              color: const Color(0xFF1E1E20),
+              surfaceTintColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                side: const BorderSide(color: Color(0xFF2C2C2C), width: 1),
               ),
-              title: Text(
-                'Expense Tracker',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              centerTitle: true,
-              actions: [
-                // Monthly/Yearly Filter Option
-                PopupMenuButton<String>(
-                  icon: const Icon(
-                    Icons.filter_alt_outlined,
-                    color: Colors.white,
-                  ),
-                  tooltip: "Filter Period",
-                  offset: Offset(0, 48.h),
-                  color: const Color(0xFF1E1E20),
-                  surfaceTintColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    side: const BorderSide(color: Color(0xFF2C2C2C), width: 1),
-                  ),
-                  constraints: BoxConstraints(maxWidth: 165.w),
-                  onSelected: (val) {
-                    if (controller.filterPeriod.value != val) {
-                      controller.filterPeriod.value = val;
-                      controller.fetchExpenses();
-                    }
-                  },
-                  itemBuilder: (context) {
-                    final current = controller.filterPeriod.value;
-                    final activeColor = const Color(0xFFFFDCA1);
-                    return [
-                      PopupMenuItem(
-                        value: 'Monthly',
-                        height: 38.h,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_month_outlined,
-                              color: current == 'Monthly'
-                                  ? activeColor
-                                  : Colors.white70,
-                              size: 16.sp,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              'Monthly View',
-                              style: GoogleFonts.inter(
-                                color: current == 'Monthly'
-                                    ? activeColor
-                                    : Colors.white70,
-                                fontWeight: current == 'Monthly'
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                                fontSize: 13.sp,
-                              ),
-                            ),
-                          ],
+              constraints: BoxConstraints(maxWidth: 150.w),
+              onSelected: (val) {
+                if (val == 'csv') {
+                  controller.exportToCSV();
+                } else if (val == 'pdf') {
+                  controller.exportToPDF();
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'csv',
+                  height: 38.h,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.table_chart_outlined,
+                        color: const Color(0xFF10B981),
+                        size: 16.sp,
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        'Export CSV',
+                        style: GoogleFonts.inter(
+                          color: Colors.white70,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                      PopupMenuItem(
-                        value: 'Yearly',
-                        height: 38.h,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_today_outlined,
-                              color: current == 'Yearly'
-                                  ? activeColor
-                                  : Colors.white70,
-                              size: 16.sp,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              'Yearly View',
-                              style: GoogleFonts.inter(
-                                color: current == 'Yearly'
-                                    ? activeColor
-                                    : Colors.white70,
-                                fontWeight: current == 'Yearly'
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                                fontSize: 13.sp,
-                              ),
-                            ),
-                          ],
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'pdf',
+                  height: 38.h,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.picture_as_pdf_outlined,
+                        color: const Color(0xFFEF4444),
+                        size: 16.sp,
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        'Export PDF',
+                        style: GoogleFonts.inter(
+                          color: Colors.white70,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                    ];
-                  },
-                ),
-                // Export PDF/CSV Options
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.ios_share, color: Colors.white),
-                  tooltip: "Export Options",
-                  offset: Offset(0, 48.h),
-                  color: const Color(0xFF1E1E20),
-                  surfaceTintColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    side: const BorderSide(color: Color(0xFF2C2C2C), width: 1),
+                    ],
                   ),
-                  constraints: BoxConstraints(maxWidth: 150.w),
-                  onSelected: (val) {
-                    if (val == 'csv') {
-                      controller.exportToCSV();
-                    } else if (val == 'pdf') {
-                      controller.exportToPDF();
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'csv',
-                      height: 38.h,
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.table_chart_outlined,
-                            color: const Color(0xFF10B981),
-                            size: 16.sp,
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            'Export CSV',
-                            style: GoogleFonts.inter(
-                              color: Colors.white70,
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'pdf',
-                      height: 38.h,
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.picture_as_pdf_outlined,
-                            color: const Color(0xFFEF4444),
-                            size: 16.sp,
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            'Export PDF',
-                            style: GoogleFonts.inter(
-                              color: Colors.white70,
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
-          ),
+          ],
         ),
         body: SafeArea(
           child: Column(
