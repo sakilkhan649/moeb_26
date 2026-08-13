@@ -94,9 +94,9 @@ class AddNewVehicleView extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF161616),
+        color: const Color(0xFF141414),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFF2A2A2A)),
+        border: Border.all(color: const Color(0xFF262626), width: 1.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1048,8 +1048,9 @@ class AddNewVehicleView extends StatelessWidget {
       width: 32.r,
       height: 32.r,
       decoration: BoxDecoration(
-        color: const Color(0xFF1E2939),
+        color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: const Color(0xFF2C2C2C)),
       ),
       child: Icon(Icons.image_outlined, color: Colors.white, size: 16.sp),
     );

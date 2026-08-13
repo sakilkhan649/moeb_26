@@ -26,6 +26,7 @@ class VehicleInformationView extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        backgroundColor: Colors.black,
         appBar: const CustomSubAppBar(title: "Vehicle Information"),
         body: Form(
           key: _formKey,
@@ -92,9 +93,9 @@ class VehicleInformationView extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 24.h),
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF161616),
+        color: const Color(0xFF141414),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFF2A2A2A)),
+        border: Border.all(color: const Color(0xFF262626), width: 1.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,9 +106,9 @@ class VehicleInformationView extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 20.h),
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: const Color(0xFF222222),
+              color: const Color(0xFF1E1E1E),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: const Color(0xFF333333)),
+              border: Border.all(color: const Color(0xFF2C2C2C)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -805,8 +806,14 @@ class VehicleInformationView extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             decoration: BoxDecoration(
+              color: const Color(0xFF1E1E1E),
               borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(color: AppColors.black200),
+              border: Border.all(
+                color: hasFile
+                    ? const Color(0xFFD08700).withValues(alpha: 0.6)
+                    : const Color(0xFF2C2C2C),
+                width: 1.2,
+              ),
             ),
             child: Row(
               children: [
@@ -878,8 +885,9 @@ class VehicleInformationView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(6.r),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E2939),
+        color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: const Color(0xFF2C2C2C)),
       ),
       child: Icon(icon, color: Colors.white, size: 16.sp),
     );
