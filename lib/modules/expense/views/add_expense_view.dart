@@ -27,7 +27,7 @@ class AddExpenseView extends StatelessWidget {
   Widget build(BuildContext context) {
     const backgroundColor = AppColors.black100;
     const borderColor = Color(0xFF1E1E1E);
-    const accentColor = AppColors.orange100;
+    const accentColor = AppColors.primaryColor;
 
     return Scaffold(
       backgroundColor: backgroundColor,

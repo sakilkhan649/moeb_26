@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/invoice_controller.dart';
 
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
@@ -97,7 +99,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                 child: Container(
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD08700), // Bright orange-yellow
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
@@ -209,7 +211,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                 child: Text(
                   'Select Saved Client',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFFD08700),
+                    color: AppColors.primaryColor,
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                   ),
@@ -234,7 +236,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                     color: const Color(0xFF161410),
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
-                      color: const Color(0xFFD08700).withValues(alpha: 0.5),
+                      color: AppColors.primaryColor.withValues(alpha: 0.5),
                       width: 1,
                     ),
                   ),
@@ -243,7 +245,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                       Container(
                         padding: EdgeInsets.all(6.r),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD08700).withValues(alpha: 0.15),
+                          color: AppColors.primaryColor.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -703,70 +705,25 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         children: [
           // Back Button
           Expanded(
-            child: GestureDetector(
-              onTap: () => controller.previousStep(),
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(
-                    color: const Color(0xFF1E1E1E),
-                    width: 1.5,
-                  ),
-                ),
-                child: Text(
-                  'Back',
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+            child: CustomButton(
+              text: 'Back',
+              backgroundColor: Colors.transparent,
+              textColor: Colors.white,
+              borderColor: const Color(0xFF1E1E1E),
+              onPressed: () => controller.previousStep(),
+              padding: EdgeInsets.symmetric(vertical: 12.h),
             ),
           ),
           SizedBox(width: 15.w),
 
           // Next/Create Button
           Expanded(
-            child: GestureDetector(
-              onTap: () => controller.nextStep(),
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD08700), // Bright orange-yellow
-                  borderRadius: BorderRadius.circular(12.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFD08700).withValues(alpha: 0.15),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Obx(() {
-                  if (controller.isLoading.value) {
-                    return SizedBox(
-                      width: 20.w,
-                      height: 20.w,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.black,
-                      ),
-                    );
-                  }
-                  return Text(
-                    nextButtonText,
-                    style: GoogleFonts.inter(
-                      color: Colors.black,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                }),
+            child: Obx(
+              () => CustomButton(
+                text: controller.currentStep.value == 3 ? 'Preview' : 'Next',
+                loading: controller.isLoading.value,
+                onPressed: () => controller.nextStep(),
+                padding: EdgeInsets.symmetric(vertical: 12.h),
               ),
             ),
           ),
@@ -843,7 +800,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                           borderRadius: BorderRadius.circular(14.r),
                           border: Border.all(
                             color: isSelected
-                                ? const Color(0xFFD08700)
+                                ? AppColors.primaryColor
                                 : const Color(0xFF2C2C2C),
                             width: isSelected ? 1.5 : 1,
                           ),
@@ -853,7 +810,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                             Container(
                               padding: EdgeInsets.all(10.r),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFD08700)
+                                color: AppColors.primaryColor
                                     .withValues(alpha: 0.15),
                                 shape: BoxShape.circle,
                               ),
@@ -903,7 +860,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
                             if (isSelected)
                               Icon(
                                 Icons.check_circle,
-                                color: const Color(0xFFD08700),
+                                color: AppColors.primaryColor,
                                 size: 22.sp,
                               ),
                           ],

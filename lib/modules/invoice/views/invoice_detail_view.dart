@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/invoice_controller.dart';
 import 'invoice_preview_view.dart';
 import 'create_invoice_view.dart';
@@ -492,25 +493,21 @@ class InvoiceDetailView extends GetView<InvoiceController> {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton(
+                    child: CustomButton(
+                      text: 'Cancel',
+                      backgroundColor: Colors.transparent,
+                      textColor: Colors.white,
+                      borderColor:  Color(0xFF2C2C2C),
                       onPressed: () => Get.back(),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF2C2C2C)),
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
-                    child: ElevatedButton(
+                    child: CustomButton(
+                      text: 'Delete',
+                      backgroundColor: const Color(0xFFEF4444),
+                      textColor: Colors.white,
                       onPressed: () async {
                         await controller.deleteInvoiceAtIndex(index);
                         Get.back(); // close dialog
@@ -523,18 +520,7 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                           snackPosition: SnackPosition.BOTTOM,
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF4444),
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                      ),
-                      child: Text(
-                        'Delete',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
                   ),
                 ],

@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/data/models/market_place_model.dart';
 import 'package:moeb_26/core/widgets/ContactSellerPopup.dart';
 import 'package:moeb_26/core/widgets/ImagePreviewPopup.dart';
@@ -403,7 +405,7 @@ class _MarketplaceItemDetailViewState extends State<MarketplaceItemDetailView> {
                       // Edit Button
                       Expanded(
                         flex: 2,
-                        child: ElevatedButton(
+                        child: CustomButton(
                           onPressed: () {
                             final MarketplaceController mpc;
                             if (Get.isRegistered<MarketplaceController>()) {
@@ -425,72 +427,31 @@ class _MarketplaceItemDetailViewState extends State<MarketplaceItemDetailView> {
                               backgroundColor: Colors.transparent,
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFFFF9800,
-                            ), // Match brand orange
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 16.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            elevation: 0,
+                          text: "Edit Item",
+                          icon: Icon(
+                            Icons.edit,
+                            size: 18.sp,
+                            color: Colors.black,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.edit,
-                                size: 18.sp,
-                                color: Colors.white,
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                "Edit Item",
-                                style: GoogleFonts.inter(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
                         ),
                       ),
                       SizedBox(width: 12.w),
                       // Delete Button
                       Expanded(
                         flex: 1,
-                        child: ElevatedButton(
+                        child: CustomButton(
                           onPressed: () => _showDeleteDialog(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1E1E1E),
-                            foregroundColor: Colors.red,
-                            padding: EdgeInsets.symmetric(vertical: 16.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.r),
-                              side: const BorderSide(color: Color(0xFF2E2E2E)),
-                            ),
-                            elevation: 0,
+                          text: "Delete",
+                          textColor: Colors.red,
+                          backgroundColor: const Color(0xFF1E1E1E),
+                          borderColor: const Color(0xFF2E2E2E),
+                          icon: Icon(
+                            Icons.delete_outline,
+                            size: 18.sp,
+                            color: Colors.red,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.delete_outline,
-                                size: 18.sp,
-                                color: Colors.red,
-                              ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                "Delete",
-                                style: GoogleFonts.inter(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
                         ),
                       ),
                     ],
@@ -498,43 +459,21 @@ class _MarketplaceItemDetailViewState extends State<MarketplaceItemDetailView> {
                 : Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
+                        child: CustomButton(
                           onPressed: () {
                             Get.dialog(ContactSellerPopup(item: widget.item));
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFFFF9800,
-                            ), // Match brand orange
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 16.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.r),
+                          text: "Contact Seller",
+                          icon: SvgPicture.asset(
+                            AppIcons.contact_icon,
+                            height: 18.sp,
+                            width: 18.sp,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.black,
+                              BlendMode.srcIn,
                             ),
-                            elevation: 0,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                AppIcons.contact_icon,
-                                height: 18.sp,
-                                width: 18.sp,
-                                colorFilter: const ColorFilter.mode(
-                                  Colors.white,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                "Contact Seller",
-                                style: GoogleFonts.inter(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
                         ),
                       ),
                     ],

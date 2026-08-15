@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/invoice_controller.dart';
 
 class SavedClientsView extends GetView<InvoiceController> {
@@ -45,18 +47,18 @@ class SavedClientsView extends GetView<InvoiceController> {
         ),
       ),
       body: RefreshIndicator(
-        color: const Color(0xFFD08700),
+        color: AppColors.primaryColor,
         backgroundColor: Colors.black,
         onRefresh: () => controller.fetchClientsFromApi(),
         child: Obx(() {
           if (controller.isLoading.value && controller.savedClients.isEmpty) {
             return const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFFD08700),
+                color: AppColors.primaryColor,
               ),
             );
           }
-
+ 
           if (controller.savedClients.isEmpty) {
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -95,7 +97,7 @@ class SavedClientsView extends GetView<InvoiceController> {
               ],
             );
           }
-
+ 
           return ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
@@ -109,7 +111,7 @@ class SavedClientsView extends GetView<InvoiceController> {
         }),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFD08700),
+        backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.black,
         onPressed: () => _showAddOrEditClientBottomSheet(context),
         child: const Icon(Icons.add),
@@ -407,17 +409,10 @@ class SavedClientsView extends GetView<InvoiceController> {
               ),
             ),
             SizedBox(height: 12.h),
-            SizedBox(
-              width: double.infinity,
-              height: 48.h,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD08700),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
+            Obx(
+              () => CustomButton(
+                text: isEditing ? 'Save Changes' : 'Add Client',
+                loading: controller.isLoading.value,
                 onPressed: () async {
                   if (nameController.text.trim().isEmpty) {
                     Get.snackbar(
@@ -449,25 +444,7 @@ class SavedClientsView extends GetView<InvoiceController> {
                     Get.back();
                   }
                 },
-                child: Obx(() {
-                  if (controller.isLoading.value) {
-                    return SizedBox(
-                      width: 20.w,
-                      height: 20.w,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.black,
-                      ),
-                    );
-                  }
-                  return Text(
-                    isEditing ? 'Save Changes' : 'Add Client',
-                    style: GoogleFonts.inter(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                }),
+                padding: EdgeInsets.symmetric(vertical: 12.h),
               ),
             ),
           ],
@@ -573,35 +550,21 @@ class SavedClientsView extends GetView<InvoiceController> {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF3F3F46)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                      ),
+                    child: CustomButton(
+                      text: 'Cancel',
+                      backgroundColor: Colors.transparent,
+                      textColor: Colors.white,
+                      borderColor:  Color(0xFF3F3F46),
                       onPressed: () => Get.back(),
-                      child: Text(
-                        'Cancel',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
                     ),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF4444),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                      ),
+                    child: CustomButton(
+                      text: 'Delete',
+                      backgroundColor: const Color(0xFFEF4444),
+                      textColor: Colors.white,
                       onPressed: () async {
                         Get.back();
                         await controller.deleteSavedClient(client.id);
@@ -613,12 +576,7 @@ class SavedClientsView extends GetView<InvoiceController> {
                           colorText: Colors.white,
                         );
                       },
-                      child: Text(
-                        'Delete',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
                     ),
                   ),
                 ],

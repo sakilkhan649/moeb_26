@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:moeb_26/core/services/expense_service.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import '../models/expense_model.dart';
 
@@ -296,8 +297,8 @@ class ExpenseController extends GetxController {
         Get.snackbar(
           "Success",
           "Expense added successfully",
-          backgroundColor: const Color(0xFFD08700),
-          colorText: Colors.white,
+          backgroundColor: AppColors.primaryColor,
+          colorText: Colors.black,
         );
       } else {
         Get.snackbar(
@@ -352,8 +353,8 @@ class ExpenseController extends GetxController {
         Get.snackbar(
           "Success",
           "Expense updated successfully",
-          backgroundColor: const Color(0xFFD08700),
-          colorText: Colors.white,
+          backgroundColor: AppColors.primaryColor,
+          colorText: Colors.black,
         );
       } else {
         Get.snackbar(

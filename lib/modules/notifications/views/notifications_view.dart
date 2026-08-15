@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/data/models/Notifications_Model.dart';
 import 'package:moeb_26/modules/my_jobs/controllers/my_jobs_controller.dart';
 import '../controllers/notifications_controller.dart';
@@ -73,7 +74,7 @@ class NotificationsView extends StatelessWidget {
                       "Read All",
                       style: GoogleFonts.inter(
                         fontSize: 14.sp,
-                        color: const Color(0xFFD08700),
+                        color: AppColors.primaryColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -90,7 +91,7 @@ class NotificationsView extends StatelessWidget {
               onRefresh: () async {
                 await controller.fetchNotifications();
               },
-              color: const Color(0xFFD08700),
+              color: AppColors.primaryColor,
               backgroundColor: const Color(0xFF1A1A1A),
               child: Obx(() {
                 if (controller.notifications.isEmpty) {
@@ -137,8 +138,8 @@ class NotificationsView extends StatelessWidget {
 
     // Logic for icon colors based on type
     if (notification.type == "GENERAL") {
-      iconColor = const Color(0xFFD08700);
-      iconBgColor = const Color(0xFFD08700).withValues(alpha: 0.1);
+      iconColor = AppColors.primaryColor;
+      iconBgColor = AppColors.primaryColor.withValues(alpha: 0.1);
     } else if (notification.type == "TASK") {
       iconColor = const Color(0xFF3498DB);
       iconBgColor = const Color(0xFF3498DB).withValues(alpha: 0.1);
@@ -275,10 +276,10 @@ class NotificationsView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: currentNoti.isRead
                     ? Colors.transparent
-                    : const Color(0xFFD08700).withValues(alpha: 0.05),
+                    : AppColors.primaryColor.withValues(alpha: 0.05),
                 border: Border(
                   left: BorderSide(
-                    color: currentNoti.isRead ? Colors.transparent : const Color(0xFFD08700),
+                    color: currentNoti.isRead ? Colors.transparent : AppColors.primaryColor,
                     width: 3.5.w,
                   ),
                 ),
@@ -350,12 +351,12 @@ class NotificationsView extends StatelessWidget {
                                 width: 8.w,
                                 height: 8.w,
                                 margin: EdgeInsets.only(top: 4.h),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFD08700),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Color(0xFFD08700),
+                                      color: AppColors.primaryColor,
                                       blurRadius: 4,
                                       spreadRadius: 1,
                                     ),

@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/invoice_controller.dart';
 
 class InvoicePreviewView extends GetView<InvoiceController> {
@@ -146,7 +148,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                     canDebug: false,
                     loadingWidget: const Center(
                       child: CircularProgressIndicator(
-                        color: Color(0xFFD08700),
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ),
@@ -181,41 +183,12 @@ class InvoicePreviewView extends GetView<InvoiceController> {
             color: Colors.black,
             border: Border(top: BorderSide(color: Color(0xFF1E1E1E), width: 1)),
           ),
-          child: GestureDetector(
-            onTap: () => _downloadPdf(context),
-            child: Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: const Color(0xFFD08700), // Bright orange-yellow
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFD08700).withValues(alpha: 0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Obx(() {
-                if (controller.isLoading.value) {
-                  return SizedBox(
-                    width: 20.w,
-                    height: 20.w,
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      color: Colors.black,
-                    ),
-                  );
-                }
-                return Text(
-                  'Send Invoice',
-                  style: GoogleFonts.inter(
-                    color: Colors.black,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                );
-              }),
+          child: Obx(
+            () => CustomButton(
+              text: 'Send Invoice',
+              loading: controller.isLoading.value,
+              onPressed: () => _downloadPdf(context),
+              padding: EdgeInsets.symmetric(vertical: 12.h),
             ),
           ),
         ),
@@ -260,7 +233,7 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFFD08700) // Bright orange-yellow
+                        ? AppColors.primaryColor
                         : const Color(0xFF27272A),
                     width: isSelected ? 1.w : .5.w,
                   ),

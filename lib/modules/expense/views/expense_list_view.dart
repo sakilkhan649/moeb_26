@@ -696,38 +696,18 @@ class ExpenseListView extends GetView<ExpenseController> {
                                               ),
                                               SizedBox(width: 12.w),
                                               Expanded(
-                                                child: ElevatedButton(
+                                                child: CustomButton(
                                                   onPressed: () {
                                                     controller.deleteExpense(
                                                       e.id,
                                                     );
                                                     Get.back();
                                                   },
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.redAccent,
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    elevation: 0,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          vertical: 12.h,
-                                                        ),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12.r,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    "Delete",
-                                                    style: GoogleFonts.inter(
-                                                      color: Colors.white,
-                                                      fontSize: 13.sp,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
+                                                  text: "Delete",
+                                                  backgroundColor: Colors.redAccent,
+                                                  textColor: Colors.white,
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12.h,
                                                   ),
                                                 ),
                                               ),
