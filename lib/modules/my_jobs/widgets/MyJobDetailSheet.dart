@@ -1,9 +1,11 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class MyJobDetailSheet extends StatelessWidget {
   final String title;
@@ -508,184 +510,95 @@ class MyJobDetailSheet extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: SizedBox(
-                      height: 50.h,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: Colors.redAccent,
-                            width: 1.5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14.r),
-                          ),
-                        ),
-                        onPressed: () {
-                          Get.back();
-                          onRejectPressed?.call();
-                        },
-                        child: Text(
-                          "Decline",
-                          style: GoogleFonts.inter(
-                            color: Colors.redAccent,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                    child: CustomButton(
+                      text: "Decline",
+                      backgroundColor: Colors.transparent,
+                      textColor: Colors.redAccent,
+                      borderColor: Colors.redAccent,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                      onPressed: () {
+                        Get.back();
+                        onRejectPressed?.call();
+                      },
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
                     flex: 2,
-                    child: SizedBox(
-                      height: 50.h,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD08700),
-                          foregroundColor: Colors.black,
-                          elevation: 2,
-                          shadowColor: const Color(
-                            0xFFD08700,
-                          ).withValues(alpha: 0.3),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14.r),
-                          ),
-                        ),
-                        onPressed: () {
-                          Get.back();
-                          onAcceptPressed?.call();
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.check_circle_outline,
-                              size: 18.sp,
-                              color: Colors.black,
-                            ),
-                            SizedBox(width: 6.w),
-                            Text(
-                              "Accept",
-                              style: GoogleFonts.inter(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                    child: CustomButton(
+                      text: "Accept",
+                      // backgroundColor: const Color(0xFFD08700),
+                      // textColor: Colors.black,
+                      // fontSize: 13.sp,
+                      // fontWeight: FontWeight.bold,
+                      icon: Icon(
+                        Icons.check_circle_outline,
+                        size: 18.sp,
+                        color: Colors.black,
                       ),
+                      onPressed: () {
+                        Get.back();
+                        onAcceptPressed?.call();
+                      },
+                      // padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
                   ),
                 ],
               ),
             ] else if (status == 'ASSIGNED') ...[
               SizedBox(height: 20.h),
-              SizedBox(
-                width: double.infinity,
-                height: 52.h,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD08700),
-                    foregroundColor: Colors.black,
-                    elevation: 2,
-                    shadowColor: const Color(0xFFD08700).withValues(alpha: 0.3),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.back();
-                    onActionButtonPressed?.call();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.navigation_outlined,
-                        size: 18.sp,
-                        color: Colors.black,
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        "View Ride Progress",
-                        style: GoogleFonts.inter(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+              CustomButton(
+                text: "View Ride Progress",
+                // backgroundColor: const Color(0xFFD08700),
+                // textColor: Colors.black,
+                // fontSize: 14.sp,
+                // fontWeight: FontWeight.bold,
+                icon: Icon(
+                  Icons.navigation_outlined,
+                  size: 18.sp,
+                  color: Colors.black,
                 ),
+                onPressed: () {
+                  Get.back();
+                  onActionButtonPressed?.call();
+                },
+                padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
             ] else if (status == 'COMPLETED') ...[
               SizedBox(height: 20.h),
-              SizedBox(
-                width: double.infinity,
-                height: 52.h,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF22C55E),
-                    foregroundColor: Colors.white,
-                    elevation: 2,
-                    shadowColor: const Color(0xFF22C55E).withValues(alpha: 0.3),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.back();
-                    onReviewPressed?.call();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.star_outline_rounded,
-                        size: 18.sp,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        "Rate & Review Driver",
-                        style: GoogleFonts.inter(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+              CustomButton(
+                text: "Rate & Review Driver",
+                backgroundColor: const Color(0xFF22C55E),
+                textColor: Colors.white,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                icon: Icon(
+                  Icons.star_outline_rounded,
+                  size: 18.sp,
+                  color: Colors.white,
                 ),
+                onPressed: () {
+                  Get.back();
+                  onReviewPressed?.call();
+                },
+                padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
             ] else if (actionButtonText != null &&
                 onActionButtonPressed != null) ...[
               SizedBox(height: 20.h),
-              SizedBox(
-                width: double.infinity,
-                height: 52.h,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD08700),
-                    foregroundColor: Colors.black,
-                    elevation: 2,
-                    shadowColor: const Color(0xFFD08700).withValues(alpha: 0.3),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.back();
-                    onActionButtonPressed!();
-                  },
-                  child: Text(
-                    actionButtonText!,
-                    style: GoogleFonts.inter(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
+              CustomButton(
+                text: actionButtonText!,
+                backgroundColor: const Color(0xFFD08700),
+                textColor: Colors.black,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                onPressed: () {
+                  Get.back();
+                  onActionButtonPressed!();
+                },
+                padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
             ],
           ],

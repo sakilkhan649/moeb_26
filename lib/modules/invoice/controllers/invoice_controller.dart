@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/data/models/invoice_model.dart';
 import 'package:moeb_26/data/repositories/invoice_repository.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_preview_view.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class InvoiceHistoryRecord {
   final String? id;
@@ -1180,7 +1181,10 @@ class InvoiceController extends GetxController {
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
+                    child: CustomButton(
+                      text: 'Delete',
+                      backgroundColor: const Color(0xFF2C2C2C),
+                      textColor: Colors.white,
                       onPressed: () {
                         // Cancel/Delete without calling API
                         invoiceAmountController.clear();
@@ -1206,52 +1210,22 @@ class InvoiceController extends GetxController {
                           Get.back(); // close detail screen
                         }
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2C2C2C),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text(
-                        'Delete',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Get.back(); // close dialog first
-                        await submitInvoice(); // NOW call API!
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD08700),
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                    child: Obx(() {
+                      return CustomButton(
+                        text: 'Save',
+                        loading: isLoading.value,
+                        onPressed: () async {
+                          Get.back(); // close dialog first
+                          await submitInvoice(); // NOW call API!
+                        },
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: Obx(() {
-                        if (isLoading.value) {
-                          return const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: Colors.black,
-                            ),
-                          );
-                        }
-                        return const Text(
-                          'Save',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        );
-                      }),
-                    ),
+                      );
+                    }),
                   ),
                 ],
               ),

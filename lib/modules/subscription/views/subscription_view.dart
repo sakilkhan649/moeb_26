@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/modules/subscription/controllers/subscription_controller.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class SubscriptionView extends StatelessWidget {
   SubscriptionView({super.key});
@@ -77,7 +78,9 @@ class SubscriptionView extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFD08700).withValues(alpha: 0.35),
+                            color: const Color(
+                              0xFFD08700,
+                            ).withValues(alpha: 0.35),
                             blurRadius: 20,
                             spreadRadius: 3,
                           ),
@@ -141,8 +144,9 @@ class SubscriptionView extends StatelessWidget {
                             boxShadow: isSelected
                                 ? [
                                     BoxShadow(
-                                      color: const Color(0xFFD08700)
-                                          .withValues(alpha: 0.2),
+                                      color: const Color(
+                                        0xFFD08700,
+                                      ).withValues(alpha: 0.2),
                                       blurRadius: 16,
                                       spreadRadius: 1,
                                     ),
@@ -282,10 +286,13 @@ class SubscriptionView extends StatelessWidget {
                         vertical: 6.h,
                       ),
                       child: Column(
-                        children: controller.features.asMap().entries.map((entry) {
+                        children: controller.features.asMap().entries.map((
+                          entry,
+                        ) {
                           final index = entry.key;
                           final feature = entry.value;
-                          final isLast = index == controller.features.length - 1;
+                          final isLast =
+                              index == controller.features.length - 1;
 
                           return Column(
                             children: [
@@ -297,9 +304,12 @@ class SubscriptionView extends StatelessWidget {
                                     Container(
                                       padding: EdgeInsets.all(8.r),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFD08700)
-                                            .withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(10.r),
+                                        color: const Color(
+                                          0xFFD08700,
+                                        ).withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(
+                                          10.r,
+                                        ),
                                       ),
                                       child: Icon(
                                         _getFeatureIcon(feature['icon']!),
@@ -366,51 +376,17 @@ class SubscriptionView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Obx(() {
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 52.h,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD08700),
-                          foregroundColor: Colors.black,
-                          elevation: 6,
-                          shadowColor: const Color(0xFFD08700).withValues(alpha: 0.35),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14.r),
-                          ),
-                        ),
-                        onPressed: controller.isLoading.value
-                            ? null
-                            : () => controller.subscribe(),
-                        child: controller.isLoading.value
-                            ? SizedBox(
-                                width: 22.w,
-                                height: 22.w,
-                                child: const CircularProgressIndicator(
-                                  color: Colors.black,
-                                  strokeWidth: 2.5,
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.workspace_premium_rounded,
-                                    color: Colors.black,
-                                    size: 20.sp,
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    'Subscribe Now • \$29/Year',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                    return CustomButton(
+                      text: 'Subscribe Now • \$29/Year',
+                      loading: controller.isLoading.value,
+                      onPressed: () => controller.subscribe(),
+
+                      icon: Icon(
+                        Icons.workspace_premium_rounded,
+                        color: Colors.black,
+                        size: 20.sp,
                       ),
+
                     );
                   }),
                   SizedBox(height: 8.h),

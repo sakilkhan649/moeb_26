@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class RequestSubmittedView extends StatelessWidget {
   const RequestSubmittedView({super.key});
@@ -74,7 +75,10 @@ class RequestSubmittedView extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF1C1810),
                   borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(color: const Color(0xFFD08700).withValues(alpha: 0.6), width: 1),
+                  border: Border.all(
+                    color: const Color(0xFFD08700).withValues(alpha: 0.6),
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -143,54 +147,22 @@ class RequestSubmittedView extends StatelessWidget {
               SizedBox(height: 28.h),
 
               // Bottom Action Buttons
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD08700),
-                    foregroundColor: Colors.black,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.offAllNamed(Routes.bottomNabbarView);
-                  },
-                  child: Text(
-                    "Go to My Jobs",
-                    style: GoogleFonts.inter(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+              CustomButton(
+                text: "Go to My Jobs",
+                onPressed: () {
+                  Get.offAllNamed(Routes.bottomNabbarView);
+                },
               ),
 
               SizedBox(height: 10.h),
 
-              SizedBox(
-                width: double.infinity,
-                height: 48.h,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Color(0xFF262626), width: 1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                    ),
-                  ),
-                  onPressed: () => Get.back(),
-                  child: Text(
-                    "Browse More Jobs",
-                    style: GoogleFonts.inter(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFFA1A1AA),
-                    ),
-                  ),
-                ),
+              CustomButton(
+                text: "Browse More Jobs",
+                backgroundColor: Colors.transparent,
+                textColor: const Color(0xFFA1A1AA),
+                borderColor: const Color(0xFF262626),
+   
+                onPressed: () => Get.back(),
               ),
 
               SizedBox(height: 24.h),
@@ -220,11 +192,7 @@ class RequestSubmittedView extends StatelessWidget {
           shape: BoxShape.circle,
           color: Color(0xFFD08700),
         ),
-        child: Icon(
-          Icons.task_alt_rounded,
-          color: Colors.black,
-          size: 38.sp,
-        ),
+        child: Icon(Icons.task_alt_rounded, color: Colors.black, size: 38.sp),
       ),
     );
   }
@@ -328,9 +296,13 @@ class RequestSubmittedView extends StatelessWidget {
               Text(
                 title,
                 style: GoogleFonts.inter(
-                  color: isDone || isActive ? Colors.white : const Color(0xFF71717A),
+                  color: isDone || isActive
+                      ? Colors.white
+                      : const Color(0xFF71717A),
                   fontSize: 13.sp,
-                  fontWeight: isDone || isActive ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight: isDone || isActive
+                      ? FontWeight.w600
+                      : FontWeight.w400,
                 ),
               ),
               SizedBox(height: 2.h),
@@ -391,13 +363,21 @@ class RequestSubmittedView extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  Icon(Icons.circle, color: const Color(0xFFD08700), size: 10.sp),
+                  Icon(
+                    Icons.circle,
+                    color: const Color(0xFFD08700),
+                    size: 10.sp,
+                  ),
                   Container(
                     width: 2.w,
                     height: 22.h,
                     color: const Color(0xFF262626),
                   ),
-                  Icon(Icons.location_on, color: const Color(0xFFD08700), size: 12.sp),
+                  Icon(
+                    Icons.location_on,
+                    color: const Color(0xFFD08700),
+                    size: 12.sp,
+                  ),
                 ],
               ),
               SizedBox(width: 10.w),
@@ -514,8 +494,12 @@ class _JobSubmittedData {
         pickup: job['pickup']?.toString() ?? "Pickup Location",
         dropoff: job['dropoff']?.toString() ?? "Dropoff Location",
         dateTime: "${job['date'] ?? ''} • ${job['time'] ?? 'ASAP'}".trim(),
-        vehicleType: job['type']?.toString() ?? job['vehicleType']?.toString() ?? "Standard",
-        amount: job['price']?.toString() ?? job['amount']?.toString() ?? "\$150",
+        vehicleType:
+            job['type']?.toString() ??
+            job['vehicleType']?.toString() ??
+            "Standard",
+        amount:
+            job['price']?.toString() ?? job['amount']?.toString() ?? "\$150",
         paymentType: job['payment']?.toString() ?? "Cash",
       );
     }

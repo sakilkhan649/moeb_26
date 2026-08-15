@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/preferred_drivers_controller.dart';
 
 class PreferredDriverProfileView extends StatelessWidget {
@@ -168,80 +169,37 @@ class PreferredDriverProfileView extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // "Start Conversation" Button
-                      ElevatedButton(
+                      CustomButton(
+                        text: 'Sent a message',
                         onPressed: () =>
                             controller.startConversation(chauffeur),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD08700),
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24.r),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 32.w,
-                            vertical: 12.h,
-                          ),
-                          elevation: 0,
+                        icon: Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          color: Colors.black,
+                          size: 18.sp,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.chat_bubble_outline_rounded,
-                              color: Colors.black,
-                              size: 18.sp,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              'Sent a message',
-                              style: GoogleFonts.inter(
-                                color: Colors.black,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                        width: 220.w,
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
                       ),
                       SizedBox(height: 12.h),
 
                       // "Remove from Favorites" Button
-                      OutlinedButton(
+                      CustomButton(
+                        text: 'Remove from Favorites',
                         onPressed: () =>
                             controller.removeFromFavorites(chauffeur),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: Color(0xFFFEDB9B),
-                            width: 1.2,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24.r),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 10.h,
-                          ),
-                          backgroundColor: Colors.transparent,
+                        backgroundColor: Colors.transparent,
+                        textColor: const Color(0xFFFEDB9B),
+                        borderColor: const Color(0xFFFEDB9B),
+                        icon: Icon(
+                          Icons.heart_broken_outlined,
+                          color: const Color(0xFFFEDB9B),
+                          size: 18.sp,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.heart_broken_outlined,
-                              color: const Color(0xFFFEDB9B),
-                              size: 18.sp,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              'Remove from Favorites',
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFFFEDB9B),
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                        width: 220.w,
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
                       ),
                     ],
                   ),

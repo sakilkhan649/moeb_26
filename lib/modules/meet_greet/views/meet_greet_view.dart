@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/meet_greet_controller.dart';
 
 class MeetGreetView extends GetView<MeetGreetController> {
@@ -91,25 +92,32 @@ class MeetGreetView extends GetView<MeetGreetController> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Obx(() => Switch(
-                                    value: controller.showCompanyLogo.value,
-                                    activeThumbColor: const Color(0xFFD5C4AB),
-                                    activeTrackColor: const Color(0xFFD5C4AB).withValues(alpha: 0.4),
-                                    inactiveThumbColor: Colors.grey,
-                                    inactiveTrackColor: const Color(0xFF121212),
-                                    onChanged: (v) async {
-                                      if (v) {
-                                        if (controller.customLogoPath.value == null) {
-                                          await controller.pickLogo();
-                                          if (controller.customLogoPath.value == null) {
-                                            controller.showCompanyLogo.value = false;
-                                            return;
-                                          }
+                              Obx(
+                                () => Switch(
+                                  value: controller.showCompanyLogo.value,
+                                  activeThumbColor: const Color(0xFFD5C4AB),
+                                  activeTrackColor: const Color(
+                                    0xFFD5C4AB,
+                                  ).withValues(alpha: 0.4),
+                                  inactiveThumbColor: Colors.grey,
+                                  inactiveTrackColor: const Color(0xFF121212),
+                                  onChanged: (v) async {
+                                    if (v) {
+                                      if (controller.customLogoPath.value ==
+                                          null) {
+                                        await controller.pickLogo();
+                                        if (controller.customLogoPath.value ==
+                                            null) {
+                                          controller.showCompanyLogo.value =
+                                              false;
+                                          return;
                                         }
                                       }
-                                      controller.showCompanyLogo.value = v;
-                                    },
-                                  )),
+                                    }
+                                    controller.showCompanyLogo.value = v;
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                           Obx(() {
@@ -119,7 +127,10 @@ class MeetGreetView extends GetView<MeetGreetController> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Divider(color: Color(0xFF364153), height: 24),
+                                const Divider(
+                                  color: Color(0xFF364153),
+                                  height: 24,
+                                ),
                                 Text(
                                   'Custom Logo (Required)',
                                   style: GoogleFonts.inter(
@@ -133,29 +144,40 @@ class MeetGreetView extends GetView<MeetGreetController> {
                                     ? Row(
                                         children: [
                                           ClipRRect(
-                                            borderRadius: BorderRadius.circular(8.r),
+                                            borderRadius: BorderRadius.circular(
+                                              8.r,
+                                            ),
                                             child: Image.file(
-                                              File(controller.customLogoPath.value!),
+                                              File(
+                                                controller
+                                                    .customLogoPath
+                                                    .value!,
+                                              ),
                                               width: 80.w,
                                               height: 60.h,
                                               fit: BoxFit.cover,
                                             ),
                                           ),
                                           SizedBox(width: 16.w),
-                                          ElevatedButton.icon(
+                                          CustomButton(
+                                            text: 'Remove',
+                                            width: 110.w,
                                             onPressed: () {
-                                              controller.customLogoPath.value = null;
-                                              controller.showCompanyLogo.value = false;
+                                              controller.customLogoPath.value =
+                                                  null;
+                                              controller.showCompanyLogo.value =
+                                                  false;
                                             },
-                                            icon: const Icon(Icons.delete, color: Colors.black, size: 16),
-                                            label: Text(
-                                              'Remove',
-                                              style: GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.sp),
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.black,
+                                              size: 16,
                                             ),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: const Color(0xFFFEDB9B),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-                                            ),
+                                            // backgroundColor: const Color(0xFFFEDB9B),
+                                            // textColor: Colors.black,
+                                            // fontSize: 12.sp,
+                                            // fontWeight: FontWeight.bold,
+                                            // padding: EdgeInsets.symmetric(vertical: 10.h),
                                           ),
                                         ],
                                       )
@@ -166,13 +188,22 @@ class MeetGreetView extends GetView<MeetGreetController> {
                                           height: 70.h,
                                           decoration: BoxDecoration(
                                             color: const Color(0xFF121212),
-                                            borderRadius: BorderRadius.circular(12.r),
-                                            border: Border.all(color: const Color(0xFF364153)),
+                                            borderRadius: BorderRadius.circular(
+                                              12.r,
+                                            ),
+                                            border: Border.all(
+                                              color: const Color(0xFF364153),
+                                            ),
                                           ),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              Icon(Icons.upload_file, color: const Color(0xFFD5C4AB), size: 20.sp),
+                                              Icon(
+                                                Icons.upload_file,
+                                                color: const Color(0xFFD5C4AB),
+                                                size: 20.sp,
+                                              ),
                                               SizedBox(width: 8.w),
                                               Text(
                                                 'Upload Custom Logo',
@@ -193,7 +224,6 @@ class MeetGreetView extends GetView<MeetGreetController> {
                       ),
                     ),
                     SizedBox(height: 24.h),
-
 
                     // --- PASSENGER & SUBTITLE INPUTS ---
                     _buildSectionHeader('PASSENGER DETAILS'),
@@ -312,7 +342,6 @@ class MeetGreetView extends GetView<MeetGreetController> {
                       }),
                     ),
 
-
                     SizedBox(height: 20.h),
                   ],
                 ),
@@ -328,41 +357,32 @@ class MeetGreetView extends GetView<MeetGreetController> {
                   top: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
                 ),
               ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52.h,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD08700),
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                    ),
-                    elevation: 3,
-                  ),
-                  icon: Icon(Icons.fullscreen_rounded, size: 24.sp),
-                  label: Text(
-                    'SHOW PICKUP SIGN BOARD',
-                    style: GoogleFonts.inter(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.w,
-                    ),
-                  ),
-                  onPressed: () {
-                    if (controller.showCompanyLogo.value && controller.customLogoPath.value == null) {
-                      Get.snackbar(
-                        'Logo Required',
-                        'Please upload a custom logo or turn off the Logo Header switch.',
-                        backgroundColor: Colors.redAccent,
-                        colorText: Colors.white,
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
-                      return;
-                    }
-                    Get.toNamed(Routes.meetGreetFullscreenView);
-                  },
+              child: CustomButton(
+                text: 'SHOW PICKUP SIGN BOARD',
+                backgroundColor: const Color(0xFFD08700),
+                textColor: Colors.black,
+                icon: Icon(
+                  Icons.fullscreen_rounded,
+                  size: 24.sp,
+                  color: Colors.black,
                 ),
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                onPressed: () {
+                  if (controller.showCompanyLogo.value &&
+                      controller.customLogoPath.value == null) {
+                    Get.snackbar(
+                      'Logo Required',
+                      'Please upload a custom logo or turn off the Logo Header switch.',
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                    return;
+                  }
+                  Get.toNamed(Routes.meetGreetFullscreenView);
+                },
+                padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
             ),
           ],

@@ -7,6 +7,7 @@ import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/modules/my_jobs/widgets/MyJobCard.dart';
 import 'package:moeb_26/modules/my_jobs/widgets/MyJobDetailSheet.dart';
 import 'package:moeb_26/modules/my_job_progress_details/views/my_job_progress_details_view.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/my_jobs_controller.dart';
 
 class MyJobsView extends StatefulWidget {
@@ -175,7 +176,8 @@ class _MyJobsViewState extends State<MyJobsView> {
     final String status = job['status'] ?? '';
     final String upperStatus = status.toUpperCase();
     final bool canEdit = upperStatus == 'PENDING';
-    final bool canDelete = upperStatus == 'PENDING' || upperStatus == 'CANCELLED';
+    final bool canDelete =
+        upperStatus == 'PENDING' || upperStatus == 'CANCELLED';
 
     Get.bottomSheet(
       MyJobDetailSheet(
@@ -219,15 +221,14 @@ class _MyJobsViewState extends State<MyJobsView> {
           );
         },
         onChatPressed: () {
-          final driverName = (job['assignedDriver'] != null &&
+          final driverName =
+              (job['assignedDriver'] != null &&
                   job['assignedDriver'] != '1 Applicant Available')
               ? job['assignedDriver']
               : "Mohamed El Bakkali";
           final chat = ChatPreview(
             id: "demo_chat_${job['id']}",
-            participants: [
-              ChatParticipant(id: "driver_1", name: driverName),
-            ],
+            participants: [ChatParticipant(id: "driver_1", name: driverName)],
             lastMessage: "Hello, I am ready for this job assignment.",
             lastMessageAt: DateTime.now().toIso8601String(),
             createdBy: "current_user",
@@ -297,29 +298,23 @@ class _MyJobsViewState extends State<MyJobsView> {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.grey),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                      ),
+                    child: CustomButton(
+                      text: "Cancel",
+                      backgroundColor: Colors.transparent,
+                      textColor: Colors.white,
+                      borderColor: Colors.grey,
+                      fontSize: 14.sp,
                       onPressed: () => Get.back(),
-                      child: Text(
-                        "Cancel",
-                        style: GoogleFonts.inter(color: Colors.white),
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
                     ),
                   ),
                   SizedBox(width: 10.w),
                   Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                      ),
+                    child: CustomButton(
+                      text: "Delete",
+                      backgroundColor: Colors.redAccent,
+                      textColor: Colors.black,
+                      fontSize: 14.sp,
                       onPressed: () {
                         Get.back();
                         Get.snackbar(
@@ -329,10 +324,7 @@ class _MyJobsViewState extends State<MyJobsView> {
                           colorText: Colors.white,
                         );
                       },
-                      child: Text(
-                        "Delete",
-                        style: GoogleFonts.inter(color: Colors.white),
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
                     ),
                   ),
                 ],

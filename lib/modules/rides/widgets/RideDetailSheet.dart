@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class RideDetailSheet extends StatelessWidget {
   final String title;
@@ -489,82 +490,41 @@ class RideDetailSheet extends StatelessWidget {
 
             if (onReviewPressed != null) ...[
               SizedBox(height: 20.h),
-              SizedBox(
-                width: double.infinity,
-                height: 52.h,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF22C55E),
-                    foregroundColor: Colors.white,
-                    elevation: 2,
-                    shadowColor: const Color(0xFF22C55E).withValues(alpha: 0.3),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.back();
-                    onReviewPressed!.call();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.star_outline_rounded,
-                        size: 18.sp,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        "Rate & Review Driver",
-                        style: GoogleFonts.inter(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+              CustomButton(
+                text: "Rate & Review Driver",
+                backgroundColor: const Color(0xFF22C55E),
+                textColor: Colors.black,
+
+                icon: Icon(
+                  Icons.star_outline_rounded,
+                  size: 18.sp,
+                  color: Colors.black,
                 ),
+                onPressed: () {
+                  Get.back();
+                  onReviewPressed!.call();
+                },
+                padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
-            ] else if (actionButtonText != null && onActionButtonPressed != null) ...[
+            ] else if (actionButtonText != null &&
+                onActionButtonPressed != null) ...[
               SizedBox(height: 20.h),
-              SizedBox(
-                width: double.infinity,
-                height: 52.h,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD08700),
-                    foregroundColor: Colors.black,
-                    elevation: 2,
-                    shadowColor: const Color(0xFFD08700).withValues(alpha: 0.3),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.back();
-                    onActionButtonPressed!();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.navigation_outlined,
-                        size: 18.sp,
-                        color: Colors.black,
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        actionButtonText!,
-                        style: GoogleFonts.inter(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
+              CustomButton(
+                text: actionButtonText!,
+                // backgroundColor: const Color(0xFFD08700),
+                // textColor: Colors.black,
+                // fontSize: 14.sp,
+                // fontWeight: FontWeight.bold,
+                icon: Icon(
+                  Icons.navigation_outlined,
+                  size: 18.sp,
+                  color: Colors.black,
                 ),
+                onPressed: () {
+                  Get.back();
+                  onActionButtonPressed!();
+                },
+                // padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
             ],
           ],
