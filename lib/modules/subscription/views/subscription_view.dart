@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/modules/subscription/controllers/subscription_controller.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class SubscriptionView extends StatelessWidget {
@@ -74,13 +75,11 @@ class SubscriptionView extends StatelessWidget {
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFFFFDF88), Color(0xFFD08700)],
+                          colors: [Color(0xFFFFDCA1), Color(0xFFFEDB9B)],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(
-                              0xFFD08700,
-                            ).withValues(alpha: 0.35),
+                            color: AppColors.primaryColor.withValues(alpha: 0.35),
                             blurRadius: 20,
                             spreadRadius: 3,
                           ),
@@ -137,16 +136,14 @@ class SubscriptionView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20.r),
                             border: Border.all(
                               color: isSelected
-                                  ? const Color(0xFFD08700)
+                                  ? AppColors.primaryColor
                                   : const Color(0xFF2C2C2C),
                               width: isSelected ? 1.5 : 1,
                             ),
                             boxShadow: isSelected
                                 ? [
                                     BoxShadow(
-                                      color: const Color(
-                                        0xFFD08700,
-                                      ).withValues(alpha: 0.2),
+                                      color: AppColors.primaryColor.withValues(alpha: 0.2),
                                       blurRadius: 16,
                                       spreadRadius: 1,
                                     ),
@@ -167,8 +164,8 @@ class SubscriptionView extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       gradient: const LinearGradient(
                                         colors: [
-                                          Color(0xFFD08700),
-                                          Color(0xFFB87600),
+                                          Color(0xFFFFDCA1),
+                                          Color(0xFFFEDB9B),
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(8.r),
@@ -189,11 +186,11 @@ class SubscriptionView extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: isSelected
-                                          ? const Color(0xFFD08700)
+                                          ? AppColors.primaryColor
                                           : Colors.transparent,
                                       border: Border.all(
                                         color: isSelected
-                                            ? const Color(0xFFD08700)
+                                            ? AppColors.primaryColor
                                             : const Color(0xFF555555),
                                         width: 2,
                                       ),
@@ -304,9 +301,7 @@ class SubscriptionView extends StatelessWidget {
                                     Container(
                                       padding: EdgeInsets.all(8.r),
                                       decoration: BoxDecoration(
-                                        color: const Color(
-                                          0xFFD08700,
-                                        ).withValues(alpha: 0.15),
+                                        color: AppColors.primaryColor.withValues(alpha: 0.15),
                                         borderRadius: BorderRadius.circular(
                                           10.r,
                                         ),

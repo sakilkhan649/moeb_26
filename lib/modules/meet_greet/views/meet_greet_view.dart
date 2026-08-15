@@ -359,15 +359,13 @@ class MeetGreetView extends GetView<MeetGreetController> {
               ),
               child: CustomButton(
                 text: 'SHOW PICKUP SIGN BOARD',
-                backgroundColor: const Color(0xFFD08700),
-                textColor: Colors.black,
+
                 icon: Icon(
                   Icons.fullscreen_rounded,
                   size: 24.sp,
                   color: Colors.black,
                 ),
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
+
                 onPressed: () {
                   if (controller.showCompanyLogo.value &&
                       controller.customLogoPath.value == null) {

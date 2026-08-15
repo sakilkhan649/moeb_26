@@ -3,13 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
 import 'package:moeb_26/modules/auth/profile/views/personal_information_view.dart';
 import 'package:moeb_26/modules/auth/profile/views/payment_information_view.dart';
 import 'package:moeb_26/core/widgets/LogoutBottomSheet.dart';
 import 'package:moeb_26/core/widgets/Contact_support_popup.dart';
-import 'package:moeb_26/core/widgets/DeleteAccountBottomSheet.dart';
 import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
 
 class ProfileView extends StatelessWidget {
@@ -31,13 +31,13 @@ class ProfileView extends StatelessWidget {
           onRefresh: () async {
             await controller.fetchUserProfile();
           },
-          color: const Color(0xFFD08700),
+          color: AppColors.primaryColor,
           backgroundColor: Colors.black,
           child: Obx(() {
             if (controller.isLoading.value &&
                 controller.userProfile.value == null) {
               return const Center(
-                child: CircularProgressIndicator(color: Color(0xFFD08700)),
+                child: CircularProgressIndicator(color: AppColors.primaryColor),
               );
             }
             return SingleChildScrollView(
@@ -55,14 +55,12 @@ class ProfileView extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: const Color(0xFFD08700),
+                            color: AppColors.primaryColor,
                             width: 2.w,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(
-                                0xFFD08700,
-                              ).withValues(alpha: 0.2),
+                              color: AppColors.primaryColor.withValues(alpha: 0.2),
                               blurRadius: 15,
                               spreadRadius: 2,
                             ),
@@ -90,7 +88,7 @@ class ProfileView extends StatelessWidget {
                             vertical: 3.h,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFD08700),
+                            color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Row(
@@ -178,12 +176,12 @@ class ProfileView extends StatelessWidget {
                         ),
                         borderRadius: BorderRadius.circular(16.r),
                         border: Border.all(
-                          color: const Color(0xFFD08700),
+                          color: AppColors.primaryColor,
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFD08700).withValues(alpha: 0.2),
+                            color: AppColors.primaryColor.withValues(alpha: 0.2),
                             blurRadius: 10,
                             spreadRadius: 1,
                           ),
@@ -194,7 +192,7 @@ class ProfileView extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.all(10.r),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFD08700),
+                              color: AppColors.primaryColor,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -225,7 +223,7 @@ class ProfileView extends StatelessWidget {
                                         vertical: 2.h,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFD08700),
+                                        color: AppColors.primaryColor,
                                         borderRadius: BorderRadius.circular(6.r),
                                       ),
                                       child: Text(
@@ -503,7 +501,7 @@ class ProfileView extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: iconColor ?? const Color(0xFFD5C4AB),
+          color: iconColor ?? Colors.white70,
           size: 19.sp,
         ),
       ),
