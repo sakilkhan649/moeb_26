@@ -365,8 +365,10 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                               if (currentSectionIndex.value < steps.length - 1) {
                                 currentSectionIndex.value++;
                               } else {
-                                // Bypass OTP and navigate directly to Account Setup (Vehicle Information)
-                                Get.toNamed(Routes.vehicleinformationView);
+                                Get.toNamed(
+                                  Routes.otpVerificationView,
+                                  arguments: {'email': controller.emailController.text, 'isRegister': true},
+                                );
                               }
                           },
                         ),

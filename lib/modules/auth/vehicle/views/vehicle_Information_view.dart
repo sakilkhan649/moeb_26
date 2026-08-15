@@ -14,11 +14,9 @@ import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 
-class VehicleInformationView extends StatelessWidget {
+class VehicleInformationView extends GetView<SignupController> {
   VehicleInformationView({super.key});
 
-  // Using the unified SignupController
-  final SignupController controller = Get.find<SignupController>();
   final _formKey = GlobalKey<FormState>();
 
   @override

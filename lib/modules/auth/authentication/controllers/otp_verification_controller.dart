@@ -42,8 +42,8 @@ class OtpController extends GetxController {
   }
 
   Future<void> verifyOtp() async {
-    // Bypass OTP verification for development testing
-      Get.offAllNamed(Routes.vehicleinformationView);
+    // API verification bypassed for now — navigate directly to vehicle setup
+    Get.offAllNamed(Routes.vehicleinformationView);
   }
 
   Future<void> resendOtp() async {

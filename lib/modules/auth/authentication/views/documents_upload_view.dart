@@ -106,11 +106,14 @@ class DocumentsuploadView extends GetView<SignupController> {
                 ),
                 SizedBox(height: 32.h),
 
-                CustomButton(
-                  text: "Submit for Review",
-                  onPressed: () {
-                    Get.offAllNamed(Routes.applicationSubmitedView);
-                  },
+                Obx(
+                  () => CustomButton(
+                    text: "Submit for Review",
+                    loading: controller.isLoading.value,
+                    onPressed: () {
+                      controller.submitAccountSetup();
+                    },
+                  ),
                 ),
                 SizedBox(height: 60.h),
               ],

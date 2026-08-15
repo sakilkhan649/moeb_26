@@ -9,6 +9,7 @@ import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/modules/notifications/controllers/notifications_controller.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/modules/market_place/views/market_place_view.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -134,7 +135,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                               width: 15.w,
                               height: 15.w,
                               decoration: const BoxDecoration(
-                                color: Colors.orange,
+                                color: Colors.yellow,
                                 shape: BoxShape.circle,
                               ),
                               child: Center(
@@ -143,7 +144,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                                       ? '99+'
                                       : '${_notificationController.unreadCount}',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontSize: 10.sp,
                                     fontWeight: FontWeight.bold,
                                   ),

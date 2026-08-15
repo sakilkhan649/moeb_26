@@ -23,6 +23,12 @@ class SignupController extends GetxController {
   var isLoading = false.obs;
   var showErrors = false.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    vehiclesList = <VehicleModel>[VehicleModel()].obs;
+  }
+
   // ===========================================================================
   // STEP 1: ACCOUNT INFORMATION
   // ===========================================================================
@@ -81,7 +87,7 @@ class SignupController extends GetxController {
   // ===========================================================================
   // STEP 2: VEHICLE INFORMATION
   // ===========================================================================
-  final RxList<VehicleModel> vehiclesList = <VehicleModel>[VehicleModel()].obs;
+  late RxList<VehicleModel> vehiclesList;
 
   void addVehicle() => vehiclesList.add(VehicleModel());
   void removeVehicle(int index) {
