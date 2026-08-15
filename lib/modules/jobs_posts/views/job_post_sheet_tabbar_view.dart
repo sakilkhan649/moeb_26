@@ -6,6 +6,8 @@ import 'by_the_hour_view.dart';
 import '../controllers/job_post_controller.dart';
 import 'one_way_view.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class JobPostSheetTabBarView extends StatelessWidget {
   const JobPostSheetTabBarView({super.key});
@@ -477,9 +479,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                                   vertical: 2.h,
                                                 ),
                                                 decoration: BoxDecoration(
-                                                  color: const Color(
-                                                    0xFFFF9800,
-                                                  ),
+                                                  color: AppColors.primaryColor,
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                         4.r,
@@ -509,7 +509,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                             ),
                                             Icon(
                                               Icons.star,
-                                              color: const Color(0xFFFF9800),
+                                              color: AppColors.primaryColor,
                                               size: 13.sp,
                                             ),
                                             SizedBox(width: 2.w),
@@ -540,26 +540,10 @@ class JobPostSheetTabBarView extends StatelessWidget {
             SizedBox(height: 16.h),
 
             // Done Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Get.back(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF9800),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 14.h),
-                ),
-                child: Text(
-                  'Done',
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
-                  ),
-                ),
-              ),
+            CustomButton(
+              text: 'Done',
+              onPressed: () => Get.back(),
+              padding: EdgeInsets.symmetric(vertical: 14.h),
             ),
           ],
         ),
@@ -582,7 +566,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 15.h),
                   decoration: BoxDecoration(
                     color: controller.jobType.value == 'One Way'
-                        ? Colors.white
+                        ? AppColors.primaryColor
                         : const Color(0xFF1F1C1C),
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(color: const Color(0xFF364153)),
@@ -610,7 +594,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 15.h),
                   decoration: BoxDecoration(
                     color: controller.jobType.value == 'By the hour'
-                        ? Colors.white
+                        ? AppColors.primaryColor
                         : const Color(0xFF1F1C1C),
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(color: const Color(0xFF364153)),

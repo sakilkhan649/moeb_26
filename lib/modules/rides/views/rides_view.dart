@@ -3,11 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/modules/rides/widgets/RideCard.dart';
 import 'package:moeb_26/modules/rides/widgets/RideDetailSheet.dart';
 import 'package:moeb_26/data/models/chat_model.dart';
-import 'package:moeb_26/modules/my_ride_progress_details/views/my_ride_progress_details_view.dart';
-import 'package:moeb_26/modules/my_job_progress_details/views/my_job_progress_details_view.dart';
 import '../../../core/widgets/Custom_AppBar.dart';
 import '../controllers/rides_controller.dart';
 
@@ -227,7 +226,7 @@ class _RidesViewState extends State<RidesView> {
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFFD08700)
+                      ? AppColors.primaryColor
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(12.r),
                 ),

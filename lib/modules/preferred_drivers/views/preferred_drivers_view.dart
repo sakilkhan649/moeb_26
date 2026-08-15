@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
 import '../controllers/preferred_drivers_controller.dart';
 
@@ -40,9 +41,7 @@ class PreferredDriversView extends StatelessWidget {
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.grey,
                   indicator: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFD08700), Color(0xFFF1A800)],
-                    ),
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(10.r),
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
@@ -56,8 +55,8 @@ class PreferredDriversView extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                   tabs: const [
-                    Tab(text: '⭐  My Favorites'),
-                    Tab(text: '🔍  Find Chauffeurs'),
+                    Tab(text: 'My Favorites'),
+                    Tab(text: 'Find Chauffeurs'),
                   ],
                 ),
               ),
@@ -236,11 +235,10 @@ class _DriverCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Avatar
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFD08700), width: 1.8.w),
+              border: Border.all(color: AppColors.primaryColor, width: 1.8.w),
             ),
             child: CircleAvatar(
               radius: 26.r,
@@ -279,7 +277,7 @@ class _DriverCard extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.star,
-                      color: const Color(0xFFD08700),
+                      color: AppColors.primaryColor,
                       size: 14.sp,
                     ),
                     SizedBox(width: 3.w),
@@ -322,7 +320,7 @@ class _DriverCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFD08700), Color(0xFFF1A800)],
+                      colors: [Color(0xFFFFDCA1), Color(0xFFFEDB9B)],
                     ),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
@@ -409,7 +407,7 @@ InputDecoration _searchDecoration(String hint) {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12.r),
-      borderSide: const BorderSide(color: Color(0xFFD08700), width: 1),
+      borderSide: const BorderSide(color: AppColors.primaryColor, width: 1),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12.r),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/preferred_drivers_controller.dart';
 
@@ -75,14 +76,12 @@ class PreferredDriverProfileView extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: const Color(0xFFD08700),
+                            color: AppColors.primaryColor,
                             width: 2.w,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(
-                                0xFFD08700,
-                              ).withValues(alpha: 0.15),
+                              color: AppColors.primaryColor.withValues(alpha: 0.15),
                               blurRadius: 15,
                               spreadRadius: 2,
                             ),
@@ -105,7 +104,7 @@ class PreferredDriverProfileView extends StatelessWidget {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFD08700),
+                            color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Row(
@@ -392,7 +391,7 @@ class PreferredDriverProfileView extends StatelessWidget {
                       Text(
                         'View All',
                         style: GoogleFonts.inter(
-                          color: const Color(0xFFD08700),
+                          color: AppColors.primaryColor,
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                         ),
@@ -423,7 +422,7 @@ class PreferredDriverProfileView extends StatelessWidget {
                                 5,
                                 (index) => Icon(
                                   Icons.star,
-                                  color: const Color(0xFFD08700),
+                                  color: AppColors.primaryColor,
                                   size: 16.sp,
                                 ),
                               ),
