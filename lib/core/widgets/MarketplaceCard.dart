@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import '../../data/models/market_place_model.dart';
 import '../../modules/market_place/views/market_place_detail_view.dart';
@@ -151,8 +152,8 @@ class MarketplaceCard extends StatelessWidget {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFF1A107), Color(0xFFFF9800)],
+                            gradient: LinearGradient(
+                              colors: [AppColors.primaryColor, const Color(0xFFFF9800)],
                             ),
                             borderRadius: BorderRadius.circular(20.r),
                           ),
@@ -217,7 +218,7 @@ class MarketplaceCard extends StatelessWidget {
             color: Colors.grey[900],
             child: const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFFF1A107),
+                color: AppColors.primaryColor,
                 strokeWidth: 2,
               ),
             ),

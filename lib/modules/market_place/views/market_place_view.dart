@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import '../../../core/widgets/Custom_Job_Button.dart';
 import '../controllers/market_place_controller.dart';
@@ -49,7 +50,7 @@ class MarketPlaceView extends StatelessWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () => controller.fetchItems(),
-        color: const Color(0xFFF1A107),
+        color: AppColors.primaryColor,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
@@ -136,7 +137,7 @@ class MarketPlaceView extends StatelessWidget {
                       controller.filteredItems.isEmpty) {
                     return const Center(
                       child: CircularProgressIndicator(
-                        color: Color(0xFFF1A107),
+                        color: AppColors.primaryColor,
                       ),
                     );
                   }
@@ -169,7 +170,7 @@ class MarketPlaceView extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(vertical: 20.h),
                                   child: const Center(
                                     child: CircularProgressIndicator(
-                                      color: Color(0xFFF1A107),
+                                      color: AppColors.primaryColor,
                                     ),
                                   ),
                                 )

@@ -75,7 +75,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: AppColors.orange100,
+                    color: AppColors.primaryColor,
                   ),
                 ),
               ),
@@ -97,7 +97,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   child: Text(
                     "Load More...",
                     style: GoogleFonts.inter(
-                      color: AppColors.orange100,
+                      color: AppColors.primaryColor,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),
@@ -129,7 +129,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   height: 18.w,
                   child: const CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: AppColors.orange100,
+                    color: AppColors.primaryColor,
                   ),
                 )
               : Icon(

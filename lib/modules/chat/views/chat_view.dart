@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/user_service.dart';
 import 'package:moeb_26/core/widgets/Custom_AppBar.dart';
@@ -71,7 +72,7 @@ class ChatView extends StatelessWidget {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
                       borderSide: BorderSide(
-                        color: const Color(0xFFD08700),
+                        color: AppColors.primaryColor,
                         width: 1.w,
                       ),
                     ),
@@ -93,7 +94,7 @@ class ChatView extends StatelessWidget {
                       await controller.fetchChats();
                       await controller.fetchCommunityRoom();
                     },
-                    color: Colors.grey,
+                    color: AppColors.primaryColor,
                     backgroundColor: const Color(0xff1A1A1A),
                     child: Obx(() {
                       if (controller.isLoading.value &&

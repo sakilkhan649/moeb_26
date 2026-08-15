@@ -235,7 +235,7 @@ class ExpenseListView extends GetView<ExpenseController> {
                   if (controller.isLoading.value) {
                     return const Center(
                       child: CircularProgressIndicator(
-                        color: AppColors.orange100,
+                        color: AppColors.primaryColor,
                       ),
                     );
                   }

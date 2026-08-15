@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/data/models/market_place_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
@@ -120,7 +121,7 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                           Text(
                             "\$${widget.item.price}",
                             style: GoogleFonts.inter(
-                              color: const Color(0xFFF1A107),
+                              color: AppColors.primaryColor,
                               fontSize: 16.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -171,17 +172,16 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                 style: GoogleFonts.inter(color: Colors.grey, fontSize: 12.sp),
               ),
               SizedBox(height: 24.h),
-              // Buttons
               _isSending
                   ? const Center(
                       child: CircularProgressIndicator(
-                        color: Color(0xFFF1A107),
+                        color: AppColors.primaryColor,
                       ),
                     )
                   : CustomButton(
                       text: "Send Message",
-                      backgroundColor: const Color(0xFFF1A107),
-                      textColor: Colors.white,
+                      backgroundColor: AppColors.primaryColor,
+                      textColor: Colors.black,
                       onPressed: () async {
                         final text = _messageController.text.trim();
                         if (text.isEmpty) {

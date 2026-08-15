@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/serviceController.dart';
 
@@ -58,13 +59,13 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                 child: RefreshIndicator(
                   onRefresh: () =>
                       controller.fetchServiceAreas(isRefresh: true),
-                  color: const Color(0xFFF1A107),
+                  color: AppColors.primaryColor,
                   child: Obx(() {
                     if (controller.isLoading.value &&
                         controller.serviceAreas.isEmpty) {
                       return const Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFFF1A107),
+                          color: AppColors.primaryColor,
                         ),
                       );
                     }
@@ -95,7 +96,7 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                             padding: EdgeInsets.symmetric(vertical: 10.h),
                             child: const Center(
                               child: CircularProgressIndicator(
-                                color: Color(0xFFF1A107),
+                                color: AppColors.primaryColor,
                               ),
                             ),
                           );
@@ -104,7 +105,6 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                         final isActive = item.status == 'ACTIVE';
 
                         return Obx(() {
-                          // Accessing selectedAreaName.value here ensures the Obx listens to its changes
                           final isSelected =
                               controller.selectedAreaName.value ==
                               item.areaName;
@@ -124,7 +124,7 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                                     borderRadius: BorderRadius.circular(8.r),
                                     border: Border.all(
                                       color: isSelected
-                                          ? const Color(0xFFF1A107)
+                                          ? AppColors.primaryColor
                                           : const Color(0xFF364153),
                                     ),
                                   ),
@@ -143,11 +143,32 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                                             ),
                                           ),
                                           if (!isActive) ...[
-                                            SizedBox(width: 10.w),
-                                            Icon(
-                                              Icons.lock_outline,
-                                              color: Colors.grey,
-                                              size: 18.sp,
+                                            SizedBox(width: 8.w),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 8.w,
+                                                vertical: 4.h,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.withValues(
+                                                  alpha: 0.1,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(4.r),
+                                                border: Border.all(
+                                                  color: Colors.red.withValues(
+                                                    alpha: 0.3,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "INACTIVE",
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.red,
+                                                  fontSize: 10.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ],
@@ -209,9 +230,7 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                                                             .selectServiceArea(
                                                               value!,
                                                             ),
-                                                    activeColor: const Color(
-                                                      0xFFF1A107,
-                                                    ),
+                                                    activeColor: AppColors.primaryColor,
                                                   ),
                                                 ),
                                               if (isActive)

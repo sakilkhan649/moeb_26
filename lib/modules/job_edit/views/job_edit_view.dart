@@ -111,7 +111,7 @@ class _JobEditViewState extends State<JobEditView> {
                 () => jobEditController.isLoading.value
                     ? const Center(
                         child: CircularProgressIndicator(
-                          color: AppColors.orange100,
+                          color: AppColors.primaryColor,
                         ),
                       )
                     : Row(

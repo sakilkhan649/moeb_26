@@ -306,7 +306,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 14.w),
         child: controller.isLoading.value
             ? const Center(
-                child: CircularProgressIndicator(color: AppColors.orange100),
+                child: CircularProgressIndicator(color: AppColors.primaryColor),
               )
             : CustomButton(
                 text: buttonText,

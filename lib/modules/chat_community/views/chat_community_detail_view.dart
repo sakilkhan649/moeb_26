@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/modules/chat_community/controllers/chat_community_detail_controller.dart';
@@ -704,7 +705,7 @@ class ChatCommunityDetailView extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 10.h),
             child: Obx(
               () => controller.isSending.value
-                  ? const CircularProgressIndicator(color: Color(0xffD4A843))
+                  ? const CircularProgressIndicator(color: AppColors.primaryColor)
                   : GestureDetector(
                       onTap: () => controller.sendMessage(),
                       child: SvgPicture.asset(

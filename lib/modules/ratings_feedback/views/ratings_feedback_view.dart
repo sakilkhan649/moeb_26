@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import '../controllers/ratings_feedback_controller.dart';
 import '../../../core/widgets/CustomText.dart';
@@ -49,12 +50,12 @@ class RatingsFeedbackView extends StatelessWidget {
         ),
       ),
       body: RefreshIndicator(
-        color: const Color(0xFFF1A107),
+        color: AppColors.primaryColor,
         onRefresh: () => controller.fetchReviews(),
         child: Obx(() {
           if (controller.isLoading.value && controller.reviews.isEmpty) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFFF1A107)),
+              child: CircularProgressIndicator(color: AppColors.primaryColor),
             );
           }
 

@@ -94,7 +94,7 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
         top: false,
         bottom: true,
         child: RefreshIndicator(
-          color: AppColors.orange100,
+          color: AppColors.primaryColor,
           onRefresh: () async {
             await _refreshJob();
           },
