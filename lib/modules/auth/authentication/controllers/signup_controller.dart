@@ -89,7 +89,10 @@ class SignupController extends GetxController {
   // ===========================================================================
   late RxList<VehicleModel> vehiclesList;
 
-  void addVehicle() => vehiclesList.add(VehicleModel());
+  void addVehicle() {
+    // Small async gap ensures microsecond-based VehicleModel.id is always unique
+    Future.microtask(() => vehiclesList.add(VehicleModel()));
+  }
   void removeVehicle(int index) {
     if (vehiclesList.length > 1) {
       vehiclesList[index].dispose();

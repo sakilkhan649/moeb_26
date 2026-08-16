@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class VehicleModel {
+  // Unique identifier to use as a stable Widget key
+  final String id = DateTime.now().microsecondsSinceEpoch.toString();
   final RxString selectedVehicleType;
   final TextEditingController makeController;
   final TextEditingController modelController;

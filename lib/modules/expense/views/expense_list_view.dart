@@ -286,8 +286,7 @@ class ExpenseListView extends GetView<ExpenseController> {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
           child: CustomButton(
             text: "Track New Expense",
-            backgroundColor: accentColor,
-            textColor: Colors.black,
+
             onPressed: () {
               Get.to(() => AddExpenseView());
             },

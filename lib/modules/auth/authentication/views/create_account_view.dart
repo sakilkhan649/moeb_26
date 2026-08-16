@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,7 @@ import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
+import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:moeb_26/core/widgets/CustomTextField.dart';
 import 'package:moeb_26/core/widgets/Custom_dropdown.dart';
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
@@ -120,6 +122,13 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                       textInputType: TextInputType.emailAddress,
                       validator: (value) => Validators.email(value),
                     ),
+                  ),
+
+                  // ========== Profile Picture Upload Card ==========
+                  _buildInputField(
+                    label: "Profile Picture",
+                    isRequired: true,
+                    child: _buildProfilePictureCard(context),
                   ),
 
                   // ========== Service Area ==========
@@ -381,6 +390,185 @@ class _CreateAccountViewState extends State<CreateAccountView> {
             ),
           ),
       ],
+    );
+  }
+
+  // --- Profile Picture Section Widgets ---
+
+  Widget _buildProfilePictureCard(BuildContext context) {
+    return Obx(() {
+      final fileRx = controller.profilePictureFile;
+      final hasFile = fileRx.value != null;
+      return Container(
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF141414),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: const Color(0xFF262626),
+            width: 1.2,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                hasFile
+                    ? _buildDocumentThumbnail(context, fileRx, "Profile Picture")
+                    : _buildIcon(Icons.account_box_outlined),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (hasFile)
+                        Text(
+                          controller.getFileName(fileRx),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      else
+                        CustomTextgray(
+                          text:
+                              "Black suit, white shirt, tie, white background",
+                          fontSize: 11.sp,
+                        ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                  onPressed: () => controller.pickFromCamera(fileRx),
+                  icon: Icon(
+                    Icons.camera_alt_outlined,
+                    color: Colors.white,
+                    size: 18.sp,
+                  ),
+                  tooltip: "Camera",
+                ),
+              ],
+            ),
+            if (controller.showErrors.value && !hasFile)
+              Padding(
+                padding: EdgeInsets.only(top: 8.h),
+                child: Text(
+                  "Please upload Profile Picture",
+                  style: TextStyle(color: Colors.redAccent, fontSize: 12.sp),
+                ),
+              ),
+          ],
+        ),
+      );
+    });
+  }
+
+  void _previewLocalImage(BuildContext context, File file, String title) {
+    Get.dialog(
+      Dialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppBar(
+              title: Text(title, style: const TextStyle(color: Colors.white)),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Get.back(),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.w),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: file.path.toLowerCase().endsWith('.pdf')
+                    ? Container(
+                        padding: EdgeInsets.all(24.w),
+                        color: const Color(0xFF141414),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.picture_as_pdf, color: Colors.red, size: 48),
+                            SizedBox(height: 12.h),
+                            Text(
+                              file.path.split('/').last.split('\\').last,
+                              style: const TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Image.file(
+                        file,
+                        fit: BoxFit.contain,
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDocumentThumbnail(
+    BuildContext context,
+    Rx<File?> fileRx,
+    String title,
+  ) {
+    final file = fileRx.value;
+    if (file == null) return const SizedBox.shrink();
+
+    final isImage = file.path.toLowerCase().endsWith('.jpg') ||
+        file.path.toLowerCase().endsWith('.jpeg') ||
+        file.path.toLowerCase().endsWith('.png');
+
+    Widget child = isImage
+        ? Image.file(file, fit: BoxFit.cover)
+        : const Icon(
+            Icons.description_outlined,
+            color: Color(0xFFD08700),
+            size: 16,
+          );
+
+    return GestureDetector(
+      onTap: () => _previewLocalImage(context, file, title),
+      child: Container(
+        width: 38.r,
+        height: 38.r,
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E1E),
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: const Color(0xFF2C2C2C)),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8.r),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIcon(IconData icon) {
+    return Container(
+      padding: EdgeInsets.all(6.r),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: const Color(0xFF2C2C2C)),
+      ),
+      child: Icon(icon, color: Colors.white, size: 16.sp),
     );
   }
 

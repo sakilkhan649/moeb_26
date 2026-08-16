@@ -349,7 +349,7 @@ class Routes {
     ),
     GetPage(
       name: addNewVehicleView,
-      page: () => AddNewVehicleView(),
+      page: () => const AddNewVehicleView(),
       transition: Transition.noTransition,
     ),
     GetPage(

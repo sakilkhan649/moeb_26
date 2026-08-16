@@ -12,21 +12,36 @@ import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:moeb_26/modules/auth/vehicle/controllers/vehicle_action_controller.dart';
 import 'package:moeb_26/modules/auth/vehicle/views/vehicle_Information_view.dart';
 
-class AddNewVehicleView extends StatelessWidget {
-  // Use a unique tag for each navigation to ensure NO data leaks or copying from previous visits
-  final String tag = DateTime.now().millisecondsSinceEpoch.toString();
+class AddNewVehicleView extends StatefulWidget {
+  const AddNewVehicleView({super.key});
 
-  AddNewVehicleView({super.key}) {
-    // Inject a completely fresh and unique controller instance
-    Get.put(VehicleActionController(), tag: tag);
-  }
+  @override
+  State<AddNewVehicleView> createState() => _AddNewVehicleViewState();
+}
 
-  // Find the exact instance using the unique tag
-  VehicleActionController get controller =>
-      Get.find<VehicleActionController>(tag: tag);
+class _AddNewVehicleViewState extends State<AddNewVehicleView> {
+  // Use a unique tag for each navigation to ensure NO data leaks from previous visits
+  late final String tag;
+  late final VehicleActionController controller;
 
   final _formKey = GlobalKey<FormState>();
   final RxBool showErrors = false.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    // Generate a fresh unique tag each time this screen is opened
+    tag = DateTime.now().millisecondsSinceEpoch.toString();
+    // Inject a completely fresh and unique controller instance
+    controller = Get.put(VehicleActionController(), tag: tag);
+  }
+
+  @override
+  void dispose() {
+    // Delete the controller when leaving the screen
+    Get.delete<VehicleActionController>(tag: tag, force: true);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

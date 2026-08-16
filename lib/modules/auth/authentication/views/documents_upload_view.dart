@@ -68,15 +68,6 @@ class DocumentsuploadView extends GetView<SignupController> {
                   expireController: controller.localPermitExpireController,
                 ),
 
-                // 4. Profile Picture Card
-                _buildUnifiedDocumentCard(
-                  context: context,
-                  title: "Profile Picture",
-                  isRequired: true,
-                  fileRx: controller.profilePictureFile,
-                  onlyCamera: true,
-                ),
-
                 SizedBox(height: 10.h),
                 Container(
                   width: double.infinity,
@@ -141,10 +132,7 @@ class DocumentsuploadView extends GetView<SignupController> {
         decoration: BoxDecoration(
           color: const Color(0xFF141414),
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: const Color(0xFF262626),
-            width: 1.2,
-          ),
+          border: Border.all(color: const Color(0xFF262626), width: 1.2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,7 +204,10 @@ class DocumentsuploadView extends GetView<SignupController> {
                   children: [
                     IconButton(
                       constraints: const BoxConstraints(),
-                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 6.w,
+                        vertical: 4.h,
+                      ),
                       onPressed: () => controller.pickFromCamera(fileRx),
                       icon: Icon(
                         Icons.camera_alt_outlined,
@@ -229,7 +220,10 @@ class DocumentsuploadView extends GetView<SignupController> {
                       SizedBox(width: 4.w),
                       IconButton(
                         constraints: const BoxConstraints(),
-                        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6.w,
+                          vertical: 4.h,
+                        ),
                         onPressed: () =>
                             controller.pickFromFile(context, fileRx),
                         icon: Icon(
@@ -298,7 +292,11 @@ class DocumentsuploadView extends GetView<SignupController> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.picture_as_pdf, color: Colors.red, size: 48),
+                            const Icon(
+                              Icons.picture_as_pdf,
+                              color: Colors.red,
+                              size: 48,
+                            ),
                             SizedBox(height: 12.h),
                             Text(
                               file.path.split('/').last.split('\\').last,
@@ -308,10 +306,7 @@ class DocumentsuploadView extends GetView<SignupController> {
                           ],
                         ),
                       )
-                    : Image.file(
-                        file,
-                        fit: BoxFit.contain,
-                      ),
+                    : Image.file(file, fit: BoxFit.contain),
               ),
             ),
           ],
@@ -328,7 +323,8 @@ class DocumentsuploadView extends GetView<SignupController> {
     final file = fileRx.value;
     if (file == null) return const SizedBox.shrink();
 
-    final isImage = file.path.toLowerCase().endsWith('.jpg') ||
+    final isImage =
+        file.path.toLowerCase().endsWith('.jpg') ||
         file.path.toLowerCase().endsWith('.jpeg') ||
         file.path.toLowerCase().endsWith('.png');
 
