@@ -1,0 +1,64 @@
+POST   /api/v1/auth/register [BDD-01-REGISTER-USER] - Register a new user successfully
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "name": "Auth Test User",
+    "email": "authtest@example.com",
+    "password": "Password123!",
+    "phone": "+1234567890",
+    "companyName": "Test Company",
+    "companyRole": "Chauffeur",
+    "serviceAreaId": "6a818ae18a380abf55c2f17c",
+    "languages": [
+      "English"
+    ]
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Registration successful. Please check your email to verify your account.",
+  "data": {
+    "userId": "6a818ae18a380abf55c2f190",
+    "accountState": "UNVERIFIED"
+  }
+}
+
+
+
+
+4:03:13 PM | User Authentication BDD Flow > STEP 3 — Verify the user email using OTP | stdout
+
+📝 USER STORY:
+As an unverified driver
+I want to verify my email using the OTP I received
+So that my account becomes fully active
+
+📖 BDD SCENARIO: 3. VERIFY EMAIL
+Feature: Authentication
+
+Given I have the OTP generated during registration
+When I POST /api/v1/auth/verify-otp with the OTP
+Then I receive a 200 OK response
+And my account is marked as verified in the database
+
+4:03:13 PM | User Authentication BDD Flow > STEP 3 — Verify the user email using OTP | stdout
+
+
+ POST   /api/v1/auth/verify-otp [BDD-03-VERIFY-EMAIL] - Verify the user email using OTP
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "email": "authtest@example.com",
+    "oneTimeCode": 654321
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Email verified successfully. Please wait for admin approval to access the app."
+}

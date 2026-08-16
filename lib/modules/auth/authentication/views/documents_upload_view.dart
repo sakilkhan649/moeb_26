@@ -68,6 +68,15 @@ class DocumentsuploadView extends GetView<SignupController> {
                   expireController: controller.localPermitExpireController,
                 ),
 
+                // 4. Profile Picture Card
+                _buildUnifiedDocumentCard(
+                  context: context,
+                  title: "Profile Picture",
+                  isRequired: true,
+                  fileRx: controller.profilePictureFile,
+                  onlyCamera: true,
+                ),
+
                 SizedBox(height: 10.h),
                 Container(
                   width: double.infinity,
