@@ -348,6 +348,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                               ? "Submit Application"
                               : "Continue",
                           fontSize: 14.sp,
+                          loading: controller.isLoading.value,
                           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
                           onPressed: () {
                             // Check if current step items are fully checked
@@ -360,16 +361,13 @@ class PrivacyPolicySignUpView extends StatelessWidget {
                                 snackPosition: SnackPosition.BOTTOM,
                               );
                               return;
-                              }
+                            }
 
-                              if (currentSectionIndex.value < steps.length - 1) {
-                                currentSectionIndex.value++;
-                              } else {
-                                Get.toNamed(
-                                  Routes.otpVerificationView,
-                                  arguments: {'email': controller.emailController.text, 'isRegister': true},
-                                );
-                              }
+                            if (currentSectionIndex.value < steps.length - 1) {
+                              currentSectionIndex.value++;
+                            } else {
+                              controller.submitTermsAndContinue();
+                            }
                           },
                         ),
                       ),
@@ -400,7 +398,7 @@ class PrivacyPolicySignUpView extends StatelessWidget {
           child: Container(
             height: 4.h,
             decoration: BoxDecoration(
-              color: const Color(0xFFD08700),
+              color: AppColors.primaryColor,
               borderRadius: BorderRadius.circular(2.r),
             ),
           ),

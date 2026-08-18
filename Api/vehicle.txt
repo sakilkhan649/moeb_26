@@ -1,0 +1,270 @@
+📝 USER STORY:
+As a verified driver
+I want to add my vehicle details
+So that they can be reviewed by the admin
+
+📖 BDD SCENARIO: 5.3 ADD VEHICLE
+Feature: Onboarding
+
+7:13:43 PM | User Authentication BDD Flow > STEP 5.3 — Chauffeur adds vehicle specs (POST /vehicles) | stdout
+
+
+ POST   /api/v1/vehicles [BDD-05.3-ADD-VEHICLE] - Chauffeur adding vehicle specs
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "makeAndModel": "Toyota Camry",
+    "year": 2023,
+    "licensePlate": "NYC-1234",
+    "type": "Sedan",
+    "colorInside": "Black",
+    "colorOutside": "White",
+    "issuingState": "NY",
+    "licensePlateRaw": "ABC1234",
+    "vehicleRegistrationExpiryDate": "2027-12-31",
+    "commercialInsuranceExpiryDate": "2027-12-31",
+    "vehicleRegistrationImage": "https://example.com/reg.jpg",
+    "commercialInsuranceImage": "https://example.com/ins.jpg",
+    "vehiclePhotoFront": "https://example.com/front.jpg",
+    "vehiclePhotoRear": "https://example.com/rear.jpg",
+    "vehiclePhotoInterior": "https://example.com/int.jpg"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Vehicle added successfully",
+  "data": {
+    "owner": "6a830906e25d3f0c964c2954",
+    "type": "Sedan",
+    "makeAndModel": "Toyota Camry",
+    "colorInside": "Black",
+    "colorOutside": "White",
+    "year": 2023,
+    "licensePlate": "NYC-1234",
+    "licensePlateRaw": "ABC1234",
+    "issuingState": "NY",
+    "status": "PENDING_REVIEW",
+    "rejectionReason": null,
+    "version": 1,
+    "reviewedBy": null,
+    "reviewedAt": null,
+    "_id": "6a830907e25d3f0c964c2990",
+    "createdAt": "2026-08-17T13:13:43.826Z",
+    "updatedAt": "2026-08-17T13:13:43.826Z",
+    "__v": 0
+  }
+}
+
+
+
+📝 USER STORY:
+As a new member
+I want to complete my onboarding by adding my vehicle details
+So that they can be reviewed by the admin and I can start driving
+
+📖 BDD SCENARIO: 5.3A ADD SINGLE VEHICLE
+Feature: Onboarding
+
+8:03:31 PM | User Authentication BDD Flow > STEP 5.3A — Chauffeur adds a single vehicle (POST /vehicles) | stdout
+
+
+ POST   /api/v1/vehicles [BDD-05.3A-ADD-SINGLE-VEHICLE] - Chauffeur adding single vehicle specs
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "makeAndModel": "Toyota Camry",
+    "year": 2023,
+    "licensePlate": "NYC-1234",
+    "type": "Sedan",
+    "colorInside": "Black",
+    "colorOutside": "White",
+    "licensePlateRaw": "ABC1234",
+    "vehicleRegistrationExpiryDate": "2027-12-31",
+    "commercialInsuranceExpiryDate": "2027-12-31",
+    "vehicleRegistrationImage": "https://example.com/reg.jpg",
+    "commercialInsuranceImage": "https://example.com/ins.jpg",
+    "vehiclePhotoFront": "https://example.com/front.jpg",
+    "vehiclePhotoRear": "https://example.com/rear.jpg",
+    "vehiclePhotoInterior": "https://example.com/int.jpg"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Vehicle added successfully",
+  "data": {
+    "owner": "6a8314b21a31bb2dfd931a2b",
+    "type": "Sedan",
+    "makeAndModel": "Toyota Camry",
+    "colorInside": "Black",
+    "colorOutside": "White",
+    "year": 2023,
+    "licensePlate": "NYC-1234",
+    "licensePlateRaw": "ABC1234",
+    "vehicleRegistration": {
+      "image": "https://example.com/reg.jpg",
+      "expiryDate": "2027-12-31T00:00:00.000Z",
+      "_id": "6a8314b21a31bb2dfd931a69"
+    },
+    "commercialInsurance": {
+      "image": "https://example.com/ins.jpg",
+      "expiryDate": "2027-12-31T00:00:00.000Z",
+      "_id": "6a8314b21a31bb2dfd931a6a"
+    },
+    "photos": {
+      "frontView": "https://example.com/front.jpg",
+      "rearView": "https://example.com/rear.jpg",
+      "interiorView": "https://example.com/int.jpg",
+      "_id": "6a8314b21a31bb2dfd931a6b"
+    },
+    "status": "PENDING_REVIEW",
+    "rejectionReason": null,
+    "version": 1,
+    "reviewedBy": null,
+    "reviewedAt": null,
+    "_id": "6a8314b21a31bb2dfd931a68",
+    "createdAt": "2026-08-17T14:03:30.989Z",
+    "updatedAt": "2026-08-17T14:03:30.989Z",
+    "__v": 0
+  }
+}
+
+
+8:03:31 PM | User Authentication BDD Flow > STEP 5.3B — Chauffeur adds multiple vehicles at once (POST /vehicles) | stdout
+
+📝 USER STORY:
+As a new member
+I want to complete my onboarding by adding multiple vehicles at once
+So that they can all be reviewed by the admin
+
+📖 BDD SCENARIO: 5.3B ADD MULTIPLE VEHICLES
+Feature: Onboarding
+
+8:03:31 PM | User Authentication BDD Flow > STEP 5.3B — Chauffeur adds multiple vehicles at once (POST /vehicles) | stdout
+
+
+ POST   /api/v1/vehicles [BDD-05.3B-ADD-MULTIPLE-VEHICLES] - Chauffeur adding multiple vehicle specs at once
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": [
+    {
+      "makeAndModel": "Honda Civic",
+      "year": 2022,
+      "licensePlate": "NYC-5678",
+      "type": "Sedan",
+      "colorInside": "Beige",
+      "colorOutside": "Black",
+      "licensePlateRaw": "NYC5678",
+      "vehicleRegistrationExpiryDate": "2027-12-31",
+      "commercialInsuranceExpiryDate": "2027-12-31",
+      "vehicleRegistrationImage": "https://example.com/reg2.jpg",
+      "commercialInsuranceImage": "https://example.com/ins2.jpg",
+      "vehiclePhotoFront": "https://example.com/front2.jpg",
+      "vehiclePhotoRear": "https://example.com/rear2.jpg",
+      "vehiclePhotoInterior": "https://example.com/int2.jpg"
+    },
+    {
+      "makeAndModel": "Ford Transit",
+      "year": 2024,
+      "licensePlate": "NYC-9012",
+      "type": "Sprinter",
+      "colorInside": "Black",
+      "colorOutside": "Grey",
+      "licensePlateRaw": "NYC9012",
+      "vehicleRegistrationExpiryDate": "2027-12-31",
+      "commercialInsuranceExpiryDate": "2027-12-31",
+      "vehicleRegistrationImage": "https://example.com/reg3.jpg",
+      "commercialInsuranceImage": "https://example.com/ins3.jpg",
+      "vehiclePhotoFront": "https://example.com/front3.jpg",
+      "vehiclePhotoRear": "https://example.com/rear3.jpg",
+      "vehiclePhotoInterior": "https://example.com/int3.jpg"
+    }
+  ]
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Vehicle added successfully",
+  "data": [
+    {
+      "owner": "6a8314b21a31bb2dfd931a2b",
+      "type": "Sedan",
+      "makeAndModel": "Honda Civic",
+      "colorInside": "Beige",
+      "colorOutside": "Black",
+      "year": 2022,
+      "licensePlate": "NYC-5678",
+      "licensePlateRaw": "NYC5678",
+      "vehicleRegistration": {
+        "image": "https://example.com/reg2.jpg",
+        "expiryDate": "2027-12-31T00:00:00.000Z",
+        "_id": "6a8314b31a31bb2dfd931a74"
+      },
+      "commercialInsurance": {
+        "image": "https://example.com/ins2.jpg",
+        "expiryDate": "2027-12-31T00:00:00.000Z",
+        "_id": "6a8314b31a31bb2dfd931a75"
+      },
+      "photos": {
+        "frontView": "https://example.com/front2.jpg",
+        "rearView": "https://example.com/rear2.jpg",
+        "interiorView": "https://example.com/int2.jpg",
+        "_id": "6a8314b31a31bb2dfd931a76"
+      },
+      "status": "PENDING_REVIEW",
+      "rejectionReason": null,
+      "version": 1,
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "_id": "6a8314b31a31bb2dfd931a73",
+      "createdAt": "2026-08-17T14:03:31.014Z",
+      "updatedAt": "2026-08-17T14:03:31.014Z",
+      "__v": 0
+    },
+    {
+      "owner": "6a8314b21a31bb2dfd931a2b",
+      "type": "Sprinter",
+      "makeAndModel": "Ford Transit",
+      "colorInside": "Black",
+      "colorOutside": "Grey",
+      "year": 2024,
+      "licensePlate": "NYC-9012",
+      "licensePlateRaw": "NYC9012",
+      "vehicleRegistration": {
+        "image": "https://example.com/reg3.jpg",
+        "expiryDate": "2027-12-31T00:00:00.000Z",
+        "_id": "6a8314b31a31bb2dfd931a79"
+      },
+      "commercialInsurance": {
+        "image": "https://example.com/ins3.jpg",
+        "expiryDate": "2027-12-31T00:00:00.000Z",
+        "_id": "6a8314b31a31bb2dfd931a7a"
+      },
+      "photos": {
+        "frontView": "https://example.com/front3.jpg",
+        "rearView": "https://example.com/rear3.jpg",
+        "interiorView": "https://example.com/int3.jpg",
+        "_id": "6a8314b31a31bb2dfd931a7b"
+      },
+      "status": "PENDING_REVIEW",
+      "rejectionReason": null,
+      "version": 1,
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "_id": "6a8314b31a31bb2dfd931a78",
+      "createdAt": "2026-08-17T14:03:31.016Z",
+      "updatedAt": "2026-08-17T14:03:31.016Z",
+      "__v": 0
+    }
+  ]
+}
+
+
+8:03:31 P

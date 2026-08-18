@@ -17,16 +17,16 @@ class OtpVerificationView extends GetView<OtpController> {
   Widget build(BuildContext context) {
     // Premium Pin Themes
     final defaultPinTheme = PinTheme(
-      width: 60.w,
-      height: 60.w,
+      width: 46.w,
+      height: 46.w,
       textStyle: GoogleFonts.inter(
-        fontSize: 20.sp,
+        fontSize: 18.sp,
         color: Colors.white,
         fontWeight: FontWeight.bold,
       ),
       decoration: BoxDecoration(
         color: const Color(0xFF121212),
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: const Color(0xFF2C2C2C), width: 1.5),
       ),
     );
@@ -97,7 +97,7 @@ class OtpVerificationView extends GetView<OtpController> {
                   ),
                   SizedBox(height: 8.h),
                   CustomTextgray(
-                    text: "Enter the 4-digit code sent to your email",
+                    text: "Enter the 6-digit code sent to your email",
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w400,
                   ),
@@ -125,31 +125,41 @@ class OtpVerificationView extends GetView<OtpController> {
                   SizedBox(height: 36.h),
 
                   // ========== Pinput Fields ==========
-                  Pinput(
-                    length: 4,
-                    controller: controller.pinController,
-                    separatorBuilder: (index) => SizedBox(width: 16.w),
-                    defaultPinTheme: defaultPinTheme,
-                    focusedPinTheme: focusedPinTheme,
-                    submittedPinTheme: submittedPinTheme,
-                    onCompleted: (pin) => controller.verifyOtp(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the OTP';
-                      }
-                      if (value.length < 4) {
-                        return 'OTP must be 4 digits';
-                      }
-                      if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                        return 'Enter numbers only';
-                      }
-                      return null;
-                    },
-                    forceErrorState: true,
-                    errorTextStyle: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
+                  Obx(
+                    () => Pinput(
+                      length: 6,
+                      controller: controller.pinController,
+                      errorText: controller.otpError.value.isNotEmpty
+                          ? controller.otpError.value
+                          : null,
+                      separatorBuilder: (index) => SizedBox(width: 8.w),
+                      defaultPinTheme: defaultPinTheme,
+                      focusedPinTheme: focusedPinTheme,
+                      submittedPinTheme: submittedPinTheme,
+                      onChanged: (_) {
+                        if (controller.otpError.value.isNotEmpty) {
+                          controller.otpError.value = '';
+                        }
+                      },
+                      onCompleted: (pin) => controller.verifyOtp(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the OTP';
+                        }
+                        if (value.length < 6) {
+                          return 'OTP must be 6 digits';
+                        }
+                        if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                          return 'Enter numbers only';
+                        }
+                        return null;
+                      },
+                      forceErrorState: controller.otpError.value.isNotEmpty,
+                      errorTextStyle: TextStyle(
+                        color: Colors.redAccent,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                   SizedBox(height: 32.h),

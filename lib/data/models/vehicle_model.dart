@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 class VehicleModel {
   // Unique identifier to use as a stable Widget key
   final String id = DateTime.now().microsecondsSinceEpoch.toString();
+  bool isDisposed = false;
+
   final RxString selectedVehicleType;
   final TextEditingController makeController;
   final TextEditingController modelController;
@@ -59,6 +61,8 @@ class VehicleModel {
   }
 
   void dispose() {
+    if (isDisposed) return;
+    isDisposed = true;
     makeController.dispose();
     modelController.dispose();
     yearController.dispose();

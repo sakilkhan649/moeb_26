@@ -70,7 +70,14 @@ class SplashScreenController extends GetxController {
       StorageConstants.bearerToken,
     );
     if (accessToken.isNotEmpty) {
-      Get.offAllNamed(Routes.bottomNabbarView);
+      final bool? isOnboardingCompleted = await StorageService.getBool(
+        StorageConstants.isOnboardingCompleted,
+      );
+      if (isOnboardingCompleted == true) {
+        Get.offAllNamed(Routes.vehicleinformationView);
+      } else {
+        Get.offAllNamed(Routes.bottomNabbarView);
+      }
     } else {
       Get.offAll(() => const AuthSelectionView());
     }

@@ -21,11 +21,16 @@ class VehicleInformationView extends GetView<SignupController> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        appBar: const CustomSubAppBar(title: "Vehicle Information"),
+    return PopScope(
+      canPop: false,
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          appBar: const CustomSubAppBar(
+            title: "Vehicle Information",
+            showBackButton: false,
+          ),
         body: Form(
           key: _formKey,
           child: Padding(
@@ -66,7 +71,9 @@ class VehicleInformationView extends GetView<SignupController> {
                           text: "Continue",
                           onPressed: () {
                             FocusScope.of(context).unfocus();
-                            Get.toNamed(Routes.documentsuploadView);
+                            if (_formKey.currentState?.validate() ?? false) {
+                              controller.submitVehicleInfo();
+                            }
                           },
                         ),
                         SizedBox(height: 60.h),
@@ -78,7 +85,7 @@ class VehicleInformationView extends GetView<SignupController> {
             ),
           ),
         ),
-      ),
+      ),)
     );
   }
 
@@ -981,15 +988,16 @@ class VehicleInformationView extends GetView<SignupController> {
       bool isSelected = model.selectedVehicleType.value == type;
       return GestureDetector(
         onTap: () {
+          if (model.isDisposed) return;
           if (model.selectedVehicleType.value != type) {
             model.selectedVehicleType.value = type;
-            model.makeController.clear();
-            model.modelController.clear();
-            model.yearController.clear();
+            if (!model.isDisposed) model.makeController.clear();
+            if (!model.isDisposed) model.modelController.clear();
+            if (!model.isDisposed) model.yearController.clear();
             if (type != "LimoStretch") {
-              model.colorOutsideController.text = "Black";
+              if (!model.isDisposed) model.colorOutsideController.text = "Black";
             } else {
-              model.colorOutsideController.clear();
+              if (!model.isDisposed) model.colorOutsideController.clear();
             }
           }
         },

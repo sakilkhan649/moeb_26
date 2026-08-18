@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:moeb_26/config/constants/api_constants.dart';
 import 'package:moeb_26/data/models/vehicle_model.dart';
 import 'package:moeb_26/core/services/api_client.dart';
@@ -29,22 +30,20 @@ class AuthRepo {
     required String email,
     required String password,
     required String phone,
-    required String serviceArea,
-    required int experience,
-    required String company,
+    required String serviceAreaId,
+    required String companyName,
     required String companyRole,
-    String? languages,
+    List<String>? languages,
   }) async {
     return await apiClient.postData(ApiConstants.signup, {
       "name": name,
       "email": email,
       "password": password,
       "phone": phone,
-      "serviceArea": serviceArea,
-      "experience": experience,
-      "company": company,
+      "serviceAreaId": serviceAreaId,
+      "companyName": companyName,
       "companyRole": companyRole,
-      "languages": languages ?? 'English',
+      "languages": languages ?? ['English'],
     });
   }
 
@@ -53,16 +52,44 @@ class AuthRepo {
     required List<VehicleModel> vehicles,
   }) async {
     final formData = FormData();
-    final vehicleJsonList = vehicles.map((v) => v.toJson()).toList();
-    formData.fields.add(MapEntry('vehicles', jsonEncode(vehicleJsonList)));
 
-    for (int i = 0; i < vehicles.length; i++) {
-      final v = vehicles[i];
+    if (vehicles.length == 1) {
+      final v = vehicles.first;
+      final make = v.makeController.text.trim();
+      final model = v.modelController.text.trim();
+      final makeAndModel = make.isNotEmpty && model.isNotEmpty
+          ? '$make $model'
+          : (make.isNotEmpty ? make : model);
+      final rawPlate = v.licensePlateController.text
+          .replaceAll('-', '')
+          .replaceAll(' ', '');
+
+      final vehicleData = {
+        "makeAndModel": makeAndModel.isEmpty ? 'Vehicle 1' : makeAndModel,
+        "year": int.tryParse(v.yearController.text) ?? 2023,
+        "licensePlate": v.licensePlateController.text,
+        "type": v.selectedVehicleType.value.isEmpty
+            ? 'Sedan'
+            : v.selectedVehicleType.value,
+        "colorInside": v.colorInsideController.text,
+        "colorOutside": v.colorOutsideController.text,
+        "licensePlateRaw":
+            rawPlate.isEmpty ? v.licensePlateController.text : rawPlate,
+        "vehicleRegistrationExpiryDate":
+            v.vehicleRegistrationExpireController.text,
+        "commercialInsuranceExpiryDate":
+            v.commercialInsuranceExpireController.text,
+      };
+
+      formData.fields.add(MapEntry('data', jsonEncode(vehicleData)));
+
       if (v.vehicleRegistrationFile.value != null) {
         formData.files.add(
           MapEntry(
             'vehicleRegistrationImage',
-            await MultipartFile.fromFile(v.vehicleRegistrationFile.value!.path),
+            await MultipartFile.fromFile(
+              v.vehicleRegistrationFile.value!.path,
+            ),
           ),
         );
       }
@@ -70,7 +97,9 @@ class AuthRepo {
         formData.files.add(
           MapEntry(
             'commercialInsuranceImage',
-            await MultipartFile.fromFile(v.commercialInsuranceFile.value!.path),
+            await MultipartFile.fromFile(
+              v.commercialInsuranceFile.value!.path,
+            ),
           ),
         );
       }
@@ -98,11 +127,134 @@ class AuthRepo {
           ),
         );
       }
+    } else {
+      // Multiple vehicles sent in ONE single API request (Scenario 5.3B)
+      final List<Map<String, dynamic>> vehiclesJson = [];
+
+      for (int i = 0; i < vehicles.length; i++) {
+        final v = vehicles[i];
+        final make = v.makeController.text.trim();
+        final model = v.modelController.text.trim();
+        final makeAndModel = make.isNotEmpty && model.isNotEmpty
+            ? '$make $model'
+            : (make.isNotEmpty ? make : model);
+        final rawPlate = v.licensePlateController.text
+            .replaceAll('-', '')
+            .replaceAll(' ', '');
+
+        vehiclesJson.add({
+          "makeAndModel":
+              makeAndModel.isEmpty ? 'Vehicle ${i + 1}' : makeAndModel,
+          "year": int.tryParse(v.yearController.text) ?? 2023,
+          "licensePlate": v.licensePlateController.text,
+          "type": v.selectedVehicleType.value.isEmpty
+              ? 'Sedan'
+              : v.selectedVehicleType.value,
+          "colorInside": v.colorInsideController.text,
+          "colorOutside": v.colorOutsideController.text,
+          "licensePlateRaw":
+              rawPlate.isEmpty ? v.licensePlateController.text : rawPlate,
+          "vehicleRegistrationExpiryDate":
+              v.vehicleRegistrationExpireController.text,
+          "commercialInsuranceExpiryDate":
+              v.commercialInsuranceExpireController.text,
+        });
+
+        if (v.vehicleRegistrationFile.value != null) {
+          formData.files.add(
+            MapEntry(
+              'vehicleRegistrationImage',
+              await MultipartFile.fromFile(
+                v.vehicleRegistrationFile.value!.path,
+              ),
+            ),
+          );
+        }
+        if (v.commercialInsuranceFile.value != null) {
+          formData.files.add(
+            MapEntry(
+              'commercialInsuranceImage',
+              await MultipartFile.fromFile(
+                v.commercialInsuranceFile.value!.path,
+              ),
+            ),
+          );
+        }
+        if (v.frontViewFile.value != null) {
+          formData.files.add(
+            MapEntry(
+              'vehiclePhotoFront',
+              await MultipartFile.fromFile(v.frontViewFile.value!.path),
+            ),
+          );
+        }
+        if (v.rearViewFile.value != null) {
+          formData.files.add(
+            MapEntry(
+              'vehiclePhotoRear',
+              await MultipartFile.fromFile(v.rearViewFile.value!.path),
+            ),
+          );
+        }
+        if (v.interiorViewFile.value != null) {
+          formData.files.add(
+            MapEntry(
+              'vehiclePhotoInterior',
+              await MultipartFile.fromFile(v.interiorViewFile.value!.path),
+            ),
+          );
+        }
+      }
+
+      formData.fields.add(MapEntry('data', jsonEncode(vehiclesJson)));
     }
-    return await apiClient.postData('${ApiConstants.signup}/vehicles', formData);
+
+    return await apiClient.postData(ApiConstants.vehicles, formData);
   }
 
-  /// ===================== DOCUMENTS UPLOAD (SEPARATE API) =====================
+  String _formatDateToIso(String dateStr) {
+    final trimmed = dateStr.trim();
+    if (trimmed.isEmpty) return trimmed;
+    try {
+      final parsed = DateFormat('dd MMMM yyyy').parse(trimmed);
+      return DateFormat('yyyy-MM-dd').format(parsed);
+    } catch (_) {
+      try {
+        final parsed = DateFormat('d MMMM yyyy').parse(trimmed);
+        return DateFormat('yyyy-MM-dd').format(parsed);
+      } catch (_) {
+        return trimmed;
+      }
+    }
+  }
+
+  /// Uploads a single document to POST /api/v1/documents
+  Future<Response<dynamic>> _uploadSingleDocument({
+    required String documentType,
+    required File file,
+    String? expiryDate,
+  }) async {
+    final formData = FormData();
+
+    final Map<String, dynamic> docMap = {
+      "documentType": documentType,
+    };
+    if (expiryDate != null && expiryDate.trim().isNotEmpty) {
+      docMap["expiryDate"] = _formatDateToIso(expiryDate);
+    }
+
+    formData.fields.add(MapEntry('data', jsonEncode(docMap)));
+    formData.files.add(
+      MapEntry(
+        'file',
+        await MultipartFile.fromFile(file.path),
+      ),
+    );
+
+    return await apiClient.postData(ApiConstants.documents, formData);
+  }
+
+  /// ===================== DOCUMENTS UPLOAD (SEQUENTIAL) =====================
   Future<Response<dynamic>> uploadDocuments({
     required File drivingLicenseFile,
     required String drivingLicenseExpiry,
@@ -112,40 +264,45 @@ class AuthRepo {
     String? localPermitExpiry,
     required File headshotFile,
   }) async {
-    final formData = FormData();
-    formData.fields.addAll([
-      MapEntry('drivingLicenseExpiryDate', drivingLicenseExpiry),
-      MapEntry('hackLicenseExpiryDate', hackLicenseExpiry),
-    ]);
-    if (localPermitExpiry != null) {
-      formData.fields.add(MapEntry('localPermitExpiryDate', localPermitExpiry));
+    // 1. DRIVING_LICENSE
+    var response = await _uploadSingleDocument(
+      documentType: "DRIVING_LICENSE",
+      file: drivingLicenseFile,
+      expiryDate: drivingLicenseExpiry,
+    );
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      return response;
     }
 
-    formData.files.addAll([
-      MapEntry(
-        'drivingLicenseImage',
-        await MultipartFile.fromFile(drivingLicenseFile.path),
-      ),
-      MapEntry(
-        'hackLicenseImage',
-        await MultipartFile.fromFile(hackLicenseFile.path),
-      ),
-      MapEntry(
-        'uploadedHeadshot',
-        await MultipartFile.fromFile(headshotFile.path),
-      ),
-    ]);
+    // 2. HACK_LICENSE
+    response = await _uploadSingleDocument(
+      documentType: "HACK_LICENSE",
+      file: hackLicenseFile,
+      expiryDate: hackLicenseExpiry,
+    );
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      return response;
+    }
 
+    // 3. LOCAL_PERMIT (Optional)
     if (localPermitFile != null) {
-      formData.files.add(
-        MapEntry(
-          'localPermitImage',
-          await MultipartFile.fromFile(localPermitFile.path),
-        ),
+      response = await _uploadSingleDocument(
+        documentType: "LOCAL_PERMIT",
+        file: localPermitFile,
+        expiryDate: localPermitExpiry,
       );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        return response;
+      }
     }
 
-    return await apiClient.postData('${ApiConstants.signup}/documents', formData);
+    // 4. PROFILE_PICTURE
+    response = await _uploadSingleDocument(
+      documentType: "PROFILE_PICTURE",
+      file: headshotFile,
+    );
+
+    return response;
   }
 
   /// ===================== LOGIN =====================

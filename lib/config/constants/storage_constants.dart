@@ -8,5 +8,6 @@ class StorageConstants {
   static const String language = 'language';
   static const String theme = 'theme';
   static const String fcmToken = 'fcm_token';
+  static const String isOnboardingCompleted = 'is_onboarding_completed';
   // Add your storage keys here
 }

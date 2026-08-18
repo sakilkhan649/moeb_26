@@ -60,11 +60,10 @@ class AuthService extends GetxService {
     required String email,
     required String password,
     required String phone,
-    required String serviceArea,
-    required int experience,
-    required String company,
+    required String serviceAreaId,
+    required String companyName,
     required String companyRole,
-    String? languages,
+    List<String>? languages,
   }) async {
     try {
       final response = await _authRepo.signup(
@@ -72,9 +71,8 @@ class AuthService extends GetxService {
         email: email,
         password: password,
         phone: phone,
-        serviceArea: serviceArea,
-        experience: experience,
-        company: company,
+        serviceAreaId: serviceAreaId,
+        companyName: companyName,
         companyRole: companyRole,
         languages: languages,
       );
@@ -301,6 +299,21 @@ class AuthService extends GetxService {
           await StorageService.setString(
             StorageConstants.refreshToken,
             refreshToken,
+          );
+        }
+
+        final dynamic onboardVal =
+            authData['isOnboard'] ??
+            authData['isOnboardingCompleted'] ??
+            (authData['user'] is Map
+                ? (authData['user']['isOnboard'] ??
+                    authData['user']['isOnboardingCompleted'])
+                : null);
+
+        if (onboardVal != null) {
+          await StorageService.setBool(
+            StorageConstants.isOnboardingCompleted,
+            onboardVal == true,
           );
         }
 

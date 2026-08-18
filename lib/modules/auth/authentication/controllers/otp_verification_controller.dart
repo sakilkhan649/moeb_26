@@ -14,6 +14,7 @@ class OtpController extends GetxController {
   var isLoading = false.obs;
   var remainingSeconds = 30.obs;
   var canResend = false.obs;
+  var otpError = ''.obs;
   Timer? _timer;
 
   String email = ''; // 👈 final সরিয়ে empty রাখো
@@ -42,8 +43,56 @@ class OtpController extends GetxController {
   }
 
   Future<void> verifyOtp() async {
-    // API verification bypassed for now — navigate directly to vehicle setup
-    Get.offAllNamed(Routes.vehicleinformationView);
+    otpError.value = '';
+    final bool isFormValid = formKey.currentState?.validate() ?? false;
+    final otpStr = pinController.text.trim();
+
+    if (!isFormValid || otpStr.length < 6) {
+      return;
+    }
+
+    final otpCode = int.tryParse(otpStr);
+    if (otpCode == null) {
+      otpError.value = 'Invalid OTP format';
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      final response = await _authService.verifyOtp(email: email, otp: otpCode);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Helpers.showCustomSnackBar(
+          response.data?['message'] ?? 'Email verified successfully',
+          isError: false,
+        );
+
+        final resData = response.data?['data'];
+        final dynamic onboardVal =
+            resData?['isOnboard'] ??
+            resData?['isOnboardingCompleted'] ??
+            (resData?['user'] is Map
+                ? (resData['user']['isOnboard'] ??
+                    resData['user']['isOnboardingCompleted'])
+                : null);
+
+        final bool isOnboard = onboardVal == true;
+
+        if (!isOnboard) {
+          Get.offAllNamed(Routes.vehicleinformationView);
+        } else {
+          Get.offAllNamed(Routes.bottomNabbarView);
+        }
+      } else {
+        final msg = response.data?['message'] ?? 'OTP verification failed';
+        otpError.value = msg;
+      }
+    } catch (e) {
+      Helpers.error('OTP verification error: $e');
+      otpError.value = 'OTP verification failed. Please try again.';
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> resendOtp() async {

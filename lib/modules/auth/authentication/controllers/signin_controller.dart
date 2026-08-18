@@ -67,6 +67,22 @@ class SigninController extends GetxController {
           return;
         }
 
+        // Check if onboarding setup is completed (supports both isOnboard and isOnboardingCompleted)
+        final dynamic onboardingVal =
+            authData['isOnboard'] ??
+            authData['isOnboardingCompleted'] ??
+            authData['user']?['isOnboard'] ??
+            authData['user']?['isOnboardingCompleted'];
+
+        if (onboardingVal == false) {
+          Helpers.showCustomSnackBar(
+            'Please complete your vehicle & document setup',
+            isError: false,
+          );
+          Get.offAllNamed(Routes.vehicleinformationView);
+          return;
+        }
+
         Helpers.showCustomSnackBar('Login successful', isError: false);
         Get.offAllNamed(Routes.bottomNabbarView);
       } else {

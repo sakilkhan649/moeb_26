@@ -24,6 +24,7 @@ class CreateAccountView extends StatefulWidget {
 class _CreateAccountViewState extends State<CreateAccountView> {
   final RxString areaError = ''.obs;
   final RxString roleError = ''.obs;
+  final RxString languageError = ''.obs;
 
   // Using the unified SignupController
   SignupController get controller => Get.find<SignupController>();
@@ -57,9 +58,13 @@ class _CreateAccountViewState extends State<CreateAccountView> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: const CustomSubAppBar(title: "Account Create"),
-        body: Form(
-          key: _formKey,
-          child: Padding(
+        body: Obx(
+          () => Form(
+            key: _formKey,
+            autovalidateMode: controller.showErrors.value
+                ? AutovalidateMode.always
+                : AutovalidateMode.disabled,
+            child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
@@ -199,57 +204,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                   _buildInputField(
                     label: "Languages Speaking",
                     isRequired: true,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Wrap(
-                          spacing: 8.w,
-                          runSpacing: 8.h,
-                          children: controller.availableLanguages.map((lang) {
-                            final isEnglish = lang == 'English';
-                            return Obx(() {
-                              final isSelected = controller.selectedLanguages
-                                  .contains(lang);
-                              return FilterChip(
-                                showCheckmark: false,
-                                label: Text(
-                                  lang,
-                                  style: GoogleFonts.inter(
-                                    color: isSelected
-                                        ? Colors.black
-                                        : Colors.white,
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.w500,
-                                    fontSize: 13.sp,
-                                  ),
-                                ),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  if (isEnglish) return;
-                                  if (selected) {
-                                    controller.selectedLanguages.add(lang);
-                                  } else {
-                                    controller.selectedLanguages.remove(lang);
-                                  }
-                                },
-                                selectedColor: const Color(0xFFFFDCA1),
-                                backgroundColor: const Color(0xFF1E1E1E),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  side: BorderSide(
-                                    color: isSelected
-                                        ? const Color(0xFFFFDCA1)
-                                        : const Color(0xFF2C2C2C),
-                                    width: 1.w,
-                                  ),
-                                ),
-                              );
-                            });
-                          }).toList(),
-                        ),
-                      ],
-                    ),
+                    child: _buildLanguageMultiSelect(context),
                   ),
 
                   // ========== Password ==========
@@ -319,6 +274,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
           ),
         ),
       ),
+      ),
     );
   }
 
@@ -370,11 +326,224 @@ class _CreateAccountViewState extends State<CreateAccountView> {
     );
   }
 
+  Widget _buildLanguageMultiSelect(BuildContext context) {
+    return Obx(() {
+      final selected = controller.selectedLanguages;
+      final displayText = selected.isEmpty
+          ? "Select languages"
+          : selected.join(", ");
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () => _showLanguageSelectionSheet(context),
+            borderRadius: BorderRadius.circular(16.r),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFF141416),
+                borderRadius: BorderRadius.circular(16.r),
+                border: Border.all(color: const Color(0xFF2C2C2C)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      displayText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        color: selected.isEmpty ? AppColors.gray100 : Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: const Color(0xFFD5C4AB),
+                    size: 22.sp,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (languageError.value.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, top: 6.h),
+              child: Text(
+                languageError.value,
+                style: TextStyle(color: Colors.red, fontSize: 12.sp),
+              ),
+            ),
+        ],
+      );
+    });
+  }
+
+  void _showLanguageSelectionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF141416),
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (context) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.65,
+          ),
+          padding: EdgeInsets.only(
+            left: 20.w,
+            right: 20.w,
+            top: 20.h,
+            bottom: 20.h,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Languages Spoken",
+                    style: GoogleFonts.inter(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                "Select all languages you speak fluently.",
+                style: GoogleFonts.inter(
+                  fontSize: 13.sp,
+                  color: AppColors.gray100,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Expanded(
+                child: Obx(
+                  () {
+                    final selectedLangs = controller.selectedLanguages.toList();
+                    return ListView.separated(
+                      itemCount: controller.availableLanguages.length,
+                      separatorBuilder: (_, __) => Divider(
+                        color: const Color(0xFF2C2C2C),
+                        height: 1.h,
+                      ),
+                      itemBuilder: (context, index) {
+                        final lang = controller.availableLanguages[index];
+                        final isSelected = selectedLangs.contains(lang);
+                        final isEnglish = lang == 'English';
+
+                      return InkWell(
+                        onTap: () {
+                          if (isEnglish) return;
+                          if (isSelected) {
+                            controller.selectedLanguages.remove(lang);
+                          } else {
+                            controller.selectedLanguages.add(lang);
+                          }
+                          if (controller.selectedLanguages.isNotEmpty) {
+                            languageError.value = '';
+                          }
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          child: Row(
+                            children: [
+                              Text(
+                                lang,
+                                style: GoogleFonts.inter(
+                                  fontSize: 15.sp,
+                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              if (isEnglish) ...[
+                                SizedBox(width: 8.w),
+                                Text(
+                                  "(Default)",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12.sp,
+                                    color: AppColors.gray100,
+                                  ),
+                                ),
+                              ],
+                              const Spacer(),
+                              Icon(
+                                isSelected
+                                    ? Icons.check_box_rounded
+                                    : Icons.check_box_outline_blank_rounded,
+                                color: isSelected
+                                    ? AppColors.primaryColor
+                                    : const Color(0xFF444444),
+                                size: 22.sp,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),),
+              SizedBox(height: 16.h),
+              CustomButton(
+                text: "Done",
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   // --- Logic ---
 
   void _handleSubmit() {
     FocusScope.of(context).unfocus();
-    // Direct navigation without blocking on API or form validation
-    Get.toNamed(Routes.privacyPolicySignUpView);
+    controller.showErrors.value = true;
+
+    final bool isFormValid = _formKey.currentState?.validate() ?? false;
+
+    bool isCustomValid = true;
+    if (controller.selectedArea.value.isEmpty) {
+      areaError.value = 'Select service area';
+      isCustomValid = false;
+    } else {
+      areaError.value = '';
+    }
+
+    if (controller.selectedRole.value.isEmpty) {
+      roleError.value = 'Select company role';
+      isCustomValid = false;
+    } else {
+      roleError.value = '';
+    }
+
+    if (controller.selectedLanguages.isEmpty) {
+      languageError.value = 'Select at least one language';
+      isCustomValid = false;
+    } else {
+      languageError.value = '';
+    }
+
+    if (isFormValid && isCustomValid) {
+      Get.toNamed(Routes.privacyPolicySignUpView);
+    }
   }
 }
