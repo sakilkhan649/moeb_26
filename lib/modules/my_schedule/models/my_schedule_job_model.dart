@@ -10,6 +10,11 @@ class MyScheduleJobModel {
   final String notes;
   bool isDispatchedToNetwork;
   String status; // e.g. "Scheduled", "Dispatched", "Completed", "Cancelled"
+  bool isPaid;
+  String? assignedChauffeurId;
+  String? assignedChauffeurName;
+  String paymentMethod; // e.g. Credit Card, Cash, Zelle, Venmo, Invoice
+  String paymentInfo; // Optional client payment details or account notes
 
   MyScheduleJobModel({
     required this.id,
@@ -23,6 +28,11 @@ class MyScheduleJobModel {
     this.notes = "",
     this.isDispatchedToNetwork = false,
     this.status = "Scheduled",
+    this.isPaid = false,
+    this.assignedChauffeurId,
+    this.assignedChauffeurName,
+    this.paymentMethod = "Cash / Direct",
+    this.paymentInfo = "",
   });
 
   MyScheduleJobModel copyWith({
@@ -37,6 +47,11 @@ class MyScheduleJobModel {
     String? notes,
     bool? isDispatchedToNetwork,
     String? status,
+    bool? isPaid,
+    String? assignedChauffeurId,
+    String? assignedChauffeurName,
+    String? paymentMethod,
+    String? paymentInfo,
   }) {
     return MyScheduleJobModel(
       id: id ?? this.id,
@@ -51,6 +66,12 @@ class MyScheduleJobModel {
       isDispatchedToNetwork:
           isDispatchedToNetwork ?? this.isDispatchedToNetwork,
       status: status ?? this.status,
+      isPaid: isPaid ?? this.isPaid,
+      assignedChauffeurId: assignedChauffeurId ?? this.assignedChauffeurId,
+      assignedChauffeurName:
+          assignedChauffeurName ?? this.assignedChauffeurName,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      paymentInfo: paymentInfo ?? this.paymentInfo,
     );
   }
 }

@@ -404,6 +404,122 @@ class MyScheduleView extends GetView<MyScheduleController> {
             ),
           ],
 
+          // Client Payment & Chauffeur Info Details Box
+          SizedBox(height: 10.h),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            decoration: BoxDecoration(
+              color: const Color(0xFF18181C),
+              borderRadius: BorderRadius.circular(10.r),
+              border: Border.all(color: const Color(0xFF2C2C34)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(Icons.payment, size: 14.sp, color: AppColors.primaryColor),
+                          SizedBox(width: 6.w),
+                          Text(
+                            "Payment: ",
+                            style: GoogleFonts.inter(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              job.paymentMethod + (job.paymentInfo.isNotEmpty ? " (${job.paymentInfo})" : ""),
+                              style: GoogleFonts.inter(
+                                fontSize: 11.sp,
+                                color: Colors.white70,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    // Sleek Interactive Paid / Not Paid Badge Button
+                    GestureDetector(
+                      onTap: () => controller.togglePaymentStatus(job.id),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                        decoration: BoxDecoration(
+                          color: job.isPaid ? const Color(0xFF1F3D24) : const Color(0xFF3D1F1F),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                            color: job.isPaid ? Colors.greenAccent : Colors.redAccent,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              job.isPaid ? Icons.check_circle_outline : Icons.error_outline,
+                              size: 12.sp,
+                              color: job.isPaid ? Colors.greenAccent : Colors.redAccent,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              job.isPaid ? "PAID" : "NOT PAID",
+                              style: GoogleFonts.inter(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.bold,
+                                color: job.isPaid ? Colors.greenAccent : Colors.redAccent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Row(
+                  children: [
+                    Icon(
+                      job.assignedChauffeurName != null ? Icons.directions_car_filled : Icons.people_outline,
+                      size: 14.sp,
+                      color: job.assignedChauffeurName != null ? AppColors.primaryColor : AppColors.gray100,
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      "Chauffeur: ",
+                      style: GoogleFonts.inter(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        job.assignedChauffeurName ?? "Public Network Dispatch (Unassigned)",
+                        style: GoogleFonts.inter(
+                          fontSize: 11.sp,
+                          color: job.assignedChauffeurName != null ? Colors.white : Colors.white60,
+                          fontWeight: job.assignedChauffeurName != null ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
           SizedBox(height: 14.h),
           const Divider(height: 1, color: Color(0xFF24242A)),
           SizedBox(height: 12.h),

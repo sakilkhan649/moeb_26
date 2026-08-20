@@ -26,6 +26,11 @@ class MyScheduleController extends GetxController {
         vehicleType: 'Executive Sedan',
         fare: '\$145.00',
         notes: 'Flight BA178. VIP client, prefers quiet ride.',
+        isPaid: true,
+        assignedChauffeurId: 'ch_1',
+        assignedChauffeurName: 'Alex Rivera (Miami FL - Suburban)',
+        paymentMethod: 'Credit Card',
+        paymentInfo: 'Paid via Stripe (Receipt #INV-8921)',
       ),
       MyScheduleJobModel(
         id: '2',
@@ -37,6 +42,9 @@ class MyScheduleController extends GetxController {
         vehicleType: 'Luxury SUV',
         fare: '\$180.00',
         notes: '2 Large Luggage bags.',
+        isPaid: false,
+        paymentMethod: 'Zelle / Cash',
+        paymentInfo: 'Client requested cash payment upon arrival',
       ),
       MyScheduleJobModel(
         id: '3',
@@ -48,12 +56,33 @@ class MyScheduleController extends GetxController {
         vehicleType: 'Chauffeur Van',
         fare: '\$220.00',
         notes: 'Group of 4 passengers.',
+        isPaid: true,
+        assignedChauffeurId: 'ch_2',
+        assignedChauffeurName: 'Marcus Vance (NYC Metro Area)',
+        paymentMethod: 'Corporate Invoice',
+        paymentInfo: 'Direct billing to Vance Corp #VC-402',
       ),
     ]);
   }
 
   void selectDate(DateTime date) {
     selectedDate.value = date;
+  }
+
+  void togglePaymentStatus(String id) {
+    final index = jobsList.indexWhere((j) => j.id == id);
+    if (index != -1) {
+      final current = jobsList[index];
+      final updated = current.copyWith(isPaid: !current.isPaid);
+      jobsList[index] = updated;
+      jobsList.refresh();
+      Helpers.showCustomSnackBar(
+        updated.isPaid
+            ? 'Marked job for ${updated.clientName} as Paid'
+            : 'Marked job for ${updated.clientName} as Not Paid',
+        isError: false,
+      );
+    }
   }
 
   List<MyScheduleJobModel> get selectedDateJobs {

@@ -167,6 +167,35 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   onSelected: (item) => handleMenuItemSelection(item),
                   itemBuilder: (context) => [
                     PopupMenuItem<int>(
+                      value: 7,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_month_outlined,
+                            color: Colors.white,
+                            size: 24.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              'My Schedule',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            CupertinoIcons.chevron_forward,
+                            size: 20.sp,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<int>(
                       value: 3,
                       child: Row(
                         children: [
@@ -237,35 +266,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           Expanded(
                             child: Text(
                               'Meet & Greet Sign',
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Icon(
-                            CupertinoIcons.chevron_forward,
-                            size: 20.sp,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem<int>(
-                      value: 7,
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month_outlined,
-                            color: Colors.white,
-                            size: 24.sp,
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Text(
-                              'My Schedule',
                               style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 14.sp,

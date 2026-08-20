@@ -11,6 +11,9 @@ import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:moeb_26/modules/my_schedule/controllers/my_schedule_controller.dart';
 import 'package:moeb_26/modules/my_schedule/models/my_schedule_job_model.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
+import 'package:moeb_26/modules/jobs_posts/controllers/job_post_controller.dart';
+import 'package:moeb_26/modules/jobs_posts/views/job_post_sheet_tabbar_view.dart';
 
 class AddScheduleJobSheet extends StatefulWidget {
   final MyScheduleJobModel? existingJob;
@@ -29,9 +32,14 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
   late TextEditingController _dropoffController;
   late TextEditingController _fareController;
   late TextEditingController _notesController;
+  late TextEditingController _paymentInfoController;
 
   late DateTime _selectedDateTime;
   late String _selectedVehicleType;
+  late bool _isPaid;
+  late String _selectedPaymentMethod;
+  String? _selectedChauffeurId;
+  String? _selectedChauffeurName;
 
   final List<String> _vehicles = [
     'SEDAN',
@@ -39,6 +47,14 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
     'SPRINTER',
     'LIMO STRETCH',
     'SEDAN/SUV',
+  ];
+
+  final List<String> _paymentMethods = [
+    'Cash / Direct',
+    'Credit Card',
+    'Zelle',
+    'Venmo',
+    'Corporate Invoice',
   ];
 
   @override
@@ -53,9 +69,14 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
     _dropoffController = TextEditingController(text: job?.dropoffLocation ?? '');
     _fareController = TextEditingController(text: job?.fare ?? '');
     _notesController = TextEditingController(text: job?.notes ?? '');
+    _paymentInfoController = TextEditingController(text: job?.paymentInfo ?? '');
 
     _selectedDateTime = job?.pickupDateTime ?? controller.selectedDate.value;
-    
+    _isPaid = job?.isPaid ?? false;
+    _selectedPaymentMethod = job?.paymentMethod ?? _paymentMethods.first;
+    _selectedChauffeurId = job?.assignedChauffeurId;
+    _selectedChauffeurName = job?.assignedChauffeurName;
+
     final existingType = job?.vehicleType.toUpperCase().trim() ?? 'SEDAN';
     if (_vehicles.contains(existingType)) {
       _selectedVehicleType = existingType;
@@ -78,6 +99,7 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
     _dropoffController.dispose();
     _fareController.dispose();
     _notesController.dispose();
+    _paymentInfoController.dispose();
     super.dispose();
   }
 
@@ -140,7 +162,15 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
       final controller = Get.find<MyScheduleController>();
+      final PostJobController postJobController = Get.isRegistered<PostJobController>()
+          ? Get.find<PostJobController>()
+          : Get.put(PostJobController());
       final isEdit = widget.existingJob != null;
+
+      final chauffeurText = postJobController.chauffeurSelectionText;
+      final assignedName = (chauffeurText != 'Select Chauffeur / Service Area')
+          ? chauffeurText
+          : widget.existingJob?.assignedChauffeurName;
 
       final job = MyScheduleJobModel(
         id: isEdit ? widget.existingJob!.id : DateTime.now().millisecondsSinceEpoch.toString(),
@@ -154,6 +184,11 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
         notes: _notesController.text.trim(),
         isDispatchedToNetwork: widget.existingJob?.isDispatchedToNetwork ?? false,
         status: widget.existingJob?.status ?? "Scheduled",
+        isPaid: _isPaid,
+        assignedChauffeurId: _selectedChauffeurId,
+        assignedChauffeurName: assignedName,
+        paymentMethod: _selectedPaymentMethod,
+        paymentInfo: _paymentInfoController.text.trim(),
       );
 
       Navigator.of(context).pop();
@@ -169,6 +204,9 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.existingJob != null;
+    final PostJobController postJobController = Get.isRegistered<PostJobController>()
+        ? Get.find<PostJobController>()
+        : Get.put(PostJobController());
 
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0C),
@@ -358,6 +396,134 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
               ),
               SizedBox(height: 14.h),
 
+              // Chauffeur Selection (Using exact same component from Job Post Screen)
+              JobPostSheetTabBarView.buildChauffeurSelection(
+                context,
+                postJobController,
+              ),
+              SizedBox(height: 14.h),
+
+              // Payment Status (Paid / Not Paid)
+              _buildLabel("Payment Status *"),
+              SizedBox(height: 6.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _isPaid = false),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        decoration: BoxDecoration(
+                          color: !_isPaid ? const Color(0xFF3D1F1F) : const Color(0xFF1E1E22),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: !_isPaid ? Colors.redAccent : const Color(0xFF2C2C34),
+                            width: !_isPaid ? 1.5 : 1.0,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 16.sp,
+                              color: !_isPaid ? Colors.redAccent : Colors.white54,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              "Not Paid",
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: !_isPaid ? FontWeight.bold : FontWeight.w500,
+                                color: !_isPaid ? Colors.redAccent : Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _isPaid = true),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        decoration: BoxDecoration(
+                          color: _isPaid ? const Color(0xFF1F3D24) : const Color(0xFF1E1E22),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: _isPaid ? Colors.greenAccent : const Color(0xFF2C2C34),
+                            width: _isPaid ? 1.5 : 1.0,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.check_circle_outline,
+                              size: 16.sp,
+                              color: _isPaid ? Colors.greenAccent : Colors.white54,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              "Paid",
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: _isPaid ? FontWeight.bold : FontWeight.w500,
+                                color: _isPaid ? Colors.greenAccent : Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 14.h),
+
+              // Payment Method
+              _buildLabel("Payment Method"),
+              SizedBox(height: 6.h),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E22),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: const Color(0xFF2C2C34)),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedPaymentMethod,
+                    isExpanded: true,
+                    dropdownColor: const Color(0xFF1E1E22),
+                    icon: Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 20.sp),
+                    style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp),
+                    items: _paymentMethods.map((method) {
+                      return DropdownMenuItem<String>(
+                        value: method,
+                        child: Text(method),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setState(() => _selectedPaymentMethod = val);
+                      }
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(height: 14.h),
+
+              // Client Payment Info
+              _buildTextField(
+                controller: _paymentInfoController,
+                label: "Client Payment Details / Notes",
+                hint: "e.g. Receipt #, Zelle phone, Cash on delivery notes",
+              ),
+              SizedBox(height: 14.h),
+
               // Notes
               _buildTextField(
                 controller: _notesController,
@@ -378,6 +544,8 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
       ),
     );
   }
+
+
 
   Widget _buildLabel(String text) {
     return Text(
