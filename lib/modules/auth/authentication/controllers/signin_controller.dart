@@ -67,13 +67,10 @@ class SigninController extends GetxController {
         }
 
         // Check if onboarding setup is completed (supports both isOnboard and isOnboardingCompleted)
-        final dynamic onboardingVal =
-            authData['isOnboard'] ??
-            authData['isOnboardingCompleted'] ??
-            authData['user']?['isOnboard'] ??
-            authData['user']?['isOnboardingCompleted'];
+        final dynamic isAccountSetupCompleted =
+            authData['isOnboard'];
 
-        if (onboardingVal != true) {
+        if (isAccountSetupCompleted == false) {
           Helpers.showCustomSnackBar(
             'Please complete your vehicle & document setup',
             isError: false,
