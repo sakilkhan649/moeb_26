@@ -99,8 +99,10 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
 
                 return ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 10.h,
+                  ),
                   itemCount: filteredList.length,
                   separatorBuilder: (context, index) => SizedBox(height: 12.h),
                   itemBuilder: (context, index) {
@@ -306,13 +308,13 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
                     ),
                   ),
                 ),
-                SizedBox(height: 22.h),
-                // Amount (Paid is highlighted in peach-yellow, Unpaid is white)
+                SizedBox(height: 16.h),
+                // Amount
                 Text(
                   'USD ${record.totalAmount.toStringAsFixed(2)}',
                   style: GoogleFonts.inter(
-                    color: isPaid ? const Color(0xFFFEDB9B) : Colors.white,
-                    fontSize: 14.sp, // Sleeker bold font size
+                    color: isPaid ? const Color(0xFF10B981) : Colors.white,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
