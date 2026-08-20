@@ -26,6 +26,7 @@ class SignupController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    showErrors.value = false;
     vehiclesList = <VehicleModel>[VehicleModel()].obs;
   }
 
@@ -365,26 +366,20 @@ class SignupController extends GetxController {
     showErrors.value = true;
     for (int i = 0; i < vehiclesList.length; i++) {
       final v = vehiclesList[i];
-      if (v.selectedVehicleType.value.isEmpty) {
-        Helpers.showCustomSnackBar(
-          'Please select a vehicle type for vehicle ${i + 1}',
-          isError: true,
-        );
-        return;
-      }
-      if (v.makeController.text.trim().isEmpty &&
-          v.modelController.text.trim().isEmpty) {
-        Helpers.showCustomSnackBar(
-          'Please select Make & Model for vehicle ${i + 1}',
-          isError: true,
-        );
-        return;
-      }
-      if (v.licensePlateController.text.trim().isEmpty) {
-        Helpers.showCustomSnackBar(
-          'Please enter license plate for vehicle ${i + 1}',
-          isError: true,
-        );
+      if (v.selectedVehicleType.value.isEmpty ||
+          (v.makeController.text.trim().isEmpty &&
+              v.modelController.text.trim().isEmpty) ||
+          v.colorInsideController.text.trim().isEmpty ||
+          v.colorOutsideController.text.trim().isEmpty ||
+          v.yearController.text.trim().isEmpty ||
+          v.licensePlateController.text.trim().isEmpty ||
+          v.commercialInsuranceFile.value == null ||
+          v.commercialInsuranceExpireController.text.trim().isEmpty ||
+          v.vehicleRegistrationFile.value == null ||
+          v.vehicleRegistrationExpireController.text.trim().isEmpty ||
+          v.frontViewFile.value == null ||
+          v.rearViewFile.value == null ||
+          v.interiorViewFile.value == null) {
         return;
       }
     }
@@ -396,27 +391,14 @@ class SignupController extends GetxController {
   // POST-OTP ACCOUNT SETUP SUBMIT — HITS VEHICLE & DOCUMENTS APIS SEQUENTIALLY
   // ===========================================================================
   Future<void> submitAccountSetup() async {
-    if (licensePlateFile.value == null) {
-      Helpers.showCustomSnackBar(
-        'Please upload your driving license image',
-        isError: true,
-      );
-      return;
-    }
-
-    if (hackLicenseFile.value == null) {
-      Helpers.showCustomSnackBar(
-        'Please upload your hack license image',
-        isError: true,
-      );
-      return;
-    }
-
-    if (profilePictureFile.value == null) {
-      Helpers.showCustomSnackBar(
-        'Please upload your profile picture',
-        isError: true,
-      );
+    showErrors.value = true;
+    if (licensePlateFile.value == null ||
+        licensePlateExpireController.text.trim().isEmpty ||
+        hackLicenseFile.value == null ||
+        hackLicenseExpireController.text.trim().isEmpty ||
+        localPermitFile.value == null ||
+        localPermitExpireController.text.trim().isEmpty ||
+        profilePictureFile.value == null) {
       return;
     }
 
@@ -428,8 +410,11 @@ class SignupController extends GetxController {
         vehicles: vehiclesList.toList(),
       );
 
-      if (vehicleResponse.statusCode != 200 &&
-          vehicleResponse.statusCode != 201) {
+      final vehicleCode = vehicleResponse.statusCode ?? 0;
+      final isVehicleSuccess = (vehicleCode >= 200 && vehicleCode < 300) ||
+          vehicleResponse.data?['success'] == true;
+
+      if (!isVehicleSuccess) {
         final msg = _extractErrorMessage(vehicleResponse);
         Helpers.showCustomSnackBar(
           'Vehicle submission failed: $msg',
@@ -451,9 +436,11 @@ class SignupController extends GetxController {
         headshotFile: profilePictureFile.value!,
       );
 
-      if (docResponse.statusCode != 200 &&
-          docResponse.statusCode != 201 &&
-          docResponse.statusCode != 201) {
+      final docCode = docResponse.statusCode ?? 0;
+      final isDocSuccess = (docCode >= 200 && docCode < 300) ||
+          docResponse.data?['success'] == true;
+
+      if (!isDocSuccess) {
         final msg = _extractErrorMessage(docResponse);
         Helpers.showCustomSnackBar(
           'Document upload failed: $msg',

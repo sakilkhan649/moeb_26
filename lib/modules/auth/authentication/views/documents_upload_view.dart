@@ -11,16 +11,29 @@ import '../../../../core/widgets/CustomTextGary.dart';
 import '../controllers/signup_controller.dart';
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 
-class DocumentsuploadView extends GetView<SignupController> {
-  DocumentsuploadView({super.key});
+class DocumentsuploadView extends StatefulWidget {
+  const DocumentsuploadView({super.key});
+
+  @override
+  State<DocumentsuploadView> createState() => _DocumentsuploadViewState();
+}
+
+class _DocumentsuploadViewState extends State<DocumentsuploadView> {
+  final controller = Get.find<SignupController>();
   final _formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.showErrors.value = false;
+      if (mounted) {
+        controller.showErrors.value = false;
+      }
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: const CustomSubAppBar(title: "Documents Upload"),
@@ -111,7 +124,13 @@ class DocumentsuploadView extends GetView<SignupController> {
                     text: "Submit for Review",
                     loading: controller.isLoading.value,
                     onPressed: () {
-                      controller.submitAccountSetup();
+                      FocusScope.of(context).unfocus();
+                      controller.showErrors.value = true;
+                      final bool isFormValid =
+                          _formKey.currentState?.validate() ?? false;
+                      if (isFormValid) {
+                        controller.submitAccountSetup();
+                      }
                     },
                   ),
                 ),
@@ -253,7 +272,7 @@ class DocumentsuploadView extends GetView<SignupController> {
                 padding: EdgeInsets.only(top: 8.h),
                 child: Text(
                   "Please upload $title",
-                  style: TextStyle(color: Colors.redAccent, fontSize: 12.sp),
+                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
                 ),
               ),
 
@@ -375,14 +394,23 @@ class DocumentsuploadView extends GetView<SignupController> {
     );
   }
 
-  Widget _buildFieldLabel(String text) {
+  Widget _buildFieldLabel(String text, {bool isRequired = true}) {
     return Padding(
       padding: EdgeInsets.only(bottom: 6.h),
-      child: CustomText(
-        text: text,
-        fontWeight: FontWeight.w500,
-        fontSize: 12.sp,
-        color: const Color(0xFF9EA3AE),
+      child: Row(
+        children: [
+          CustomText(
+            text: text,
+            fontWeight: FontWeight.w500,
+            fontSize: 12.sp,
+            color: const Color(0xFF9EA3AE),
+          ),
+          if (isRequired)
+            const Text(
+              " *",
+              style: TextStyle(color: Colors.red),
+            ),
+        ],
       ),
     );
   }
@@ -403,6 +431,7 @@ class DocumentsuploadView extends GetView<SignupController> {
       decoration: InputDecoration(
         hintText: "Select Expiry Date",
         hintStyle: TextStyle(color: AppColors.gray100, fontSize: 13.sp),
+        errorStyle: TextStyle(color: Colors.red, fontSize: 11.sp),
         contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         filled: true,
         fillColor: const Color(0xFF1E1E1E),
@@ -421,7 +450,15 @@ class DocumentsuploadView extends GetView<SignupController> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Color(0xFF9EA3AE)),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
         ),
       ),
     );

@@ -140,14 +140,15 @@ class _CustomDropdownState extends State<CustomDropdown> {
         ),
         dropdownStyleData: DropdownStyleData(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.r),
-            color: Colors.black,
+            borderRadius: BorderRadius.circular(16.r),
+            color: const Color(0xFF1A1A1E),
+            border: Border.all(color: const Color(0xFF2C2C2C), width: 1.2),
           ),
-          offset: const Offset(0, -5),
-          maxHeight: 250.h,
+          offset: const Offset(0, -4),
+          maxHeight: 260.h,
           scrollbarTheme: ScrollbarThemeData(
             radius: Radius.circular(40.r),
-            thickness: WidgetStateProperty.all(6),
+            thickness: WidgetStateProperty.all(4),
             thumbVisibility: WidgetStateProperty.all(true),
           ),
         ),

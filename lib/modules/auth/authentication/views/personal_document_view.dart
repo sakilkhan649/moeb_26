@@ -356,7 +356,15 @@ class PersonalDocumentView extends GetView<PersonalDocumentController> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Color(0xFF9EA3AE)),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
         ),
       ),
     );

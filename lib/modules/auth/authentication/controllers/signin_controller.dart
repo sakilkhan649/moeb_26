@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/auth_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
@@ -74,7 +73,7 @@ class SigninController extends GetxController {
             authData['user']?['isOnboard'] ??
             authData['user']?['isOnboardingCompleted'];
 
-        if (onboardingVal == false) {
+        if (onboardingVal != true) {
           Helpers.showCustomSnackBar(
             'Please complete your vehicle & document setup',
             isError: false,

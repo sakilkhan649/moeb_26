@@ -43,6 +43,7 @@ class OtpController extends GetxController {
   }
 
   Future<void> verifyOtp() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     otpError.value = '';
     final bool isFormValid = formKey.currentState?.validate() ?? false;
     final otpStr = pinController.text.trim();
@@ -68,17 +69,13 @@ class OtpController extends GetxController {
         );
 
         final resData = response.data?['data'];
-        final dynamic onboardVal =
-            resData?['isOnboard'] ??
-            resData?['isOnboardingCompleted'] ??
-            (resData?['user'] is Map
-                ? (resData['user']['isOnboard'] ??
-                    resData['user']['isOnboardingCompleted'])
-                : null);
+        final dynamic isAccountSetupComplete =
+            resData?['isOnboard'];
 
-        final bool isOnboard = onboardVal == true;
+        FocusManager.instance.primaryFocus?.unfocus();
+        await Future.delayed(const Duration(milliseconds: 100));
 
-        if (!isOnboard) {
+        if (isAccountSetupComplete == false) {
           Get.offAllNamed(Routes.vehicleinformationView);
         } else {
           Get.offAllNamed(Routes.bottomNabbarView);

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/modules/auth/authentication/controllers/signup_controller.dart';
@@ -14,10 +13,26 @@ import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 
-class VehicleInformationView extends GetView<SignupController> {
-  VehicleInformationView({super.key});
+class VehicleInformationView extends StatefulWidget {
+  const VehicleInformationView({super.key});
 
+  @override
+  State<VehicleInformationView> createState() => _VehicleInformationViewState();
+}
+
+class _VehicleInformationViewState extends State<VehicleInformationView> {
+  final controller = Get.find<SignupController>();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        controller.showErrors.value = false;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +86,10 @@ class VehicleInformationView extends GetView<SignupController> {
                           text: "Continue",
                           onPressed: () {
                             FocusScope.of(context).unfocus();
-                            if (_formKey.currentState?.validate() ?? false) {
+                            controller.showErrors.value = true;
+                            final bool isFormValid =
+                                _formKey.currentState?.validate() ?? false;
+                            if (isFormValid) {
                               controller.submitVehicleInfo();
                             }
                           },
@@ -245,7 +263,8 @@ class VehicleInformationView extends GetView<SignupController> {
                 DropdownButtonFormField<String>(
                   key: ValueKey(type),
                   value: value,
-                  dropdownColor: const Color(0xFF1A1A1A),
+                  dropdownColor: const Color(0xFF1A1A1E),
+                  menuMaxHeight: 260.h,
                   borderRadius: BorderRadius.circular(16.r),
                   icon: const Icon(
                     Icons.keyboard_arrow_down_rounded,
@@ -282,21 +301,15 @@ class VehicleInformationView extends GetView<SignupController> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFD08700),
-                        width: 1.5,
-                      ),
+                      borderSide: const BorderSide(color: AppColors.black200),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(color: Color(0xFFEF4444)),
+                      borderSide: const BorderSide(color: AppColors.black200),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFEF4444),
-                        width: 1.5,
-                      ),
+                      borderSide: const BorderSide(color: AppColors.black200),
                     ),
                   ),
                   items: cars.map((car) {
@@ -340,7 +353,7 @@ class VehicleInformationView extends GetView<SignupController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildFieldLabel("Color (Inside)", isRequired: false),
+                    _buildFieldLabel("Color (Inside)", isRequired: true),
                     _buildTextField(
                       controller: model.colorInsideController,
                       hintText: "Black",
@@ -356,7 +369,7 @@ class VehicleInformationView extends GetView<SignupController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildFieldLabel("Color (Outside)", isRequired: false),
+                    _buildFieldLabel("Color (Outside)", isRequired: true),
                     Obx(() {
                       final type = model.selectedVehicleType.value;
                       final isLimo = type == "LimoStretch";
@@ -379,7 +392,8 @@ class VehicleInformationView extends GetView<SignupController> {
                       return DropdownButtonFormField<String>(
                         key: ValueKey(type),
                         value: value,
-                        dropdownColor: const Color(0xFF1A1A1A),
+                        dropdownColor: const Color(0xFF1A1A1E),
+                        menuMaxHeight: 260.h,
                         borderRadius: BorderRadius.circular(16.r),
                         icon: const Icon(
                           Icons.keyboard_arrow_down_rounded,
@@ -422,21 +436,19 @@ class VehicleInformationView extends GetView<SignupController> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
                             borderSide: const BorderSide(
-                              color: Color(0xFFD08700),
-                              width: 1.5,
+                              color: AppColors.black200,
                             ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
                             borderSide: const BorderSide(
-                              color: Color(0xFFEF4444),
+                              color: AppColors.black200,
                             ),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
                             borderSide: const BorderSide(
-                              color: Color(0xFFEF4444),
-                              width: 1.5,
+                              color: AppColors.black200,
                             ),
                           ),
                         ),
@@ -575,7 +587,7 @@ class VehicleInformationView extends GetView<SignupController> {
           if (isRequired)
             Text(
               " *",
-              style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              style: TextStyle(color: Colors.red, fontSize: 14.sp),
             ),
         ],
       ),
@@ -776,7 +788,7 @@ class VehicleInformationView extends GetView<SignupController> {
                 padding: EdgeInsets.only(top: 8.h),
                 child: Text(
                   "Please upload $title",
-                  style: TextStyle(color: Colors.redAccent, fontSize: 12.sp),
+                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
                 ),
               ),
             SizedBox(height: 14.h),

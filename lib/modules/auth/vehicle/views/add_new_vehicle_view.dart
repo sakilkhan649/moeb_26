@@ -194,7 +194,8 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                 DropdownButtonFormField<String>(
                   key: ValueKey(type),
                   value: value,
-                  dropdownColor: const Color(0xFF1A1A1A),
+                  dropdownColor: const Color(0xFF1A1A1E),
+                  menuMaxHeight: 260.h,
                   borderRadius: BorderRadius.circular(16.r),
                   icon: const Icon(
                     Icons.keyboard_arrow_down_rounded,
@@ -231,21 +232,15 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFD08700),
-                        width: 1.5,
-                      ),
+                      borderSide: const BorderSide(color: AppColors.black200),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(color: Color(0xFFEF4444)),
+                      borderSide: const BorderSide(color: AppColors.black200),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFEF4444),
-                        width: 1.5,
-                      ),
+                      borderSide: const BorderSide(color: AppColors.black200),
                     ),
                   ),
                   items: cars.map((car) {
@@ -349,7 +344,8 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                       return DropdownButtonFormField<String>(
                         key: ValueKey(type),
                         value: value,
-                        dropdownColor: const Color(0xFF1A1A1A),
+                        dropdownColor: const Color(0xFF1A1A1E),
+                        menuMaxHeight: 260.h,
                         borderRadius: BorderRadius.circular(16.r),
                         icon: const Icon(
                           Icons.keyboard_arrow_down_rounded,
@@ -392,21 +388,19 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
                             borderSide: const BorderSide(
-                              color: Color(0xFFD08700),
-                              width: 1.5,
+                              color: AppColors.black200,
                             ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
                             borderSide: const BorderSide(
-                              color: Color(0xFFEF4444),
+                              color: AppColors.black200,
                             ),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.r),
                             borderSide: const BorderSide(
-                              color: Color(0xFFEF4444),
-                              width: 1.5,
+                              color: AppColors.black200,
                             ),
                           ),
                         ),
