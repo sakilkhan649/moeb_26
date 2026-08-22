@@ -30,13 +30,27 @@ class TermStep {
   });
 }
 
-class PrivacyPolicySignUpView extends StatelessWidget {
-  PrivacyPolicySignUpView({super.key});
+class PrivacyPolicySignUpView extends StatefulWidget {
+  const PrivacyPolicySignUpView({super.key});
 
-  final controller = Get.find<SignupController>();
+  @override
+  State<PrivacyPolicySignUpView> createState() =>
+      _PrivacyPolicySignUpViewState();
+}
+
+class _PrivacyPolicySignUpViewState extends State<PrivacyPolicySignUpView> {
+  late SignupController controller;
 
   // Reactive section index tracking
   final RxInt currentSectionIndex = 0.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.isRegistered<SignupController>()
+        ? Get.find<SignupController>()
+        : Get.put(SignupController());
+  }
 
   final List<TermSection> originalSections = [
     TermSection(

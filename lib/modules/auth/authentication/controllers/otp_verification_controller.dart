@@ -79,7 +79,7 @@ class OtpController extends GetxController {
             resData?['isOnboard'];
 
         FocusManager.instance.primaryFocus?.unfocus();
-        await Future.delayed(const Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 300));
 
         if (isAccountSetupComplete == false) {
           Get.offAllNamed(Routes.vehicleinformationView);

@@ -21,12 +21,18 @@ class VehicleInformationView extends StatefulWidget {
 }
 
 class _VehicleInformationViewState extends State<VehicleInformationView> {
-  final controller = Get.find<SignupController>();
+  late SignupController controller;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
+    // Initialize controller lazily in initState so that GetX has fully
+    // disposed and recreated SignupController before we grab it.
+    // This prevents "TextEditingController used after dispose" crash.
+    controller = Get.isRegistered<SignupController>()
+        ? Get.find<SignupController>()
+        : Get.put(SignupController());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         controller.showErrors.value = false;

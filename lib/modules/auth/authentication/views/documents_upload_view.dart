@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import '../../../../core/widgets/CustomButton.dart';
 import '../../../../core/widgets/CustomText.dart';
@@ -19,12 +17,15 @@ class DocumentsuploadView extends StatefulWidget {
 }
 
 class _DocumentsuploadViewState extends State<DocumentsuploadView> {
-  final controller = Get.find<SignupController>();
+  late SignupController controller;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
+    controller = Get.isRegistered<SignupController>()
+        ? Get.find<SignupController>()
+        : Get.put(SignupController());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         controller.showErrors.value = false;
