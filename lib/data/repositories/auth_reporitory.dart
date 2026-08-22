@@ -327,9 +327,13 @@ class AuthRepo {
 
   /// ===================== RESEND OTP =====================
   Future<Response> resentOtp({required String email}) async {
-    return await apiClient.postData(ApiConstants.resendVerifyEmail, {
+    return await apiClient.postData(ApiConstants.resendOtp, {
       "email": email,
     });
+  }
+
+  Future<Response> resendOtp({required String email}) async {
+    return await resentOtp(email: email);
   }
 
   /// ===================== OTP VERIFY =====================

@@ -12,7 +12,7 @@ class OtpController extends GetxController {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   var isLoading = false.obs;
-  var remainingSeconds = 30.obs;
+  var remainingSeconds = 90.obs;
   var canResend = false.obs;
   var otpError = ''.obs;
   Timer? _timer;
@@ -23,10 +23,16 @@ class OtpController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    email = Get.arguments?['email'] ?? ''; // 👈 onInit এ assig
+    email = Get.arguments?['email'] ?? '';
     isRegister = Get.arguments?['isRegister'] ?? false;
+    startTimer();
+  }
+
+  void startTimer() {
     _timer?.cancel();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    remainingSeconds.value = 90;
+    canResend.value = false;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingSeconds.value == 0) {
         canResend.value = true;
         timer.cancel();
@@ -96,13 +102,11 @@ class OtpController extends GetxController {
     if (!canResend.value) return;
     try {
       isLoading.value = true;
-      if (isRegister) {
-        await _authService.resendOtp(email);
-      } else {
-        await _authService.forgotPassword(email);
-      }
-      Helpers.showCustomSnackBar('OTP Resent Successfully', isError: false);
+      final response = await _authService.resendOtp(email);
+      final msg = response.data?['message'] ?? 'OTP Resent Successfully';
+      Helpers.showCustomSnackBar(msg, isError: false);
       pinController.clear();
+      startTimer();
     } catch (e) {
       Helpers.showCustomSnackBar(e.toString());
     } finally {

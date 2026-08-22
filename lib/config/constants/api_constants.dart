@@ -1,7 +1,7 @@
 class ApiConstants {
   // Base URL
-  // static const String baseUrl = 'https://nayem5001.binarybards.online/api/v1';
-  static const String baseUrl = 'https://api.ekkali.app/api/v1';
+  static const String baseUrl = 'https://nayem5001.binarybards.online/api/v1';
+  // static const String baseUrl = 'https://api.ekkali.app/api/v1';
   // static const String baseUrl = 'http://10.10.7.47:5003/api/v1';
 
   // Auth Endpoints
@@ -11,7 +11,8 @@ class ApiConstants {
 
   // Registration & Verification
   static const String signup = '/auth/register';
-  static const String resendVerifyEmail = '/auth/resend-verify-email';
+  static const String resendOtp = '/auth/resend-otp';
+  static const String resendVerifyEmail = '/auth/resend-otp';
   static const String verifyEmail = '/auth/verify-otp';
   static const String vehicles = '/vehicles';
   static const String documents = '/documents';

@@ -214,9 +214,9 @@ class AuthService extends GetxService {
   }
 
   /// ===================== RESEND OTP =====================
-  Future<void> resendOtp(String email) async {
+  Future<Response> resendOtp(String email) async {
     try {
-      await _authRepo.resentOtp(email: email);
+      return await _authRepo.resentOtp(email: email);
     } catch (e) {
       rethrow;
     }
