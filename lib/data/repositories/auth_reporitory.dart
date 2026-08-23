@@ -254,6 +254,11 @@ class AuthRepo {
     return await apiClient.postData(ApiConstants.documents, formData);
   }
 
+  bool _isSuccessResponse(Response response) {
+    final code = response.statusCode ?? 0;
+    return (code >= 200 && code < 300) || response.data?['success'] == true;
+  }
+
   /// ===================== DOCUMENTS UPLOAD (SEQUENTIAL) =====================
   Future<Response<dynamic>> uploadDocuments({
     required File drivingLicenseFile,
@@ -270,7 +275,7 @@ class AuthRepo {
       file: drivingLicenseFile,
       expiryDate: drivingLicenseExpiry,
     );
-    if (response.statusCode != 200 && response.statusCode != 201) {
+    if (!_isSuccessResponse(response)) {
       return response;
     }
 
@@ -280,7 +285,7 @@ class AuthRepo {
       file: hackLicenseFile,
       expiryDate: hackLicenseExpiry,
     );
-    if (response.statusCode != 200 && response.statusCode != 201) {
+    if (!_isSuccessResponse(response)) {
       return response;
     }
 
@@ -291,7 +296,7 @@ class AuthRepo {
         file: localPermitFile,
         expiryDate: localPermitExpiry,
       );
-      if (response.statusCode != 200 && response.statusCode != 201) {
+      if (!_isSuccessResponse(response)) {
         return response;
       }
     }
