@@ -255,6 +255,32 @@ class JobPostSheetTabBarView extends StatelessWidget {
                       if (controller.chauffeurSelectionType.value != 'global') {
                         return const SizedBox.shrink();
                       }
+
+                      if (controller.isServiceAreasLoading.value &&
+                          controller.serviceAreas.isEmpty) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (controller.serviceAreas.isEmpty) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          child: Text(
+                            'No service areas found.',
+                            style: GoogleFonts.inter(
+                              color: Colors.grey.shade500,
+                              fontSize: 13.sp,
+                            ),
+                          ),
+                        );
+                      }
+
                       return Padding(
                         padding: EdgeInsets.only(top: 16.h),
                         child: Column(
@@ -269,23 +295,27 @@ class JobPostSheetTabBarView extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 12.h),
-                            ...controller.stateServiceAreas.entries.map((
-                              entry,
-                            ) {
-                              final state = entry.key;
-                              final cities = entry.value;
+                            ...controller.serviceAreas.map((areaItem) {
+                              final areaName = areaItem.areaName;
+                              final isActive = areaItem.status == 'ACTIVE';
+                              final cities = areaItem.cities.isNotEmpty
+                                  ? areaItem.cities
+                                  : (areaItem.city.isNotEmpty
+                                      ? [areaItem.city]
+                                      : [areaName]);
+
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 16.h),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // State Header
+                                    // State / Area Header
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 8.h),
                                       child: Row(
                                         children: [
                                           Text(
-                                            state,
+                                            areaName,
                                             style: GoogleFonts.inter(
                                               color: const Color(0xFFD5C4AB),
                                               fontWeight: FontWeight.bold,
@@ -294,17 +324,25 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                           ),
                                           SizedBox(width: 8.w),
                                           Icon(
-                                            state == 'Florida' ||
-                                                    state == 'California'
+                                            isActive
                                                 ? Icons.check_circle_outline
                                                 : Icons.lock_outline,
-                                            color:
-                                                state == 'Florida' ||
-                                                    state == 'California'
+                                            color: isActive
                                                 ? const Color(0xFFFF9800)
                                                 : Colors.grey[600],
                                             size: 16.sp,
                                           ),
+                                          if (!isActive) ...[
+                                            SizedBox(width: 6.w),
+                                            Text(
+                                              "INACTIVE",
+                                              style: GoogleFonts.inter(
+                                                color: Colors.grey[600],
+                                                fontSize: 10.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ],
                                       ),
                                     ),
@@ -313,21 +351,15 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                       spacing: 8.w,
                                       runSpacing: 8.h,
                                       children: cities.map((cityFull) {
-                                        final cityName = cityFull
-                                            .split(',')
-                                            .first
-                                            .trim();
                                         final isSelected = controller
                                             .selectedServiceAreas
                                             .contains(cityFull);
-                                        final isLocked =
-                                            state != 'Florida' &&
-                                            state != 'California';
+                                        final isLocked = !isActive;
                                         return GestureDetector(
                                           onTap: () {
                                             if (isLocked) {
                                               Helpers.showCustomSnackBar(
-                                                "The $state service area is currently locked/coming soon.",
+                                                "The $areaName service area is currently inactive.",
                                                 isError: true,
                                               );
                                             } else {
@@ -362,7 +394,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                               ),
                                             ),
                                             child: Text(
-                                              cityName,
+                                              cityFull,
                                               style: GoogleFonts.inter(
                                                 color: isSelected
                                                     ? const Color(0xFFFF9800)

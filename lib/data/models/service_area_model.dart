@@ -1,50 +1,3 @@
-// class ServiceAreaModel {
-//   final String id;
-//   final String areaName;
-//   final String city;
-//   final String status;
-//   final DateTime createdAt;
-//   final DateTime updatedAt;
-//   bool isExpanded;
-
-//   ServiceAreaModel({
-//     required this.id,
-//     required this.areaName,
-//     required this.city,
-//     required this.status,
-//     required this.createdAt,
-//     required this.updatedAt,
-//     this.isExpanded = false,
-//   });
-
-//   factory ServiceAreaModel.fromJson(Map<String, dynamic> json) {
-//     return ServiceAreaModel(
-//       id: json['_id']?.toString() ?? '',
-//       areaName: json['areaName']?.toString() ?? '',
-//       city: json['city']?.toString() ?? '',
-//       status: json['status']?.toString() ?? '',
-//       createdAt: json['createdAt'] != null
-//           ? DateTime.parse(json['createdAt'])
-//           : DateTime.now(),
-//       updatedAt: json['updatedAt'] != null
-//           ? DateTime.parse(json['updatedAt'])
-//           : DateTime.now(),
-//       isExpanded: false,
-//     );
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     return {
-//       '_id': id,
-//       'areaName': areaName,
-//       'city': city,
-//       'status': status,
-//       'createdAt': createdAt.toIso8601String(),
-//       'updatedAt': updatedAt.toIso8601String(),
-//     };
-//   }
-// }
-
 class ServiceAreaResponseModel {
   final bool success;
   final String message;
@@ -110,7 +63,9 @@ class ServiceAreaModel {
   final String id;
   final String areaName;
   final String city;
+  final List<String> cities;
   final String status;
+  final int chauffeurCount;
   final DateTime createdAt;
   final DateTime updatedAt;
   bool isExpanded;
@@ -119,29 +74,58 @@ class ServiceAreaModel {
     required this.id,
     required this.areaName,
     required this.city,
+    this.cities = const [],
     required this.status,
+    this.chauffeurCount = 0,
     required this.createdAt,
     required this.updatedAt,
     this.isExpanded = false,
   });
 
   factory ServiceAreaModel.fromJson(Map<String, dynamic> json) {
+    List<String> parsedCities = [];
+    if (json['cities'] is List) {
+      parsedCities = (json['cities'] as List)
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    } else if (json['city'] != null && json['city'].toString().isNotEmpty) {
+      parsedCities = [json['city'].toString()];
+    }
+
+    final int count = json['chauffeurCount'] is int
+        ? json['chauffeurCount']
+        : int.tryParse(json['chauffeurCount']?.toString() ?? '0') ?? 0;
+
+    DateTime parseDate(dynamic value) {
+      if (value == null) return DateTime.now();
+      return DateTime.tryParse(value.toString()) ?? DateTime.now();
+    }
+
     return ServiceAreaModel(
       id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
       areaName: json['areaName']?.toString() ?? json['name']?.toString() ?? '',
-      city: json['city']?.toString() ?? '',
-      status: json['status']?.toString() ?? '',
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
-          : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
-          : DateTime.now(),
+      city: json['city']?.toString() ??
+          (parsedCities.isNotEmpty ? parsedCities.first : ''),
+      cities: parsedCities,
+      status: json['status']?.toString() ?? 'ACTIVE',
+      chauffeurCount: count,
+      createdAt: parseDate(json['createdAt'] ?? json['created_at']),
+      updatedAt: parseDate(json['updatedAt'] ?? json['updated_at']),
       isExpanded: false,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'areaName': areaName,
+      'city': city,
+      'cities': cities,
+      'status': status,
+      'chauffeurCount': chauffeurCount,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
   }
 }

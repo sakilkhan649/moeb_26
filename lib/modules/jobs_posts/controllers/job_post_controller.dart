@@ -7,11 +7,14 @@ import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/core/services/job_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/favorite_chauffeur_model.dart';
+import 'package:moeb_26/data/models/service_area_model.dart';
 import 'package:moeb_26/data/repositories/favorite_chauffeur_repository.dart';
+import 'package:moeb_26/data/repositories/serviceAreas_repository.dart';
 
 class PostJobController extends GetxController {
   final JobService _jobService = Get.find<JobService>();
   late final FavoriteChauffeurRepo _favoriteRepo;
+  late final ServiceAreasRepo _serviceAreasRepo;
 
   // Job Type & Vehicle
   var jobType = 'One Way'.obs;
@@ -27,13 +30,22 @@ class PostJobController extends GetxController {
       <FavoriteChauffeurModel>[].obs;
   final RxBool isFavoriteDriversLoading = false.obs;
 
+  final RxList<ServiceAreaModel> serviceAreas = <ServiceAreaModel>[].obs;
+  final RxBool isServiceAreasLoading = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     _favoriteRepo = Get.isRegistered<FavoriteChauffeurRepo>()
         ? Get.find<FavoriteChauffeurRepo>()
         : Get.put(FavoriteChauffeurRepo(apiClient: Get.find<ApiClient>()));
+
+    _serviceAreasRepo = Get.isRegistered<ServiceAreasRepo>()
+        ? Get.find<ServiceAreasRepo>()
+        : Get.put(ServiceAreasRepo(apiClient: Get.find<ApiClient>()));
+
     fetchFavoriteDrivers();
+    fetchServiceAreas();
   }
 
   Future<void> fetchFavoriteDrivers() async {
@@ -54,52 +66,25 @@ class PostJobController extends GetxController {
     }
   }
 
-  final Map<String, List<String>> stateServiceAreas = {
-    'Florida': [
-      'Miami, FL',
-      'Fort Lauderdale, FL',
-      'West Palm Beach, FL',
-      'Boca Raton, FL',
-      'Orlando, FL',
-      'Tampa, FL',
-      'Jacksonville, FL',
-      'Naples, FL',
-      'Sarasota, FL',
-      'Fort Myers, FL',
-    ],
-    'California': [
-      'Los Angeles, CA',
-      'San Francisco, CA',
-      'San Diego, CA',
-      'San Jose, CA',
-      'Sacramento, CA',
-      'Santa Barbara, CA',
-    ],
-    'Texas': ['Dallas, TX', 'Houston, TX', 'Austin, TX', 'San Antonio, TX'],
-    'New York': ['New York City, NY'],
-    'Illinois': ['Chicago, IL'],
-    'District of Columbia': ['Washington, DC'],
-    'Nevada': ['Las Vegas, NV'],
-    'Massachusetts': ['Boston, MA'],
-    'Georgia': ['Atlanta, GA'],
-    'Washington State': ['Seattle, WA'],
-    'Colorado': ['Denver, CO', 'Aspen, CO'],
-    'Arizona': ['Phoenix, AZ', 'Scottsdale, AZ'],
-    'Pennsylvania': ['Philadelphia, PA', 'Pittsburgh, PA'],
-    'North Carolina': ['Charlotte, NC', 'Raleigh, NC'],
-    'Tennessee': ['Nashville, TN'],
-    'Minnesota': ['Minneapolis, MN'],
-    'Louisiana': ['New Orleans, LA'],
-    'Utah': ['Salt Lake City, UT'],
-    'Oregon': ['Portland, OR'],
-    'Michigan': ['Detroit, MI'],
-    'Missouri': ['Kansas City, MO', 'St. Louis, MO'],
-    'Ohio': ['Columbus, OH', 'Cincinnati, OH', 'Cleveland, OH'],
-    'Indiana': ['Indianapolis, IN'],
-    'Virginia': ['Richmond, VA'],
-    'South Carolina': ['Charleston, SC'],
-    'Connecticut': ['Greenwich, CT'],
-  };
+  Future<void> fetchServiceAreas() async {
+    isServiceAreasLoading.value = true;
+    try {
+      final response = await _serviceAreasRepo.getAllServiceAreas(page: 1, limit: 50);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> dataList = response.data is Map
+            ? (response.data['data'] ?? response.data['service_areas'] ?? [])
+            : (response.data is List ? response.data : []);
+        final items = dataList
+            .map((e) => ServiceAreaModel.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        serviceAreas.assignAll(items);
+      }
+    } catch (e) {
+      debugPrint("Error fetching service areas for job post: $e");
+    } finally {
+      isServiceAreasLoading.value = false;
+    }
+  }
 
 
   String get chauffeurSelectionText {

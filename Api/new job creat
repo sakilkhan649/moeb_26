@@ -1,0 +1,349 @@
+📝 USER STORY:
+As a Job Creator
+I want to post a new scheduled ONE WAY job with date and time broadcast to ALL CHAUFFEURS
+So that available drivers in my service area can apply
+
+📖 BDD SCENARIO: 1-A1. CREATE SCHEDULED ONE WAY JOB
+Feature: Job Creation
+
+Given I am an authenticated Job Creator
+When I POST /api/v1/jobs with valid scheduled ONE WAY ride details, CREDIT CARD ON FILE, and dispatchType: ALL CHAUFFEURS
+Then I receive a 201 Created response
+And the job is created with status PENDING in the database
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-A1 creator creates a scheduled ONE WAY job with ALL CHAUFFEURS dispatch (POST /jobs) | stdout
+
+
+ POST   /api/v1/jobs [BDD-01-A1-CREATE-SCHEDULED-ONE-WAY] - Creator creates scheduled ONE WAY job with ALL CHAUFFEURS dispatch successfully
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "jobType": "ONE WAY",
+    "pickup": "JFK Airport, Terminal 4",
+    "dropoff": "Manhattan Hotel, Times Square",
+    "vehicleType": "Sedan",
+    "paymentAmount": 175,
+    "paymentType": "CREDIT CARD ON FILE",
+    "dispatchType": "ALL CHAUFFEURS",
+    "asap": false,
+    "date": "2026-10-15",
+    "time": "10:00",
+    "instruction": "Please hold passenger name sign at arrivals",
+    "flightNumber": "BA178"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Job created successfully",
+  "data": {
+    "jobType": "ONE WAY",
+    "pickup": "JFK Airport, Terminal 4",
+    "dropoff": "Manhattan Hotel, Times Square",
+    "flightNumber": "BA178",
+    "asap": false,
+    "date": "2026-10-15T00:00:00.000Z",
+    "time": "10:00",
+    "vehicleType": "Sedan",
+    "paymentAmount": 175,
+    "paymentType": "CREDIT CARD ON FILE",
+    "instruction": "Please hold passenger name sign at arrivals",
+    "serviceArea": "New York",
+    "companyName": "Test Fleet Services",
+    "dispatchType": "ALL CHAUFFEURS",
+    "isPersonalNote": false,
+    "status": "PENDING",
+    "rideStatus": null,
+    "createdBy": "6a8ab083fc4e36325a9de9ab",
+    "targetedChauffeurs": [],
+    "_id": "6a8ab085fc4e36325a9de9cd",
+    "createdAt": "2026-08-23T08:34:13.040Z",
+    "updatedAt": "2026-08-23T08:34:13.040Z",
+    "__v": 0,
+    "hasReview": false,
+    "isReviewedByCreator": false,
+    "isReviewedByDriver": false,
+    "id": "6a8ab085fc4e36325a9de9cd"
+  }
+}
+
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-A2 creator creates a scheduled BY THE HOUR job with COLLECT PAYMENT (POST /jobs) | stdout
+
+📝 USER STORY:
+As a Job Creator
+I want to post a scheduled BY THE HOUR job with date, time, COLLECT PAYMENT, and dispatchType: ALL CHAUFFEURS
+So that a driver can provide hourly service and collect payment directly
+
+📖 BDD SCENARIO: 1-A2. CREATE SCHEDULED BY THE HOUR JOB
+Feature: Job Creation
+
+Given I am an authenticated Job Creator
+When I POST /api/v1/jobs with valid scheduled BY THE HOUR details, COLLECT PAYMENT, and dispatchType: ALL CHAUFFEURS
+Then I receive a 201 Created response
+And the job is created with status PENDING
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-A2 creator creates a scheduled BY THE HOUR job with COLLECT PAYMENT (POST /jobs) | stdout
+
+
+ POST   /api/v1/jobs [BDD-01-A2-CREATE-SCHEDULED-BY-THE-HOUR] - Creator creates scheduled BY THE HOUR job with COLLECT PAYMENT successfully
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "jobType": "BY THE HOUR",
+    "pickup": "Wall Street Financial Plaza",
+    "dropoff": "Manhattan Midtown Executive Suite",
+    "vehicleType": "Executive SUV",
+    "paymentAmount": 350,
+    "paymentType": "COLLECT PAYMENT",
+    "dispatchType": "ALL CHAUFFEURS",
+    "asap": false,
+    "date": "2026-10-16",
+    "time": "14:00",
+    "instruction": "3 hours chauffeur service requested"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Job created successfully",
+  "data": {
+    "jobType": "BY THE HOUR",
+    "pickup": "Wall Street Financial Plaza",
+    "dropoff": "Manhattan Midtown Executive Suite",
+    "asap": false,
+    "date": "2026-10-16T00:00:00.000Z",
+    "time": "14:00",
+    "vehicleType": "Executive SUV",
+    "paymentAmount": 350,
+    "paymentType": "COLLECT PAYMENT",
+    "instruction": "3 hours chauffeur service requested",
+    "serviceArea": "New York",
+    "companyName": "Test Fleet Services",
+    "dispatchType": "ALL CHAUFFEURS",
+    "isPersonalNote": false,
+    "status": "PENDING",
+    "rideStatus": null,
+    "createdBy": "6a8ab083fc4e36325a9de9ab",
+    "targetedChauffeurs": [],
+    "_id": "6a8ab085fc4e36325a9de9d7",
+    "createdAt": "2026-08-23T08:34:13.173Z",
+    "updatedAt": "2026-08-23T08:34:13.173Z",
+    "__v": 0,
+    "hasReview": false,
+    "isReviewedByCreator": false,
+    "isReviewedByDriver": false,
+    "id": "6a8ab085fc4e36325a9de9d7"
+  }
+}
+
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-B1 creator creates an ASAP ONE WAY job with CREDIT CARD ON FILE (POST /jobs) | stdout
+
+📝 USER STORY:
+As a Job Creator
+I want to post an ASAP ONE WAY ride with CREDIT CARD ON FILE and dispatchType: ALL CHAUFFEURS
+So that a nearby chauffeur can pick up the urgent ride immediately
+
+📖 BDD SCENARIO: 1-B1. CREATE ASAP ONE WAY JOB
+Feature: Job Creation
+
+Given I am an authenticated Job Creator
+When I POST /api/v1/jobs with asap: true, jobType: ONE WAY, and dispatchType: ALL CHAUFFEURS
+Then I receive a 201 Created response without requiring date and time
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-B1 creator creates an ASAP ONE WAY job with CREDIT CARD ON FILE (POST /jobs) | stdout
+
+
+ POST   /api/v1/jobs [BDD-01-B1-CREATE-ASAP-ONE-WAY] - Creator creates ASAP ONE WAY job successfully
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "jobType": "ONE WAY",
+    "pickup": "Penn Station Concourse",
+    "dropoff": "LaGuardia Airport Terminal B",
+    "vehicleType": "Sedan",
+    "paymentAmount": 120,
+    "paymentType": "CREDIT CARD ON FILE",
+    "dispatchType": "ALL CHAUFFEURS",
+    "asap": true
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Job created successfully",
+  "data": {
+    "jobType": "ONE WAY",
+    "pickup": "Penn Station Concourse",
+    "dropoff": "LaGuardia Airport Terminal B",
+    "asap": true,
+    "vehicleType": "Sedan",
+    "paymentAmount": 120,
+    "paymentType": "CREDIT CARD ON FILE",
+    "serviceArea": "New York",
+    "companyName": "Test Fleet Services",
+    "dispatchType": "ALL CHAUFFEURS",
+    "isPersonalNote": false,
+    "status": "PENDING",
+    "rideStatus": null,
+    "createdBy": "6a8ab083fc4e36325a9de9ab",
+    "targetedChauffeurs": [],
+    "_id": "6a8ab085fc4e36325a9de9df",
+    "createdAt": "2026-08-23T08:34:13.244Z",
+    "updatedAt": "2026-08-23T08:34:13.244Z",
+    "__v": 0,
+    "hasReview": false,
+    "isReviewedByCreator": false,
+    "isReviewedByDriver": false,
+    "id": "6a8ab085fc4e36325a9de9df"
+  }
+}
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-B2 creator creates an ASAP BY THE HOUR job with COLLECT PAYMENT (POST /jobs) | stdout
+
+📝 USER STORY:
+As a Job Creator
+I want to post an ASAP BY THE HOUR job with COLLECT PAYMENT and dispatchType: ALL CHAUFFEURS
+So that an available driver can start immediate hourly service
+
+📖 BDD SCENARIO: 1-B2. CREATE ASAP BY THE HOUR JOB
+Feature: Job Creation
+
+Given I am an authenticated Job Creator
+When I POST /api/v1/jobs with asap: true, jobType: BY THE HOUR, and dispatchType: ALL CHAUFFEURS
+Then I receive a 201 Created response
+And date and time are not required
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-B2 creator creates an ASAP BY THE HOUR job with COLLECT PAYMENT (POST /jobs) | stdout
+
+
+ POST   /api/v1/jobs [BDD-01-B2-CREATE-ASAP-BY-THE-HOUR] - Creator creates ASAP BY THE HOUR job with COLLECT PAYMENT successfully
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "jobType": "BY THE HOUR",
+    "pickup": "Grand Central Station",
+    "dropoff": "Wall Street Finance Center",
+    "vehicleType": "SUV",
+    "paymentAmount": 250,
+    "paymentType": "COLLECT PAYMENT",
+    "dispatchType": "ALL CHAUFFEURS",
+    "asap": true
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Job created successfully",
+  "data": {
+    "jobType": "BY THE HOUR",
+    "pickup": "Grand Central Station",
+    "dropoff": "Wall Street Finance Center",
+    "asap": true,
+    "vehicleType": "SUV",
+    "paymentAmount": 250,
+    "paymentType": "COLLECT PAYMENT",
+    "serviceArea": "New York",
+    "companyName": "Test Fleet Services",
+    "dispatchType": "ALL CHAUFFEURS",
+    "isPersonalNote": false,
+    "status": "PENDING",
+    "rideStatus": null,
+    "createdBy": "6a8ab083fc4e36325a9de9ab",
+    "targetedChauffeurs": [],
+    "_id": "6a8ab085fc4e36325a9de9e7",
+    "createdAt": "2026-08-23T08:34:13.379Z",
+    "updatedAt": "2026-08-23T08:34:13.379Z",
+    "__v": 0,
+    "hasReview": false,
+    "isReviewedByCreator": false,
+    "isReviewedByDriver": false,
+    "id": "6a8ab085fc4e36325a9de9e7"
+  }
+}
+
+
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-T creator creates a targeted job for specific chauffeurs (POST /jobs) | stdout
+
+📝 USER STORY:
+As a Job Creator
+I want to dispatch a job with dispatchType: TARGETED CHAUFFEURS directly to select favorite chauffeurs
+So that only invited chauffeurs can view and apply for the ride
+
+📖 BDD SCENARIO: 1-T. TARGETED CHAUFFEUR DISPATCH
+Feature: Targeted Job Dispatch
+
+Given I am an authenticated Job Creator
+When I POST /api/v1/jobs with dispatchType: TARGETED CHAUFFEURS and targetedChauffeurs array
+Then I receive a 201 Created response
+And the targeted drivers array is saved on the job
+
+2:34:13 PM | Job Module E2E Test Suite — BDD-01 CREATE JOB > Happy Paths > BDD-01-T creator creates a targeted job for specific chauffeurs (POST /jobs) | stdout
+
+
+ POST   /api/v1/jobs [BDD-01-T-CREATE-TARGETED-JOB] - Creator creates targeted job for specific chauffeurs
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "jobType": "ONE WAY",
+    "pickup": "Private Jet Terminal, Teterboro Airport",
+    "dropoff": "Park Avenue Penthouse",
+    "vehicleType": "Luxury Sedan",
+    "paymentAmount": 400,
+    "paymentType": "CREDIT CARD ON FILE",
+    "dispatchType": "TARGETED CHAUFFEURS",
+    "asap": true,
+    "targetedChauffeurs": [
+      "6a8ab083fc4e36325a9de9ae",
+      "6a8ab084fc4e36325a9de9b7"
+    ]
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Job created successfully",
+  "data": {
+    "jobType": "ONE WAY",
+    "pickup": "Private Jet Terminal, Teterboro Airport",
+    "dropoff": "Park Avenue Penthouse",
+    "asap": true,
+    "vehicleType": "Luxury Sedan",
+    "paymentAmount": 400,
+    "paymentType": "CREDIT CARD ON FILE",
+    "serviceArea": "New York",
+    "companyName": "Test Fleet Services",
+    "dispatchType": "TARGETED CHAUFFEURS",
+    "isPersonalNote": false,
+    "status": "PENDING",
+    "rideStatus": null,
+    "createdBy": "6a8ab083fc4e36325a9de9ab",
+    "targetedChauffeurs": [
+      "6a8ab083fc4e36325a9de9ae",
+      "6a8ab084fc4e36325a9de9b7"
+    ],
+    "_id": "6a8ab085fc4e36325a9de9ef",
+    "createdAt": "2026-08-23T08:34:13.502Z",
+    "updatedAt": "2026-08-23T08:34:13.502Z",
+    "__v": 0,
+    "hasReview": false,
+    "isReviewedByCreator": false,
+    "isReviewedByDriver": false,
+    "id": "6a8ab085fc4e36325a9de9ef"
+  }
+}
+
+
+2:34:13 PM | Job M
