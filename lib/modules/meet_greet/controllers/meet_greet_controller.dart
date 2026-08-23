@@ -132,7 +132,7 @@ class MeetGreetController extends GetxController {
       isLoadingJobs.value = true;
       if (Get.isRegistered<JobService>()) {
         final jobService = Get.find<JobService>();
-        final response = await jobService.getJobs(page: 1, limit: 10);
+        final response = await jobService.getJobs(limit: 10);
         if (response.statusCode == 200 || response.statusCode == 201) {
           if (response.data != null && response.data['data'] != null) {
             final jobResponse = MyJobsModel.fromJson(response.data);

@@ -56,11 +56,15 @@ class JobRepo {
     return await apiClient.postData(ApiConstants.createJob, body);
   }
 
-  Future<Response> getJobs({int page = 1, int limit = 10}) async {
+  Future<Response> getJobs({String? cursor, int limit = 10}) async {
+    final Map<String, dynamic> query = {'limit': limit};
+    if (cursor != null && cursor.isNotEmpty) {
+      query['cursor'] = cursor;
+    }
     return await apiClient.getData(
       ApiConstants.myJobs,
-      query: {'page': page, 'limit': limit},
-    ); // Same endpoint /jobs
+      query: query,
+    );
   }
 
   Future<Response> getAllJobOffers({int page = 1, int limit = 10}) async {

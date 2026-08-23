@@ -17,6 +17,7 @@ class MyJobDetailSheet extends StatelessWidget {
   final String? dropoffNotes;
   final String passengerName;
   final String driverName;
+  final double? driverRating;
   final String vehicleInfo;
   final String vehicleType;
   final String? paymentType;
@@ -24,6 +25,7 @@ class MyJobDetailSheet extends StatelessWidget {
   final String? flightNumber;
   final String? specialInstructions;
   final String status;
+  final bool isReviewedByCreator;
   final String? actionButtonText;
   final VoidCallback? onActionButtonPressed;
   final VoidCallback? onAcceptPressed;
@@ -44,6 +46,7 @@ class MyJobDetailSheet extends StatelessWidget {
     this.dropoffNotes,
     required this.passengerName,
     required this.driverName,
+    this.driverRating,
     required this.vehicleInfo,
     required this.vehicleType,
     this.paymentType,
@@ -51,6 +54,7 @@ class MyJobDetailSheet extends StatelessWidget {
     this.flightNumber,
     this.specialInstructions,
     required this.status,
+    this.isReviewedByCreator = false,
     this.actionButtonText,
     this.onActionButtonPressed,
     this.onAcceptPressed,
@@ -335,18 +339,17 @@ class MyJobDetailSheet extends StatelessWidget {
                               ),
                               SizedBox(height: 2.h),
                               Text(
-                                (driverName.isNotEmpty &&
-                                        driverName != '1 Applicant Available')
+                                driverName.isNotEmpty
                                     ? driverName
-                                    : "Mohamed El Bakkali",
+                                    : "Not Assigned",
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              if (status == 'PENDING' ||
-                                  status == 'ASSIGNED') ...[
+                              if (driverRating != null &&
+                                  driverRating! > 0) ...[
                                 SizedBox(height: 2.h),
                                 Row(
                                   children: [
@@ -357,7 +360,7 @@ class MyJobDetailSheet extends StatelessWidget {
                                     ),
                                     SizedBox(width: 4.w),
                                     Text(
-                                      "4.9",
+                                      driverRating!.toStringAsFixed(1),
                                       style: GoogleFonts.inter(
                                         color: Colors.white70,
                                         fontSize: 11.sp,
@@ -567,24 +570,26 @@ class MyJobDetailSheet extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
             ] else if (status == 'COMPLETED') ...[
-              SizedBox(height: 20.h),
-              CustomButton(
-                text: "Rate & Review Driver",
-                backgroundColor: const Color(0xFF22C55E),
-                textColor: Colors.white,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-                icon: Icon(
-                  Icons.star_outline_rounded,
-                  size: 18.sp,
-                  color: Colors.white,
+              if (!isReviewedByCreator) ...[
+                SizedBox(height: 20.h),
+                CustomButton(
+                  text: "Rate & Review Driver",
+                  backgroundColor: const Color(0xFF22C55E),
+                  textColor: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  icon: Icon(
+                    Icons.star_outline_rounded,
+                    size: 18.sp,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    Get.back();
+                    onReviewPressed?.call();
+                  },
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
                 ),
-                onPressed: () {
-                  Get.back();
-                  onReviewPressed?.call();
-                },
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-              ),
+              ],
             ] else if (actionButtonText != null &&
                 onActionButtonPressed != null) ...[
               SizedBox(height: 20.h),

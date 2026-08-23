@@ -25,9 +25,9 @@ class BookingController extends GetxController {
   var page = 1;
   var hasNextPage = true.obs;
 
-  // My Jobs Pagination
+  // My Jobs Cursor & Pagination
   var isMyJobsLoadMore = false.obs;
-  var myJobsPage = 1;
+  String? myJobsNextCursor;
   var hasNextMyJobsPage = true.obs;
 
   RxList<JobData> myJobsList = <JobData>[].obs;
@@ -48,44 +48,40 @@ class BookingController extends GetxController {
 
   Future<void> fetchJobs({bool isRefresh = false}) async {
     if (isRefresh) {
-      myJobsPage = 1;
+      myJobsNextCursor = null;
       hasNextMyJobsPage.value = true;
     }
 
     if (!hasNextMyJobsPage.value) return;
 
     try {
-      if (myJobsPage == 1) {
+      if (myJobsNextCursor == null) {
         isJobsLoading.value = true;
       } else {
         isMyJobsLoadMore.value = true;
       }
 
-      final response = await _jobService.getJobs(page: myJobsPage, limit: 10);
+      final response = await _jobService.getJobs(
+        cursor: myJobsNextCursor,
+        limit: 10,
+      );
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null && response.data['data'] != null) {
           final jobResponse = MyJobsModel.fromJson(response.data);
           final newJobs = jobResponse.data ?? [];
 
-          if (myJobsPage == 1) {
+          if (myJobsNextCursor == null || isRefresh) {
             myJobsList.assignAll(newJobs);
           } else {
             myJobsList.addAll(newJobs);
           }
 
-          if (jobResponse.pagination != null) {
-            if (myJobsPage >= (jobResponse.pagination!.totalPage ?? 1)) {
-              hasNextMyJobsPage.value = false;
-            } else {
-              myJobsPage++;
-            }
+          if (jobResponse.cursor != null) {
+            myJobsNextCursor = jobResponse.cursor!.nextCursor;
+            hasNextMyJobsPage.value =
+                jobResponse.cursor!.hasMore ?? (myJobsNextCursor != null);
           } else {
-            // Fallback if pagination is null
-            if (newJobs.isEmpty || newJobs.length < 10) {
-              hasNextMyJobsPage.value = false;
-            } else {
-              myJobsPage++;
-            }
+            hasNextMyJobsPage.value = false;
           }
         }
       } else {
