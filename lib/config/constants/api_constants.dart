@@ -82,6 +82,10 @@ class ApiConstants {
   static const String invoices = '/invoices';
   static const String invoiceProfile = '/invoices/profile';
   static const String invoiceClient = '/invoices/client';
+
+  // Favorites & Chauffeurs Endpoints
+  static const String favorites = '/users/favorites';
+  static const String chauffeurs = '/users/chauffeurs';
 }
 
 

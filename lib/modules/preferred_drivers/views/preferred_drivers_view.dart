@@ -107,29 +107,72 @@ class _MyFavoritesTab extends StatelessWidget {
         // Favorites list
         Expanded(
           child: Obx(() {
-            final list = controller.filteredChauffeursList;
-            if (list.isEmpty) {
-              return _emptyState(
-                icon: Icons.favorite_border,
-                title: controller.searchQuery.isEmpty
-                    ? 'No favorites yet'
-                    : 'No matching chauffeur',
-                subtitle: controller.searchQuery.isEmpty
-                    ? 'Go to "Find Chauffeurs" tab to discover and add chauffeurs.'
-                    : 'Try a different name, phone or email.',
+            if (controller.isLoading.value) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
               );
             }
-            return ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
-              itemCount: list.length,
-              separatorBuilder: (_, _) => SizedBox(height: 14.h),
-              itemBuilder: (context, index) {
-                return _DriverCard(
-                  chauffeur: list[index],
-                  controller: controller,
-                  isFavorite: true,
-                );
-              },
+
+            final list = controller.filteredChauffeursList;
+            if (list.isEmpty) {
+              return RefreshIndicator(
+                color: AppColors.primaryColor,
+                backgroundColor: const Color(0xFF1E1E1E),
+                onRefresh: () => controller.fetchFavorites(isRefresh: true),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(height: 100.h),
+                    _emptyState(
+                      icon: Icons.favorite_border,
+                      title: controller.searchQuery.isEmpty
+                          ? 'No favorites yet'
+                          : 'No matching chauffeur',
+                      subtitle: controller.searchQuery.isEmpty
+                          ? 'Go to "Find Chauffeurs" tab to discover and add chauffeurs.'
+                          : 'Try a different name, phone or company.',
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              color: AppColors.primaryColor,
+              backgroundColor: const Color(0xFF1E1E1E),
+              onRefresh: () => controller.fetchFavorites(isRefresh: true),
+              child: ListView.separated(
+                controller: controller.scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
+                itemCount:
+                    list.length + (controller.isMoreLoading.value ? 1 : 0),
+                separatorBuilder: (_, _) => SizedBox(height: 14.h),
+                itemBuilder: (context, index) {
+                  if (index == list.length) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      child: Center(
+                        child: SizedBox(
+                          width: 24.w,
+                          height: 24.w,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return _DriverCard(
+                    chauffeur: list[index],
+                    controller: controller,
+                    isFavorite: true,
+                  );
+                },
+              ),
             );
           }),
         ),
@@ -162,37 +205,78 @@ class _FindDriversTab extends StatelessWidget {
         // Results
         Expanded(
           child: Obx(() {
-            final query = controller.globalSearchQuery.value.trim();
-            if (query.isEmpty) {
-              return _emptyState(
-                icon: Icons.person_search_outlined,
-                title: 'Find any chauffeur',
-                subtitle: 'Search by name or phone number.',
+            if (controller.isGlobalLoading.value) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
               );
             }
+
             final results = controller.filteredGlobalResults;
             if (results.isEmpty) {
-              return _emptyState(
-                icon: Icons.search_off,
-                title: 'No results found',
-                subtitle: 'Try searching with a different name or area.',
+              return RefreshIndicator(
+                color: AppColors.primaryColor,
+                backgroundColor: const Color(0xFF1E1E1E),
+                onRefresh: () =>
+                    controller.fetchGlobalChauffeurs(isRefresh: true),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(height: 100.h),
+                    _emptyState(
+                      icon: Icons.search_off,
+                      title: controller.globalSearchQuery.isEmpty
+                          ? 'No chauffeurs available'
+                          : 'No results found',
+                      subtitle: controller.globalSearchQuery.isEmpty
+                          ? 'No active platform chauffeurs found at this time.'
+                          : 'Try searching with a different name or area.',
+                    ),
+                  ],
+                ),
               );
             }
-            return ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
-              itemCount: results.length,
-              separatorBuilder: (_, _) => SizedBox(height: 14.h),
-              itemBuilder: (context, index) {
-                final chauffeur = results[index];
-                return Obx(
-                  () => _DriverCard(
-                    chauffeur: chauffeur,
-                    controller: controller,
-                    isFavorite: controller.isInFavorites(chauffeur.id),
-                    showAddToFavorites: true,
-                  ),
-                );
-              },
+
+            return RefreshIndicator(
+              color: AppColors.primaryColor,
+              backgroundColor: const Color(0xFF1E1E1E),
+              onRefresh: () =>
+                  controller.fetchGlobalChauffeurs(isRefresh: true),
+              child: ListView.separated(
+                controller: controller.globalScrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
+                itemCount: results.length +
+                    (controller.isGlobalMoreLoading.value ? 1 : 0),
+                separatorBuilder: (_, _) => SizedBox(height: 14.h),
+                itemBuilder: (context, index) {
+                  if (index == results.length) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      child: Center(
+                        child: SizedBox(
+                          width: 24.w,
+                          height: 24.w,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  final chauffeur = results[index];
+                  return Obx(
+                    () => _DriverCard(
+                      chauffeur: chauffeur,
+                      controller: controller,
+                      isFavorite: controller.isInFavorites(chauffeur.id),
+                      showAddToFavorites: true,
+                    ),
+                  );
+                },
+              ),
             );
           }),
         ),
@@ -242,8 +326,22 @@ class _DriverCard extends StatelessWidget {
             ),
             child: CircleAvatar(
               radius: 26.r,
-              backgroundImage: NetworkImage(chauffeur.imageUrl),
+              backgroundImage: chauffeur.imageUrl.isNotEmpty
+                  ? NetworkImage(chauffeur.imageUrl)
+                  : null,
               backgroundColor: const Color(0xFF27272A),
+              child: chauffeur.imageUrl.isEmpty
+                  ? Text(
+                      chauffeur.name.isNotEmpty
+                          ? chauffeur.name[0].toUpperCase()
+                          : 'C',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : null,
             ),
           ),
           SizedBox(width: 14.w),

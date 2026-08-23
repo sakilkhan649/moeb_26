@@ -89,10 +89,25 @@ class PreferredDriverProfileView extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(65.w),
-                          child: Image.network(
-                            chauffeur.imageUrl,
-                            fit: BoxFit.cover,
-                          ),
+                          child: chauffeur.imageUrl.isNotEmpty
+                              ? Image.network(
+                                  chauffeur.imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Center(
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Colors.white54,
+                                      size: 50,
+                                    ),
+                                  ),
+                                )
+                              : const Center(
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white54,
+                                    size: 50,
+                                  ),
+                                ),
                         ),
                       ),
                       Positioned(
@@ -234,7 +249,9 @@ class PreferredDriverProfileView extends StatelessWidget {
                         _buildInfoRow(
                           icon: Icons.business_outlined,
                           title: 'Company',
-                          value: chauffeur.companyName,
+                          value: chauffeur.companyName.isNotEmpty
+                              ? chauffeur.companyName
+                              : 'Not specified',
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -246,7 +263,9 @@ class PreferredDriverProfileView extends StatelessWidget {
                         _buildInfoRow(
                           icon: Icons.phone_outlined,
                           title: 'Phone',
-                          value: chauffeur.phone,
+                          value: chauffeur.phone.isNotEmpty
+                              ? chauffeur.phone
+                              : 'Not provided',
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -258,7 +277,9 @@ class PreferredDriverProfileView extends StatelessWidget {
                         _buildInfoRow(
                           icon: Icons.email_outlined,
                           title: 'Email',
-                          value: chauffeur.email,
+                          value: chauffeur.email.isNotEmpty
+                              ? chauffeur.email
+                              : 'Not provided',
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -270,20 +291,24 @@ class PreferredDriverProfileView extends StatelessWidget {
                         _buildInfoRow(
                           icon: Icons.map_outlined,
                           title: 'Service Area',
-                          value: chauffeur.serviceArea,
+                          value: chauffeur.serviceArea.isNotEmpty
+                              ? chauffeur.serviceArea
+                              : 'Not specified',
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          child: const Divider(
-                            color: Color(0xFF2C2C2C),
-                            thickness: 1,
+                        if (chauffeur.carTag.isNotEmpty) ...[
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            child: const Divider(
+                              color: Color(0xFF2C2C2C),
+                              thickness: 1,
+                            ),
                           ),
-                        ),
-                        _buildInfoRow(
-                          icon: Icons.directions_car_outlined,
-                          title: 'Car - Tag',
-                          value: chauffeur.carTag,
-                        ),
+                          _buildInfoRow(
+                            icon: Icons.directions_car_outlined,
+                            title: 'Car - Tag',
+                            value: chauffeur.carTag,
+                          ),
+                        ],
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
                           child: const Divider(
@@ -294,7 +319,9 @@ class PreferredDriverProfileView extends StatelessWidget {
                         _buildInfoRow(
                           icon: Icons.translate_outlined,
                           title: 'Languages',
-                          value: chauffeur.languages,
+                          value: chauffeur.languages.isNotEmpty
+                              ? chauffeur.languages
+                              : 'English',
                         ),
                       ],
                     ),
@@ -302,189 +329,207 @@ class PreferredDriverProfileView extends StatelessWidget {
                   SizedBox(height: 28.h),
 
                   // Accepted Payment Methods Title
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Accepted Payment Methods',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFFD5C4AB),
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-
-                  // Payment Card Container
-                  Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: const Color(0xFF2C2C2C),
-                        width: 0.98,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        _buildInfoRow(
-                          icon: Icons.account_balance_wallet_outlined,
-                          title: 'Zelle',
-                          value: chauffeur.zelle,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          child: const Divider(
-                            color: Color(0xFF2C2C2C),
-                            thickness: 1,
-                          ),
-                        ),
-                        _buildInfoRow(
-                          icon: Icons.payment_outlined,
-                          title: 'Venmo',
-                          value: chauffeur.venmo,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          child: const Divider(
-                            color: Color(0xFF2C2C2C),
-                            thickness: 1,
-                          ),
-                        ),
-                        _buildInfoRow(
-                          icon: Icons.monetization_on_outlined,
-                          title: 'Cash App',
-                          value: chauffeur.cashApp,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          child: const Divider(
-                            color: Color(0xFF2C2C2C),
-                            thickness: 1,
-                          ),
-                        ),
-                        _buildInfoRow(
-                          icon: Icons.credit_card_outlined,
-                          title: 'Card Payment',
-                          value: chauffeur.cardPaymentAccepted
-                              ? 'Accepted ✅'
-                              : 'Not Accepted ❌',
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 28.h),
-
-                  // Recent Ratings Title Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Recent Ratings & Feedback',
+                  if (chauffeur.zelle.isNotEmpty ||
+                      chauffeur.venmo.isNotEmpty ||
+                      chauffeur.cashApp.isNotEmpty ||
+                      chauffeur.cardPaymentAccepted) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Accepted Payment Methods',
                         style: GoogleFonts.inter(
                           color: const Color(0xFFD5C4AB),
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(
-                        'View All',
-                        style: GoogleFonts.inter(
-                          color: AppColors.primaryColor,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w500,
+                    ),
+                    SizedBox(height: 12.h),
+
+                    // Payment Card Container
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1A1A1A),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          color: const Color(0xFF2C2C2C),
+                          width: 0.98,
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 12.h),
-
-                  // Feedback Card Container
-                  Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: const Color(0xFF2C2C2C),
-                        width: 0.98,
+                      child: Column(
+                        children: [
+                          if (chauffeur.zelle.isNotEmpty) ...[
+                            _buildInfoRow(
+                              icon: Icons.account_balance_wallet_outlined,
+                              title: 'Zelle',
+                              value: chauffeur.zelle,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12.h),
+                              child: const Divider(
+                                color: Color(0xFF2C2C2C),
+                                thickness: 1,
+                              ),
+                            ),
+                          ],
+                          if (chauffeur.venmo.isNotEmpty) ...[
+                            _buildInfoRow(
+                              icon: Icons.payment_outlined,
+                              title: 'Venmo',
+                              value: chauffeur.venmo,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12.h),
+                              child: const Divider(
+                                color: Color(0xFF2C2C2C),
+                                thickness: 1,
+                              ),
+                            ),
+                          ],
+                          if (chauffeur.cashApp.isNotEmpty) ...[
+                            _buildInfoRow(
+                              icon: Icons.monetization_on_outlined,
+                              title: 'Cash App',
+                              value: chauffeur.cashApp,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12.h),
+                              child: const Divider(
+                                color: Color(0xFF2C2C2C),
+                                thickness: 1,
+                              ),
+                            ),
+                          ],
+                          _buildInfoRow(
+                            icon: Icons.credit_card_outlined,
+                            title: 'Card Payment',
+                            value: chauffeur.cardPaymentAccepted
+                                ? 'Accepted ✅'
+                                : 'Not Accepted ❌',
+                          ),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    SizedBox(height: 28.h),
+                  ],
+
+                  // Recent Ratings Title Row
+                  if (chauffeur.reviewText.isNotEmpty) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: List.generate(
-                                5,
-                                (index) => Icon(
-                                  Icons.star,
-                                  color: AppColors.primaryColor,
-                                  size: 16.sp,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              chauffeur.reviewDate,
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFFD5C4AB),
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12.h),
                         Text(
-                          '"${chauffeur.reviewText}"',
+                          'Recent Ratings & Feedback',
                           style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w400,
-                            height: 1.4,
+                            color: const Color(0xFFD5C4AB),
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                          child: const Divider(
-                            color: Color(0xFF2C2C2C),
-                            thickness: 1,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: const Color(0xFF2C2C2C),
-                                  width: 0.98,
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                radius: 16.r,
-                                backgroundImage: NetworkImage(
-                                  chauffeur.reviewerImageUrl,
-                                ),
-                                backgroundColor: const Color(0xFF27272A),
-                              ),
-                            ),
-                            SizedBox(width: 10.w),
-                            Text(
-                              chauffeur.reviewerName,
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),
-                  ),
+                    SizedBox(height: 12.h),
+
+                    // Feedback Card Container
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1A1A1A),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          color: const Color(0xFF2C2C2C),
+                          width: 0.98,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: List.generate(
+                                  5,
+                                  (index) => Icon(
+                                    Icons.star,
+                                    color: AppColors.primaryColor,
+                                    size: 16.sp,
+                                  ),
+                                ),
+                              ),
+                              if (chauffeur.reviewDate.isNotEmpty)
+                                Text(
+                                  chauffeur.reviewDate,
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFFD5C4AB),
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          SizedBox(height: 12.h),
+                          Text(
+                            '"${chauffeur.reviewText}"',
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              height: 1.4,
+                            ),
+                          ),
+                          if (chauffeur.reviewerName.isNotEmpty) ...[
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 14.h),
+                              child: const Divider(
+                                color: Color(0xFF2C2C2C),
+                                thickness: 1,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: const Color(0xFF2C2C2C),
+                                      width: 0.98,
+                                    ),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 16.r,
+                                    backgroundImage:
+                                        chauffeur.reviewerImageUrl.isNotEmpty
+                                            ? NetworkImage(
+                                                chauffeur.reviewerImageUrl,
+                                              )
+                                            : null,
+                                    backgroundColor: const Color(0xFF27272A),
+                                    child: chauffeur.reviewerImageUrl.isEmpty
+                                        ? const Icon(
+                                            Icons.person,
+                                            size: 16,
+                                            color: Colors.white54,
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                                SizedBox(width: 10.w),
+                                Text(
+                                  chauffeur.reviewerName,
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

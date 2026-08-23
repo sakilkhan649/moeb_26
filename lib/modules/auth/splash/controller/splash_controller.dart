@@ -73,7 +73,7 @@ class SplashScreenController extends GetxController {
       final bool? isOnboardingCompleted = await StorageService.getBool(
         StorageConstants.isOnboardingCompleted,
       );
-      if (isOnboardingCompleted == true) {
+      if (isOnboardingCompleted == false) {
         Get.offAllNamed(Routes.vehicleinformationView);
       } else {
         Get.offAllNamed(Routes.bottomNabbarView);
