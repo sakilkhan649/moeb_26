@@ -325,6 +325,7 @@ class _MyJobsViewState extends State<MyJobsView> {
         },
         onEditPressed: canEdit && job.id != null
             ? () {
+                Get.back();
                 Get.toNamed(Routes.jobEditView, arguments: job);
               }
             : null,
@@ -363,7 +364,7 @@ class _MyJobsViewState extends State<MyJobsView> {
               ),
               SizedBox(height: 10.h),
               Text(
-                "Are you sure you want to delete job #$jobId?",
+                "Are you sure you want to delete this job?",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(color: Colors.grey, fontSize: 13.sp),
               ),
@@ -389,13 +390,11 @@ class _MyJobsViewState extends State<MyJobsView> {
                       textColor: Colors.black,
                       fontSize: 14.sp,
                       onPressed: () {
-                        Get.back();
-                        Get.snackbar(
-                          "Job Deleted",
-                          "Job #$jobId has been deleted",
-                          backgroundColor: Colors.redAccent,
-                          colorText: Colors.white,
-                        );
+                        Get.back(); // Close confirmation dialog
+                        if (Get.isBottomSheetOpen == true) {
+                          Get.back(); // Close bottom sheet
+                        }
+                        controller.deleteJob(jobId: jobId);
                       },
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                     ),

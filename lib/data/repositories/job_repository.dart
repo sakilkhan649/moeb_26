@@ -129,24 +129,44 @@ class JobRepo {
     required double paymentAmount,
     required String instruction,
     required String dropoffLocation,
-    required String date,
-    required String time,
+    String? date,
+    String? time,
     required String vehicleType,
     required String paymentType,
     required String jobType,
+    String? flightNumber,
+    bool asap = false,
   }) async {
-    return await apiClient
-        .patchData(ApiConstants.updateJob.replaceAll('{jobId}', jobId), {
-          "pickupLocation": pickupLocation,
-          "paymentAmount": paymentAmount,
-          "instruction": instruction,
-          "dropoffLocation": dropoffLocation,
-          "date": date,
-          "time": time,
-          "vehicleType": vehicleType,
-          "paymentType": paymentType,
-          "jobType": jobType,
-        });
+    final Map<String, dynamic> body = {
+      "pickup": pickupLocation,
+      "pickupLocation": pickupLocation,
+      "dropoff": dropoffLocation,
+      "dropoffLocation": dropoffLocation,
+      "paymentAmount": paymentAmount,
+      "instruction": instruction,
+      "vehicleType": vehicleType,
+      "paymentType": paymentType,
+      "jobType": jobType,
+      "asap": asap,
+    };
+
+    if (!asap) {
+      if (date != null && date.isNotEmpty) {
+        body["date"] = date;
+      }
+      if (time != null && time.isNotEmpty) {
+        body["time"] = time;
+      }
+    }
+
+    if (flightNumber != null && flightNumber.isNotEmpty) {
+      body["flightNumber"] = flightNumber;
+    }
+
+    return await apiClient.patchData(
+      ApiConstants.updateJob.replaceAll('{jobId}', jobId),
+      body,
+    );
   }
 
   Future<Response> deleteJob({required String jobId}) async {
