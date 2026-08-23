@@ -382,7 +382,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                   ],
                                 ),
                               );
-                            }).toList(),
+                            }),
                           ],
                         ),
                       );
@@ -401,135 +401,196 @@ class JobPostSheetTabBarView extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
 
-                    // Chauffeur list items
-                    ...controller.favoriteDrivers.map((driver) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: Obx(() {
-                          final isSelected =
-                              controller.chauffeurSelectionType.value ==
-                                  'favorites' &&
+                    // Chauffeur list items from API
+                    Obx(() {
+                      if (controller.isFavoriteDriversLoading.value &&
+                          controller.favoriteDrivers.isEmpty) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (controller.favoriteDrivers.isEmpty) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          child: Text(
+                            'No chauffeurs found.',
+                            style: GoogleFonts.inter(
+                              color: Colors.grey.shade500,
+                              fontSize: 13.sp,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return Column(
+                        children: controller.favoriteDrivers.map((driver) {
+                          final isSelected = controller
+                                  .chauffeurSelectionType.value ==
+                              'favorites' &&
                               controller.selectedDrivers.contains(driver.name);
-                          return GestureDetector(
-                            onTap: () =>
-                                controller.toggleDriverSelection(driver.name),
-                            child: Container(
-                              padding: EdgeInsets.all(16.w),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF1E1E1E),
-                                borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? const Color(0xFFFF9800)
-                                      : const Color(0xFF2C2C2C),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    isSelected
-                                        ? Icons.check_circle
-                                        : Icons.radio_button_unchecked,
+
+                          final subtitleText = driver.company.isNotEmpty
+                              ? driver.company
+                              : (driver.serviceArea.isNotEmpty
+                                  ? driver.serviceArea
+                                  : 'Chauffeur');
+
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 12.h),
+                            child: GestureDetector(
+                              onTap: () =>
+                                  controller.toggleDriverSelection(driver.name),
+                              child: Container(
+                                padding: EdgeInsets.all(16.w),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF1E1E1E),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(
                                     color: isSelected
                                         ? const Color(0xFFFF9800)
-                                        : Colors.grey.shade600,
-                                    size: 22.sp,
+                                        : const Color(0xFF2C2C2C),
+                                    width: 1,
                                   ),
-                                  SizedBox(width: 14.w),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? const Color(0xFFFF9800)
-                                            : const Color(0xFF2C2C2C),
-                                        width: 1,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      isSelected
+                                          ? Icons.check_circle
+                                          : Icons.radio_button_unchecked,
+                                      color: isSelected
+                                          ? const Color(0xFFFF9800)
+                                          : Colors.grey.shade600,
+                                      size: 22.sp,
+                                    ),
+                                    SizedBox(width: 14.w),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: isSelected
+                                              ? const Color(0xFFFF9800)
+                                              : const Color(0xFF2C2C2C),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 22.r,
+                                        backgroundImage:
+                                            driver.profilePicture.isNotEmpty
+                                                ? NetworkImage(
+                                                    driver.profilePicture,
+                                                  )
+                                                : null,
+                                        backgroundColor:
+                                            const Color(0xFF27272A),
+                                        child: driver.profilePicture.isEmpty
+                                            ? const Icon(
+                                                Icons.person,
+                                                color: Colors.white54,
+                                              )
+                                            : null,
                                       ),
                                     ),
-                                    child: CircleAvatar(
-                                      radius: 22.r,
-                                      backgroundImage: NetworkImage(
-                                        driver.imageUrl,
-                                      ),
-                                      backgroundColor: const Color(0xFF27272A),
-                                    ),
-                                  ),
-                                  SizedBox(width: 14.w),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              driver.name,
-                                              style: GoogleFonts.inter(
-                                                color: Colors.white,
-                                                fontSize: 15.sp,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            if (driver.isTopRated) ...[
-                                              SizedBox(width: 8.w),
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 6.w,
-                                                  vertical: 2.h,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.primaryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        4.r,
-                                                      ),
-                                                ),
+                                    SizedBox(width: 14.w),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
                                                 child: Text(
-                                                  'TOP RATED',
+                                                  driver.name,
                                                   style: GoogleFonts.inter(
-                                                    color: Colors.black,
-                                                    fontSize: 9.sp,
-                                                    fontWeight: FontWeight.w800,
+                                                    color: Colors.white,
+                                                    fontSize: 15.sp,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              if (driver.badges.isNotEmpty) ...[
+                                                SizedBox(width: 8.w),
+                                                Container(
+                                                  padding:
+                                                      EdgeInsets.symmetric(
+                                                    horizontal: 6.w,
+                                                    vertical: 2.h,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      4.r,
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    driver.badges.first
+                                                        .toUpperCase(),
+                                                    style: GoogleFonts.inter(
+                                                      color: Colors.black,
+                                                      fontSize: 9.sp,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                          SizedBox(height: 4.h),
+                                          Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  '$subtitleText • ',
+                                                  style: GoogleFonts.inter(
+                                                    color: Colors.grey.shade500,
+                                                    fontSize: 13.sp,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Icon(
+                                                Icons.star,
+                                                color: AppColors.primaryColor,
+                                                size: 13.sp,
+                                              ),
+                                              SizedBox(width: 2.w),
+                                              Text(
+                                                driver.averageRating > 0
+                                                    ? driver.averageRating
+                                                        .toString()
+                                                    : '0.0',
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.grey.shade500,
+                                                  fontSize: 13.sp,
                                                 ),
                                               ),
                                             ],
-                                          ],
-                                        ),
-                                        SizedBox(height: 4.h),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              '${driver.vehicleName} • ',
-                                              style: GoogleFonts.inter(
-                                                color: Colors.grey.shade500,
-                                                fontSize: 13.sp,
-                                              ),
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              color: AppColors.primaryColor,
-                                              size: 13.sp,
-                                            ),
-                                            SizedBox(width: 2.w),
-                                            Text(
-                                              driver.rating.toString(),
-                                              style: GoogleFonts.inter(
-                                                color: Colors.grey.shade500,
-                                                fontSize: 13.sp,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           );
-                        }),
+                        }).toList(),
                       );
                     }),
                   ],

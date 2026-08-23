@@ -10,6 +10,8 @@ class FavoriteChauffeurModel {
   final int totalReviews;
   final bool isFavorite;
 
+  final List<String> badges;
+
   FavoriteChauffeurModel({
     required this.id,
     required this.name,
@@ -21,9 +23,19 @@ class FavoriteChauffeurModel {
     required this.averageRating,
     required this.totalReviews,
     required this.isFavorite,
+    this.badges = const [],
   });
 
   factory FavoriteChauffeurModel.fromJson(Map<String, dynamic> json) {
+    final List<String> badgesList = [];
+    if (json['badges'] is List) {
+      for (var b in json['badges']) {
+        if (b != null && b.toString().isNotEmpty) {
+          badgesList.add(b.toString());
+        }
+      }
+    }
+
     return FavoriteChauffeurModel(
       id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
@@ -39,6 +51,7 @@ class FavoriteChauffeurModel {
           ? json['totalReviews']
           : int.tryParse(json['totalReviews']?.toString() ?? '0') ?? 0,
       isFavorite: json['isFavorite'] == true,
+      badges: badgesList,
     );
   }
 
@@ -54,6 +67,7 @@ class FavoriteChauffeurModel {
       'averageRating': averageRating,
       'totalReviews': totalReviews,
       'isFavorite': isFavorite,
+      'badges': badges,
     };
   }
 }

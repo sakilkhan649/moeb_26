@@ -3,27 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/core/services/job_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
-
-class FavoriteChauffeurSelection {
-  final String name;
-  final String imageUrl;
-  final String vehicleName;
-  final double rating;
-  final bool isTopRated;
-
-  FavoriteChauffeurSelection({
-    required this.name,
-    required this.imageUrl,
-    required this.vehicleName,
-    required this.rating,
-    this.isTopRated = false,
-  });
-}
+import 'package:moeb_26/data/models/favorite_chauffeur_model.dart';
+import 'package:moeb_26/data/repositories/favorite_chauffeur_repository.dart';
 
 class PostJobController extends GetxController {
   final JobService _jobService = Get.find<JobService>();
+  late final FavoriteChauffeurRepo _favoriteRepo;
 
   // Job Type & Vehicle
   var jobType = 'One Way'.obs;
@@ -34,6 +22,37 @@ class PostJobController extends GetxController {
   var chauffeurSelectionType = ''.obs; // '', 'global', or 'favorites'
   var selectedDrivers = <String>[].obs;
   var selectedServiceAreas = <String>[].obs;
+
+  final RxList<FavoriteChauffeurModel> favoriteDrivers =
+      <FavoriteChauffeurModel>[].obs;
+  final RxBool isFavoriteDriversLoading = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _favoriteRepo = Get.isRegistered<FavoriteChauffeurRepo>()
+        ? Get.find<FavoriteChauffeurRepo>()
+        : Get.put(FavoriteChauffeurRepo(apiClient: Get.find<ApiClient>()));
+    fetchFavoriteDrivers();
+  }
+
+  Future<void> fetchFavoriteDrivers() async {
+    isFavoriteDriversLoading.value = true;
+    try {
+      final response = await _favoriteRepo.getFavorites(limit: 50);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> dataList = response.data?['data'] ?? [];
+        final items = dataList
+            .map((e) => FavoriteChauffeurModel.fromJson(e))
+            .toList();
+        favoriteDrivers.assignAll(items);
+      }
+    } catch (e) {
+      debugPrint("Error fetching favorite chauffeurs for job post: $e");
+    } finally {
+      isFavoriteDriversLoading.value = false;
+    }
+  }
 
   final Map<String, List<String>> stateServiceAreas = {
     'Florida': [
@@ -82,32 +101,6 @@ class PostJobController extends GetxController {
     'Connecticut': ['Greenwich, CT'],
   };
 
-  final List<FavoriteChauffeurSelection> favoriteDrivers = [
-    FavoriteChauffeurSelection(
-      name: 'Marcus J.',
-      imageUrl:
-          'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150',
-      vehicleName: 'Mercedes S-Class',
-      rating: 4.98,
-      isTopRated: true,
-    ),
-    FavoriteChauffeurSelection(
-      name: 'Elena V.',
-      imageUrl:
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-      vehicleName: 'Audi e-tron GT',
-      rating: 4.95,
-      isTopRated: false,
-    ),
-    FavoriteChauffeurSelection(
-      name: 'Julian K.',
-      imageUrl:
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-      vehicleName: 'Range Rover Vogue',
-      rating: 4.92,
-      isTopRated: false,
-    ),
-  ];
 
   String get chauffeurSelectionText {
     if (chauffeurSelectionType.value == 'global') {
