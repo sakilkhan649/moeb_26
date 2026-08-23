@@ -1,0 +1,33 @@
+GET   /api/v1/users/:userId [JOURNEY-2.1-CHAUFFEUR-ALPHA-DETAILS] - Fleet operator inspects Michael Alpha profile details
+        ↳ /api/v1/users/6a8a7b3d9ff1db491a34d84b
+ REQUEST 
+{
+  "params": {
+    "userId": "6a8a7b3d9ff1db491a34d84b"
+  },
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "User details retrieved successfully",
+  "data": {
+    "_id": "6a8a7b3d9ff1db491a34d84b",
+    "name": "Michael Chauffeur Alpha",
+    "email": "michael.alpha@test.com",
+    "phone": "+12125551111",
+    "serviceArea": "New York",
+    "languages": [
+      "English"
+    ],
+    "company": "Elite Limousine Worldwide",
+    "companyRole": "Chauffeur",
+    "profilePicture": "https://example.com/photos/chauffeur-avatar.jpg",
+    "averageRating": 4.9,
+    "totalReviews": 24,
+    "createdAt": "2026-08-23T04:46:53.035Z",
+    "updatedAt": "2026-08-23T04:46:53.035Z",
+    "__v": 0
+  }
+}

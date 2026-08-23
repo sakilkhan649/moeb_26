@@ -433,13 +433,17 @@ class _DriverCard extends StatelessWidget {
                 ),
               ),
 
-              // Add / Already added button (Find tab only)
+              // Add / Remove from Favorites toggle (Find tab only)
               if (showAddToFavorites) ...[
                 SizedBox(height: 6.h),
                 GestureDetector(
-                  onTap: isFavorite
-                      ? null
-                      : () => controller.addToFavorites(chauffeur),
+                  onTap: () {
+                    if (isFavorite) {
+                      controller.removeFromFavorites(chauffeur);
+                    } else {
+                      controller.addToFavorites(chauffeur);
+                    }
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 12.w,
@@ -447,12 +451,12 @@ class _DriverCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: isFavorite
-                          ? const Color(0xFF1E2E1E)
+                          ? const Color(0xFF2A1C1C)
                           : const Color(0xFF1E1E1E),
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
                         color: isFavorite
-                            ? Colors.green.withValues(alpha: 0.5)
+                            ? const Color(0xFFFEDB9B).withValues(alpha: 0.5)
                             : const Color(0xFF2C2C2C),
                       ),
                     ),
@@ -460,15 +464,21 @@ class _DriverCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
                           size: 12.sp,
-                          color: isFavorite ? Colors.green : Colors.grey,
+                          color: isFavorite
+                              ? const Color(0xFFFEDB9B)
+                              : Colors.grey,
                         ),
                         SizedBox(width: 4.w),
                         Text(
                           isFavorite ? 'Saved' : 'Add',
                           style: GoogleFonts.inter(
-                            color: isFavorite ? Colors.green : Colors.grey,
+                            color: isFavorite
+                                ? const Color(0xFFFEDB9B)
+                                : Colors.grey,
                             fontSize: 11.sp,
                             fontWeight: FontWeight.w600,
                           ),

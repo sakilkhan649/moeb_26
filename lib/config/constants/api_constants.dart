@@ -86,6 +86,7 @@ class ApiConstants {
   // Favorites & Chauffeurs Endpoints
   static const String favorites = '/users/favorites';
   static const String chauffeurs = '/users/chauffeurs';
+  static const String users = '/users';
 }
 
 

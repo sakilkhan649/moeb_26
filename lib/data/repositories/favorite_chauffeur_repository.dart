@@ -42,4 +42,30 @@ class FavoriteChauffeurRepo {
   Future<Response> addFavorite(String chauffeurId) async {
     return await apiClient.postData('${ApiConstants.favorites}/$chauffeurId', {});
   }
+
+  /// DELETE /api/v1/users/favorites/:chauffeurId
+  Future<Response> removeFavorite(String chauffeurId) async {
+    return await apiClient.deleteData('${ApiConstants.favorites}/$chauffeurId');
+  }
+
+  /// GET /api/v1/users/:userId
+  Future<Response> getUserDetails(String userId) async {
+    return await apiClient.getData('${ApiConstants.users}/$userId');
+  }
+
+  /// GET /api/v1/users/:userId/reviews
+  Future<Response> getUserReviews(
+    String userId, {
+    int limit = 5,
+    String? cursor,
+  }) async {
+    final Map<String, dynamic> queryParams = {'limit': limit};
+    if (cursor != null && cursor.isNotEmpty) {
+      queryParams['cursor'] = cursor;
+    }
+    return await apiClient.getData(
+      '${ApiConstants.users}/$userId/reviews',
+      query: queryParams,
+    );
+  }
 }
