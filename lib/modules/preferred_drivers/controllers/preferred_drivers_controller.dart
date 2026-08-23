@@ -143,7 +143,8 @@ class FavoriteChauffeur {
 
       // Zelle
       if (pm['zelle'] is Map) {
-        zelleVal = pm['zelle']['email']?.toString() ??
+        zelleVal =
+            pm['zelle']['email']?.toString() ??
             pm['zelle']['phone']?.toString() ??
             pm['zelle']['username']?.toString() ??
             pm['zelle']['identifier']?.toString() ??
@@ -154,7 +155,8 @@ class FavoriteChauffeur {
 
       // Venmo
       if (pm['venmo'] is Map) {
-        venmoVal = pm['venmo']['username']?.toString() ??
+        venmoVal =
+            pm['venmo']['username']?.toString() ??
             pm['venmo']['phone']?.toString() ??
             '';
       } else if (pm['venmo'] is String) {
@@ -163,7 +165,8 @@ class FavoriteChauffeur {
 
       // CashApp
       if (pm['cashApp'] is Map) {
-        cashAppVal = pm['cashApp']['cashtag']?.toString() ??
+        cashAppVal =
+            pm['cashApp']['cashtag']?.toString() ??
             pm['cashApp']['tag']?.toString() ??
             pm['cashApp']['username']?.toString() ??
             '';
@@ -191,7 +194,8 @@ class FavoriteChauffeur {
       nickName: json['nickname']?.toString() ?? json['nickName']?.toString(),
       phone: json['phone']?.toString() ?? '',
       serviceArea: json['serviceArea']?.toString() ?? '',
-      companyName: json['company']?.toString() ??
+      companyName:
+          json['company']?.toString() ??
           json['companyName']?.toString() ??
           'Elite Services',
       companyRole: json['companyRole']?.toString() ?? 'Chauffeur',
@@ -386,8 +390,9 @@ class PreferredDriversController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> dataList = response.data?['data'] ?? [];
-        final items =
-            dataList.map((e) => FavoriteChauffeur.fromJson(e)).toList();
+        final items = dataList
+            .map((e) => FavoriteChauffeur.fromJson(e))
+            .toList();
 
         final cursorData = response.data?['cursor'];
         if (cursorData != null) {
@@ -440,8 +445,9 @@ class PreferredDriversController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> dataList = response.data?['data'] ?? [];
-        final items =
-            dataList.map((e) => FavoriteChauffeur.fromJson(e)).toList();
+        final items = dataList
+            .map((e) => FavoriteChauffeur.fromJson(e))
+            .toList();
 
         final cursorData = response.data?['cursor'];
         if (cursorData != null) {
@@ -494,8 +500,9 @@ class PreferredDriversController extends GetxController {
           }
 
           // Update in globalChauffeursList as well
-          final globalIndex =
-              globalChauffeursList.indexWhere((c) => c.id == chauffeur.id);
+          final globalIndex = globalChauffeursList.indexWhere(
+            (c) => c.id == chauffeur.id,
+          );
           if (globalIndex != -1) {
             globalChauffeursList[globalIndex] = updatedChauffeur;
           }
@@ -579,8 +586,7 @@ class PreferredDriversController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> dataList = response.data?['data'] ?? [];
-        final items =
-            dataList.map((e) => ChauffeurReview.fromJson(e)).toList();
+        final items = dataList.map((e) => ChauffeurReview.fromJson(e)).toList();
 
         final cursorData = response.data?['cursor'];
         if (cursorData != null) {
@@ -625,8 +631,9 @@ class PreferredDriversController extends GetxController {
           selectedChauffeur.value = updatedChauffeur;
         }
 
-        final globalIndex =
-            globalChauffeursList.indexWhere((c) => c.id == chauffeur.id);
+        final globalIndex = globalChauffeursList.indexWhere(
+          (c) => c.id == chauffeur.id,
+        );
         if (globalIndex != -1) {
           globalChauffeursList[globalIndex] = updatedChauffeur;
         }
