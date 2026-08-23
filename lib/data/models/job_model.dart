@@ -99,10 +99,10 @@ class Job {
 
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
-      id: json['_id'] ?? '',
+      id: json['_id'] ?? json['id'] ?? '',
       jobType: json['jobType'] ?? '',
-      pickupLocation: json['pickupLocation'] ?? '',
-      dropoffLocation: json['dropoffLocation'],
+      pickupLocation: json['pickup'] ?? json['pickupLocation'] ?? '',
+      dropoffLocation: json['dropoff'] ?? json['dropoffLocation'],
       flightNumber: json['flightNumber'],
       asap: json['asap'],
       date: json['date'] != null

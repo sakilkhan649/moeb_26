@@ -90,7 +90,7 @@ class PostJobController extends GetxController {
   String get chauffeurSelectionText {
     if (chauffeurSelectionType.value == 'global') {
       if (selectedServiceAreas.isEmpty) {
-        return 'Select Service Area';
+        return 'Auto-assign: All Chauffeurs';
       }
       final cities = selectedServiceAreas
           .map((city) => city.split(',').first.trim())
@@ -98,7 +98,11 @@ class PostJobController extends GetxController {
       return 'Auto-assign: $cities';
     } else if (chauffeurSelectionType.value == 'favorites' &&
         selectedDrivers.isNotEmpty) {
-      return 'Preferred: ${selectedDrivers.join(', ')}';
+      final names = favoriteDrivers
+          .where((d) => selectedDrivers.contains(d.id))
+          .map((d) => d.name)
+          .join(', ');
+      return names.isNotEmpty ? 'Preferred: $names' : 'Preferred Chauffeur';
     }
     return 'Select Chauffeur / Service Area';
   }
@@ -108,19 +112,19 @@ class PostJobController extends GetxController {
     selectedDrivers.clear();
   }
 
-  void toggleDriverSelection(String name) {
+  void toggleDriverSelection(String driverId) {
     if (chauffeurSelectionType.value != 'favorites') {
       chauffeurSelectionType.value = 'favorites';
       selectedDrivers.clear();
       selectedServiceAreas.clear();
     }
-    if (selectedDrivers.contains(name)) {
-      selectedDrivers.remove(name);
+    if (selectedDrivers.contains(driverId)) {
+      selectedDrivers.remove(driverId);
       if (selectedDrivers.isEmpty) {
         chauffeurSelectionType.value = '';
       }
     } else {
-      selectedDrivers.add(name);
+      selectedDrivers.add(driverId);
     }
   }
 
@@ -232,7 +236,7 @@ class PostJobController extends GetxController {
     if (picked != null && picked != selectedTime.value) {
       selectedTime.value = picked;
 
-      // Format to 12-hour AM/PM
+      // Format to 12-hour AM/PM for display
       final now = DateTime.now();
       final dateTime = DateTime(
         now.year,
@@ -260,23 +264,43 @@ class PostJobController extends GetxController {
     try {
       isLoading.value = true;
 
+      final isAsapRide = asap == true;
+      final String? formattedDate = !isAsapRide && date != null
+          ? "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}"
+          : null;
+      final String? formattedTimeStr = !isAsapRide && time != null
+          ? "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}"
+          : null;
+
+      final String normalizedPayment =
+          (paymentType.toUpperCase().contains("COLLECT") &&
+                  !paymentType.toUpperCase().contains("CREDIT"))
+              ? "COLLECT PAYMENT"
+              : "CREDIT CARD ON FILE";
+
+      final bool isTargeted =
+          chauffeurSelectionType.value == 'favorites' &&
+              selectedDrivers.isNotEmpty;
+      final String dispatchType =
+          isTargeted ? "TARGETED CHAUFFEURS" : "ALL CHAUFFEURS";
+      final List<String> targetedChauffeurs =
+          isTargeted ? selectedDrivers.toList() : [];
+
       final response = await _jobService.createJob(
         jobType: "ONE WAY",
-        pickupLocation: pickupLocation,
-        dropoffLocation: dropoffLocation,
-        flightNumber: flightNumber,
-        date: asap == true ? null : date?.toUtc().toIso8601String(),
-        time: asap == true ? null : time?.format(Get.context!),
-        asap: asap,
+        pickup: pickupLocation,
+        dropoff: dropoffLocation,
+        flightNumber: flightNumber.isNotEmpty ? flightNumber : null,
+        date: formattedDate,
+        time: formattedTimeStr,
+        asap: isAsapRide,
         vehicleType: selectedVehicle.value,
         paymentAmount: double.tryParse(paymentAmount) ?? 0,
-        paymentType: paymentType == 'Credit Card on File'
-            ? 'NO COLLECT'
-            : 'COLLECT',
-        instruction: instruction,
-        driverSelection: chauffeurSelectionType.value == 'global'
-            ? 'Service Area: ${selectedServiceAreas.join(', ')}'
-            : selectedDrivers.join(', '),
+        paymentType: normalizedPayment,
+        dispatchType: dispatchType,
+        instruction:
+            instruction?.isNotEmpty == true ? instruction : null,
+        targetedChauffeurs: targetedChauffeurs,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -305,8 +329,9 @@ class PostJobController extends GetxController {
     required String pickupLocation,
     String? dropoffLocation,
     String? duration,
-    required DateTime date,
-    required TimeOfDay time,
+    DateTime? date,
+    TimeOfDay? time,
+    bool? asap,
     required String paymentAmount,
     required String paymentType,
     required String? instruction,
@@ -314,22 +339,46 @@ class PostJobController extends GetxController {
     try {
       isLoading.value = true;
 
+      final isAsapRide = asap == true;
+      final String? formattedDate = !isAsapRide && date != null
+          ? "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}"
+          : null;
+      final String? formattedTimeStr = !isAsapRide && time != null
+          ? "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}"
+          : null;
+
+      final String normalizedPayment =
+          (paymentType.toUpperCase().contains("COLLECT") &&
+                  !paymentType.toUpperCase().contains("CREDIT"))
+              ? "COLLECT PAYMENT"
+              : "CREDIT CARD ON FILE";
+
+      final bool isTargeted =
+          chauffeurSelectionType.value == 'favorites' &&
+              selectedDrivers.isNotEmpty;
+      final String dispatchType =
+          isTargeted ? "TARGETED CHAUFFEURS" : "ALL CHAUFFEURS";
+      final List<String> targetedChauffeurs =
+          isTargeted ? selectedDrivers.toList() : [];
+
+      final String finalDropoff =
+          (dropoffLocation != null && dropoffLocation.isNotEmpty)
+              ? dropoffLocation
+              : "By the hour";
+
       final response = await _jobService.createJob(
         jobType: "BY THE HOUR",
-        pickupLocation: pickupLocation,
-        dropoffLocation: dropoffLocation,
-        duration: duration,
-        date: date.toUtc().toIso8601String(),
-        time: time.format(Get.context!),
+        pickup: pickupLocation,
+        dropoff: finalDropoff,
+        date: formattedDate,
+        time: formattedTimeStr,
+        asap: isAsapRide,
         vehicleType: selectedVehicle.value,
         paymentAmount: double.tryParse(paymentAmount) ?? 0,
-        paymentType: paymentType == 'Credit Card on File'
-            ? 'NO COLLECT'
-            : 'COLLECT',
-        instruction: instruction,
-        driverSelection: chauffeurSelectionType.value == 'global'
-            ? 'Service Area: ${selectedServiceAreas.join(', ')}'
-            : selectedDrivers.join(', '),
+        paymentType: normalizedPayment,
+        dispatchType: dispatchType,
+        instruction: instruction?.isNotEmpty == true ? instruction : null,
+        targetedChauffeurs: targetedChauffeurs,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

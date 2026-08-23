@@ -8,50 +8,49 @@ class JobRepo {
 
   Future<Response> createJob({
     required String jobType,
-    required String pickupLocation,
-    String? dropoffLocation,
-    String? flightNumber,
-    String? duration,
-    String? date,
-    String? time,
-    bool? asap,
+    required String pickup,
+    required String dropoff,
     required String vehicleType,
     required double paymentAmount,
     required String paymentType,
+    required String dispatchType,
+    bool asap = false,
+    String? date,
+    String? time,
+    String? flightNumber,
     String? instruction,
-    String? driverSelection,
+    List<String>? targetedChauffeurs,
   }) async {
     final Map<String, dynamic> body = {
       "jobType": jobType,
-      "pickupLocation": pickupLocation,
+      "pickup": pickup,
+      "dropoff": dropoff,
       "vehicleType": vehicleType,
       "paymentAmount": paymentAmount,
       "paymentType": paymentType,
+      "dispatchType": dispatchType,
+      "asap": asap,
     };
 
-    if (dropoffLocation != null && dropoffLocation.isNotEmpty) {
-      body["dropoffLocation"] = dropoffLocation;
+    if (!asap) {
+      if (date != null && date.isNotEmpty) {
+        body["date"] = date;
+      }
+      if (time != null && time.isNotEmpty) {
+        body["time"] = time;
+      }
     }
-    if (duration != null && duration.isNotEmpty) {
-      body["duration"] = duration;
-    }
-    if (date != null && date.isNotEmpty) {
-      body["date"] = date;
-    }
-    if (time != null && time.isNotEmpty) {
-      body["time"] = time;
-    }
-    if (asap != null) {
-      body["asap"] = asap;
-    }
+
     if (flightNumber != null && flightNumber.isNotEmpty) {
       body["flightNumber"] = flightNumber;
     }
     if (instruction != null && instruction.isNotEmpty) {
       body["instruction"] = instruction;
     }
-    if (driverSelection != null && driverSelection.isNotEmpty) {
-      body["driverSelection"] = driverSelection;
+    if (dispatchType == "TARGETED CHAUFFEURS" && targetedChauffeurs != null) {
+      body["targetedChauffeurs"] = targetedChauffeurs;
+    } else {
+      body["targetedChauffeurs"] = [];
     }
 
     return await apiClient.postData(ApiConstants.createJob, body);

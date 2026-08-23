@@ -465,7 +465,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                           final isSelected = controller
                                   .chauffeurSelectionType.value ==
                               'favorites' &&
-                              controller.selectedDrivers.contains(driver.name);
+                              controller.selectedDrivers.contains(driver.id);
 
                           final subtitleText = driver.company.isNotEmpty
                               ? driver.company
@@ -477,7 +477,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                             padding: EdgeInsets.only(bottom: 12.h),
                             child: GestureDetector(
                               onTap: () =>
-                                  controller.toggleDriverSelection(driver.name),
+                                  controller.toggleDriverSelection(driver.id),
                               child: Container(
                                 padding: EdgeInsets.all(16.w),
                                 decoration: BoxDecoration(

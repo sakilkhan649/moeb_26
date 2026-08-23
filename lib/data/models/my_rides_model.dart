@@ -97,9 +97,9 @@ class Ride {
 
   factory Ride.fromJson(Map<String, dynamic> json) {
     return Ride(
-      id: json['_id'] ?? '',
-      pickupLocation: json['pickupLocation'] ?? '',
-      dropoffLocation: json['dropoffLocation'] ?? '',
+      id: json['_id'] ?? json['id'] ?? '',
+      pickupLocation: json['pickup'] ?? json['pickupLocation'] ?? '',
+      dropoffLocation: json['dropoff'] ?? json['dropoffLocation'] ?? '',
       vehicleType: json['vehicleType'] ?? '',
       asap: json['asap'],
       paymentAmount: json['paymentAmount'] != null
