@@ -89,6 +89,7 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
                         SizedBox(height: 30.h),
 
                         CustomButton(
+                          loading: controller.isLoading.value,
                           text: "Continue",
                           onPressed: () {
                             FocusScope.of(context).unfocus();

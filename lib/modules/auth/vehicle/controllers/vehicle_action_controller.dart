@@ -49,46 +49,80 @@ class VehicleActionController extends GetxController {
     final args = Get.arguments;
     if (args != null && args['isEdit'] == true && args['vehicle'] != null) {
       isEditMode.value = true;
-      final v = args['vehicle'];
+      final v = args['vehicle'] as Vehicle;
       editVehicleId = v.id;
-
-      selectedVehicleType.value = v.carType ?? "";
-      makeController.text = v.make ?? "";
-      modelController.text = v.model ?? "";
-      yearController.text = (v.year ?? "").toString();
-      colorInsideController.text = v.colorInside ?? "";
-      colorOutsideController.text = v.colorOutside ?? "";
-      licensePlateController.text = v.licensePlate ?? "";
-      if (v.commercialInsuranceExpiryDate != null &&
-          v.commercialInsuranceExpiryDate!.isNotEmpty) {
-        try {
-          commercialInsuranceExpireController.text = DateFormat(
-            'yyyy-MM-dd',
-          ).format(DateTime.parse(v.commercialInsuranceExpiryDate!));
-        } catch (_) {
-          commercialInsuranceExpireController.text =
-              v.commercialInsuranceExpiryDate!;
-        }
+      _populateVehicleData(v);
+      if (editVehicleId != null && editVehicleId!.isNotEmpty) {
+        _fetchFullVehicleDetails(editVehicleId!);
       }
+    }
+  }
 
-      if (v.vehicleRegistrationExpiryDate != null &&
-          v.vehicleRegistrationExpiryDate!.isNotEmpty) {
-        try {
-          vehicleRegistrationExpireController.text = DateFormat(
-            'yyyy-MM-dd',
-          ).format(DateTime.parse(v.vehicleRegistrationExpiryDate!));
-        } catch (_) {
-          vehicleRegistrationExpireController.text =
-              v.vehicleRegistrationExpiryDate!;
-        }
+  void _populateVehicleData(Vehicle v) {
+    if (v.carType.isNotEmpty) selectedVehicleType.value = v.carType;
+    if (v.make.isNotEmpty) makeController.text = v.make;
+    if (v.model.isNotEmpty) modelController.text = v.model;
+    if (v.year > 0) yearController.text = v.year.toString();
+    if (v.colorInside.isNotEmpty) colorInsideController.text = v.colorInside;
+    if (v.colorOutside.isNotEmpty) colorOutsideController.text = v.colorOutside;
+    if (v.licensePlate.isNotEmpty) licensePlateController.text = v.licensePlate;
+
+    if (v.commercialInsuranceExpiryDate != null &&
+        v.commercialInsuranceExpiryDate!.isNotEmpty) {
+      try {
+        commercialInsuranceExpireController.text = DateFormat(
+          'yyyy-MM-dd',
+        ).format(DateTime.parse(v.commercialInsuranceExpiryDate!));
+      } catch (_) {
+        commercialInsuranceExpireController.text =
+            v.commercialInsuranceExpiryDate!;
       }
+    }
 
-      // Load existing image URLs for preview
+    if (v.vehicleRegistrationExpiryDate != null &&
+        v.vehicleRegistrationExpiryDate!.isNotEmpty) {
+      try {
+        vehicleRegistrationExpireController.text = DateFormat(
+          'yyyy-MM-dd',
+        ).format(DateTime.parse(v.vehicleRegistrationExpiryDate!));
+      } catch (_) {
+        vehicleRegistrationExpireController.text =
+            v.vehicleRegistrationExpiryDate!;
+      }
+    }
+
+    if (v.commercialInsuranceImage != null &&
+        v.commercialInsuranceImage!.isNotEmpty) {
       commercialInsuranceUrl.value = v.commercialInsuranceImage;
+    }
+    if (v.vehicleRegistrationImage != null &&
+        v.vehicleRegistrationImage!.isNotEmpty) {
       vehicleRegistrationUrl.value = v.vehicleRegistrationImage;
+    }
+    if (v.vehiclePhotoFront != null && v.vehiclePhotoFront!.isNotEmpty) {
       frontViewUrl.value = v.vehiclePhotoFront;
+    }
+    if (v.vehiclePhotoRear != null && v.vehiclePhotoRear!.isNotEmpty) {
       rearViewUrl.value = v.vehiclePhotoRear;
+    }
+    if (v.vehiclePhotoInterior != null &&
+        v.vehiclePhotoInterior!.isNotEmpty) {
       interiorViewUrl.value = v.vehiclePhotoInterior;
+    }
+  }
+
+  Future<void> _fetchFullVehicleDetails(String vehicleId) async {
+    try {
+      final response = await _profileService.getVehicleById(vehicleId);
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'];
+        if (data != null && data is Map<String, dynamic>) {
+          final fullVehicle = Vehicle.fromJson(data);
+          _populateVehicleData(fullVehicle);
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching full vehicle details for edit: $e");
     }
   }
 

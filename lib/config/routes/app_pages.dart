@@ -36,6 +36,7 @@ import 'package:moeb_26/modules/auth/authentication/views/signin_view.dart';
 import 'package:moeb_26/modules/auth/splash/binding/splash_binding.dart';
 import 'package:moeb_26/modules/auth/splash/views/splash_view.dart';
 import 'package:moeb_26/modules/auth/vehicle/views/vehicle_Information_view.dart';
+import 'package:moeb_26/modules/auth/vehicle/views/vehicle_details_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/auth_selection_view.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/views/bottom_nabbar_view.dart';
 import 'package:moeb_26/modules/chat_detail/views/chat_detail_view.dart';
@@ -120,6 +121,7 @@ class Routes {
   static const String privacyPolicySignUpView = "/PrivacyPolicySignUpView";
   static const String allVehicleView = "/AllVehicleView";
   static const String addNewVehicleView = "/AddNewVehicleView";
+  static const String vehicleDetailsView = "/VehicleDetailsView";
   static const String personalDocumentView = "/PersonalDocumentView";
   static const String dealsView = "/DealsView";
   static const String createInvoiceView = "/CreateInvoiceView";
@@ -353,6 +355,11 @@ class Routes {
     GetPage(
       name: addNewVehicleView,
       page: () => const AddNewVehicleView(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: vehicleDetailsView,
+      page: () => const VehicleDetailsView(),
       transition: Transition.noTransition,
     ),
     GetPage(

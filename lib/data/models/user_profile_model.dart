@@ -75,7 +75,10 @@ class UserProfileModel {
           ? DateTime.parse(json['updatedAt'])
           : DateTime.now(),
       averageRating: (json['averageRating'] ?? 0.0).toDouble(),
-      selectedVehicle: json['selectedVehicle']?.toString(),
+      selectedVehicle: json['selectedVehicle'] is Map
+          ? (json['selectedVehicle']['id']?.toString() ??
+              json['selectedVehicle']['_id']?.toString())
+          : json['selectedVehicle']?.toString(),
       nickname: json['nickname']?.toString(),
       uid: json['uid']?.toString(),
     );
@@ -119,6 +122,7 @@ class Vehicle {
   final int year;
   final String licensePlate;
   final String status;
+  final String? rejectionReason;
   final String? vehicleRegistrationImage;
   final String? vehicleRegistrationExpiryDate;
   final String? commercialInsuranceImage;
@@ -138,6 +142,7 @@ class Vehicle {
     required this.year,
     required this.licensePlate,
     this.status = 'PENDING_REVIEW',
+    this.rejectionReason,
     this.vehicleRegistrationImage,
     this.vehicleRegistrationExpiryDate,
     this.commercialInsuranceImage,
@@ -175,6 +180,7 @@ class Vehicle {
           : (int.tryParse(json['year']?.toString() ?? '') ?? 0),
       licensePlate: json['licensePlate']?.toString() ?? json['licensePlateRaw']?.toString() ?? '',
       status: json['status']?.toString() ?? 'PENDING_REVIEW',
+      rejectionReason: json['rejectionReason']?.toString(),
       // Nested: vehicleRegistration.image / .expiryDate
       vehicleRegistrationImage: json['vehicleRegistration'] is Map
           ? json['vehicleRegistration']['image']?.toString()
@@ -216,6 +222,7 @@ class Vehicle {
       'year': year,
       'licensePlate': licensePlate,
       'status': status,
+      'rejectionReason': rejectionReason,
       'vehicleRegistrationImage': vehicleRegistrationImage,
       'vehicleRegistrationExpiryDate': vehicleRegistrationExpiryDate,
       'commercialInsuranceImage': commercialInsuranceImage,

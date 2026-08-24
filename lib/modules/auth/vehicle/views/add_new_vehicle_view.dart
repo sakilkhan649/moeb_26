@@ -69,31 +69,30 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                 _buildVehicleForm(context),
                 SizedBox(height: 30.h),
                 Obx(
-                  () => controller.isLoading.value
-                      ? const Center(child: CircularProgressIndicator())
-                      : CustomButton(
-                          text: controller.isEditMode.value
-                              ? "Update Vehicle"
-                              : "Add Vehicle",
-                          onPressed: () {
-                            showErrors.value = true;
-                            if (_formKey.currentState!.validate()) {
-                              if (controller
-                                  .selectedVehicleType
-                                  .value
-                                  .isEmpty) {
-                                Get.snackbar(
-                                  "Error",
-                                  "Please select a vehicle type",
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
-                                return;
-                              }
-                              controller.submitVehicle();
-                            }
-                          },
-                        ),
+                  () => CustomButton(
+                    loading: controller.isLoading.value,
+                    text: controller.isEditMode.value
+                        ? "Update Vehicle"
+                        : "Add Vehicle",
+                    onPressed: () {
+                      showErrors.value = true;
+                      if (_formKey.currentState!.validate()) {
+                        if (controller
+                            .selectedVehicleType
+                            .value
+                            .isEmpty) {
+                          Get.snackbar(
+                            "Error",
+                            "Please select a vehicle type",
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+                        controller.submitVehicle();
+                      }
+                    },
+                  ),
                 ),
                 SizedBox(height: 60.h),
               ],

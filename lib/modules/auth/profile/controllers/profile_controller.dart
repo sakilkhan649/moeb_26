@@ -264,25 +264,61 @@ class ProfileController extends GetxController {
   Future<void> updateSelectedVehicle(String vehicleId) async {
     isUpdating.value = true;
     try {
-      Map<String, dynamic> body = {"selectedVehicle": vehicleId};
-
-      var response = await _profileService.patchProfile(body);
+      var response = await _profileService.selectVehicle(vehicleId);
       if (response.statusCode == 200) {
         var data = response.data['data'];
-        userProfile.value = UserProfileModel.fromJson(data);
+        String? newSelectedVehicleId;
+        if (data != null && data['selectedVehicle'] != null) {
+          if (data['selectedVehicle'] is Map) {
+            newSelectedVehicleId = data['selectedVehicle']['id']?.toString() ??
+                data['selectedVehicle']['_id']?.toString();
+          } else {
+            newSelectedVehicleId = data['selectedVehicle'].toString();
+          }
+        } else {
+          newSelectedVehicleId = vehicleId;
+        }
+
+        if (userProfile.value != null) {
+          userProfile.value = UserProfileModel(
+            id: userProfile.value!.id,
+            name: userProfile.value!.name,
+            role: userProfile.value!.role,
+            email: userProfile.value!.email,
+            phone: userProfile.value!.phone,
+            home: userProfile.value!.home,
+            serviceArea: userProfile.value!.serviceArea,
+            experience: userProfile.value!.experience,
+            company: userProfile.value!.company,
+            companyRole: userProfile.value!.companyRole,
+            profilePicture: userProfile.value!.profilePicture,
+            status: userProfile.value!.status,
+            verified: userProfile.value!.verified,
+            deviceTokens: userProfile.value!.deviceTokens,
+            vehicles: userProfile.value!.vehicles,
+            createdAt: userProfile.value!.createdAt,
+            updatedAt: userProfile.value!.updatedAt,
+            averageRating: userProfile.value!.averageRating,
+            selectedVehicle: newSelectedVehicleId,
+            nickname: userProfile.value!.nickname,
+            uid: userProfile.value!.uid,
+          );
+        } else {
+          fetchUserProfile();
+        }
 
         Helpers.showCustomSnackBar(
-          "Vehicle selected successfully",
+          response.data['message'] ?? "Vehicle selected successfully",
           isError: false,
         );
       } else {
         Helpers.showCustomSnackBar(
-          response.data['message'] ?? "Failed to update selected vehicle",
+          response.data?['message'] ?? "Failed to select vehicle",
           isError: true,
         );
       }
     } catch (e) {
-      debugPrint("Error updating selected vehicle: $e");
+      debugPrint("Error selecting vehicle: $e");
       Helpers.showCustomSnackBar(
         "Something went wrong while selecting vehicle",
         isError: true,

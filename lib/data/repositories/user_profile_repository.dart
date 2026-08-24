@@ -33,6 +33,10 @@ class UserProfileRepo {
     return apiClient.getData(ApiConstants.vehicles);
   }
 
+  Future<Response> getVehicleById(String vehicleId) {
+    return apiClient.getData('${ApiConstants.vehicles}/$vehicleId');
+  }
+
   Future<Response> addVehicle(dynamic body) {
     return apiClient.postData(ApiConstants.vehicles, body);
   }
@@ -41,6 +45,13 @@ class UserProfileRepo {
     return apiClient.patchData(
       '${ApiConstants.vehicles}/$vehicleId',
       body,
+    );
+  }
+
+  Future<Response> selectVehicle(String vehicleId) {
+    return apiClient.patchData(
+      '${ApiConstants.vehicles}/$vehicleId/select',
+      {},
     );
   }
 
