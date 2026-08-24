@@ -23,17 +23,30 @@ class MyJobProgressDetailsView extends StatefulWidget {
 }
 
 class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
-  final BookingController controller = Get.find<BookingController>();
+  final BookingController controller = Get.isRegistered<BookingController>()
+      ? Get.find<BookingController>()
+      : Get.put(BookingController());
   JobData? initialJob;
   String? jobId;
 
   @override
   void initState() {
     super.initState();
-    initialJob = Get.arguments as JobData?;
-    jobId = initialJob?.id;
-    // Initialize with the job data we already have
-    controller.myJobView.value = initialJob;
+    final args = Get.arguments;
+    if (args is JobData) {
+      initialJob = args;
+      jobId = args.id;
+    } else if (args is Map) {
+      initialJob = args['job'] as JobData?;
+      jobId = args['jobId']?.toString() ?? initialJob?.id;
+    } else if (args is String) {
+      jobId = args;
+    }
+
+    if (initialJob != null) {
+      controller.myJobView.value = initialJob;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshJob();
     });
@@ -101,19 +114,23 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
           child: Obx(() {
             final job = controller.myJobView.value;
 
-            if (job == null && (controller.viewLoading[jobId ?? ""] ?? false)) {
-              return const Center(child: CircularProgressIndicator());
+            if (job == null) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
+              );
             }
 
             // Format date and time
             String displayDateTime = "N/A";
-            if (job?.asap == true) {
+            if (job.asap == true) {
               displayDateTime = "ASAP";
             } else {
               String dateStr = "";
-              if (job?.date != null &&
-                  job?.date != "null" &&
-                  job!.date!.isNotEmpty) {
+              if (job.date != null &&
+                  job.date != "null" &&
+                  job.date!.isNotEmpty) {
                 try {
                   DateTime parsedDate = DateTime.parse(job.date!);
                   dateStr = DateFormat('EEE MMM dd').format(parsedDate);
@@ -122,7 +139,7 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                 }
               }
 
-              String timeStr = job?.time ?? "";
+              String timeStr = job.time ?? "";
               if (timeStr.contains(':')) {
                 try {
                   final parts = timeStr.split(':');
@@ -141,14 +158,14 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                   : timeStr;
             }
 
-            final driver = job?.assignedTo ?? job?.applicant?.driver;
+            final driver = job.assignedTo ?? job.applicant?.driver;
             final vehicle =
                 (driver?.vehicles != null && driver!.vehicles!.isNotEmpty)
                 ? driver.vehicles!.first
                 : null;
             final vehicleInfo = vehicle != null
                 ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
-                : job?.vehicleType ?? "N/A";
+                : job.vehicleType ?? "N/A";
 
             String driverName = "Driver";
             if (driver != null) {
@@ -171,8 +188,8 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildOwnerProgressTracker(
-                        job?.rideStatus ?? "",
-                        job?.status ?? "",
+                        job.rideStatus ?? "",
+                        job.status ?? "",
                       ),
                       SizedBox(height: 6.h),
                       _buildDriverSection(
@@ -182,11 +199,11 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                         rating: "${driver?.averageRating ?? 0.0}",
                         onChatPressed: () async {
                           final String? participantId =
-                              job?.assignedTo?.id ?? job?.applicant?.driver?.id;
-                          if (participantId != null && job?.id != null) {
+                              job.assignedTo?.id ?? job.applicant?.driver?.id;
+                          if (participantId != null && job.id != null) {
                             try {
                               final chat = await Get.find<SocketRepository>()
-                                  .createChat(participantId, job!.id!);
+                                  .createChat(participantId, job.id!);
                               if (chat != null) {
                                 Get.toNamed(
                                   Routes.chatDetailView,
@@ -212,23 +229,21 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                         padding: EdgeInsets.symmetric(horizontal: 14.w),
                         child: CustomJobDetailsCard(
                           // Location details
-                          pickupLocation: job?.pickupLocation ?? "N/A",
-                          dropoffLocation: job?.dropoffLocation ?? "N/A",
+                          pickupLocation: job.pickupLocation ?? "N/A",
+                          dropoffLocation: job.dropoffLocation ?? "N/A",
 
                           // Job information
-                          flightNumber: job?.flightNumber ?? "N/A",
+                          flightNumber: job.flightNumber ?? "N/A",
                           dateTime: displayDateTime,
-                          vehicleType: job?.vehicleType ?? "N/A",
+                          vehicleType: vehicleInfo,
                           jobPoster:
-                              (job?.createdBy?.nickname != null &&
-                                  job!.createdBy!.nickname!.isNotEmpty)
+                              (job.createdBy?.nickname != null &&
+                                  job.createdBy!.nickname!.isNotEmpty)
                               ? job.createdBy!.nickname!
-                              : (job?.createdBy?.name ?? "Unknown"),
+                              : (job.createdBy?.name ?? "Unknown"),
                           company: driver?.company ?? "N/A",
-                          payment: job?.paymentType ?? "N/A",
-                          amount: job != null
-                              ? "\$${job.paymentAmount}"
-                              : "N/A",
+                          payment: job.paymentType ?? "N/A",
+                          amount: "\$${job.paymentAmount}",
 
                           // Optional: Custom colors matching Invoice Theme
                           backgroundColor: const Color(0xFF1A1A1A),
@@ -241,10 +256,10 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                       ),
                       SizedBox(height: 20.h),
 
-                      if (job?.instruction != null &&
-                          job!.instruction!.trim().isNotEmpty) ...[
+                      if (job.instruction != null &&
+                          job.instruction!.trim().isNotEmpty) ...[
                         CustomInfoBox(
-                          text: job!.instruction!,
+                          text: job.instruction!,
                           title: "Special Instructions",
                           padding: EdgeInsets.symmetric(horizontal: 14.w),
                         ),
@@ -255,9 +270,9 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                         padding: EdgeInsets.symmetric(horizontal: 14.w),
                         child: Builder(
                           builder: (context) {
-                            final status = job?.status?.toUpperCase() ?? "";
+                            final status = job.status?.toUpperCase() ?? "";
                             final rideStatus =
-                                job?.rideStatus?.toUpperCase() ?? "";
+                                job.rideStatus?.toUpperCase() ?? "";
 
                             bool isCancelled =
                                 status == "CANCELLED" ||
@@ -268,7 +283,7 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                                 status == "COMPLETED";
 
                             if (isCompleted) {
-                              if (job?.hasReview == true) {
+                              if (job.hasReview == true) {
                                 return Container(
                                   padding: EdgeInsets.all(16.w),
                                   decoration: BoxDecoration(
@@ -324,8 +339,8 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                                 ).withValues(alpha: 0.5),
                                 textColor: const Color(0xFFEF4444),
                                 onPressed: () {
-                                  if (job?.id != null) {
-                                    _showDeleteDialog(job!.id!);
+                                  if (job.id != null) {
+                                    _showDeleteDialog(job.id!);
                                   }
                                 },
                               );

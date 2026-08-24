@@ -1,0 +1,506 @@
+4:33:50 PM | E2E Test Suite: Job Application, Acceptance & Rejection Lifecycle > 2. Job Applicant Approval Flow (PATCH /api/v1/jobs/:id/approve-applicant) > 2.2 Post-Approval Driver Confirmation: Approved chauffeur sees the assigned ride in My Rides (GET /api/v1/jobs/my-rides) | stdout
+
+📝 USER STORY:
+As an Assigned Chauffeur
+I want to view all my confirmed booked rides in My Rides
+So that I can track scheduled pickups and initiate navigation
+
+📖 BDD SCENARIO: Stage 2.2 — My Rides Driver Synchronization
+Feature: Driver Rides — Confirmed Booking Feed
+
+Given a job where Chauffeur Alpha was approved and assigned
+When Chauffeur Alpha sends GET /api/v1/jobs/my-rides
+Then I receive HTTP 200 OK
+And the returned rides list contains the newly assigned job with status: ASSIGNED
+
+4:33:50 PM | E2E Test Suite: Job Application, Acceptance & Rejection Lifecycle > 2. Job Applicant Approval Flow (PATCH /api/v1/jobs/:id/approve-applicant) > 2.2 Post-Approval Driver Confirmation: Approved chauffeur sees the assigned ride in My Rides (GET /api/v1/jobs/my-rides) | stdout
+
+
+ GET   /api/v1/jobs/my-rides [MYRIDES-2.2-DRIVER-ASSIGNED-RIDES-FEED] - Chauffeur Alpha verifies approved ride appears in My Rides
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "My rides retrieved successfully",
+  "cursor": {
+    "nextCursor": null,
+    "hasMore": false,
+    "limit": 10
+  },
+  "data": [
+    {
+      "_id": "6a8c1e0d34bd8f0e30aa4904",
+      "jobType": "ONE WAY",
+      "pickup": "The Mark Hotel, 25 E 77th St, New York",
+      "dropoff": "JFK Airport, Terminal 8",
+      "flightNumber": "AA 1234",
+      "asap": false,
+      "date": "2026-11-03T00:00:00.000Z",
+      "time": "10:00",
+      "vehicleType": "SUV",
+      "paymentAmount": 220,
+      "paymentType": "CREDIT CARD ON FILE",
+      "instruction": "VIP Passenger. Please provide bottled water and assist with luggage.",
+      "serviceArea": "New York Metro",
+      "dispatchType": "ALL CHAUFFEURS",
+      "isPersonalNote": false,
+      "passengerName": "Jonathan Davies",
+      "passengerPhone": "+12125559876",
+      "status": "PENDING",
+      "rideStatus": null,
+      "createdBy": {
+        "_id": "6a8c1e0c34bd8f0e30aa48b8",
+        "name": "Harrison Vance",
+        "nickname": "Harrison",
+        "email": "harrison.vance@operator.com",
+        "phone": "+12125550001",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Operator",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": null,
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "targetedChauffeurs": [],
+      "createdAt": "2026-08-24T10:33:49.908Z",
+      "updatedAt": "2026-08-24T10:33:49.930Z",
+      "__v": 0,
+      "applicant": {
+        "driver": {
+          "_id": "6a8c1e0c34bd8f0e30aa48c7",
+          "name": "Lucas Bennett",
+          "nickname": "Lucas",
+          "email": "lucas.bennett@chauffeur.com",
+          "phone": "+12125550002",
+          "company": "Gotham Black Car Service",
+          "companyRole": "Chauffeur",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "selectedVehicle": "6a8c1e0c34bd8f0e30aa48d8",
+          "averageRating": 4.9,
+          "totalReviews": 12
+        },
+        "vehicleId": "6a8c1e0c34bd8f0e30aa48d8",
+        "appliedAt": "2026-08-24T10:33:49.929Z"
+      },
+      "companyName": "Gotham Black Car Service"
+    },
+    {
+      "_id": "6a8c1e0e34bd8f0e30aa4924",
+      "jobType": "ONE WAY",
+      "pickup": "The Mark Hotel, 25 E 77th St, New York",
+      "dropoff": "JFK Airport, Terminal 8",
+      "flightNumber": "AA 1234",
+      "asap": false,
+      "date": "2026-11-04T00:00:00.000Z",
+      "time": "10:00",
+      "vehicleType": "SUV",
+      "paymentAmount": 220,
+      "paymentType": "CREDIT CARD ON FILE",
+      "instruction": "VIP Passenger. Please provide bottled water and assist with luggage.",
+      "serviceArea": "New York Metro",
+      "dispatchType": "TARGETED CHAUFFEURS",
+      "isPersonalNote": false,
+      "passengerName": "Jonathan Davies",
+      "passengerPhone": "+12125559876",
+      "status": "PENDING",
+      "rideStatus": null,
+      "createdBy": {
+        "_id": "6a8c1e0c34bd8f0e30aa48b8",
+        "name": "Harrison Vance",
+        "nickname": "Harrison",
+        "email": "harrison.vance@operator.com",
+        "phone": "+12125550001",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Operator",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": null,
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "targetedChauffeurs": [
+        "6a8c1e0c34bd8f0e30aa48c7"
+      ],
+      "createdAt": "2026-08-24T10:33:50.021Z",
+      "updatedAt": "2026-08-24T10:33:50.042Z",
+      "__v": 0,
+      "applicant": {
+        "driver": {
+          "_id": "6a8c1e0c34bd8f0e30aa48c7",
+          "name": "Lucas Bennett",
+          "nickname": "Lucas",
+          "email": "lucas.bennett@chauffeur.com",
+          "phone": "+12125550002",
+          "company": "Gotham Black Car Service",
+          "companyRole": "Chauffeur",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "selectedVehicle": "6a8c1e0c34bd8f0e30aa48d8",
+          "averageRating": 4.9,
+          "totalReviews": 12
+        },
+        "vehicleId": "6a8c1e0c34bd8f0e30aa48d8",
+        "appliedAt": "2026-08-24T10:33:50.042Z"
+      },
+      "companyName": "Gotham Black Car Service"
+    },
+    {
+      "_id": "6a8c1e0e34bd8f0e30aa4937",
+      "jobType": "ONE WAY",
+      "pickup": "The Mark Hotel, 25 E 77th St, New York",
+      "dropoff": "JFK Airport, Terminal 8",
+      "flightNumber": "AA 1234",
+      "asap": false,
+      "date": "2026-12-05T00:00:00.000Z",
+      "time": "15:00",
+      "vehicleType": "SUV",
+      "paymentAmount": 220,
+      "paymentType": "CREDIT CARD ON FILE",
+      "instruction": "VIP Passenger. Please provide bottled water and assist with luggage.",
+      "serviceArea": "New York Metro",
+      "dispatchType": "ALL CHAUFFEURS",
+      "isPersonalNote": false,
+      "passengerName": "Jonathan Davies",
+      "passengerPhone": "+12125559876",
+      "status": "ASSIGNED",
+      "rideStatus": "PENDING",
+      "createdBy": {
+        "_id": "6a8c1e0c34bd8f0e30aa48b8",
+        "name": "Harrison Vance",
+        "nickname": "Harrison",
+        "email": "harrison.vance@operator.com",
+        "phone": "+12125550001",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Operator",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": null,
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "targetedChauffeurs": [],
+      "createdAt": "2026-08-24T10:33:50.071Z",
+      "updatedAt": "2026-08-24T10:33:50.145Z",
+      "__v": 0,
+      "assignedTo": {
+        "_id": "6a8c1e0c34bd8f0e30aa48c7",
+        "name": "Lucas Bennett",
+        "nickname": "Lucas",
+        "email": "lucas.bennett@chauffeur.com",
+        "phone": "+12125550002",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Chauffeur",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": "6a8c1e0c34bd8f0e30aa48d8",
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "companyName": "Gotham Black Car Service"
+    }
+  ]
+}
+
+
+5:24:39 PM | E2E Test Suite: Job Application, Acceptance & Rejection Lifecycle > 2. Job Applicant Approval Flow (PATCH /api/v1/jobs/:id/approve-applicant) > 2.2 Post-Approval Driver Confirmation: Approved chauffeur sees the assigned ride in Upcoming Rides (GET /api/v1/jobs/my-rides?type=upcoming) | stdout
+
+📝 USER STORY:
+As an Assigned Chauffeur
+I want to view all my upcoming booked and applied rides
+So that I can track scheduled pickups and initiate navigation
+
+📖 BDD SCENARIO: Stage 2.2 — My Upcoming Rides Driver Synchronization
+Feature: Driver Rides — Upcoming Rides Feed
+
+Given a job where Chauffeur Alpha was approved and assigned
+When Chauffeur Alpha sends GET /api/v1/jobs/my-rides?type=upcoming
+Then I receive HTTP 200 OK
+And the returned rides list contains the newly assigned job with status: ASSIGNED
+
+5:24:39 PM | E2E Test Suite: Job Application, Acceptance & Rejection Lifecycle > 2. Job Applicant Approval Flow (PATCH /api/v1/jobs/:id/approve-applicant) > 2.2 Post-Approval Driver Confirmation: Approved chauffeur sees the assigned ride in Upcoming Rides (GET /api/v1/jobs/my-rides?type=upcoming) | stdout
+
+
+ GET   /api/v1/jobs/my-rides?type=upcoming [MYRIDES-2.2-DRIVER-UPCOMING-RIDES-FEED] - Chauffeur Alpha retrieves upcoming assigned and applied rides
+        ↳ /api/v1/jobs/my-rides?type=upcoming?type=upcoming
+ REQUEST 
+{
+  "params": {},
+  "query": {
+    "type": "upcoming"
+  },
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "My rides retrieved successfully",
+  "cursor": {
+    "nextCursor": null,
+    "hasMore": false,
+    "limit": 10
+  },
+  "data": [
+    {
+      "_id": "6a8c29f7cd58a0c40a07cb48",
+      "jobType": "ONE WAY",
+      "pickup": "The Mark Hotel, 25 E 77th St, New York",
+      "dropoff": "JFK Airport, Terminal 8",
+      "flightNumber": "AA 1234",
+      "asap": false,
+      "date": "2026-11-03T00:00:00.000Z",
+      "time": "10:00",
+      "vehicleType": "SUV",
+      "paymentAmount": 220,
+      "paymentType": "CREDIT CARD ON FILE",
+      "instruction": "VIP Passenger. Please provide bottled water and assist with luggage.",
+      "serviceArea": "New York Metro",
+      "dispatchType": "ALL CHAUFFEURS",
+      "isPersonalNote": false,
+      "passengerName": "Jonathan Davies",
+      "passengerPhone": "+12125559876",
+      "status": "PENDING",
+      "rideStatus": null,
+      "createdBy": {
+        "_id": "6a8c29f5cd58a0c40a07cafc",
+        "name": "Harrison Vance",
+        "nickname": "Harrison",
+        "email": "harrison.vance@operator.com",
+        "phone": "+12125550001",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Operator",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": null,
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "targetedChauffeurs": [],
+      "createdAt": "2026-08-24T11:24:39.131Z",
+      "updatedAt": "2026-08-24T11:24:39.158Z",
+      "__v": 0,
+      "applicant": {
+        "driver": {
+          "_id": "6a8c29f5cd58a0c40a07cb19",
+          "name": "Lucas Bennett",
+          "nickname": "Lucas",
+          "email": "lucas.bennett@chauffeur.com",
+          "phone": "+12125550002",
+          "company": "Gotham Black Car Service",
+          "companyRole": "Chauffeur",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "selectedVehicle": "6a8c29f6cd58a0c40a07cb1c",
+          "averageRating": 4.9,
+          "totalReviews": 12
+        },
+        "vehicleId": "6a8c29f6cd58a0c40a07cb1c",
+        "appliedAt": "2026-08-24T11:24:39.157Z"
+      },
+      "companyName": "Gotham Black Car Service"
+    },
+    {
+      "_id": "6a8c29f7cd58a0c40a07cb68",
+      "jobType": "ONE WAY",
+      "pickup": "The Mark Hotel, 25 E 77th St, New York",
+      "dropoff": "JFK Airport, Terminal 8",
+      "flightNumber": "AA 1234",
+      "asap": false,
+      "date": "2026-11-04T00:00:00.000Z",
+      "time": "10:00",
+      "vehicleType": "SUV",
+      "paymentAmount": 220,
+      "paymentType": "CREDIT CARD ON FILE",
+      "instruction": "VIP Passenger. Please provide bottled water and assist with luggage.",
+      "serviceArea": "New York Metro",
+      "dispatchType": "TARGETED CHAUFFEURS",
+      "isPersonalNote": false,
+      "passengerName": "Jonathan Davies",
+      "passengerPhone": "+12125559876",
+      "status": "PENDING",
+      "rideStatus": null,
+      "createdBy": {
+        "_id": "6a8c29f5cd58a0c40a07cafc",
+        "name": "Harrison Vance",
+        "nickname": "Harrison",
+        "email": "harrison.vance@operator.com",
+        "phone": "+12125550001",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Operator",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": null,
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "targetedChauffeurs": [
+        "6a8c29f5cd58a0c40a07cb19"
+      ],
+      "createdAt": "2026-08-24T11:24:39.245Z",
+      "updatedAt": "2026-08-24T11:24:39.271Z",
+      "__v": 0,
+      "applicant": {
+        "driver": {
+          "_id": "6a8c29f5cd58a0c40a07cb19",
+          "name": "Lucas Bennett",
+          "nickname": "Lucas",
+          "email": "lucas.bennett@chauffeur.com",
+          "phone": "+12125550002",
+          "company": "Gotham Black Car Service",
+          "companyRole": "Chauffeur",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "selectedVehicle": "6a8c29f6cd58a0c40a07cb1c",
+          "averageRating": 4.9,
+          "totalReviews": 12
+        },
+        "vehicleId": "6a8c29f6cd58a0c40a07cb1c",
+        "appliedAt": "2026-08-24T11:24:39.271Z"
+      },
+      "companyName": "Gotham Black Car Service"
+    },
+    {
+      "_id": "6a8c29f7cd58a0c40a07cb7b",
+      "jobType": "ONE WAY",
+      "pickup": "The Mark Hotel, 25 E 77th St, New York",
+      "dropoff": "JFK Airport, Terminal 8",
+      "flightNumber": "AA 1234",
+      "asap": false,
+      "date": "2026-12-05T00:00:00.000Z",
+      "time": "15:00",
+      "vehicleType": "SUV",
+      "paymentAmount": 220,
+      "paymentType": "CREDIT CARD ON FILE",
+      "instruction": "VIP Passenger. Please provide bottled water and assist with luggage.",
+      "serviceArea": "New York Metro",
+      "dispatchType": "ALL CHAUFFEURS",
+      "isPersonalNote": false,
+      "passengerName": "Jonathan Davies",
+      "passengerPhone": "+12125559876",
+      "status": "ASSIGNED",
+      "rideStatus": "PENDING",
+      "createdBy": {
+        "_id": "6a8c29f5cd58a0c40a07cafc",
+        "name": "Harrison Vance",
+        "nickname": "Harrison",
+        "email": "harrison.vance@operator.com",
+        "phone": "+12125550001",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Operator",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": null,
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "targetedChauffeurs": [],
+      "createdAt": "2026-08-24T11:24:39.298Z",
+      "updatedAt": "2026-08-24T11:24:39.369Z",
+      "__v": 0,
+      "assignedTo": {
+        "_id": "6a8c29f5cd58a0c40a07cb19",
+        "name": "Lucas Bennett",
+        "nickname": "Lucas",
+        "email": "lucas.bennett@chauffeur.com",
+        "phone": "+12125550002",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Chauffeur",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": "6a8c29f6cd58a0c40a07cb1c",
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "companyName": "Gotham Black Car Service"
+    }
+  ]
+}
+
+
+5:24:39 PM | E2E Test Suite: Job Application, Acceptance & Rejection Lifecycle > 2. Job Applicant Approval Flow (PATCH /api/v1/jobs/:id/approve-applicant) > 2.3 Driver retrieves past completed rides in Past Rides feed (GET /api/v1/jobs/my-rides?type=past) | stdout
+
+📝 USER STORY:
+As a Chauffeur
+I want to view my past completed rides history
+So that I can verify my completed trips and ride earnings
+
+📖 BDD SCENARIO: Stage 2.3 — My Past Rides Driver Feed
+Feature: Driver Rides — Past Completed Rides
+
+Given a job previously completed by Chauffeur Alpha (status: COMPLETED)
+When Chauffeur Alpha sends GET /api/v1/jobs/my-rides?type=past
+Then I receive HTTP 200 OK
+And the completed ride appears in the past rides list with status: COMPLETED
+And it does NOT appear in upcoming rides
+
+5:24:39 PM | E2E Test Suite: Job Application, Acceptance & Rejection Lifecycle > 2. Job Applicant Approval Flow (PATCH /api/v1/jobs/:id/approve-applicant) > 2.3 Driver retrieves past completed rides in Past Rides feed (GET /api/v1/jobs/my-rides?type=past) | stdout
+
+
+ GET   /api/v1/jobs/my-rides?type=past [MYRIDES-2.3-DRIVER-PAST-RIDES-FEED] - Chauffeur Alpha retrieves past completed rides
+        ↳ /api/v1/jobs/my-rides?type=past?type=past
+ REQUEST 
+{
+  "params": {},
+  "query": {
+    "type": "past"
+  },
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "My rides retrieved successfully",
+  "cursor": {
+    "nextCursor": null,
+    "hasMore": false,
+    "limit": 10
+  },
+  "data": [
+    {
+      "_id": "6a8c29f7cd58a0c40a07cba8",
+      "jobType": "ONE WAY",
+      "pickup": "The Mark Hotel, 25 E 77th St, New York",
+      "dropoff": "JFK Airport, Terminal 8",
+      "flightNumber": "AA 1234",
+      "asap": false,
+      "date": "2026-10-15T00:00:00.000Z",
+      "time": "09:00",
+      "vehicleType": "SUV",
+      "paymentAmount": 220,
+      "paymentType": "CREDIT CARD ON FILE",
+      "instruction": "VIP Passenger. Please provide bottled water and assist with luggage.",
+      "serviceArea": "New York Metro",
+      "dispatchType": "ALL CHAUFFEURS",
+      "isPersonalNote": false,
+      "passengerName": "Jonathan Davies",
+      "passengerPhone": "+12125559876",
+      "status": "COMPLETED",
+      "rideStatus": null,
+      "createdBy": {
+        "_id": "6a8c29f5cd58a0c40a07cafc",
+        "name": "Harrison Vance",
+        "nickname": "Harrison",
+        "email": "harrison.vance@operator.com",
+        "phone": "+12125550001",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Operator",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": null,
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "assignedTo": {
+        "_id": "6a8c29f5cd58a0c40a07cb19",
+        "name": "Lucas Bennett",
+        "nickname": "Lucas",
+        "email": "lucas.bennett@chauffeur.com",
+        "phone": "+12125550002",
+        "company": "Gotham Black Car Service",
+        "companyRole": "Chauffeur",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "selectedVehicle": "6a8c29f6cd58a0c40a07cb1c",
+        "averageRating": 4.9,
+        "totalReviews": 12
+      },
+      "targetedChauffeurs": [],
+      "createdAt": "2026-08-24T11:24:39.423Z",
+      "updatedAt": "2026-08-24T11:24:39.423Z",
+      "__v": 0,
+      "companyName": "Gotham Black Car Service"
+    }
+  ]
+}

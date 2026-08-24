@@ -319,7 +319,10 @@ class _MyJobsViewState extends State<MyJobsView> {
         },
         onActionButtonPressed: () {
           if (upperStatus == 'ASSIGNED' || upperStatus == 'IN PROGRESS') {
-            Get.to(() => const MyJobProgressDetailsView());
+            Get.toNamed(
+              Routes.myJobProgressDetailsView,
+              arguments: job,
+            );
           }
         },
         onReviewPressed: () {
