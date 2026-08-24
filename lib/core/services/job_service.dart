@@ -82,4 +82,20 @@ class JobService extends GetxService {
       rethrow;
     }
   }
+
+  Future<Response> approveApplicant({required String jobId}) async {
+    try {
+      return await _jobRepo.approveApplicant(jobId: jobId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> rejectApplicant({required String jobId}) async {
+    try {
+      return await _jobRepo.rejectApplicant(jobId: jobId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

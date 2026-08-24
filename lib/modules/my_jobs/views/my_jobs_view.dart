@@ -273,6 +273,9 @@ class _MyJobsViewState extends State<MyJobsView> {
     final double? driverRating =
         job.assignedTo?.averageRating ?? job.applicant?.driver?.averageRating;
 
+    final bool hasApplicant = (job.applicant != null && job.applicant?.driver != null) ||
+        ((job.applicantCount ?? 0) > 0);
+
     Get.bottomSheet(
       MyJobDetailSheet(
         title: "Created Job Details",
@@ -291,16 +294,15 @@ class _MyJobsViewState extends State<MyJobsView> {
         specialInstructions: job.instruction,
         status: status,
         isReviewedByCreator: job.isReviewedByCreator ?? false,
-        onAcceptPressed: (job.id != null)
+        hasApplicant: hasApplicant,
+        onAcceptPressed: (hasApplicant && job.id != null)
             ? () {
                 controller.approveApplicant(jobId: job.id!);
-                Get.back();
               }
             : null,
-        onRejectPressed: (job.id != null)
+        onRejectPressed: (hasApplicant && job.id != null)
             ? () {
                 controller.rejectApplicant(jobId: job.id!);
-                Get.back();
               }
             : null,
         onChatPressed: () {

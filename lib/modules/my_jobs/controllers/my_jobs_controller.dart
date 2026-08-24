@@ -217,17 +217,18 @@ class BookingController extends GetxController {
         await fetchJobs(isRefresh: true);
 
         Helpers.showCustomSnackBar(
-          'Job rejected successfully.',
+          response.data?['message'] ?? 'Applicant rejected successfully.',
           isError: false,
         );
       } else {
         final message = response.data is Map
-            ? (response.data['message'] ?? 'Failed to reject job.')
-            : 'Failed to reject job.';
+            ? (response.data['message'] ?? 'Failed to reject applicant.')
+            : 'Failed to reject applicant.';
         Helpers.showCustomSnackBar(message, isError: true);
       }
     } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Failed to reject job.';
+      final message =
+          e.response?.data['message'] ?? 'Failed to reject applicant.';
       Helpers.showCustomSnackBar(message, isError: true);
     } catch (e) {
       debugPrint("Error rejecting job: $e");
@@ -248,13 +249,14 @@ class BookingController extends GetxController {
         await fetchJobs(isRefresh: true);
 
         Helpers.showCustomSnackBar(
-          'Job approved successfully.',
+          response.data?['message'] ??
+              'Applicant approved and job assigned successfully.',
           isError: false,
         );
       } else {
         final message = response.data is Map
-            ? (response.data['message'] ?? 'Failed to approve job.')
-            : 'Failed to approve job.';
+            ? (response.data['message'] ?? 'Failed to approve applicant.')
+            : 'Failed to approve applicant.';
         Helpers.showCustomSnackBar(message, isError: true);
       }
     } on DioException catch (e) {

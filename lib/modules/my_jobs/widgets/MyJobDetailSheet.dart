@@ -26,6 +26,7 @@ class MyJobDetailSheet extends StatelessWidget {
   final String? specialInstructions;
   final String status;
   final bool isReviewedByCreator;
+  final bool hasApplicant;
   final String? actionButtonText;
   final VoidCallback? onActionButtonPressed;
   final VoidCallback? onAcceptPressed;
@@ -55,6 +56,7 @@ class MyJobDetailSheet extends StatelessWidget {
     this.specialInstructions,
     required this.status,
     this.isReviewedByCreator = false,
+    this.hasApplicant = false,
     this.actionButtonText,
     this.onActionButtonPressed,
     this.onAcceptPressed,
@@ -373,7 +375,8 @@ class MyJobDetailSheet extends StatelessWidget {
                           ),
                         ],
                       ),
-                      if (onChatPressed != null) ...[
+                      if (onChatPressed != null &&
+                          (currentStatus != 'PENDING' || hasApplicant)) ...[
                         InkWell(
                           onTap: () {
                             Get.back();
@@ -507,49 +510,80 @@ class MyJobDetailSheet extends StatelessWidget {
               ),
             ),
 
-            // Section 4: Action Buttons (Accept/Reject for PENDING, Ride Progress for ASSIGNED, Review for COMPLETED)
+            // Section 4: Action Buttons (Accept/Reject for PENDING with Applicant, Ride Progress for ASSIGNED, Review for COMPLETED)
             if (status == 'PENDING') ...[
-              SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomButton(
-                      text: "Decline",
-                      backgroundColor: Colors.transparent,
-                      textColor: Colors.redAccent,
-                      borderColor: Colors.redAccent,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold,
-                      onPressed: () {
-                        Get.back();
-                        onRejectPressed?.call();
-                      },
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    flex: 2,
-                    child: CustomButton(
-                      text: "Accept",
-                      // backgroundColor: const Color(0xFFD08700),
-                      // textColor: Colors.black,
-                      // fontSize: 13.sp,
-                      // fontWeight: FontWeight.bold,
-                      icon: Icon(
-                        Icons.check_circle_outline,
-                        size: 18.sp,
-                        color: Colors.black,
+              if (hasApplicant && onAcceptPressed != null) ...[
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    if (onRejectPressed != null) ...[
+                      Expanded(
+                        child: CustomButton(
+                          text: "Decline",
+                          backgroundColor: Colors.transparent,
+                          textColor: Colors.redAccent,
+                          borderColor: Colors.redAccent,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          onPressed: () {
+                            Get.back();
+                            onRejectPressed?.call();
+                          },
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                        ),
                       ),
-                      onPressed: () {
-                        Get.back();
-                        onAcceptPressed?.call();
-                      },
-                      // padding: EdgeInsets.symmetric(vertical: 14.h),
+                      SizedBox(width: 12.w),
+                    ],
+                    Expanded(
+                      flex: 2,
+                      child: CustomButton(
+                        text: "Accept",
+                        icon: Icon(
+                          Icons.check_circle_outline,
+                          size: 18.sp,
+                          color: Colors.black,
+                        ),
+                        onPressed: () {
+                          Get.back();
+                          onAcceptPressed?.call();
+                        },
+                      ),
                     ),
+                  ],
+                ),
+              ] else ...[
+                SizedBox(height: 16.h),
+                Container(
+                  width: double.infinity,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF141416),
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: const Color(0xFF24242A)),
                   ),
-                ],
-              ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.hourglass_empty_rounded,
+                        color: const Color(0xFFFEDB9B),
+                        size: 18.sp,
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Text(
+                          "Awaiting Chauffeur Application — You will be able to review and approve drivers once they apply.",
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF94A3B8),
+                            fontSize: 12.sp,
+                            height: 1.35,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ] else if (status == 'ASSIGNED') ...[
               SizedBox(height: 20.h),
               CustomButton(
