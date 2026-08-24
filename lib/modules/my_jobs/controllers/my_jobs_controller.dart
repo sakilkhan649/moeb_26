@@ -125,7 +125,7 @@ class BookingController extends GetxController {
         isLoadMore.value = true;
       }
 
-      final response = await _jobService.getAllJobOffers(page: page);
+      final response = await _jobService.getAllJobOffers();
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null && response.data['data'] != null) {
           final jobResponse = JobResponse.fromJson(response.data);

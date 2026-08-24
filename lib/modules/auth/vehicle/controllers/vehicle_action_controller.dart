@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/data/models/user_profile_model.dart';
 import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
 import 'package:moeb_26/core/services/user_profile_service.dart';
 import 'package:moeb_26/core/widgets/ImagePreviewPopup.dart';
@@ -250,36 +250,49 @@ class VehicleActionController extends GetxController {
     return name;
   }
 
+  String _formatDateToIso(String dateStr) {
+    final trimmed = dateStr.trim();
+    if (trimmed.isEmpty) return trimmed;
+    try {
+      final parsed = DateTime.parse(trimmed);
+      return parsed.toUtc().toIso8601String();
+    } catch (_) {
+      return trimmed;
+    }
+  }
+
   Future<void> submitVehicle() async {
     isLoading.value = true;
     try {
       final profileCtrl = Get.find<ProfileController>();
       final formData = dio.FormData();
 
-      // Based on Postman screenshot: vehicles is a JSON string of an array
-      Map<String, dynamic> vehicleData = {
-        "carType": selectedVehicleType.value,
-        "make": makeController.text,
-        "model": modelController.text,
-        "year": int.tryParse(yearController.text) ?? 2024,
-        "colorInside": colorInsideController.text,
-        "colorOutside": colorOutsideController.text,
-        "licensePlate": licensePlateController.text,
-        "vehicleRegistrationExpiryDate":
-            vehicleRegistrationExpireController.text,
-        "commercialInsuranceExpiryDate":
-            commercialInsuranceExpireController.text,
-      };
+      final make = makeController.text.trim();
+      final model = modelController.text.trim();
+      final makeAndModel = model.isNotEmpty ? "$make $model" : make;
+      final rawPlate = licensePlateController.text.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
 
-      if (isEditMode.value) {
-        // If editing, we include the id so the backend knows which one to replace
-        vehicleData["id"] = editVehicleId;
+      formData.fields.addAll([
+        MapEntry("type", selectedVehicleType.value),
+        MapEntry("makeAndModel", makeAndModel),
+        MapEntry("colorInside", colorInsideController.text.trim()),
+        MapEntry("colorOutside", colorOutsideController.text.trim()),
+        MapEntry("year", (int.tryParse(yearController.text.trim()) ?? 2024).toString()),
+        MapEntry("licensePlate", licensePlateController.text.trim()),
+        MapEntry("licensePlateRaw", rawPlate.isNotEmpty ? rawPlate : licensePlateController.text.trim()),
+      ]);
+
+      final regExpiry = _formatDateToIso(vehicleRegistrationExpireController.text);
+      if (regExpiry.isNotEmpty) {
+        formData.fields.add(MapEntry("vehicleRegistrationExpiryDate", regExpiry));
       }
 
-      // Send as a list of one item as per screenshot
-      formData.fields.add(MapEntry("vehicles", jsonEncode([vehicleData])));
+      final insExpiry = _formatDateToIso(commercialInsuranceExpireController.text);
+      if (insExpiry.isNotEmpty) {
+        formData.fields.add(MapEntry("commercialInsuranceExpiryDate", insExpiry));
+      }
 
-      // Files - matching Postman exactly
+      // Files
       if (vehicleRegistrationFile.value != null) {
         formData.files.add(
           MapEntry(
@@ -325,19 +338,40 @@ class VehicleActionController extends GetxController {
         );
       }
 
-      var response = await _profileService.patchProfile(formData);
+      final dio.Response response;
+      if (isEditMode.value && editVehicleId != null && editVehicleId!.isNotEmpty) {
+        response = await _profileService.updateVehicle(editVehicleId!, formData);
+      } else {
+        response = await _profileService.addVehicle(formData);
+      }
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.back(); // Navigate back first
+        final data = response.data?['data'];
+        if (data != null && data is Map<String, dynamic>) {
+          final vehicle = Vehicle.fromJson(data);
+          if (isEditMode.value) {
+            final index = profileCtrl.vehiclesList.indexWhere((v) => v.id == vehicle.id);
+            if (index != -1) {
+              profileCtrl.vehiclesList[index] = vehicle;
+            } else {
+              profileCtrl.vehiclesList.add(vehicle);
+            }
+          } else {
+            profileCtrl.vehiclesList.add(vehicle);
+          }
+        }
+
+        Get.back(); // Navigate back
         Helpers.showCustomSnackBar(
-          isEditMode.value
-              ? "Vehicle updated successfully"
-              : "Vehicle added successfully",
+          response.data?['message'] ??
+              (isEditMode.value
+                  ? "Vehicle updated successfully"
+                  : "Vehicle added successfully"),
           isError: false,
         );
-        profileCtrl.fetchUserProfile();
       } else {
         Helpers.showCustomSnackBar(
-          response.data['message'] ?? "Failed to save vehicle",
+          response.data?['message'] ?? "Failed to save vehicle",
           isError: true,
         );
       }

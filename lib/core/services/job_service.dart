@@ -59,9 +59,9 @@ class JobService extends GetxService {
     }
   }
 
-  Future<Response> getAllJobOffers({int page = 1, int limit = 10}) async {
+  Future<Response> getAllJobOffers() async {
     try {
-      return await _jobRepo.getAllJobOffers(page: page, limit: limit);
+      return await _jobRepo.getAllJobOffers();
     } catch (e) {
       rethrow;
     }

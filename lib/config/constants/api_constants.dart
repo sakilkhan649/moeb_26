@@ -70,8 +70,8 @@ class ApiConstants {
   static const String communityRoom = '/community-chats/room';
   static const String communityMessages = '/community-chats/messages';
 
-  // Driver Endpoints
-  static const String deleteVehicle = '/user/vehicles/{{vehicleId}}';
+  // Driver & Vehicle Endpoints
+  static const String deleteVehicle = '/vehicles/{{vehicleId}}';
   static const String deleteAccount = '/user/delete-account';
 
   // Expense Endpoints

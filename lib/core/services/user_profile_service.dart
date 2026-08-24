@@ -26,6 +26,18 @@ class UserProfileService {
     return userProfileRepo.getLegalBySlug(slug);
   }
 
+  Future<Response> getVehicles() {
+    return userProfileRepo.getVehicles();
+  }
+
+  Future<Response> addVehicle(dynamic body) {
+    return userProfileRepo.addVehicle(body);
+  }
+
+  Future<Response> updateVehicle(String vehicleId, dynamic body) {
+    return userProfileRepo.updateVehicle(vehicleId, body);
+  }
+
   Future<Response> deleteVehicle(String vehicleId) {
     return userProfileRepo.deleteVehicle(vehicleId);
   }

@@ -16,7 +16,13 @@ class ExpenseController extends GetxController {
 
   var expenses = <ExpenseModel>[].obs;
   var isLoading = false.obs;
+  var isLoadingMore = false.obs;
   var totalAmount = 0.0.obs;
+
+  // Cursor Pagination state
+  var nextCursor = RxnString();
+  var hasMore = false.obs;
+  final ScrollController scrollController = ScrollController();
 
   // Input fields controllers
   final amountController = TextEditingController();
@@ -59,7 +65,18 @@ class ExpenseController extends GetxController {
   void onInit() {
     super.onInit();
     _expenseService = Get.find<ExpenseService>();
+    scrollController.addListener(_onScroll);
     fetchExpenses();
+  }
+
+  void _onScroll() {
+    if (scrollController.hasClients &&
+        scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200) {
+      if (hasMore.value && !isLoadingMore.value && !isLoading.value) {
+        loadMoreExpenses();
+      }
+    }
   }
 
   /// Calculates start and end dates based on selected filterPeriod & filterDate
@@ -75,10 +92,15 @@ class ExpenseController extends GetxController {
     }
   }
 
-  /// Fetch expenses from backend API using date range filter
-  Future<void> fetchExpenses() async {
+  /// Fetch expenses from backend API using date range filter & cursor pagination
+  Future<void> fetchExpenses({bool isRefresh = false}) async {
     try {
-      isLoading.value = true;
+      if (!isRefresh) {
+        isLoading.value = true;
+      }
+      nextCursor.value = null;
+      hasMore.value = false;
+
       final range = _getDateRange();
       final response = await _expenseService.fetchExpenses(
         startDate: range.start,
@@ -87,7 +109,16 @@ class ExpenseController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final List<dynamic> dataList = response.data['data'] is List ? response.data['data'] : [];
+        final cursorData = response.data['cursor'];
+        if (cursorData is Map) {
+          nextCursor.value = cursorData['nextCursor']?.toString();
+          hasMore.value = cursorData['hasMore'] == true;
+        } else {
+          hasMore.value = false;
+        }
+
+        final List<dynamic> dataList =
+            response.data['data'] is List ? response.data['data'] : [];
         final loadedExpenses = dataList
             .map((item) => ExpenseModel.fromJson(item as Map<String, dynamic>))
             .toList();
@@ -98,6 +129,44 @@ class ExpenseController extends GetxController {
       Helpers.debug('Error fetching expenses: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Load more expenses when scrolling down
+  Future<void> loadMoreExpenses() async {
+    if (isLoadingMore.value || !hasMore.value || nextCursor.value == null) {
+      return;
+    }
+    try {
+      isLoadingMore.value = true;
+      final range = _getDateRange();
+      final response = await _expenseService.fetchExpenses(
+        startDate: range.start,
+        endDate: range.end,
+        cursor: nextCursor.value,
+        limit: 1000,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final cursorData = response.data['cursor'];
+        if (cursorData is Map) {
+          nextCursor.value = cursorData['nextCursor']?.toString();
+          hasMore.value = cursorData['hasMore'] == true;
+        } else {
+          hasMore.value = false;
+        }
+
+        final List<dynamic> dataList =
+            response.data['data'] is List ? response.data['data'] : [];
+        final moreExpenses = dataList
+            .map((item) => ExpenseModel.fromJson(item as Map<String, dynamic>))
+            .toList();
+        expenses.addAll(moreExpenses);
+      }
+    } catch (e) {
+      Helpers.debug('Error loading more expenses: $e');
+    } finally {
+      isLoadingMore.value = false;
     }
   }
 
@@ -540,6 +609,7 @@ class ExpenseController extends GetxController {
 
   @override
   void onClose() {
+    scrollController.dispose();
     amountController.dispose();
     descriptionController.dispose();
     super.onClose();

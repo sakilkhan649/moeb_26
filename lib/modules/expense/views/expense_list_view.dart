@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -261,20 +260,46 @@ class ExpenseListView extends GetView<ExpenseController> {
                       ),
                     );
                   }
-                  return ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    itemCount: groupedExpenses.keys.length,
-                    itemBuilder: (context, index) {
-                      final category = groupedExpenses.keys.elementAt(index);
-                      final items = groupedExpenses[category]!;
-                      return _buildCategoryExpansionTile(
-                        context,
-                        category,
-                        items,
-                        borderColor,
-                        accentColor,
-                      );
-                    },
+                  return RefreshIndicator(
+                    color: AppColors.primaryColor,
+                    backgroundColor: const Color(0xFF1E1E1E),
+                    onRefresh: () => controller.fetchExpenses(isRefresh: true),
+                    child: ListView.builder(
+                      controller: controller.scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics(),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      itemCount: groupedExpenses.keys.length +
+                          (controller.isLoadingMore.value ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == groupedExpenses.keys.length) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.h),
+                            child: const Center(
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
+                        final category = groupedExpenses.keys.elementAt(index);
+                        final items = groupedExpenses[category]!;
+                        return _buildCategoryExpansionTile(
+                          context,
+                          category,
+                          items,
+                          borderColor,
+                          accentColor,
+                        );
+                      },
+                    ),
                   );
                 }),
               ),
@@ -742,9 +767,9 @@ class ExpenseListView extends GetView<ExpenseController> {
                       ),
                     ],
                   ),
-                );
-              }).toList(),
-            ],
+                  );
+                }),
+              ],
           ),
         ),
       ),

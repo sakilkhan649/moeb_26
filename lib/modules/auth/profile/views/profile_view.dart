@@ -319,13 +319,7 @@ class ProfileView extends StatelessWidget {
                           title: "My Vehicles",
                           subtitle: "Manage and select active vehicles",
                           onTap: () {
-                            Get.toNamed(
-                              Routes.allVehicleView,
-                              arguments: {
-                                "vehicles":
-                                    controller.userProfile.value?.vehicles,
-                              },
-                            );
+                            Get.toNamed(Routes.allVehicleView);
                           },
                         ),
                         _buildTileDivider(),

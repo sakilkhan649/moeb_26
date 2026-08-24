@@ -154,7 +154,7 @@ class AddExpenseView extends StatelessWidget {
                           ),
                           const Icon(
                             Icons.keyboard_arrow_down_rounded,
-                            color: const Color(0xFFFFDCA1),
+                            color: Color(0xFFFFDCA1),
                             size: 22,
                           ),
                         ],

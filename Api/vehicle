@@ -1,0 +1,231 @@
+3:28:57 PM | E2E Test Suite: Vehicle Fleet Management & Lifecycle Operations > 1. Onboarding Vehicle Discovery & Detail Inspection (GET /api/v1/vehicles & /mine) > 1.1 Chauffeur Marcus retrieves initial fleet list created during mandatory onboarding (GET /api/v1/vehicles & /mine) | stdout
+
+📝 USER STORY:
+As an Authenticated Chauffeur
+I want to view my vehicle fleet list immediately after onboarding
+So that I can verify that my mandatory initial vehicle was registered successfully
+
+📖 BDD SCENARIO: Stage 1.1 — Onboarding Vehicle Fleet Discovery
+Feature: Vehicle Management — Initial Fleet Discovery
+
+Given Chauffeur Marcus registered his primary Sedan during onboarding
+When I send GET /api/v1/vehicles
+Then I receive HTTP 200 OK with 1 vehicle item
+And the vehicle make/model is Mercedes-Benz S-Class S580
+
+3:28:57 PM | E2E Test Suite: Vehicle Fleet Management & Lifecycle Operations > 1. Onboarding Vehicle Discovery & Detail Inspection (GET /api/v1/vehicles & /mine) > 1.1 Chauffeur Marcus retrieves initial fleet list created during mandatory onboarding (GET /api/v1/vehicles & /mine) | stdout
+
+
+ GET   /api/v1/vehicles [VEHICLE-1.1A-GET-ONBOARDING-VEHICLES] - Marcus retrieves initial onboarding fleet list (1 Sedan)
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Vehicles retrieved successfully",
+  "data": [
+    {
+      "_id": "6a8c0ed946d1eea66624ea5d",
+      "owner": "6a8c0ed946d1eea66624ea33",
+      "type": "Sedan",
+      "makeAndModel": "Mercedes-Benz S-Class S580",
+      "colorInside": "Jet Black Nappa Leather",
+      "colorOutside": "Obsidian Black Metallic",
+      "year": 2024,
+      "licensePlate": "NY-8821",
+      "licensePlateRaw": "NY8821",
+      "vehicleRegistration": {
+        "image": "https://example.com/vehicles/onboarding-sedan-reg.jpg",
+        "expiryDate": "2030-12-31T00:00:00.000Z",
+        "_id": "6a8c0ed946d1eea66624ea5e"
+      },
+      "commercialInsurance": {
+        "image": "https://example.com/vehicles/onboarding-sedan-ins.jpg",
+        "expiryDate": "2030-12-31T00:00:00.000Z",
+        "_id": "6a8c0ed946d1eea66624ea5f"
+      },
+      "photos": {
+        "frontView": "https://example.com/vehicles/onboarding-sedan-front.jpg",
+        "rearView": "https://example.com/vehicles/onboarding-sedan-rear.jpg",
+        "interiorView": "https://example.com/vehicles/onboarding-sedan-interior.jpg",
+        "_id": "6a8c0ed946d1eea66624ea60"
+      },
+      "status": "PENDING_REVIEW",
+      "rejectionReason": null,
+      "version": 1,
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "createdAt": "2026-08-24T09:28:57.716Z",
+      "updatedAt": "2026-08-24T09:28:57.716Z",
+      "__v": 0
+    }
+  ]
+}
+
+
+
+
+3:41:36 PM | E2E Test Suite: Vehicle Fleet Management & Lifecycle Operations > 3. Expanding Fleet — Adding Additional Vehicles (POST /api/v1/vehicles) > 3.1 Chauffeur Marcus registers an additional executive vehicle (Cadillac Escalade ESV SUV) | stdout
+
+📝 USER STORY:
+As an Active Chauffeur
+I want to add a second vehicle (SUV) to my fleet
+So that I can qualify for large-group and high-capacity luxury dispatches
+
+📖 BDD SCENARIO: Stage 3.1 — Add Secondary Vehicle to Fleet
+Feature: Vehicle Management — Multi-Vehicle Fleet Registration
+
+Given an authenticated Chauffeur Marcus Sterling with 1 existing Sedan
+When I send POST /api/v1/vehicles with Cadillac Escalade SUV specifications and documentation
+Then I receive HTTP 201 Created with message "Vehicle added successfully"
+And the vehicle is saved under Marcus's owner ID
+
+3:41:36 PM | E2E Test Suite: Vehicle Fleet Management & Lifecycle Operations > 3. Expanding Fleet — Adding Additional Vehicles (POST /api/v1/vehicles) > 3.1 Chauffeur Marcus registers an additional executive vehicle (Cadillac Escalade ESV SUV) | stdout
+
+
+ POST   /api/v1/vehicles [VEHICLE-3.1-ADD-SECONDARY-SUV] - Marcus adds Cadillac Escalade ESV SUV
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "type": "SUV",
+    "makeAndModel": "Cadillac Escalade ESV Sport Platinum",
+    "colorInside": "Jet Black Semi-Aniline Leather",
+    "colorOutside": "Black Raven",
+    "year": 2024,
+    "licensePlate": "NY-9944",
+    "licensePlateRaw": "NY9944",
+    "vehicleRegistrationImage": "https://example.com/vehicles/suv-reg.jpg",
+    "vehicleRegistrationExpiryDate": "2030-12-31T00:00:00.000Z",
+    "commercialInsuranceImage": "https://example.com/vehicles/suv-ins.jpg",
+    "commercialInsuranceExpiryDate": "2030-12-31T00:00:00.000Z",
+    "vehiclePhotoFront": "https://example.com/vehicles/suv-front.jpg",
+    "vehiclePhotoRear": "https://example.com/vehicles/suv-rear.jpg",
+    "vehiclePhotoInterior": "https://example.com/vehicles/suv-interior.jpg"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Vehicle added successfully",
+  "data": {
+    "owner": "6a8c11cf4cc80a6db586f170",
+    "type": "SUV",
+    "makeAndModel": "Cadillac Escalade ESV Sport Platinum",
+    "colorInside": "Jet Black Semi-Aniline Leather",
+    "colorOutside": "Black Raven",
+    "year": 2024,
+    "licensePlate": "NY-9944",
+    "licensePlateRaw": "NY9944",
+    "vehicleRegistration": {
+      "image": "https://example.com/vehicles/suv-reg.jpg",
+      "expiryDate": "2030-12-31T00:00:00.000Z",
+      "_id": "6a8c11d04cc80a6db586f1b0"
+    },
+    "commercialInsurance": {
+      "image": "https://example.com/vehicles/suv-ins.jpg",
+      "expiryDate": "2030-12-31T00:00:00.000Z",
+      "_id": "6a8c11d04cc80a6db586f1b1"
+    },
+    "photos": {
+      "frontView": "https://example.com/vehicles/suv-front.jpg",
+      "rearView": "https://example.com/vehicles/suv-rear.jpg",
+      "interiorView": "https://example.com/vehicles/suv-interior.jpg",
+      "_id": "6a8c11d04cc80a6db586f1b2"
+    },
+    "status": "PENDING_REVIEW",
+    "rejectionReason": null,
+    "version": 1,
+    "reviewedBy": null,
+    "reviewedAt": null,
+    "_id": "6a8c11d04cc80a6db586f1af",
+    "createdAt": "2026-08-24T09:41:36.016Z",
+    "updatedAt": "2026-08-24T09:41:36.016Z",
+    "__v": 0
+  }
+}
+
+
+
+PATCH   /api/v1/vehicles/:vehicleId [VEHICLE-2.1-UPDATE-SEDAN-SPECS] - Marcus updates Sedan interior leather color and renewed insurance date
+        ↳ /api/v1/vehicles/6a8c11cf4cc80a6db586f195
+ REQUEST 
+{
+  "params": {
+    "vehicleId": "6a8c11cf4cc80a6db586f195"
+  },
+  "query": {},
+  "body": {
+    "colorInside": "Exclusive Sienna Brown Custom Leather",
+    "commercialInsuranceExpiryDate": "2032-12-31T00:00:00.000Z"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Vehicle updated successfully",
+  "data": {
+    "_id": "6a8c11cf4cc80a6db586f195",
+    "owner": "6a8c11cf4cc80a6db586f170",
+    "type": "Sedan",
+    "makeAndModel": "Mercedes-Benz S-Class S580",
+    "colorInside": "Exclusive Sienna Brown Custom Leather",
+    "colorOutside": "Obsidian Black Metallic",
+    "year": 2024,
+    "licensePlate": "NY-8821",
+    "licensePlateRaw": "NY8821",
+    "vehicleRegistration": {
+      "image": "https://example.com/vehicles/onboarding-sedan-reg.jpg",
+      "expiryDate": "2030-12-31T00:00:00.000Z",
+      "_id": "6a8c11cf4cc80a6db586f196"
+    },
+    "commercialInsurance": {
+      "image": "https://example.com/vehicles/onboarding-sedan-ins.jpg",
+      "expiryDate": "2032-12-31T00:00:00.000Z",
+      "_id": "6a8c11cf4cc80a6db586f1a6"
+    },
+    "photos": {
+      "frontView": "https://example.com/vehicles/onboarding-sedan-front.jpg",
+      "rearView": "https://example.com/vehicles/onboarding-sedan-rear.jpg",
+      "interiorView": "https://example.com/vehicles/onboarding-sedan-interior.jpg",
+      "_id": "6a8c11cf4cc80a6db586f198"
+    },
+    "status": "PENDING_REVIEW",
+    "rejectionReason": null,
+    "version": 1,
+    "reviewedBy": null,
+    "reviewedAt": null,
+    "createdAt": "2026-08-24T09:41:35.867Z",
+    "updatedAt": "2026-08-24T09:41:35.979Z",
+    "__v": 0
+  }
+}
+
+
+
+
+DELETE   /api/v1/vehicles/:vehicleId [VEHICLE-5.3A-DELETE-FINAL-SEDAN] - Marcus deletes final Sedan; fleet becomes empty
+        ↳ /api/v1/vehicles/6a8c11cf4cc80a6db586f195
+ REQUEST 
+{
+  "params": {
+    "vehicleId": "6a8c11cf4cc80a6db586f195"
+  },
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Vehicle deleted successfully",
+  "data": {
+    "vehicleId": "6a8c11cf4cc80a6db586f195",
+    "selectedVehicle": null,
+    "remainingVehicles": 0
+  }
+}

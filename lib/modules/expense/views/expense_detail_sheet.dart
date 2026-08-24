@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:moeb_26/config/themes/app_theme.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense_model.dart';
 
@@ -18,7 +17,6 @@ class ExpenseDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     const cardColor = Color(0xFF1A1A1A);
     const borderColor = Color(0xFF1E1E1E);
-    const accentColor = AppColors.orange100;
     final dateLongStr = DateFormat('EEEE, dd MMMM yyyy').format(expense.date);
 
     return Container(

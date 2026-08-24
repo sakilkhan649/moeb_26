@@ -67,10 +67,9 @@ class JobRepo {
     );
   }
 
-  Future<Response> getAllJobOffers({int page = 1, int limit = 10}) async {
+  Future<Response> getAllJobOffers() async {
     return await apiClient.getData(
       ApiConstants.getAllJobOffers,
-      query: {'page': page, 'limit': limit},
     );
   }
 

@@ -34,6 +34,10 @@ class ProfileController extends GetxController {
   var isUpdating = false.obs;
   var userProfile = Rxn<UserProfileModel>();
 
+  // Vehicles Fleet List (GET /api/v1/vehicles)
+  var vehiclesList = <Vehicle>[].obs;
+  var isVehiclesLoading = false.obs;
+
   // Service Areas
   var serviceAreas = <String>[].obs;
   var isServiceAreasLoading = false.obs;
@@ -74,8 +78,59 @@ class ProfileController extends GetxController {
     cashAppController = TextEditingController(text: cashApp.value);
 
     fetchUserProfile();
+    fetchVehicles();
     fetchServiceAreas();
     fetchLegalPages();
+  }
+
+  /// Fetches vehicles list from GET /api/v1/vehicles
+  Future<void> fetchVehicles() async {
+    isVehiclesLoading.value = true;
+    try {
+      var response = await _profileService.getVehicles();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var rawData = response.data['data'];
+        if (rawData is List) {
+          vehiclesList.value =
+              rawData.map((e) => Vehicle.fromJson(e)).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching vehicles: $e");
+    } finally {
+      isVehiclesLoading.value = false;
+    }
+  }
+
+  /// Deletes a vehicle from DELETE /api/v1/vehicles/:vehicleId
+  Future<void> deleteVehicle(String vehicleId) async {
+    isUpdating.value = true;
+    try {
+      var response = await _profileService.deleteVehicle(vehicleId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        vehiclesList.removeWhere((v) => v.id == vehicleId);
+        Get.back(); // Close confirmation dialog
+        Helpers.showCustomSnackBar(
+          "Vehicle deleted successfully",
+          isError: false,
+        );
+      } else {
+        Get.back();
+        Helpers.showCustomSnackBar(
+          response.data?['message'] ?? "Failed to delete vehicle",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      Get.back();
+      debugPrint("Error deleting vehicle: $e");
+      Helpers.showCustomSnackBar(
+        "Failed to delete vehicle",
+        isError: true,
+      );
+    } finally {
+      isUpdating.value = false;
+    }
   }
 
   Future<void> fetchLegalPages() async {
@@ -232,31 +287,6 @@ class ProfileController extends GetxController {
         "Something went wrong while selecting vehicle",
         isError: true,
       );
-    } finally {
-      isUpdating.value = false;
-    }
-  }
-
-  Future<void> deleteVehicle(String vehicleId) async {
-    isUpdating.value = true;
-    try {
-      var response = await _profileService.deleteVehicle(vehicleId);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.back(); // Close dialog first
-        Helpers.showCustomSnackBar(
-          "Vehicle deleted successfully",
-          isError: false,
-        );
-        fetchUserProfile();
-      } else {
-        Helpers.showCustomSnackBar(
-          response.data['message'] ?? "Failed to delete vehicle",
-          isError: true,
-        );
-      }
-    } catch (e) {
-      debugPrint("Error deleting vehicle: $e");
-      Helpers.showDebugLog("Error deleting vehicle: $e");
     } finally {
       isUpdating.value = false;
     }
