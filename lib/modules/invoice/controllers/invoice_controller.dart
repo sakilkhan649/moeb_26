@@ -623,13 +623,6 @@ class InvoiceController extends GetxController {
   bool validateStep1() {
     bool isValid = true;
 
-    final invNumErr = Validators.required(
-      invoiceNumberController.text,
-      message: 'Invoice number is required',
-    );
-    invoiceNumberError.value = invNumErr ?? '';
-    if (invNumErr != null) isValid = false;
-
     final amountErr = Validators.amount(
       invoiceAmountController.text,
       message: 'Enter a valid amount (> 0)',

@@ -130,20 +130,6 @@ class CreateInvoiceView extends GetView<InvoiceController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Invoice Number
-        _buildFieldLabel('Invoice number*'),
-        _buildInputField(
-          controller: controller.invoiceNumberController,
-          hint: 'e.g. Invoice 001',
-          errorText: controller.invoiceNumberError.value,
-          suffixIcon: Icon(
-            Icons.notes,
-            color: const Color(0xFFD5C4AB),
-            size: 20.sp,
-          ),
-        ),
-        SizedBox(height: 20.h),
-
         // Invoice Amount
         _buildFieldLabel('Invoice amount*'),
         _buildInputField(
