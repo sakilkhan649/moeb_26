@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/data/models/ratings_feedback_model.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 import '../controllers/ratings_feedback_controller.dart';
 
 class RatingsFeedbackView extends StatelessWidget {
@@ -262,55 +263,82 @@ class RatingsFeedbackView extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Avatar
-              Container(
-                width: 38.r,
-                height: 38.r,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFF2E2E38), width: 1.0),
-                ),
-                child: ClipOval(
-                  child: item.reviewerImage.isNotEmpty &&
-                          item.reviewerImage.startsWith('http')
-                      ? Image.network(
-                          item.reviewerImage,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                              _buildAvatarFallback(item.reviewerName),
-                        )
-                      : _buildAvatarFallback(item.reviewerName),
-                ),
-              ),
-              SizedBox(width: 10.w),
-
-              // Reviewer Name & Date
+              // Clickable Reviewer Avatar & Name
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.reviewerName,
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => _openReviewerProfile(item),
+                  child: Row(
+                    children: [
+                      // Avatar
+                      Container(
+                        width: 38.r,
+                        height: 38.r,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color(0xFF2E2E38),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: ClipOval(
+                          child: item.reviewerImage.isNotEmpty &&
+                                  item.reviewerImage.startsWith('http')
+                              ? Image.network(
+                                  item.reviewerImage,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) =>
+                                      _buildAvatarFallback(item.reviewerName),
+                                )
+                              : _buildAvatarFallback(item.reviewerName),
+                        ),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (dateFormatted.isNotEmpty) ...[
-                      SizedBox(height: 2.h),
-                      Text(
-                        dateFormatted,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF8E8E93),
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w400,
+                      SizedBox(width: 10.w),
+
+                      // Reviewer Name & Date
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    item.reviewerName,
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: 4.w),
+                                Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: Colors.white38,
+                                  size: 11.sp,
+                                ),
+                              ],
+                            ),
+                            if (dateFormatted.isNotEmpty) ...[
+                              SizedBox(height: 2.h),
+                              Text(
+                                dateFormatted,
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFF8E8E93),
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                     ],
-                  ],
+                  ),
                 ),
               ),
 
@@ -360,6 +388,28 @@ class RatingsFeedbackView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _openReviewerProfile(Review item) {
+    if (item.reviewerId.isEmpty) return;
+
+    final PreferredDriversController preferredController;
+    if (Get.isRegistered<PreferredDriversController>()) {
+      preferredController = Get.find<PreferredDriversController>();
+    } else {
+      preferredController = Get.put(PreferredDriversController());
+    }
+
+    final placeholderChauffeur = FavoriteChauffeur(
+      id: item.reviewerId,
+      name: item.reviewerName,
+      imageUrl: item.reviewerImage,
+      rating: item.rating.toDouble(),
+      companyName: '',
+      ratingCount: '',
+      serviceArea: '',
+    );
+    preferredController.viewProfile(placeholderChauffeur);
   }
 
   Widget _buildAvatarFallback(String name) {
