@@ -213,6 +213,9 @@ class InvoiceHistoryView extends GetView<InvoiceController> {
       onTap: () {
         final trueIndex = controller.invoiceHistory.indexOf(record);
         if (trueIndex != -1) {
+          if (record.id != null && record.id!.isNotEmpty) {
+            controller.fetchInvoiceDetails(record.id!);
+          }
           Get.to(() => InvoiceDetailView(index: trueIndex));
         }
       },

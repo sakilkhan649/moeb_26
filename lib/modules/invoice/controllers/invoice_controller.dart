@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/data/models/invoice_model.dart';
 import 'package:moeb_26/data/repositories/invoice_repository.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_preview_view.dart';
+import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class InvoiceHistoryRecord {
@@ -154,15 +155,19 @@ class SavedClient {
       email: json['emailAddress'] as String? ?? json['email'] as String? ?? '',
       phone: json['phoneNumber'] as String? ?? json['phone'] as String? ?? '',
       streetAddress:
-          billing?['streetAddress'] as String? ??
           json['streetAddress'] as String? ??
+          billing?['streetAddress'] as String? ??
           '',
-      city: billing?['city'] as String? ?? json['city'] as String? ?? '',
-      state: billing?['state'] as String? ?? json['state'] as String? ?? '',
-      zip: billing?['zipCode'] as String? ?? json['zip'] as String? ?? '',
+      city: json['city'] as String? ?? billing?['city'] as String? ?? '',
+      state: json['state'] as String? ?? billing?['state'] as String? ?? '',
+      zip:
+          json['zipCode'] as String? ??
+          billing?['zipCode'] as String? ??
+          json['zip'] as String? ??
+          '',
       country:
-          billing?['country'] as String? ??
           json['country'] as String? ??
+          billing?['country'] as String? ??
           'United States',
     );
   }
@@ -173,13 +178,11 @@ class SavedClient {
       'businessName': businessName,
       'emailAddress': email,
       'phoneNumber': phone,
-      'billingAddress': {
-        'streetAddress': streetAddress,
-        'city': city,
-        'state': state,
-        'zipCode': zip,
-        'country': country,
-      },
+      'streetAddress': streetAddress,
+      'city': city,
+      'state': state,
+      'zipCode': zip,
+      'country': country,
     };
   }
 }
@@ -201,6 +204,11 @@ class InvoiceController extends GetxController {
   var selectedCurrency = 'USD - US Dollar'.obs;
   var invoiceStatus = 'Unpaid'.obs;
 
+  // Step 1 Validation Errors
+  var invoiceNumberError = ''.obs;
+  var invoiceAmountError = ''.obs;
+  var customDueDateError = ''.obs;
+
   // Step 2: Client Details
   late TextEditingController clientNameController;
   late TextEditingController clientBusinessNameController;
@@ -213,6 +221,15 @@ class InvoiceController extends GetxController {
   late TextEditingController clientStateController;
   late TextEditingController clientZipController;
   var clientCountry = 'United States'.obs;
+
+  // Step 2 Validation Errors
+  var clientNameError = ''.obs;
+  var clientEmailError = ''.obs;
+  var clientPhoneError = ''.obs;
+  var clientStreetAddressError = ''.obs;
+  var clientCityError = ''.obs;
+  var clientStateError = ''.obs;
+  var clientZipError = ''.obs;
 
   // Step 3: Message to Client
   late TextEditingController invoiceDescriptionController;
@@ -291,10 +308,57 @@ class InvoiceController extends GetxController {
     businessWebsiteController = TextEditingController();
     businessAddressController = TextEditingController();
 
+    // Auto-clear error messages on text change
+    invoiceNumberController.addListener(() {
+      if (invoiceNumberError.value.isNotEmpty) invoiceNumberError.value = '';
+    });
+    invoiceAmountController.addListener(() {
+      if (invoiceAmountError.value.isNotEmpty) invoiceAmountError.value = '';
+    });
+    clientNameController.addListener(() {
+      if (clientNameError.value.isNotEmpty) clientNameError.value = '';
+    });
+    clientEmailController.addListener(() {
+      if (clientEmailError.value.isNotEmpty) clientEmailError.value = '';
+    });
+    clientPhoneController.addListener(() {
+      if (clientPhoneError.value.isNotEmpty) clientPhoneError.value = '';
+    });
+    clientStreetAddressController.addListener(() {
+      if (clientStreetAddressError.value.isNotEmpty) {
+        clientStreetAddressError.value = '';
+      }
+    });
+    clientCityController.addListener(() {
+      if (clientCityError.value.isNotEmpty) clientCityError.value = '';
+    });
+    clientStateController.addListener(() {
+      if (clientStateError.value.isNotEmpty) clientStateError.value = '';
+    });
+    clientZipController.addListener(() {
+      if (clientZipError.value.isNotEmpty) clientZipError.value = '';
+    });
+
     // Fetch data from backend API
     fetchInvoicesFromApi();
     fetchClientsFromApi();
     fetchInvoiceProfileFromApi();
+
+    // Ensure all validation errors start empty
+    clearValidationErrors();
+  }
+
+  void clearValidationErrors() {
+    invoiceNumberError.value = '';
+    invoiceAmountError.value = '';
+    customDueDateError.value = '';
+    clientNameError.value = '';
+    clientEmailError.value = '';
+    clientPhoneError.value = '';
+    clientStreetAddressError.value = '';
+    clientCityError.value = '';
+    clientStateError.value = '';
+    clientZipError.value = '';
   }
 
   // --- SAVED CLIENTS ACTIONS ---
@@ -319,33 +383,6 @@ class InvoiceController extends GetxController {
       colorText: Colors.black,
       duration: const Duration(seconds: 2),
     );
-  }
-
-  void autoSaveClientFromControllers() {
-    final name = clientNameController.text.trim();
-    final email = clientEmailController.text.trim();
-    if (name.isEmpty) return;
-
-    final existingIndex = savedClients.indexWhere(
-      (c) =>
-          c.name.toLowerCase() == name.toLowerCase() ||
-          (email.isNotEmpty && c.email.toLowerCase() == email.toLowerCase()),
-    );
-
-    final client = SavedClient(
-      id: existingIndex != -1 ? savedClients[existingIndex].id : '',
-      name: name,
-      businessName: clientBusinessNameController.text.trim(),
-      email: email,
-      phone: clientPhoneController.text.trim(),
-      streetAddress: clientStreetAddressController.text.trim(),
-      city: clientCityController.text.trim(),
-      state: clientStateController.text.trim(),
-      zip: clientZipController.text.trim(),
-      country: clientCountry.value,
-    );
-
-    addOrUpdateSavedClient(client);
   }
 
   Future<void> fetchClientsFromApi() async {
@@ -583,13 +620,118 @@ class InvoiceController extends GetxController {
     }
   }
 
+  bool validateStep1() {
+    bool isValid = true;
+
+    final invNumErr = Validators.required(
+      invoiceNumberController.text,
+      message: 'Invoice number is required',
+    );
+    invoiceNumberError.value = invNumErr ?? '';
+    if (invNumErr != null) isValid = false;
+
+    final amountErr = Validators.amount(
+      invoiceAmountController.text,
+      message: 'Enter a valid amount (> 0)',
+      min: 0.01,
+    );
+    invoiceAmountError.value = amountErr ?? '';
+    if (amountErr != null) isValid = false;
+
+    if (selectedDueDateOption.value == 'Custom Due Date' &&
+        customDueDate.value == null) {
+      customDueDateError.value = 'Please select a custom due date';
+      isValid = false;
+    } else {
+      customDueDateError.value = '';
+    }
+
+    return isValid;
+  }
+
+  bool validateStep2() {
+    bool isValid = true;
+
+    final nameErr = Validators.name(
+      clientNameController.text,
+      message: 'Client name is required',
+      minLength: 2,
+    );
+    clientNameError.value = nameErr ?? '';
+    if (nameErr != null) isValid = false;
+
+    final emailErr = Validators.email(
+      clientEmailController.text,
+      message: 'Enter a valid email address',
+    );
+    clientEmailError.value = emailErr ?? '';
+    if (emailErr != null) isValid = false;
+
+    if (clientPhoneController.text.trim().isNotEmpty) {
+      final phoneErr = Validators.phone(
+        clientPhoneController.text,
+        message: 'Enter a valid phone number',
+      );
+      clientPhoneError.value = phoneErr ?? '';
+      if (phoneErr != null) isValid = false;
+    } else {
+      clientPhoneError.value = '';
+    }
+
+    final streetErr = Validators.required(
+      clientStreetAddressController.text,
+      message: 'Street address is required',
+    );
+    clientStreetAddressError.value = streetErr ?? '';
+    if (streetErr != null) isValid = false;
+
+    final cityErr = Validators.required(
+      clientCityController.text,
+      message: 'City is required',
+    );
+    clientCityError.value = cityErr ?? '';
+    if (cityErr != null) isValid = false;
+
+    final stateErr = Validators.required(
+      clientStateController.text,
+      message: 'State/Province is required',
+    );
+    clientStateError.value = stateErr ?? '';
+    if (stateErr != null) isValid = false;
+
+    final zipErr = Validators.required(
+      clientZipController.text,
+      message: 'ZIP/Postal code is required',
+    );
+    clientZipError.value = zipErr ?? '';
+    if (zipErr != null) isValid = false;
+
+    return isValid;
+  }
+
+  bool validateAll() {
+    final v1 = validateStep1();
+    final v2 = validateStep2();
+    if (!v1) {
+      currentStep.value = 1;
+      return false;
+    }
+    if (!v2) {
+      currentStep.value = 2;
+      return false;
+    }
+    return true;
+  }
+
   void nextStep() {
     if (currentStep.value == 1) {
+      if (!validateStep1()) return;
       currentStep.value = 2;
     } else if (currentStep.value == 2) {
+      if (!validateStep2()) return;
       currentStep.value = 3;
     } else if (currentStep.value == 3) {
-      // submitInvoice();
+      if (!validateAll()) return;
       Get.to(() => const InvoicePreviewView());
     }
   }
@@ -757,6 +899,7 @@ class InvoiceController extends GetxController {
   }
 
   void populateFromRecord(InvoiceHistoryRecord record) {
+    clearValidationErrors();
     invoiceNumberController.text = record.invoiceNumber;
     invoiceAmountController.text = record.totalAmount.toStringAsFixed(2);
     clientNameController.text = record.clientName;
@@ -789,6 +932,7 @@ class InvoiceController extends GetxController {
   }
 
   void prepareNewInvoice() {
+    clearValidationErrors();
     editingRecordIndex.value = -1;
     invoiceStatus.value = 'Unpaid';
     invoiceAmountController.clear();
@@ -947,6 +1091,28 @@ class InvoiceController extends GetxController {
     }
   }
 
+  Future<void> fetchInvoiceDetails(String invoiceId) async {
+    if (invoiceId.isEmpty) return;
+    try {
+      final response = await _invoiceRepo.fetchInvoiceById(invoiceId);
+      if (response.statusCode == 200 && response.data != null) {
+        final body = response.data;
+        if (body['success'] == true && body['data'] != null) {
+          final model = InvoiceModel.fromJson(
+            body['data'] as Map<String, dynamic>,
+          );
+          final updatedRecord = _mapInvoiceModelToRecord(model);
+          final idx = invoiceHistory.indexWhere((r) => r.id == invoiceId);
+          if (idx != -1) {
+            invoiceHistory[idx] = updatedRecord;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching single invoice details: $e');
+    }
+  }
+
   InvoiceHistoryRecord _mapInvoiceModelToRecord(InvoiceModel model) {
     String dueDateStr = 'On Receipt';
     if (model.dueDateType == 'custom' && model.customDueDate != null) {
@@ -998,11 +1164,10 @@ class InvoiceController extends GetxController {
   }
 
   Future<void> submitInvoice() async {
+    if (!validateAll()) return;
+
     final wasEditing = editingRecordIndex.value != -1;
     final double amount = double.tryParse(invoiceAmountController.text) ?? 0.0;
-
-    // Auto save client details for future invoices
-    autoSaveClientFromControllers();
 
     final String dueDateTypeStr = selectedDueDateOption.value == 'On Receipt'
         ? 'on_receipt'
@@ -1101,6 +1266,9 @@ class InvoiceController extends GetxController {
         invoiceNumberController.clear();
         currentStep.value = 1;
         editingRecordIndex.value = -1;
+
+        // Refresh client directory from backend
+        fetchClientsFromApi();
 
         Get.back(); // close preview screen
         Get.back(); // close create screen

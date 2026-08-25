@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/invoice_controller.dart';
 
@@ -414,14 +416,69 @@ class SavedClientsView extends GetView<InvoiceController> {
                 text: isEditing ? 'Save Changes' : 'Add Client',
                 loading: controller.isLoading.value,
                 onPressed: () async {
-                  if (nameController.text.trim().isEmpty) {
-                    Get.snackbar(
-                      'Required',
-                      'Client name is required',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.redAccent,
-                      colorText: Colors.white,
+                  final nameErr = Validators.name(
+                    nameController.text,
+                    message: 'Client name is required',
+                    minLength: 2,
+                  );
+                  if (nameErr != null) {
+                    Helpers.showCustomSnackBar(nameErr, isError: true);
+                    return;
+                  }
+
+                  final emailErr = Validators.email(
+                    emailController.text,
+                    message: 'Client email is required',
+                  );
+                  if (emailErr != null) {
+                    Helpers.showCustomSnackBar(emailErr, isError: true);
+                    return;
+                  }
+
+                  if (phoneController.text.trim().isNotEmpty) {
+                    final phoneErr = Validators.phone(
+                      phoneController.text,
+                      message: 'Please enter a valid phone number',
                     );
+                    if (phoneErr != null) {
+                      Helpers.showCustomSnackBar(phoneErr, isError: true);
+                      return;
+                    }
+                  }
+
+                  final streetErr = Validators.required(
+                    streetController.text,
+                    message: 'Street address is required',
+                  );
+                  if (streetErr != null) {
+                    Helpers.showCustomSnackBar(streetErr, isError: true);
+                    return;
+                  }
+
+                  final cityErr = Validators.required(
+                    cityController.text,
+                    message: 'City is required',
+                  );
+                  if (cityErr != null) {
+                    Helpers.showCustomSnackBar(cityErr, isError: true);
+                    return;
+                  }
+
+                  final stateErr = Validators.required(
+                    stateController.text,
+                    message: 'State is required',
+                  );
+                  if (stateErr != null) {
+                    Helpers.showCustomSnackBar(stateErr, isError: true);
+                    return;
+                  }
+
+                  final zipErr = Validators.required(
+                    zipController.text,
+                    message: 'ZIP/Postal code is required',
+                  );
+                  if (zipErr != null) {
+                    Helpers.showCustomSnackBar(zipErr, isError: true);
                     return;
                   }
 

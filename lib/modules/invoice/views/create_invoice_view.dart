@@ -135,6 +135,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         _buildInputField(
           controller: controller.invoiceNumberController,
           hint: 'e.g. Invoice 001',
+          errorText: controller.invoiceNumberError.value,
           suffixIcon: Icon(
             Icons.notes,
             color: const Color(0xFFD5C4AB),
@@ -149,6 +150,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
           controller: controller.invoiceAmountController,
           hint: '0.00',
           prefixText: 'USD ',
+          errorText: controller.invoiceAmountError.value,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),
         SizedBox(height: 20.h),
@@ -291,6 +293,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         _buildInputField(
           controller: controller.clientNameController,
           hint: 'e.g. Johnathan Smith',
+          errorText: controller.clientNameError.value,
         ),
         SizedBox(height: 16.h),
 
@@ -307,6 +310,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         _buildInputField(
           controller: controller.clientEmailController,
           hint: 'client@example.com',
+          errorText: controller.clientEmailError.value,
           keyboardType: TextInputType.emailAddress,
         ),
         SizedBox(height: 16.h),
@@ -316,6 +320,7 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         _buildInputField(
           controller: controller.clientPhoneController,
           hint: 'e.g. 555-000-0000',
+          errorText: controller.clientPhoneError.value,
           keyboardType: TextInputType.phone,
         ),
         SizedBox(height: 24.h),
@@ -343,10 +348,11 @@ class CreateInvoiceView extends GetView<InvoiceController> {
         SizedBox(height: 16.h),
 
         // Street Address
-        _buildFieldLabel('Street Address'),
+        _buildFieldLabel('Street Address*'),
         _buildInputField(
           controller: controller.clientStreetAddressController,
           hint: '123 Luxury Avenue',
+          errorText: controller.clientStreetAddressError.value,
         ),
         SizedBox(height: 16.h),
 
@@ -357,10 +363,11 @@ class CreateInvoiceView extends GetView<InvoiceController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildFieldLabel('City'),
+                  _buildFieldLabel('City*'),
                   _buildInputField(
                     controller: controller.clientCityController,
                     hint: 'Beverly Hills',
+                    errorText: controller.clientCityError.value,
                   ),
                 ],
               ),
@@ -370,10 +377,11 @@ class CreateInvoiceView extends GetView<InvoiceController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildFieldLabel('State/Province'),
+                  _buildFieldLabel('State/Province*'),
                   _buildInputField(
                     controller: controller.clientStateController,
                     hint: 'CA',
+                    errorText: controller.clientStateError.value,
                   ),
                 ],
               ),
@@ -389,10 +397,11 @@ class CreateInvoiceView extends GetView<InvoiceController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildFieldLabel('ZIP/Postal Code'),
+                  _buildFieldLabel('ZIP/Postal Code*'),
                   _buildInputField(
                     controller: controller.clientZipController,
                     hint: '90210',
+                    errorText: controller.clientZipError.value,
                   ),
                 ],
               ),
@@ -570,84 +579,124 @@ class CreateInvoiceView extends GetView<InvoiceController> {
     String? prefixText,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    String? errorText,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF111111), // Dark container background
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFF1E1E1E), width: 1.5),
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        maxLines: maxLines,
-        style: GoogleFonts.inter(
-          color: Colors.white,
-          fontSize: 15.sp,
-          fontWeight: FontWeight.w500,
+    final bool hasError = errorText != null && errorText.trim().isNotEmpty;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF111111), // Dark container background
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: const Color(0xFF1E1E1E),
+              width: 1.5,
+            ),
+          ),
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            maxLines: maxLines,
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w500,
+            ),
+            decoration: InputDecoration(
+              prefixText: prefixText,
+              prefixStyle: GoogleFonts.inter(
+                color: const Color(0xFFD5C4AB),
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              hintText: hint,
+              hintStyle: GoogleFonts.inter(
+                color: const Color(0xFF4B5563),
+                fontSize: 15.sp,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: maxLines > 1 ? 12.h : 16.h,
+              ),
+              border: InputBorder.none,
+              suffixIcon: suffixIcon,
+            ),
+          ),
         ),
-        decoration: InputDecoration(
-          prefixText: prefixText,
-          prefixStyle: GoogleFonts.inter(
-            color: const Color(0xFFD5C4AB),
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w500,
+        if (hasError)
+          Padding(
+            padding: EdgeInsets.only(top: 6.h, left: 4.w),
+            child: Text(
+              errorText,
+              style: GoogleFonts.inter(
+                color: const Color(0xFFEF4444),
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
           ),
-          hintText: hint,
-          hintStyle: GoogleFonts.inter(
-            color: const Color(0xFF4B5563),
-            fontSize: 15.sp,
-          ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: maxLines > 1 ? 12.h : 16.h,
-          ),
-          border: InputBorder.none,
-          suffixIcon: suffixIcon,
-        ),
-      ),
+      ],
     );
   }
 
   Widget _buildDueDateSection(BuildContext context) {
-    return Wrap(
-      spacing: 10.w,
-      runSpacing: 10.h,
-      children: controller.dueDateOptions.map((option) {
-        final isSelected = controller.selectedDueDateOption.value == option;
+    final hasDueDateError = controller.customDueDateError.value.isNotEmpty;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 10.w,
+          runSpacing: 10.h,
+          children: controller.dueDateOptions.map((option) {
+            final isSelected = controller.selectedDueDateOption.value == option;
 
-        // Label logic for Custom Due Date representation
-        String displayLabel = option;
-        if (option == 'Custom Due Date' &&
-            controller.customDueDate.value != null) {
-          displayLabel = controller.formattedDueDate;
-        }
+            // Label logic for Custom Due Date representation
+            String displayLabel = option;
+            if (option == 'Custom Due Date' &&
+                controller.customDueDate.value != null) {
+              displayLabel = controller.formattedDueDate;
+            }
 
-        return GestureDetector(
-          onTap: () => controller.selectDueDateOption(option, context),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFFEDB9B) : Colors.transparent,
-              borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(
-                color: isSelected
-                    ? const Color(0xFFFEDB9B)
-                    : const Color(0xFF1E1E1E),
-                width: 1.5,
+            return GestureDetector(
+              onTap: () => controller.selectDueDateOption(option, context),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xFFFEDB9B) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(
+                    color: isSelected
+                        ? const Color(0xFFFEDB9B)
+                        : const Color(0xFF1E1E1E),
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  displayLabel,
+                  style: GoogleFonts.inter(
+                    color: isSelected ? Colors.black : Colors.white,
+                    fontSize: 13.sp,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
+            );
+          }).toList(),
+        ),
+        if (hasDueDateError)
+          Padding(
+            padding: EdgeInsets.only(top: 6.h, left: 4.w),
             child: Text(
-              displayLabel,
+              controller.customDueDateError.value,
               style: GoogleFonts.inter(
-                color: isSelected ? Colors.black : Colors.white,
-                fontSize: 13.sp,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: const Color(0xFFEF4444),
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
-        );
-      }).toList(),
+      ],
     );
   }
 
@@ -693,9 +742,6 @@ class CreateInvoiceView extends GetView<InvoiceController> {
 
   // --- BOTTOM BUTTONS ---
   Widget _buildBottomButtons(BuildContext context) {
-    final bool isLastStep = controller.currentStep.value == 3;
-    final String nextButtonText = isLastStep ? 'Preview' : 'Next';
-
     return Container(
       padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 30.h),
       decoration: const BoxDecoration(
