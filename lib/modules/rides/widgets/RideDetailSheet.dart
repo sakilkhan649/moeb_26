@@ -132,9 +132,6 @@ class RideDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final title = isPast ? "Completed Ride" : "Upcoming Ride Details";
-    final bookingNo = ride.id.isNotEmpty
-        ? ride.id.substring(ride.id.length > 8 ? ride.id.length - 8 : 0)
-        : "";
     final dateTimeStr = _formatDateTime(ride);
     final amountStr =
         ride.paymentAmount != null ? "${ride.paymentAmount}" : "0.00";
@@ -178,29 +175,13 @@ class RideDetailSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.outfit(
-                        color: Colors.white,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (bookingNo.isNotEmpty) ...[
-                      SizedBox(height: 2.h),
-                      Text(
-                        "Booking #$bookingNo",
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF94A3B8),
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ],
+                Text(
+                  title,
+                  style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 IconButton(
                   onPressed: () => Get.back(),

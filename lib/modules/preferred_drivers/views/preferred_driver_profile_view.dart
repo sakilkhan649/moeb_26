@@ -85,7 +85,7 @@ class _PreferredDriverProfileViewState
           onPressed: () => Get.back(),
         ),
         title: Text(
-          'Favorite Chauffeur',
+          'Chauffeur Profile',
           style: GoogleFonts.inter(
             color: Colors.white,
             fontSize: 18.sp,
@@ -534,13 +534,6 @@ class _PreferredDriverProfileViewState
             value: chauffeur.serviceArea.trim().isNotEmpty
                 ? chauffeur.serviceArea
                 : 'N/A',
-          ),
-          _buildDivider(),
-          _buildCompactInfoRow(
-            icon: Icons.directions_car_outlined,
-            title: 'Car - Tag',
-            value:
-                chauffeur.carTag.trim().isNotEmpty ? chauffeur.carTag : 'N/A',
           ),
           _buildDivider(),
           _buildCompactInfoRow(
