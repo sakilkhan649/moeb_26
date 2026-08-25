@@ -406,6 +406,43 @@ class InvoiceController extends GetxController {
     }
   }
 
+  String _extractErrorMessage(dynamic error, {String defaultMsg = 'Something went wrong.'}) {
+    if (error is dio.DioException) {
+      if (error.response?.data != null) {
+        final data = error.response!.data;
+        if (data is Map) {
+          if (data['message'] != null &&
+              data['message'].toString().trim().isNotEmpty) {
+            return data['message'].toString();
+          }
+          if (data['errorMessages'] is List &&
+              (data['errorMessages'] as List).isNotEmpty) {
+            final first = (data['errorMessages'] as List)[0];
+            if (first is Map && first['message'] != null) {
+              return first['message'].toString();
+            }
+          }
+        }
+      }
+      if (error.message != null && error.message!.isNotEmpty) {
+        return error.message!;
+      }
+    } else if (error is Map) {
+      if (error['message'] != null &&
+          error['message'].toString().trim().isNotEmpty) {
+        return error['message'].toString();
+      }
+      if (error['errorMessages'] is List &&
+          (error['errorMessages'] as List).isNotEmpty) {
+        final first = (error['errorMessages'] as List)[0];
+        if (first is Map && first['message'] != null) {
+          return first['message'].toString();
+        }
+      }
+    }
+    return error?.toString() ?? defaultMsg;
+  }
+
   Future<bool> addOrUpdateSavedClient(SavedClient client) async {
     // Only genuine 24-character MongoDB hex ObjectIDs represent existing backend clients
     final isEditing =
@@ -415,69 +452,68 @@ class InvoiceController extends GetxController {
 
     try {
       isLoading.value = true;
+      final dio.Response response;
       if (isEditing) {
-        final response = await _invoiceRepo.updateClient(
+        response = await _invoiceRepo.updateClient(
           client.id,
           client.toJson(),
         );
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          if (response.data != null && response.data['data'] != null) {
-            final updated = SavedClient.fromJson(response.data['data']);
-            final idx = savedClients.indexWhere((c) => c.id == client.id);
-            if (idx != -1) savedClients[idx] = updated;
-          }
-          Get.snackbar(
-            'Success',
-            'Client updated successfully',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: const Color(0xFFD08700),
-            colorText: Colors.black,
-            duration: const Duration(seconds: 2),
-          );
-          return true;
-        }
       } else {
         // Send POST /api/v1/invoices/client to create new client on backend
-        final response = await _invoiceRepo.createClient(client.toJson());
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          if (response.data != null && response.data['data'] != null) {
-            final created = SavedClient.fromJson(response.data['data']);
+        response = await _invoiceRepo.createClient(client.toJson());
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data != null && response.data['data'] != null) {
+          final saved = SavedClient.fromJson(response.data['data']);
+          if (isEditing) {
+            final idx = savedClients.indexWhere((c) => c.id == client.id);
+            if (idx != -1) savedClients[idx] = saved;
+          } else {
             final existingIndex = savedClients.indexWhere(
               (c) =>
-                  c.id == created.id ||
-                  (c.name.toLowerCase() == created.name.toLowerCase() &&
-                      created.name.isNotEmpty),
+                  c.id == saved.id ||
+                  (c.name.toLowerCase() == saved.name.toLowerCase() &&
+                      saved.name.isNotEmpty),
             );
             if (existingIndex != -1) {
-              savedClients[existingIndex] = created;
+              savedClients[existingIndex] = saved;
             } else {
-              savedClients.add(created);
+              savedClients.add(saved);
             }
           }
-          Get.snackbar(
-            'Success',
-            'New client added successfully',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: const Color(0xFFD08700),
-            colorText: Colors.black,
-            duration: const Duration(seconds: 2),
-          );
-          return true;
         }
+        Get.snackbar(
+          'Success',
+          isEditing
+              ? 'Client updated successfully'
+              : 'New client added successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFFD08700),
+          colorText: Colors.black,
+          duration: const Duration(seconds: 2),
+        );
+        return true;
+      } else {
+        final errorMsg = _extractErrorMessage(
+          response.data,
+          defaultMsg: 'Failed to save client.',
+        );
+        Get.snackbar(
+          'Error',
+          errorMsg,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return false;
       }
-      Get.snackbar(
-        'Error',
-        'Failed to save client.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
     } catch (e) {
       debugPrint('Error saving client to API: $e');
+      final errorMsg = _extractErrorMessage(e, defaultMsg: 'Failed to save client.');
       Get.snackbar(
         'Error',
-        'Failed to save client.',
+        errorMsg,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -856,20 +892,10 @@ class InvoiceController extends GetxController {
           duration: const Duration(seconds: 2),
         );
       } else {
-        String errorMsg =
-            'Failed to save profile. Code: ${response.statusCode}';
-        if (response.data != null && response.data is Map) {
-          final body = response.data as Map<String, dynamic>;
-          if (body['errorMessages'] is List &&
-              (body['errorMessages'] as List).isNotEmpty) {
-            final firstErr = (body['errorMessages'] as List)[0];
-            if (firstErr is Map && firstErr['message'] != null) {
-              errorMsg = "${firstErr['path']}: ${firstErr['message']}";
-            }
-          } else if (body['message'] != null) {
-            errorMsg = body['message'].toString();
-          }
-        }
+        final errorMsg = _extractErrorMessage(
+          response.data,
+          defaultMsg: 'Failed to save profile. Code: ${response.statusCode}',
+        );
         Get.snackbar(
           'Validation Error',
           errorMsg,
@@ -879,9 +905,10 @@ class InvoiceController extends GetxController {
         );
       }
     } catch (e) {
+      final errorMsg = _extractErrorMessage(e, defaultMsg: 'Profile update failed.');
       Get.snackbar(
         'Error',
-        'Profile update failed: $e',
+        errorMsg,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -1280,18 +1307,23 @@ class InvoiceController extends GetxController {
           duration: const Duration(seconds: 2),
         );
       } else {
+        final errorMsg = _extractErrorMessage(
+          response.data,
+          defaultMsg: 'Failed to create invoice. Code: ${response.statusCode}',
+        );
         Get.snackbar(
           'Error',
-          'Failed to create invoice. Code: ${response.statusCode}',
+          errorMsg,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
       }
     } catch (e) {
+      final errorMsg = _extractErrorMessage(e, defaultMsg: 'Invoice submission failed.');
       Get.snackbar(
         'Error',
-        'Invoice submission failed: $e',
+        errorMsg,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
