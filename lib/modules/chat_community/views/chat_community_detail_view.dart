@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/modules/chat_community/controllers/chat_community_detail_controller.dart';
@@ -267,13 +266,14 @@ class ChatCommunityDetailView extends StatelessWidget {
                             ? Get.find<PreferredDriversController>()
                             : Get.put(PreferredDriversController());
 
-                        final namePart = message.sender.name
-                            .split(' ')
-                            .first
-                            .toLowerCase();
+                        final namePart = message.sender.name.trim().isNotEmpty
+                            ? message.sender.name.trim().split(' ').first.toLowerCase()
+                            : '';
                         final chauffeur = preferredController.chauffeursList
                             .firstWhere(
-                              (c) => c.name.toLowerCase().startsWith(namePart),
+                              (c) =>
+                                  namePart.isNotEmpty &&
+                                  c.name.toLowerCase().startsWith(namePart),
                               orElse: () =>
                                   preferredController.chauffeursList.first,
                             );
@@ -283,7 +283,9 @@ class ChatCommunityDetailView extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
                         child: Text(
-                          message.sender.name,
+                          message.sender.name.isNotEmpty
+                              ? message.sender.name
+                              : 'Chauffeur',
                           style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 12.sp,
@@ -700,23 +702,19 @@ class ChatCommunityDetailView extends StatelessWidget {
             ),
           ),
           SizedBox(width: 10.w),
-          // Send Button with loader support
+          // Send Button
           Padding(
             padding: EdgeInsets.only(bottom: 10.h),
-            child: Obx(
-              () => controller.isSending.value
-                  ? const CircularProgressIndicator(color: AppColors.primaryColor)
-                  : GestureDetector(
-                      onTap: () => controller.sendMessage(),
-                      child: SvgPicture.asset(
-                        AppIcons.send_message_icon,
-                        height: 24.sp,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                    ),
+            child: GestureDetector(
+              onTap: () => controller.sendMessage(),
+              child: SvgPicture.asset(
+                AppIcons.send_message_icon,
+                height: 24.sp,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
+              ),
             ),
           ),
         ],

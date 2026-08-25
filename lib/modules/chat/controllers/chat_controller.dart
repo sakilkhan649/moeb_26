@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
@@ -10,6 +11,7 @@ class ChatController extends GetxController {
   final SocketRepository socketRepo = Get.find();
   final SocketService socketService = Get.find();
   final CommunityService communityService = Get.find();
+  final UserService userService = Get.find();
 
   var chats = <ChatPreview>[].obs;
   var filteredChats = <ChatPreview>[].obs;
@@ -35,15 +37,26 @@ class ChatController extends GetxController {
     super.onInit();
     fetchChats();
     fetchCommunityRoom();
-    // setupRealtimeUpdates();
+    setupRealtimeUpdates();
   }
 
   Future<void> fetchCommunityRoom() async {
+    try {
+      final response = await communityService.getCommunityRoom();
+      if (response.statusCode == 200 && response.data != null) {
+        communityRoom.value = CommunityRoom.fromJson(response.data['data']);
+        return;
+      }
+    } catch (e) {
+      debugPrint('Error fetching community room: $e');
+    }
+
+    // Default Live Chat tile info
     communityRoom.value = CommunityRoom(
       name: "Live Chat",
       serviceArea: "Global",
       lastMessage: "Welcome to the live chat room!",
-      lastMessageAt: DateTime.now().toIso8601String(),
+      lastMessageAt: null,
     );
   }
 
@@ -54,87 +67,89 @@ class ChatController extends GetxController {
         // Find if this chat exists in our list
         int index = chats.indexWhere((c) => c.id == newMessage.chatId);
         if (index != -1) {
-          // Update the chat preview and move to top
           final updatedChat = chats[index];
           updatedChat.lastMessage = newMessage.text;
           updatedChat.lastMessageAt = newMessage.createdAt;
-          // You might want to update unread count here if needed
+
+          // Mark as unread if the message is from the other participant
+          if (newMessage.sender?.id != null &&
+              newMessage.sender!.id != userService.userId) {
+            updatedChat.isRead = false;
+            updatedChat.unreadCount = updatedChat.unreadCount + 1;
+          }
 
           chats.removeAt(index);
           chats.insert(0, updatedChat);
           filterChats(searchController.value);
+          chats.refresh();
+          filteredChats.refresh();
         } else {
           // If it's a new chat not in list, fetch all again
           fetchChats();
         }
       }
     });
+
+    // Listen for community messages
+    ever(socketService.lastReceivedCommunityMessage, (newCommMsg) {
+      if (newCommMsg != null && communityRoom.value != null) {
+        final currentRoom = communityRoom.value!;
+        String? text;
+        String? createdAt;
+        String? senderId;
+
+        if (newCommMsg is Map) {
+          if (newCommMsg['message'] is Map) {
+            text = newCommMsg['message']['text']?.toString();
+            createdAt = newCommMsg['message']['createdAt']?.toString();
+            final sData = newCommMsg['message']['sender'];
+            if (sData is Map) {
+              senderId = sData['id']?.toString() ?? sData['_id']?.toString();
+            } else if (sData is String) {
+              senderId = sData;
+            }
+          } else {
+            text = newCommMsg['text']?.toString();
+            createdAt = newCommMsg['createdAt']?.toString();
+            final sData = newCommMsg['sender'];
+            if (sData is Map) {
+              senderId = sData['id']?.toString() ?? sData['_id']?.toString();
+            } else if (sData is String) {
+              senderId = sData;
+            }
+          }
+        }
+
+        if (text != null && text.isNotEmpty) {
+          final isFromOther =
+              senderId != null && senderId != userService.userId;
+          communityRoom.value = CommunityRoom(
+            name: currentRoom.name,
+            serviceArea: currentRoom.serviceArea,
+            totalMembers: currentRoom.totalMembers,
+            lastMessage: text,
+            lastMessageAt: createdAt ?? DateTime.now().toIso8601String(),
+            unreadCount: isFromOther
+                ? (currentRoom.unreadCount + 1)
+                : currentRoom.unreadCount,
+            isRead: isFromOther ? false : currentRoom.isRead,
+          );
+        }
+      }
+    });
   }
 
   Future<void> fetchChats() async {
-    isLoading.value = true;
-    final currentUserId = Get.find<UserService>().userId;
-    chats.assignAll([
-      ChatPreview(
-        id: 'demo_admin_chat',
-        participants: [
-          ChatParticipant(
-            id: currentUserId,
-            name: 'You',
-          ),
-          ChatParticipant(
-            id: 'admin_id',
-            name: 'Support Team',
-            profilePicture: 'assets/images/ekkali support.png',
-          ),
-        ],
-        lastMessage: 'Hello! Let us know if you have any questions.',
-        lastMessageAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
-        createdBy: 'admin_id',
-        createdAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
-        updatedAt: DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String(),
-      ),
-      ChatPreview(
-        id: 'demo_user_chat_1',
-        participants: [
-          ChatParticipant(
-            id: currentUserId,
-            name: 'You',
-          ),
-          ChatParticipant(
-            id: 'demo_user_id_1',
-            name: 'John Doe',
-            profilePicture: null,
-          ),
-        ],
-        lastMessage: 'Hey, is the offer still available?',
-        lastMessageAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
-        createdBy: 'demo_user_id_1',
-        createdAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
-        updatedAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
-      ),
-      ChatPreview(
-        id: 'demo_user_chat_2',
-        participants: [
-          ChatParticipant(
-            id: currentUserId,
-            name: 'You',
-          ),
-          ChatParticipant(
-            id: 'demo_user_id_2',
-            name: 'Jane Smith',
-            profilePicture: null,
-          ),
-        ],
-        lastMessage: 'I am interested in this vehicle listing.',
-        lastMessageAt: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-        createdBy: 'demo_user_id_2',
-        createdAt: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-        updatedAt: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-      ),
-    ]);
-    filteredChats.assignAll(chats);
-    isLoading.value = false;
+    try {
+      isLoading.value = true;
+      final result = await socketRepo.getChats();
+      chats.assignAll(result);
+      filterChats(searchController.value);
+    } catch (e) {
+      debugPrint('Error fetching chats from API: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void filterChats(String query) {
@@ -154,11 +169,32 @@ class ChatController extends GetxController {
   }
 
   Future<void> deleteChat(String chatId) async {
-    isLoading.value = true;
-    chats.removeWhere((c) => c.id == chatId);
-    filterChats(searchController.value);
-    selectedChatIdForDelete.value = "";
-    Get.back();
-    isLoading.value = false;
+    try {
+      isLoading.value = true;
+      await socketRepo.deleteChat(chatId);
+      chats.removeWhere((c) => c.id == chatId);
+      filterChats(searchController.value);
+      selectedChatIdForDelete.value = "";
+      if (Get.isDialogOpen ?? false) Get.back();
+      Get.snackbar(
+        'Success',
+        'Chat deleted successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFFFEDB9B),
+        colorText: Colors.black,
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      debugPrint('Error deleting chat: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to delete chat',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

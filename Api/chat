@@ -1,0 +1,782 @@
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 1. Direct 1-on-1 Chat Initiation (POST /api/v1/chats) > 1.1 Buyer initiates a 1-on-1 chat with seller regarding a marketplace item (POST /api/v1/chats) | stdout
+
+📝 USER STORY:
+As a Prospective Buyer (Chauffeur)
+I want to contact an item seller directly from the marketplace listing
+So that I can ask questions or negotiate a price for vehicle gear
+
+📋 BUSINESS RULES & PAYLOAD SPECIFICATIONS:
+• Endpoint: POST /api/v1/chats
+• Authentication: Bearer JWT Token required
+• Payload:
+  - participantId (string): Target seller user ID
+  - itemId (string): Marketplace listing ID (mutual exclusive with jobId/supportId)
+• Validation: Exactly one context reference (itemId, jobId, or supportId) must be provided
+• Idempotency: Returns existing chat session if already created for this pair + item without creating duplicate rooms
+• Response: { success: true, message: 'Chat retrieved successfully', data: IChat }
+
+📖 BDD SCENARIO: Stage 1.1 — Item-Linked Chat Initiation & Idempotency
+Feature: Chat Management — Direct Messaging Setup
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 1. Direct 1-on-1 Chat Initiation (POST /api/v1/chats) > 1.1 Buyer initiates a 1-on-1 chat with seller regarding a marketplace item (POST /api/v1/chats) | stdout
+
+
+ POST   /api/v1/chats [CHAT-1.1-START-ITEM-CHAT] - Alex (Buyer) starts a direct chat with Marcus (Seller) regarding AMG Wheels
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "participantId": "6a8d3604d39925a2a7c859da",
+    "itemId": "6a8d3604d39925a2a7c859f5"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Chat retrieved successfully",
+  "data": {
+    "participants": [
+      {
+        "name": "Alex Wright",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3603d39925a2a7c859b9"
+      },
+      {
+        "name": "Marcus Sterling",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3604d39925a2a7c859da"
+      }
+    ],
+    "itemId": {
+      "title": "Mercedes-Benz S-Class OEM 20\" AMG Wheels (Set of 4)",
+      "price": 1850,
+      "status": "AVAILABLE",
+      "photos": [
+        "https://example.com/photos/amg-wheels-1.jpg"
+      ],
+      "id": "6a8d3604d39925a2a7c859f5"
+    },
+    "lastMessage": null,
+    "lastMessageAt": null,
+    "createdAt": "2026-08-25T06:28:20.567Z",
+    "updatedAt": "2026-08-25T06:28:20.567Z",
+    "id": "6a8d3604d39925a2a7c859fb"
+  }
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 1. Direct 1-on-1 Chat Initiation (POST /api/v1/chats) > 1.2 Chauffeur initiates a chat regarding a broadcast job opportunity (POST /api/v1/chats) | stdout
+
+📝 USER STORY:
+As a Chauffeur
+I want to message a job dispatcher or peer regarding a broadcasted job
+So that I can clarify passenger details or schedule requirements
+
+📋 BUSINESS RULES & PAYLOAD SPECIFICATIONS:
+• Endpoint: POST /api/v1/chats
+• Authentication: Bearer JWT Token required
+• Payload:
+  - participantId (string): Dispatcher or peer user ID
+  - jobId (string): Broadcasted Job ID
+• Response: { success: true, message: 'Chat retrieved successfully', data: IChat }
+
+📖 BDD SCENARIO: Stage 1.2 — Job-Linked Chat Initiation
+Feature: Chat Management — Dispatch Communication
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 1. Direct 1-on-1 Chat Initiation (POST /api/v1/chats) > 1.2 Chauffeur initiates a chat regarding a broadcast job opportunity (POST /api/v1/chats) | stdout
+
+
+ POST   /api/v1/chats [CHAT-1.2-START-JOB-CHAT] - Alex messages Marcus regarding the JFK Airport Transfer job
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "participantId": "6a8d3604d39925a2a7c859da",
+    "jobId": "6a8d3604d39925a2a7c859f7"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Chat retrieved successfully",
+  "data": {
+    "participants": [
+      {
+        "name": "Alex Wright",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3603d39925a2a7c859b9"
+      },
+      {
+        "name": "Marcus Sterling",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3604d39925a2a7c859da"
+      }
+    ],
+    "jobId": {
+      "jobType": "ONE WAY",
+      "pickup": "JFK Airport Terminal 4",
+      "dropoff": "The Plaza Hotel, 768 5th Ave, New York",
+      "date": "2026-08-28T00:00:00.000Z",
+      "time": "14:30",
+      "paymentAmount": 250,
+      "status": "PENDING",
+      "id": "6a8d3604d39925a2a7c859f7"
+    },
+    "lastMessage": null,
+    "lastMessageAt": null,
+    "createdAt": "2026-08-25T06:28:20.625Z",
+    "updatedAt": "2026-08-25T06:28:20.625Z",
+    "id": "6a8d3604d39925a2a7c85a0d"
+  }
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.1 Buyer sends initial text message inquiry in the marketplace chat (POST /api/v1/messages/:chatId) | stdout
+
+📝 USER STORY:
+As a Buyer
+I want to send a text message in the chat
+So that the seller receives my inquiry and question
+
+📋 BUSINESS RULES & PAYLOAD SPECIFICATIONS:
+• Endpoint: POST /api/v1/messages/:chatId
+• Authentication: Bearer JWT Token required (sender must be a chat participant)
+• Body:
+  - text (string, optional if attachments provided, max 4000 chars)
+  - attachments (string | string[], optional)
+• Chat Side Effects: Updates Chat.lastMessage and Chat.lastMessageAt
+• Response: { success: true, message: 'Message sent successfully', data: IMessage }
+
+📖 BDD SCENARIO: Stage 2.1 — Send Text Message
+Feature: Messaging — Direct Chat Communication
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.1 Buyer sends initial text message inquiry in the marketplace chat (POST /api/v1/messages/:chatId) | stdout
+
+
+ POST   /api/v1/messages/:chatId [CHAT-2.1-SEND-TEXT-MESSAGE] - Alex sends an inquiry message to Marcus about the AMG wheels
+        ↳ /api/v1/messages/6a8d3604d39925a2a7c859fb
+ REQUEST 
+{
+  "params": {
+    "chatId": "6a8d3604d39925a2a7c859fb"
+  },
+  "query": {},
+  "body": {
+    "text": "Hi Marcus, are these AMG wheels still available for pickup this weekend?"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Message sent successfully",
+  "data": {
+    "sender": "6a8d3603d39925a2a7c859b9",
+    "text": "Hi Marcus, are these AMG wheels still available for pickup this weekend?",
+    "attachments": [],
+    "createdAt": "2026-08-25T06:28:20.651Z",
+    "updatedAt": "2026-08-25T06:28:20.651Z",
+    "id": "6a8d3604d39925a2a7c85a17"
+  }
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.1 Buyer sends initial text message inquiry in the marketplace chat (POST /api/v1/messages/:chatId) | stdout
+
+ ⚡ WS EVENT   [WS-2.1-RECEIVE-TEXT-MESSAGE] - NEW_MESSAGE (user::6a8d3604d39925a2a7c859da)
+ 📝 Marcus client socket receives real-time text message notification in private room
+ EVENT PAYLOAD 
+{
+  "chatId": "6a8d3604d39925a2a7c859fb",
+  "message": {
+    "_id": "6a8d3604d39925a2a7c85a17",
+    "chatId": "6a8d3604d39925a2a7c859fb",
+    "sender": {
+      "_id": "6a8d3603d39925a2a7c859b9",
+      "name": "Alex Wright",
+      "profilePicture": "https://example.com/photos/avatar.jpg"
+    },
+    "text": "Hi Marcus, are these AMG wheels still available for pickup this weekend?",
+    "attachments": [],
+    "createdAt": "2026-08-25T06:28:20.651Z",
+    "updatedAt": "2026-08-25T06:28:20.651Z",
+    "__v": 0
+  }
+}
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.2 Seller replies with a confirmation message and photo attachment (POST /api/v1/messages/:chatId) | stdout
+
+📝 USER STORY:
+As a Seller
+I want to reply with text and an image attachment
+So that I can show proof of condition to the buyer
+
+📋 BUSINESS RULES:
+• Endpoint: POST /api/v1/messages/:chatId
+• Payload: Supports attachments array alongside text
+• Response: { success: true, message: 'Message sent successfully', data: IMessage }
+
+📖 BDD SCENARIO: Stage 2.2 — Reply with Attachment
+Feature: Messaging — Media Attachments
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.2 Seller replies with a confirmation message and photo attachment (POST /api/v1/messages/:chatId) | stdout
+
+
+ POST   /api/v1/messages/:chatId [CHAT-2.2-SEND-REPLY-WITH-ATTACHMENT] - Marcus replies with condition confirmation and photo attachment
+        ↳ /api/v1/messages/6a8d3604d39925a2a7c859fb
+ REQUEST 
+{
+  "params": {
+    "chatId": "6a8d3604d39925a2a7c859fb"
+  },
+  "query": {},
+  "body": {
+    "text": "Yes Alex! They are boxed and ready in Manhattan. Here is a photo of the tire tread.",
+    "attachments": [
+      "https://example.com/photos/wheel-tread-proof.jpg"
+    ]
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Message sent successfully",
+  "data": {
+    "sender": "6a8d3604d39925a2a7c859da",
+    "text": "Yes Alex! They are boxed and ready in Manhattan. Here is a photo of the tire tread.",
+    "attachments": [
+      "https://example.com/photos/wheel-tread-proof.jpg"
+    ],
+    "createdAt": "2026-08-25T06:28:20.691Z",
+    "updatedAt": "2026-08-25T06:28:20.691Z",
+    "id": "6a8d3604d39925a2a7c85a29"
+  }
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.2 Seller replies with a confirmation message and photo attachment (POST /api/v1/messages/:chatId) | stdout
+
+ ⚡ WS EVENT   [WS-2.2-RECEIVE-REPLY-WITH-ATTACHMENT] - NEW_MESSAGE (user::6a8d3603d39925a2a7c859b9)
+ 📝 Alex client socket receives real-time reply with attachment in private room
+ EVENT PAYLOAD 
+{
+  "chatId": "6a8d3604d39925a2a7c859fb",
+  "message": {
+    "_id": "6a8d3604d39925a2a7c85a29",
+    "chatId": "6a8d3604d39925a2a7c859fb",
+    "sender": {
+      "_id": "6a8d3604d39925a2a7c859da",
+      "name": "Marcus Sterling",
+      "profilePicture": "https://example.com/photos/avatar.jpg"
+    },
+    "text": "Yes Alex! They are boxed and ready in Manhattan. Here is a photo of the tire tread.",
+    "attachments": [
+      "https://example.com/photos/wheel-tread-proof.jpg"
+    ],
+    "createdAt": "2026-08-25T06:28:20.691Z",
+    "updatedAt": "2026-08-25T06:28:20.691Z",
+    "__v": 0
+  }
+}
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.3 Chauffeur retrieves paginated message thread history for the chat (GET /api/v1/messages/:chatId) | stdout
+
+📝 USER STORY:
+As a Chat Participant
+I want to view the chronological message history with cursor pagination
+So that I can smoothly scroll through past conversations without duplicate or missed messages
+
+📋 BUSINESS RULES & QUERY PAYLOAD SPECIFICATIONS:
+• Endpoint: GET /api/v1/messages/:chatId
+• Authentication: Bearer JWT Token required (must be chat participant)
+• Pagination: Cursor-based infinite scroll (nextCursor, hasMore, limit)
+• Sorting: Chronological by createdAt (ASC in response batch)
+• Population: sender { name, profilePicture }
+• Response: { success: true, message: 'Messages retrieved successfully', cursor: { nextCursor, hasMore, limit }, data: IMessage[] }
+
+📖 BDD SCENARIO: Stage 2.3 — Message History Retrieval (Cursor Paginated)
+Feature: Messaging — Thread History
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.3 Chauffeur retrieves paginated message thread history for the chat (GET /api/v1/messages/:chatId) | stdout
+
+
+ GET   /api/v1/messages/:chatId [CHAT-2.3-GET-CHAT-MESSAGES] - Alex retrieves the message history thread in the AMG Wheels chat
+        ↳ /api/v1/messages/6a8d3604d39925a2a7c859fb
+ REQUEST 
+{
+  "params": {
+    "chatId": "6a8d3604d39925a2a7c859fb"
+  },
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Messages retrieved successfully",
+  "cursor": {
+    "nextCursor": null,
+    "hasMore": false,
+    "limit": 20
+  },
+  "data": [
+    {
+      "sender": {
+        "name": "Alex Wright",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3603d39925a2a7c859b9"
+      },
+      "text": "Hi Marcus, are these AMG wheels still available for pickup this weekend?",
+      "attachments": [],
+      "createdAt": "2026-08-25T06:28:20.651Z",
+      "updatedAt": "2026-08-25T06:28:20.651Z",
+      "id": "6a8d3604d39925a2a7c85a17"
+    },
+    {
+      "sender": {
+        "name": "Marcus Sterling",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3604d39925a2a7c859da"
+      },
+      "text": "Yes Alex! They are boxed and ready in Manhattan. Here is a photo of the tire tread.",
+      "attachments": [
+        "https://example.com/photos/wheel-tread-proof.jpg"
+      ],
+      "createdAt": "2026-08-25T06:28:20.691Z",
+      "updatedAt": "2026-08-25T06:28:20.691Z",
+      "id": "6a8d3604d39925a2a7c85a29"
+    }
+  ]
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 3. Chat Inbox & Conversation Discovery (GET /api/v1/chats & GET /api/v1/chats/:chatId) > 3.1 Chauffeur retrieves all their active conversations in their chat inbox (GET /api/v1/chats) | stdout
+
+📝 USER STORY:
+As a Chauffeur
+I want to see all my active conversations sorted by most recent activity
+So that I can quickly resume chats with buyers, sellers, or dispatchers
+
+📋 BUSINESS RULES & QUERY SPECIFICATIONS:
+• Endpoint: GET /api/v1/chats
+• Authentication: Bearer JWT Token required (scoped to logged-in user)
+• Sorting: Sorted by lastMessageAt (DESC)
+• Population:
+  - participants: name, profilePicture
+  - itemId: title, photos, price, status
+  - jobId: jobType, pickup, dropoff, date, time, paymentAmount, status
+• Response: { success: true, message: 'Chats retrieved successfully', data: IChat[] }
+
+📖 BDD SCENARIO: Stage 3.1 — Chat Inbox Feed
+Feature: Chat Management — Inbox Overview
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 3. Chat Inbox & Conversation Discovery (GET /api/v1/chats & GET /api/v1/chats/:chatId) > 3.1 Chauffeur retrieves all their active conversations in their chat inbox (GET /api/v1/chats) | stdout
+
+
+ GET   /api/v1/chats [CHAT-3.1-GET-MY-CHATS] - Alex retrieves his chat inbox feed with latest previews
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Chats retrieved successfully",
+  "data": [
+    {
+      "participants": [
+        {
+          "name": "Alex Wright",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "id": "6a8d3603d39925a2a7c859b9"
+        },
+        {
+          "name": "Marcus Sterling",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "id": "6a8d3604d39925a2a7c859da"
+        }
+      ],
+      "itemId": {
+        "title": "Mercedes-Benz S-Class OEM 20\" AMG Wheels (Set of 4)",
+        "price": 1850,
+        "status": "AVAILABLE",
+        "photos": [
+          "https://example.com/photos/amg-wheels-1.jpg"
+        ],
+        "id": "6a8d3604d39925a2a7c859f5"
+      },
+      "lastMessage": "Yes Alex! They are boxed and ready in Manhattan. Here is a photo of the tire tread.",
+      "lastMessageAt": "2026-08-25T06:28:20.691Z",
+      "createdAt": "2026-08-25T06:28:20.567Z",
+      "updatedAt": "2026-08-25T06:28:20.694Z",
+      "id": "6a8d3604d39925a2a7c859fb"
+    },
+    {
+      "participants": [
+        {
+          "name": "Alex Wright",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "id": "6a8d3603d39925a2a7c859b9"
+        },
+        {
+          "name": "Marcus Sterling",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "id": "6a8d3604d39925a2a7c859da"
+        }
+      ],
+      "jobId": {
+        "jobType": "ONE WAY",
+        "pickup": "JFK Airport Terminal 4",
+        "dropoff": "The Plaza Hotel, 768 5th Ave, New York",
+        "date": "2026-08-28T00:00:00.000Z",
+        "time": "14:30",
+        "paymentAmount": 250,
+        "status": "PENDING",
+        "id": "6a8d3604d39925a2a7c859f7"
+      },
+      "lastMessage": null,
+      "lastMessageAt": null,
+      "createdAt": "2026-08-25T06:28:20.625Z",
+      "updatedAt": "2026-08-25T06:28:20.625Z",
+      "id": "6a8d3604d39925a2a7c85a0d"
+    }
+  ]
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 3. Chat Inbox & Conversation Discovery (GET /api/v1/chats & GET /api/v1/chats/:chatId) > 3.2 Chauffeur inspects full conversation specifications and context by ID (GET /api/v1/chats/:chatId) | stdout
+
+📝 USER STORY:
+As a Chauffeur
+I want to inspect single chat conversation metadata by ID
+So that I can load the full participant cards and item details header
+
+📋 BUSINESS RULES:
+• Endpoint: GET /api/v1/chats/:chatId
+• Authentication: Bearer JWT Token required (must be chat participant)
+• Population: Full item specs (title, photos, price, condition, status, location) and participant profiles
+• Response: { success: true, message: 'Chat retrieved successfully', data: IChat }
+
+📖 BDD SCENARIO: Stage 3.2 — Single Chat Specification Lookup
+Feature: Chat Management — Conversation Metadata
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 3. Chat Inbox & Conversation Discovery (GET /api/v1/chats & GET /api/v1/chats/:chatId) > 3.2 Chauffeur inspects full conversation specifications and context by ID (GET /api/v1/chats/:chatId) | stdout
+
+
+ GET   /api/v1/chats/:chatId [CHAT-3.2-GET-SINGLE-CHAT] - Alex retrieves full chat header metadata and seller details for the AMG wheels listing
+        ↳ /api/v1/chats/6a8d3604d39925a2a7c859fb
+ REQUEST 
+{
+  "params": {
+    "chatId": "6a8d3604d39925a2a7c859fb"
+  },
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Chat retrieved successfully",
+  "data": {
+    "participants": [
+      {
+        "name": "Alex Wright",
+        "email": "alex.buyer@chauffeur.com",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3603d39925a2a7c859b9"
+      },
+      {
+        "name": "Marcus Sterling",
+        "email": "marcus.seller@chauffeur.com",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3604d39925a2a7c859da"
+      }
+    ],
+    "itemId": {
+      "title": "Mercedes-Benz S-Class OEM 20\" AMG Wheels (Set of 4)",
+      "price": 1850,
+      "condition": "New",
+      "status": "AVAILABLE",
+      "location": "Manhattan, New York (Upper East Side)",
+      "photos": [
+        "https://example.com/photos/amg-wheels-1.jpg"
+      ],
+      "id": "6a8d3604d39925a2a7c859f5"
+    },
+    "lastMessage": "Yes Alex! They are boxed and ready in Manhattan. Here is a photo of the tire tread.",
+    "lastMessageAt": "2026-08-25T06:28:20.691Z",
+    "createdAt": "2026-08-25T06:28:20.567Z",
+    "updatedAt": "2026-08-25T06:28:20.694Z",
+    "id": "6a8d3604d39925a2a7c859fb"
+  }
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 4. Community Chat & Service Area Broadcast (GET & POST /api/v1/community-chats) > 4.1 Chauffeur retrieves their service area community room summary (GET /api/v1/community-chats/room) | stdout
+
+📝 USER STORY:
+As a Chauffeur
+I want to see my service area community channel summary on my chat list
+So that I can tap into the local chauffeur network and real-time alerts
+
+📋 BUSINESS RULES & PAYLOAD SPECIFICATIONS:
+• Endpoint: GET /api/v1/community-chats/room
+• Authentication: Bearer JWT Token required (user must have a valid serviceArea set)
+• Room Format: "{serviceArea} Network" (e.g. "New York Metro Network")
+• Response: { success: true, message: 'Community room retrieved successfully', data: { name, serviceArea, lastMessage, lastMessageAt } }
+
+📖 BDD SCENARIO: Stage 4.1 — Community Room Summary
+Feature: Community Chat — Local Area Network Info
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 4. Community Chat & Service Area Broadcast (GET & POST /api/v1/community-chats) > 4.1 Chauffeur retrieves their service area community room summary (GET /api/v1/community-chats/room) | stdout
+
+
+ GET   /api/v1/community-chats/room [CHAT-4.1-GET-COMMUNITY-ROOM] - Alex retrieves the New York Metro Network community room summary
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Community room retrieved successfully",
+  "data": {
+    "name": "New York Metro Network",
+    "serviceArea": "New York Metro",
+    "lastMessage": null,
+    "lastMessageAt": null
+  }
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 4. Community Chat & Service Area Broadcast (GET & POST /api/v1/community-chats) > 4.2 Chauffeur broadcasts a traffic/road alert message to their local community (POST /api/v1/community-chats/messages) | stdout
+
+📝 USER STORY:
+As a Chauffeur on the road
+I want to post a message in my local community chat
+So that fellow chauffeurs in my service area are alerted to traffic and airport delays
+
+📋 BUSINESS RULES & PAYLOAD SPECIFICATIONS:
+• Endpoint: POST /api/v1/community-chats/messages
+• Authentication: Bearer JWT Token required
+• Body:
+  - text (string, required unless attachments provided)
+  - attachments (optional files or URLs)
+• Service Area Scoping: Automatically scoped to user.serviceArea
+• Response: { success: true, message: 'Message sent successfully', data: ICommunityMessage }
+
+📖 BDD SCENARIO: Stage 4.2 — Community Message Broadcast
+Feature: Community Chat — Broadcast Message
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 4. Community Chat & Service Area Broadcast (GET & POST /api/v1/community-chats) > 4.2 Chauffeur broadcasts a traffic/road alert message to their local community (POST /api/v1/community-chats/messages) | stdout
+
+
+ POST   /api/v1/community-chats/messages [CHAT-4.2-BROADCAST-COMMUNITY-MESSAGE] - Alex broadcasts a JFK traffic advisory to the New York Metro community channel
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {
+    "text": "Heads up New York chauffeurs: Van Wyck Expressway heavily congested near JFK Terminal 4. Use Belt Parkway instead."
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Message sent successfully",
+  "data": {
+    "serviceArea": "New York Metro",
+    "sender": "6a8d3603d39925a2a7c859b9",
+    "text": "Heads up New York chauffeurs: Van Wyck Expressway heavily congested near JFK Terminal 4. Use Belt Parkway instead.",
+    "attachments": [],
+    "createdAt": "2026-08-25T06:28:20.796Z",
+    "updatedAt": "2026-08-25T06:28:20.796Z",
+    "id": "6a8d3604d39925a2a7c85a51"
+  }
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 4. Community Chat & Service Area Broadcast (GET & POST /api/v1/community-chats) > 4.2 Chauffeur broadcasts a traffic/road alert message to their local community (POST /api/v1/community-chats/messages) | stdout
+
+ ⚡ WS EVENT   [WS-4.2-RECEIVE-COMMUNITY-BROADCAST] - COMMUNITY_NEW_MESSAGE (community::New York Metro)
+ 📝 Marcus client socket receives live local traffic advisory broadcast in community room
+ EVENT PAYLOAD 
+{
+  "message": {
+    "_id": "6a8d3604d39925a2a7c85a51",
+    "serviceArea": "New York Metro",
+    "sender": {
+      "_id": "6a8d3603d39925a2a7c859b9",
+      "name": "Alex Wright",
+      "profilePicture": "https://example.com/photos/avatar.jpg"
+    },
+    "text": "Heads up New York chauffeurs: Van Wyck Expressway heavily congested near JFK Terminal 4. Use Belt Parkway instead.",
+    "attachments": [],
+    "createdAt": "2026-08-25T06:28:20.796Z",
+    "updatedAt": "2026-08-25T06:28:20.796Z",
+    "__v": 0
+  },
+  "roomName": "New York Metro Network",
+  "serviceArea": "New York Metro"
+}
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 4. Community Chat & Service Area Broadcast (GET & POST /api/v1/community-chats) > 4.3 Chauffeur retrieves paginated community message stream for their service area (GET /api/v1/community-chats/messages) | stdout
+
+📝 USER STORY:
+As a Chauffeur
+I want to view the stream of recent community messages in my area with cursor pagination
+So that I stay informed on real-time discussions from local peers without skipping messages
+
+📋 BUSINESS RULES & QUERY SPECIFICATIONS:
+• Endpoint: GET /api/v1/community-chats/messages
+• Authentication: Bearer JWT Token required
+• Scoping: Returns only messages matching user.serviceArea
+• Population: sender { name, profilePicture }
+• Pagination: Cursor-based infinite scroll (nextCursor, hasMore, limit)
+• Response: { success: true, message: 'Community messages retrieved successfully', cursor: { nextCursor, hasMore, limit }, data: ICommunityMessage[], serviceArea }
+
+📖 BDD SCENARIO: Stage 4.3 — Community Message Stream Retrieval (Cursor Paginated)
+Feature: Community Chat — Area Stream Feed
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 4. Community Chat & Service Area Broadcast (GET & POST /api/v1/community-chats) > 4.3 Chauffeur retrieves paginated community message stream for their service area (GET /api/v1/community-chats/messages) | stdout
+
+
+ GET   /api/v1/community-chats/messages [CHAT-4.3-GET-COMMUNITY-MESSAGES] - Marcus opens the New York Metro community stream and reads Alex traffic alert
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Community messages retrieved successfully",
+  "cursor": {
+    "nextCursor": null,
+    "hasMore": false,
+    "limit": 20
+  },
+  "data": [
+    {
+      "serviceArea": "New York Metro",
+      "sender": {
+        "name": "Alex Wright",
+        "profilePicture": "https://example.com/photos/avatar.jpg",
+        "id": "6a8d3603d39925a2a7c859b9"
+      },
+      "text": "Heads up New York chauffeurs: Van Wyck Expressway heavily congested near JFK Terminal 4. Use Belt Parkway instead.",
+      "attachments": [],
+      "createdAt": "2026-08-25T06:28:20.796Z",
+      "updatedAt": "2026-08-25T06:28:20.796Z",
+      "id": "6a8d3604d39925a2a7c85a51"
+    }
+  ]
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 5. Chat Deletion & Cascade Cleanup (DELETE /api/v1/chats/:chatId) > 5.1 Chauffeur deletes a direct chat conversation and cascades deletion to all messages (DELETE /api/v1/chats/:chatId) | stdout
+
+📝 USER STORY:
+As a Chauffeur
+I want to delete a completed or stale chat conversation
+So that my inbox remains tidy and relevant
+
+📋 BUSINESS RULES:
+• Endpoint: DELETE /api/v1/chats/:chatId
+• Authentication: Bearer JWT Token required (must be chat participant)
+• Cascade Behavior: Automatically deletes all associated Message documents in DB
+• Response: { success: true, message: 'Chat deleted successfully', data: { message: 'Chat deleted successfully' } }
+
+📖 BDD SCENARIO: Stage 5.1 — Chat Deletion & Cascade Cleanup
+Feature: Chat Management — Deletion
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 5. Chat Deletion & Cascade Cleanup (DELETE /api/v1/chats/:chatId) > 5.1 Chauffeur deletes a direct chat conversation and cascades deletion to all messages (DELETE /api/v1/chats/:chatId) | stdout
+
+
+ DELETE   /api/v1/chats/:chatId [CHAT-5.1-DELETE-CHAT] - Alex deletes the AMG wheels chat conversation with Marcus
+        ↳ /api/v1/chats/6a8d3604d39925a2a7c859fb
+ REQUEST 
+{
+  "params": {
+    "chatId": "6a8d3604d39925a2a7c859fb"
+  },
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Chat deleted successfully",
+  "data": {
+    "deleted": true,
+    "id": "6a8d3604d39925a2a7c859fb"
+  }
+}
+
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 5. Chat Deletion & Cascade Cleanup (DELETE /api/v1/chats/:chatId) > 5.2 Deleted chat is no longer listed in inbox feed (GET /api/v1/chats) | stdout
+
+📝 USER STORY:
+As a Chauffeur
+I want my deleted conversations to be removed from my chat list immediately
+So that I only see active conversations
+
+📋 BUSINESS RULES:
+• Endpoint: GET /api/v1/chats
+• Verification: Deleted chat ID must not appear in the returned list
+
+📖 BDD SCENARIO: Stage 5.2 — Post-Deletion Inbox Verification
+Feature: Chat Management — Feed Sync
+
+12:28:20 PM | E2E Test Suite: Chat & Messaging Lifecycle > 5. Chat Deletion & Cascade Cleanup (DELETE /api/v1/chats/:chatId) > 5.2 Deleted chat is no longer listed in inbox feed (GET /api/v1/chats) | stdout
+
+
+ GET   /api/v1/chats [CHAT-5.2-VERIFY-INBOX-AFTER-DELETE] - Alex verifies that deleted AMG wheels chat is no longer present in inbox
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Chats retrieved successfully",
+  "data": [
+    {
+      "participants": [
+        {
+          "name": "Alex Wright",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "id": "6a8d3603d39925a2a7c859b9"
+        },
+        {
+          "name": "Marcus Sterling",
+          "profilePicture": "https://example.com/photos/avatar.jpg",
+          "id": "6a8d3604d39925a2a7c859da"
+        }
+      ],
+      "jobId": {
+        "jobType": "ONE WAY",
+        "pickup": "JFK Airport Terminal 4",
+        "dropoff": "The Plaza Hotel, 768 5th Ave, New York",
+        "date": "2026-08-28T00:00:00.000Z",
+        "time": "14:30",
+        "paymentAmount": 250,
+        "status": "PENDING",
+        "id": "6a8d3604d39925a2a7c859f7"
+      },
+      "lastMessage": null,
+      "lastMessageAt": null,
+      "createdAt": "2026-08-25T06:28:20.625Z",
+      "updatedAt": "2026-08-25T06:28:20.625Z",
+      "id": "6a8d3604d39925a2a7c85a0d"
+    }
+  ]
+}

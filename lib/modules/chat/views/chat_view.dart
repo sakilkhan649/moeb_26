@@ -134,8 +134,12 @@ class ChatView extends StatelessWidget {
 
   /// ── Community Chat Tile ──
   Widget _buildCommunityChatTile(CommunityRoom room) {
+    final isUnread = !room.isRead || room.unreadCount > 0;
+
     return InkWell(
       onTap: () {
+        room.isRead = true;
+        room.unreadCount = 0;
         Get.toNamed(Routes.chatCommunityDetailView, arguments: room);
       },
       borderRadius: BorderRadius.circular(12.r),
@@ -186,22 +190,44 @@ class ChatView extends StatelessWidget {
                         Text(
                           _formatTime(room.lastMessageAt!),
                           style: GoogleFonts.inter(
-                            color: Colors.grey,
+                            color: isUnread ? Colors.white : Colors.grey,
                             fontSize: 12.sp,
+                            fontWeight: isUnread
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                     ],
                   ),
                   SizedBox(height: 4.h),
-                  Text(
-                    room.lastMessage ?? 'No messages yet',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      color: Colors.grey,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          room.lastMessage ?? 'No messages yet',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            color: isUnread ? Colors.white : Colors.grey,
+                            fontSize: 14.sp,
+                            fontWeight:
+                                isUnread ? FontWeight.w700 : FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      if (isUnread) ...[
+                        SizedBox(width: 8.w),
+                        Container(
+                          width: 8.r,
+                          height: 8.r,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ),
@@ -215,12 +241,22 @@ class ChatView extends StatelessWidget {
   /// ── Single Chat Tile ──
   Widget _buildChatTile(ChatPreview chat) {
     final other = chat.getOtherParticipant(userService.userId);
+    final isUnread = !chat.isRead || chat.unreadCount > 0;
+
     return InkWell(
       onTap: () {
         if (controller.selectedChatIdForDelete.value != "") {
           controller.clearDeleteSelection();
         } else {
-          Get.toNamed(Routes.chatDetailView, arguments: chat);
+          // Mark locally as read when user taps to open
+          chat.isRead = true;
+          chat.unreadCount = 0;
+          controller.chats.refresh();
+          controller.filteredChats.refresh();
+          Get.toNamed(Routes.chatDetailView, arguments: chat)?.then((_) {
+            controller.chats.refresh();
+            controller.filteredChats.refresh();
+          });
         }
       },
       onLongPress: () {
@@ -255,7 +291,8 @@ class ChatView extends StatelessWidget {
                           style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
+                            fontWeight:
+                                isUnread ? FontWeight.bold : FontWeight.w600,
                           ),
                         ),
                       ),
@@ -276,8 +313,11 @@ class ChatView extends StatelessWidget {
                             ? Text(
                                 _formatTime(chat.lastMessageAt!),
                                 style: GoogleFonts.inter(
-                                  color: Colors.grey,
+                                  color: isUnread ? Colors.white : Colors.grey,
                                   fontSize: 12.sp,
+                                  fontWeight: isUnread
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                                 ),
                               )
                             : const SizedBox.shrink();
@@ -286,7 +326,7 @@ class ChatView extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
 
-                  // Last Message
+                  // Last Message & Unread Dot
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -296,11 +336,24 @@ class ChatView extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
-                            color: Colors.grey,
+                            color: isUnread ? Colors.white : Colors.grey,
                             fontSize: 14.sp,
+                            fontWeight:
+                                isUnread ? FontWeight.w700 : FontWeight.w400,
                           ),
                         ),
                       ),
+                      if (isUnread) ...[
+                        SizedBox(width: 8.w),
+                        Container(
+                          width: 8.r,
+                          height: 8.r,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ],
@@ -388,6 +441,31 @@ class ChatView extends StatelessWidget {
   /// ── Avatar Widget ──
   Widget _buildAvatar(ChatPreview chat) {
     final other = chat.getOtherParticipant(userService.userId);
+    final isSupport = other != null &&
+        (other.name.toLowerCase().contains('support') ||
+            other.email?.toLowerCase().contains('support') == true);
+
+    if (isSupport) {
+      return Container(
+        width: 56.r,
+        height: 56.r,
+        padding: EdgeInsets.all(2.r),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey[700]!, width: 1.5),
+        ),
+        child: ClipOval(
+          child: Transform.scale(
+            scale: 1.3,
+            child: Image.asset(
+              'assets/images/ekkali support.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      );
+    }
+
     final hasImage =
         other?.profilePicture != null && other!.profilePicture!.isNotEmpty;
     final isNetwork = hasImage && other.profilePicture!.startsWith('http');
@@ -411,7 +489,7 @@ class ChatView extends StatelessWidget {
             ? Image.network(
                 other.profilePicture!,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _avatarFallback(other?.initials),
+                errorBuilder: (_, _, _) => _avatarFallback(other.initials),
               )
             : _avatarFallback(other?.initials),
       ),

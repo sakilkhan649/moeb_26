@@ -123,11 +123,20 @@ class SocketService extends GetxService with WidgetsBindingObserver {
       socket.on(event, (data) => _handleIncomingMessage(data, event));
     }
 
-    // Community message event
-    socket.on('COMMUNITY_NEW_MESSAGE', (data) {
-      debugPrint('📥 SocketService: Received COMMUNITY_NEW_MESSAGE');
-      lastReceivedCommunityMessage.value = data;
-    });
+    // Community message events
+    final List<String> commEvents = [
+      'COMMUNITY_NEW_MESSAGE',
+      'community_new_message',
+      'community_message',
+      'new_community_message',
+      'COMMUNITY_MESSAGE',
+    ];
+    for (var event in commEvents) {
+      socket.on(event, (data) {
+        debugPrint('📥 SocketService: Received community event [$event]: $data');
+        lastReceivedCommunityMessage.value = data;
+      });
+    }
 
     // Reconnection events for debugging
     socket.onReconnect((_) => debugPrint('🔄 SocketService: Reconnected'));
@@ -138,34 +147,25 @@ class SocketService extends GetxService with WidgetsBindingObserver {
     socket.connect();
   }
 
+  final Set<String> _activeRooms = {};
+
   void _handleIncomingMessage(dynamic data, String eventName) {
     debugPrint('📥 SocketService: Received event [$eventName]');
     debugPrint('📦 SocketService: Raw data: $data');
 
     if (data != null) {
       try {
-        // সকেট ডাটা বিভিন্ন ফরম্যাটে থাকতে পারে, আমরা সবচেয়ে গভীরে যাওয়ার চেষ্টা করব
         dynamic actualData = data;
 
         if (data is Map) {
           if (data.containsKey('data')) {
             actualData = data['data'];
           } else if (data.containsKey('message') && data['message'] is Map) {
-            // যদি { "message": { "text": "..." } } ফরম্যাটে থাকে
             actualData = data['message'];
           }
         }
 
         final newMessage = ChatMessage.fromJson(actualData);
-
-        // যদি পার্স করার পর টেক্সট খালি থাকে, তবে ডাটা থেকে সরাসরি নেয়ার চেষ্টা করা
-        if (newMessage.text.isEmpty && data is Map) {
-          // এটি একটি ব্যাকআপ যদি মডেল পার্সিং কোনো কারণে ফেইল করে
-          debugPrint(
-            '⚠️ SocketService: Parsed text is empty, attempting direct extraction',
-          );
-        }
-
         lastReceivedMessage.value = newMessage;
         debugPrint(
           '✅ SocketService: Message parsed successfully and broadcasted',
@@ -179,6 +179,7 @@ class SocketService extends GetxService with WidgetsBindingObserver {
   }
 
   void joinRoom(String roomId) {
+    _activeRooms.add(roomId);
     _currentRoomId = roomId;
     if (!isSocketInitialized) {
       debugPrint(
@@ -190,20 +191,23 @@ class SocketService extends GetxService with WidgetsBindingObserver {
 
     if (socket.connected) {
       socket.emit('join-room', roomId);
+      socket.emit('join', roomId);
+      socket.emit('join_room', roomId);
       debugPrint('➡️ SocketService: Emitted join-room for roomId: $roomId');
     } else {
       debugPrint(
         '⚠️ SocketService: Cannot join room, socket not connected. Reconnecting... RoomId: $roomId',
       );
       socket.connect();
-      // Room will be joined in onConnect callback
     }
   }
 
   void leaveRoom(String roomId) {
+    _activeRooms.remove(roomId);
     _currentRoomId = null;
     if (isSocketInitialized && socket.connected) {
       socket.emit('leave-room', roomId);
+      socket.emit('leave', roomId);
       debugPrint('⬅️ SocketService: Emitted leave-room for roomId: $roomId');
     }
   }

@@ -115,6 +115,18 @@ class ChatDetailView extends StatelessWidget {
                   ),
                   child: ClipOval(
                     child: () {
+                      final isSupport = other != null &&
+                          (other.name.toLowerCase().contains('support') ||
+                              other.email?.toLowerCase().contains('support') == true);
+                      if (isSupport) {
+                        return Transform.scale(
+                          scale: 1.3,
+                          child: Image.asset(
+                            'assets/images/ekkali support.png',
+                            fit: BoxFit.contain,
+                          ),
+                        );
+                      }
                       final pic = other?.profilePicture;
                       final hasImage = pic != null && pic.isNotEmpty;
                       final isNetwork = hasImage && pic.startsWith('http');
