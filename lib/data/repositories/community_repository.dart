@@ -12,15 +12,18 @@ class CommunityRepo {
   }
 
   Future<Response> getCommunityMessages({
-    int page = 1,
-    int limit = 10,
+    int? page,
+    int limit = 40,
     String? serviceArea,
+    String? cursor,
   }) async {
-    String url = "${ApiConstants.communityMessages}?page=$page&limit=$limit";
+    final query = <String, dynamic>{'limit': limit};
+    if (page != null) query['page'] = page;
+    if (cursor != null && cursor.isNotEmpty) query['cursor'] = cursor;
     if (serviceArea != null && serviceArea.isNotEmpty) {
-      url += "&serviceArea=$serviceArea";
+      query['serviceArea'] = serviceArea;
     }
-    return await apiClient.getData(url);
+    return await apiClient.getData(ApiConstants.communityMessages, query: query);
   }
 
   Future<Response> sendCommunityMessage({

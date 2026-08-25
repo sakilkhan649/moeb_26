@@ -32,14 +32,31 @@ class ChatCommunityDetailView extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 return ListView.builder(
+                  controller: controller.scrollController,
                   padding: EdgeInsets.symmetric(
                     horizontal: 10.w,
                     vertical: 10.h,
                   ),
-                  itemCount: controller.messages.length,
+                  itemCount: controller.messages.length +
+                      (controller.isLoadingMore.value ? 1 : 0),
                   reverse: true, // Show latest messages at the bottom
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
+                    if (index == controller.messages.length) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFFFEDB9B),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
                     final message = controller.messages[index];
                     return _buildMessageBubble(message);
                   },

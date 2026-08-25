@@ -19,7 +19,11 @@ class CommunityChatDetailController extends GetxController {
 
   final RxList<CommunityMessage> messages = <CommunityMessage>[].obs;
   final TextEditingController messageController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
   final RxBool isLoading = false.obs;
+  final RxBool isLoadingMore = false.obs;
+  final RxString nextCursor = ''.obs;
+  final RxBool hasMore = true.obs;
   final RxBool isSending = false.obs;
   final RxList<File> selectedImages = <File>[].obs;
   final Rxn<CommunityMessage> replyingTo = Rxn<CommunityMessage>();
@@ -46,6 +50,7 @@ class CommunityChatDetailController extends GetxController {
         Get.find<ChatController>().markCommunityAsRead();
       }
     });
+    scrollController.addListener(_onScroll);
     if (room.serviceArea.isNotEmpty) {
       final String area = room.serviceArea.toLowerCase();
       for (var state in states) {
@@ -57,6 +62,18 @@ class CommunityChatDetailController extends GetxController {
     }
     fetchMessages();
     setupSocket();
+  }
+
+  void _onScroll() {
+    if (scrollController.hasClients &&
+        scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        hasMore.value &&
+        !isLoadingMore.value &&
+        !isLoading.value &&
+        nextCursor.value.isNotEmpty) {
+      loadMoreMessages();
+    }
   }
 
   void changeState(String newState) {
@@ -101,8 +118,11 @@ class CommunityChatDetailController extends GetxController {
   Future<void> fetchMessages() async {
     try {
       isLoading.value = true;
+      hasMore.value = true;
+      nextCursor.value = '';
       final response = await communityService.getCommunityMessages(
         serviceArea: selectedState.value,
+        limit: 40,
       );
       if (response.statusCode == 200 && response.data != null) {
         final List list = response.data['data'] ?? [];
@@ -110,12 +130,19 @@ class CommunityChatDetailController extends GetxController {
             .map((item) => CommunityMessage.fromJson(item as Map<String, dynamic>))
             .toList();
 
+        final cursorData = response.data['cursor'];
+        if (cursorData is Map) {
+          nextCursor.value = cursorData['nextCursor']?.toString() ?? '';
+          hasMore.value = cursorData['hasMore'] == true;
+        } else {
+          hasMore.value = false;
+        }
+
         // Check if list is oldest-first (ASC)
         if (fetched.length > 1) {
           final firstDate = DateTime.tryParse(fetched.first.createdAt);
           final lastDate = DateTime.tryParse(fetched.last.createdAt);
           if (firstDate != null && lastDate != null && firstDate.isBefore(lastDate)) {
-            // Reversing so newest message is at index 0 (bottom of screen in reverse ListView)
             messages.assignAll(fetched.reversed.toList());
           } else {
             messages.assignAll(fetched);
@@ -128,6 +155,57 @@ class CommunityChatDetailController extends GetxController {
       debugPrint('Error fetching community messages: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMoreMessages() async {
+    if (!hasMore.value || isLoadingMore.value || nextCursor.value.isEmpty) return;
+    try {
+      isLoadingMore.value = true;
+      final response = await communityService.getCommunityMessages(
+        serviceArea: selectedState.value,
+        cursor: nextCursor.value,
+        limit: 40,
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        final List list = response.data['data'] ?? [];
+        final fetched = list
+            .map((item) => CommunityMessage.fromJson(item as Map<String, dynamic>))
+            .toList();
+
+        final cursorData = response.data['cursor'];
+        if (cursorData is Map) {
+          nextCursor.value = cursorData['nextCursor']?.toString() ?? '';
+          hasMore.value = cursorData['hasMore'] == true;
+        } else {
+          hasMore.value = false;
+        }
+
+        if (fetched.isNotEmpty) {
+          List<CommunityMessage> toAppend;
+          if (fetched.length > 1) {
+            final firstDate = DateTime.tryParse(fetched.first.createdAt);
+            final lastDate = DateTime.tryParse(fetched.last.createdAt);
+            if (firstDate != null && lastDate != null && firstDate.isBefore(lastDate)) {
+              toAppend = fetched.reversed.toList();
+            } else {
+              toAppend = fetched;
+            }
+          } else {
+            toAppend = fetched;
+          }
+
+          for (var msg in toAppend) {
+            if (!messages.any((m) => m.id == msg.id)) {
+              messages.add(msg);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading more community messages: $e');
+    } finally {
+      isLoadingMore.value = false;
     }
   }
 
@@ -257,6 +335,7 @@ class CommunityChatDetailController extends GetxController {
         Get.find<ChatController>().markCommunityAsRead();
       }
     });
+    scrollController.dispose();
     socketService.leaveRoom('community::${selectedState.value}');
     _commWorker?.dispose();
     messageController.dispose();

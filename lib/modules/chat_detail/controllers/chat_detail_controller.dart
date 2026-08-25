@@ -19,7 +19,11 @@ class ChatDetailController extends GetxController {
 
   final RxList<ChatMessage> messages = <ChatMessage>[].obs;
   final TextEditingController messageController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
   final RxBool isLoading = false.obs;
+  final RxBool isLoadingMore = false.obs;
+  final RxString nextCursor = ''.obs;
+  final RxBool hasMore = true.obs;
   final RxList<File> selectedImages = <File>[].obs;
   final Rxn<ChatMessage> replyingTo = Rxn<ChatMessage>();
   Worker? _messageWorker;
@@ -36,8 +40,21 @@ class ChatDetailController extends GetxController {
         Get.find<ChatController>().markChatAsRead(chat.id);
       }
     });
+    scrollController.addListener(_onScroll);
     _initWithUserId();
     setupSocket();
+  }
+
+  void _onScroll() {
+    if (scrollController.hasClients &&
+        scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        hasMore.value &&
+        !isLoadingMore.value &&
+        !isLoading.value &&
+        nextCursor.value.isNotEmpty) {
+      loadMoreMessages();
+    }
   }
 
   Future<void> _initWithUserId() async {
@@ -71,23 +88,93 @@ class ChatDetailController extends GetxController {
   Future<void> fetchMessages() async {
     try {
       isLoading.value = true;
-      final fetchedMessages = await socketRepo.getMessages(chat.id);
-      if (fetchedMessages.length > 1) {
-        final firstDate = DateTime.tryParse(fetchedMessages.first.createdAt);
-        final lastDate = DateTime.tryParse(fetchedMessages.last.createdAt);
-        if (firstDate != null && lastDate != null && firstDate.isBefore(lastDate)) {
-          messages.assignAll(fetchedMessages.reversed.toList());
+      hasMore.value = true;
+      nextCursor.value = '';
+      final response = await socketRepo.getMessagesRaw(chat.id, limit: 40);
+      if (response.statusCode == 200 && response.data != null) {
+        final List data = response.data['data'] ?? [];
+        final fetchedMessages =
+            data.map((json) => ChatMessage.fromJson(json)).toList();
+
+        final cursorData = response.data['cursor'];
+        if (cursorData is Map) {
+          nextCursor.value = cursorData['nextCursor']?.toString() ?? '';
+          hasMore.value = cursorData['hasMore'] == true;
+        } else {
+          hasMore.value = false;
+        }
+
+        if (fetchedMessages.length > 1) {
+          final firstDate = DateTime.tryParse(fetchedMessages.first.createdAt);
+          final lastDate = DateTime.tryParse(fetchedMessages.last.createdAt);
+          if (firstDate != null &&
+              lastDate != null &&
+              firstDate.isBefore(lastDate)) {
+            messages.assignAll(fetchedMessages.reversed.toList());
+          } else {
+            messages.assignAll(fetchedMessages);
+          }
         } else {
           messages.assignAll(fetchedMessages);
         }
-      } else {
-        messages.assignAll(fetchedMessages);
       }
       update();
     } catch (e) {
       debugPrint('Error fetching messages: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMoreMessages() async {
+    if (!hasMore.value || isLoadingMore.value || nextCursor.value.isEmpty) return;
+    try {
+      isLoadingMore.value = true;
+      final response = await socketRepo.getMessagesRaw(
+        chat.id,
+        cursor: nextCursor.value,
+        limit: 40,
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        final List data = response.data['data'] ?? [];
+        final fetchedMessages =
+            data.map((json) => ChatMessage.fromJson(json)).toList();
+
+        final cursorData = response.data['cursor'];
+        if (cursorData is Map) {
+          nextCursor.value = cursorData['nextCursor']?.toString() ?? '';
+          hasMore.value = cursorData['hasMore'] == true;
+        } else {
+          hasMore.value = false;
+        }
+
+        if (fetchedMessages.isNotEmpty) {
+          List<ChatMessage> toAppend;
+          if (fetchedMessages.length > 1) {
+            final firstDate = DateTime.tryParse(fetchedMessages.first.createdAt);
+            final lastDate = DateTime.tryParse(fetchedMessages.last.createdAt);
+            if (firstDate != null &&
+                lastDate != null &&
+                firstDate.isBefore(lastDate)) {
+              toAppend = fetchedMessages.reversed.toList();
+            } else {
+              toAppend = fetchedMessages;
+            }
+          } else {
+            toAppend = fetchedMessages;
+          }
+
+          for (var msg in toAppend) {
+            if (!messages.any((m) => m.id == msg.id)) {
+              messages.add(msg);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading more messages: $e');
+    } finally {
+      isLoadingMore.value = false;
     }
   }
 
@@ -214,6 +301,7 @@ class ChatDetailController extends GetxController {
         Get.find<ChatController>().markChatAsRead(closingChatId);
       }
     });
+    scrollController.dispose();
     socketService.leaveRoom('chat::$closingChatId');
     _messageWorker?.dispose();
     messageController.dispose();

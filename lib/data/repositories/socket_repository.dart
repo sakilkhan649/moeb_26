@@ -113,18 +113,32 @@ class SocketRepository {
     return null;
   }
 
-  /// Get messages for a chat
+  /// Get message history raw response for a chat (cursor pagination)
+  Future<Response> getMessagesRaw(
+    String chatId, {
+    String? cursor,
+    int limit = 40,
+  }) async {
+    final url = '/messages/$chatId';
+    final query = <String, dynamic>{
+      'limit': limit,
+      'sort': '-createdAt',
+    };
+    if (cursor != null && cursor.isNotEmpty) {
+      query['cursor'] = cursor;
+    }
+    return await apiClient.getData(url, query: query);
+  }
+
+  /// Get message history for a chat
   Future<List<ChatMessage>> getMessages(
     String chatId, {
     int page = 1,
-    int limit = 20,
+    int limit = 40,
+    String? cursor,
   }) async {
     try {
-      final url = '/messages/$chatId';
-      final response = await apiClient.getData(
-        url,
-        query: {'page': page, 'limit': limit, 'sort': '-createdAt'},
-      );
+      final response = await getMessagesRaw(chatId, cursor: cursor, limit: limit);
       if (response.statusCode == 200 && response.data != null) {
         final List data = response.data['data'] ?? [];
         return data.map((json) => ChatMessage.fromJson(json)).toList();
