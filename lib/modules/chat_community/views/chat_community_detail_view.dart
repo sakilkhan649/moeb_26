@@ -171,11 +171,16 @@ class ChatCommunityDetailView extends StatelessWidget {
                   dropdownStyleData: DropdownStyleData(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
-                      color: Colors.black,
+                      color: const Color(0xFF161618),
+                      border: Border.all(color: const Color(0xFF27272A)),
                     ),
-                    width: 160.w,
+                    maxHeight: 250.h,
+                    width: 170.w,
                   ),
-                  items: controller.states.map((state) {
+                  items: (controller.states.isNotEmpty
+                          ? controller.states
+                          : [controller.selectedState.value])
+                      .map((state) {
                     return DropdownMenuItem(
                       value: state,
                       child: Text(

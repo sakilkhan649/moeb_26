@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/core/services/user_profile_service.dart';
 import 'package:moeb_26/core/services/community_service.dart';
 import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:moeb_26/core/services/socket_service.dart';
@@ -16,6 +17,7 @@ class CommunityChatDetailController extends GetxController {
   final UserService userService = Get.find<UserService>();
   final SocketService socketService = Get.find<SocketService>();
   final CommunityService communityService = Get.find<CommunityService>();
+  final UserProfileService _profileService = Get.find<UserProfileService>();
 
   final RxList<CommunityMessage> messages = <CommunityMessage>[].obs;
   final TextEditingController messageController = TextEditingController();
@@ -30,15 +32,9 @@ class CommunityChatDetailController extends GetxController {
   Worker? _commWorker;
 
   late CommunityRoom room;
-  var selectedState = 'Florida'.obs;
-
-  final List<String> states = [
-    'Florida', 'California', 'Texas', 'New York', 'Illinois', 'District of Columbia',
-    'Nevada', 'Massachusetts', 'Georgia', 'Washington', 'Colorado', 'Arizona',
-    'Pennsylvania', 'North Carolina', 'Tennessee', 'Minnesota', 'Louisiana', 'Utah',
-    'Oregon', 'Michigan', 'Missouri', 'Ohio', 'Indiana', 'Virginia', 'South Carolina',
-    'Connecticut'
-  ];
+  var selectedState = 'New York Metro'.obs;
+  final RxList<String> states = <String>[].obs;
+  final RxBool isServiceAreasLoading = false.obs;
 
   @override
   void onInit() {
@@ -52,16 +48,60 @@ class CommunityChatDetailController extends GetxController {
     });
     scrollController.addListener(_onScroll);
     if (room.serviceArea.isNotEmpty) {
-      final String area = room.serviceArea.toLowerCase();
-      for (var state in states) {
-        if (area.contains(state.toLowerCase())) {
-          selectedState.value = state;
-          break;
-        }
-      }
+      selectedState.value = room.serviceArea;
     }
+    fetchServiceAreas();
     fetchMessages();
     setupSocket();
+  }
+
+  Future<void> fetchServiceAreas() async {
+    isServiceAreasLoading.value = true;
+    try {
+      final response = await _profileService.getServiceAreas();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data['data'];
+        if (data is List) {
+          final List<String> loadedAreas = data
+              .map((item) {
+                if (item is Map) {
+                  return item['areaName']?.toString() ??
+                      item['name']?.toString() ??
+                      '';
+                }
+                return item.toString();
+              })
+              .where((name) => name.trim().isNotEmpty)
+              .toList();
+
+          if (loadedAreas.isNotEmpty) {
+            states.value = loadedAreas;
+
+            // Sync selected state with dynamic list
+            if (room.serviceArea.isNotEmpty) {
+              final String areaLower = room.serviceArea.toLowerCase();
+              final matched = states.firstWhereOrNull(
+                (s) =>
+                    s.toLowerCase() == areaLower ||
+                    areaLower.contains(s.toLowerCase()) ||
+                    s.toLowerCase().contains(areaLower),
+              );
+              if (matched != null) {
+                selectedState.value = matched;
+              } else if (!states.contains(selectedState.value)) {
+                selectedState.value = states.first;
+              }
+            } else if (!states.contains(selectedState.value)) {
+              selectedState.value = states.first;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching dynamic service areas for live chat: $e");
+    } finally {
+      isServiceAreasLoading.value = false;
+    }
   }
 
   void _onScroll() {
