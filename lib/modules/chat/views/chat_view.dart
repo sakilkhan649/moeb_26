@@ -252,10 +252,8 @@ class ChatView extends StatelessWidget {
           chat.isRead = true;
           chat.unreadCount = 0;
           controller.chats.refresh();
-          controller.filteredChats.refresh();
           Get.toNamed(Routes.chatDetailView, arguments: chat)?.then((_) {
             controller.chats.refresh();
-            controller.filteredChats.refresh();
           });
         }
       },

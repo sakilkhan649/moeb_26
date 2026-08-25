@@ -10,6 +10,7 @@ import 'package:moeb_26/core/services/user_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/data/models/chat_model.dart';
+import 'package:moeb_26/modules/chat/controllers/chat_controller.dart';
 
 class CommunityChatDetailController extends GetxController {
   final UserService userService = Get.find<UserService>();
@@ -39,6 +40,12 @@ class CommunityChatDetailController extends GetxController {
   void onInit() {
     super.onInit();
     room = Get.arguments;
+    socketService.isCommunityActive = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<ChatController>()) {
+        Get.find<ChatController>().markCommunityAsRead();
+      }
+    });
     if (room.serviceArea.isNotEmpty) {
       final String area = room.serviceArea.toLowerCase();
       for (var state in states) {
@@ -244,6 +251,12 @@ class CommunityChatDetailController extends GetxController {
 
   @override
   void onClose() {
+    socketService.isCommunityActive = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<ChatController>()) {
+        Get.find<ChatController>().markCommunityAsRead();
+      }
+    });
     socketService.leaveRoom('community::${selectedState.value}');
     _commWorker?.dispose();
     messageController.dispose();

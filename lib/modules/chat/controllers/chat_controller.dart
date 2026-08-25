@@ -14,7 +14,6 @@ class ChatController extends GetxController {
   final UserService userService = Get.find();
 
   var chats = <ChatPreview>[].obs;
-  var filteredChats = <ChatPreview>[].obs;
   var communityRoom = Rxn<CommunityRoom>();
   var searchController = "".obs;
   var isLoading = false.obs;
@@ -60,6 +59,31 @@ class ChatController extends GetxController {
     );
   }
 
+  void markChatAsRead(String chatId) {
+    int index = chats.indexWhere((c) => c.id == chatId);
+    if (index != -1 && (!chats[index].isRead || chats[index].unreadCount > 0)) {
+      chats[index].isRead = true;
+      chats[index].unreadCount = 0;
+      chats.refresh();
+    }
+  }
+
+  void markCommunityAsRead() {
+    if (communityRoom.value != null &&
+        (!communityRoom.value!.isRead || communityRoom.value!.unreadCount > 0)) {
+      final current = communityRoom.value!;
+      communityRoom.value = CommunityRoom(
+        name: current.name,
+        serviceArea: current.serviceArea,
+        totalMembers: current.totalMembers,
+        lastMessage: current.lastMessage,
+        lastMessageAt: current.lastMessageAt,
+        unreadCount: 0,
+        isRead: true,
+      );
+    }
+  }
+
   void setupRealtimeUpdates() {
     // Listen for global message updates to refresh the list
     ever(socketService.lastReceivedMessage, (newMessage) {
@@ -71,8 +95,14 @@ class ChatController extends GetxController {
           updatedChat.lastMessage = newMessage.text;
           updatedChat.lastMessageAt = newMessage.createdAt;
 
-          // Mark as unread if the message is from the other participant
-          if (newMessage.sender?.id != null &&
+          // If the user is currently viewing this exact chat, keep it marked as READ
+          final bool isCurrentlyViewing =
+              socketService.activeChatId == newMessage.chatId;
+
+          if (isCurrentlyViewing) {
+            updatedChat.isRead = true;
+            updatedChat.unreadCount = 0;
+          } else if (newMessage.sender?.id != null &&
               newMessage.sender!.id != userService.userId) {
             updatedChat.isRead = false;
             updatedChat.unreadCount = updatedChat.unreadCount + 1;
@@ -80,9 +110,7 @@ class ChatController extends GetxController {
 
           chats.removeAt(index);
           chats.insert(0, updatedChat);
-          filterChats(searchController.value);
           chats.refresh();
-          filteredChats.refresh();
         } else {
           // If it's a new chat not in list, fetch all again
           fetchChats();
@@ -123,16 +151,20 @@ class ChatController extends GetxController {
         if (text != null && text.isNotEmpty) {
           final isFromOther =
               senderId != null && senderId != userService.userId;
+          final isCurrentlyViewingCommunity = socketService.isCommunityActive;
+
           communityRoom.value = CommunityRoom(
             name: currentRoom.name,
             serviceArea: currentRoom.serviceArea,
             totalMembers: currentRoom.totalMembers,
             lastMessage: text,
             lastMessageAt: createdAt ?? DateTime.now().toIso8601String(),
-            unreadCount: isFromOther
+            unreadCount: (isFromOther && !isCurrentlyViewingCommunity)
                 ? (currentRoom.unreadCount + 1)
-                : currentRoom.unreadCount,
-            isRead: isFromOther ? false : currentRoom.isRead,
+                : 0,
+            isRead: isCurrentlyViewingCommunity
+                ? true
+                : (isFromOther ? false : currentRoom.isRead),
           );
         }
       }
@@ -152,20 +184,18 @@ class ChatController extends GetxController {
     }
   }
 
+  List<ChatPreview> get filteredChats {
+    final query = searchController.value.trim().toLowerCase();
+    if (query.isEmpty) return chats;
+    final currentUserId = userService.userId;
+    return chats.where((chat) {
+      final other = chat.getOtherParticipant(currentUserId);
+      return other?.name.toLowerCase().contains(query) ?? false;
+    }).toList();
+  }
+
   void filterChats(String query) {
     searchController.value = query;
-    if (query.isEmpty) {
-      filteredChats.assignAll(chats);
-    } else {
-      filteredChats.assignAll(
-        chats.where((chat) {
-          final currentUserId = Get.find<UserService>().userId;
-          final other = chat.getOtherParticipant(currentUserId);
-          return other?.name.toLowerCase().contains(query.toLowerCase()) ??
-              false;
-        }).toList(),
-      );
-    }
   }
 
   Future<void> deleteChat(String chatId) async {

@@ -10,6 +10,7 @@ import 'package:moeb_26/data/models/chat_message_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/core/services/socket_service.dart';
 import 'package:moeb_26/core/services/user_service.dart';
+import 'package:moeb_26/modules/chat/controllers/chat_controller.dart';
 
 class ChatDetailController extends GetxController {
   final SocketRepository socketRepo = Get.find();
@@ -29,6 +30,12 @@ class ChatDetailController extends GetxController {
   void onInit() {
     super.onInit();
     chat = Get.arguments;
+    socketService.activeChatId = chat.id;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<ChatController>()) {
+        Get.find<ChatController>().markChatAsRead(chat.id);
+      }
+    });
     _initWithUserId();
     setupSocket();
   }
@@ -198,7 +205,16 @@ class ChatDetailController extends GetxController {
 
   @override
   void onClose() {
-    socketService.leaveRoom('chat::${chat.id}');
+    final String closingChatId = chat.id;
+    if (socketService.activeChatId == closingChatId) {
+      socketService.activeChatId = null;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<ChatController>()) {
+        Get.find<ChatController>().markChatAsRead(closingChatId);
+      }
+    });
+    socketService.leaveRoom('chat::$closingChatId');
     _messageWorker?.dispose();
     messageController.dispose();
     super.onClose();

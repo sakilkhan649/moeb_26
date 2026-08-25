@@ -18,6 +18,10 @@ class SocketService extends GetxService with WidgetsBindingObserver {
   // Stream for community message updates
   final Rxn<dynamic> lastReceivedCommunityMessage = Rxn<dynamic>();
 
+  // Currently active screen tracking
+  String? activeChatId;
+  bool isCommunityActive = false;
+
   @override
   void onInit() {
     super.onInit();
