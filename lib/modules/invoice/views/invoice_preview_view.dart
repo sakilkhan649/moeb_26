@@ -12,7 +12,9 @@ import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/invoice_controller.dart';
 
 class InvoicePreviewView extends GetView<InvoiceController> {
-  const InvoicePreviewView({super.key});
+  final bool isFromDetail;
+
+  const InvoicePreviewView({super.key, this.isFromDetail = false});
 
   @override
   Widget build(BuildContext context) {
@@ -557,8 +559,11 @@ class InvoicePreviewView extends GetView<InvoiceController> {
           'invoice_${controller.invoiceNumberController.text.isNotEmpty ? controller.invoiceNumberController.text.replaceAll(RegExp(r'\s+'), '_') : "999"}.pdf',
     );
 
-    // Show confirm dialog to user FIRST
-    controller.showSaveConfirmDialog();
+    // If opened from Create/Edit flow: show Save/Delete confirmation popup
+    // If opened from InvoiceDetailView (view only): DO NOT show popup dialog
+    if (!isFromDetail) {
+      controller.showSaveConfirmDialog();
+    }
   }
 
   // PDF LAYOUT 0: Delta (Classic)

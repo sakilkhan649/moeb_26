@@ -344,8 +344,7 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                 subtitle: 'View, share or print the generated PDF',
                 onTap: () {
                   controller.populateFromRecord(record);
-                  controller.fetchInvoiceProfileFromApi();
-                  Get.to(() => const InvoicePreviewView());
+                  Get.to(() => const InvoicePreviewView(isFromDetail: true));
                 },
               ),
               SizedBox(height: 12.h),
@@ -356,8 +355,6 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                 subtitle: 'Modify document entries or templates',
                 onTap: () {
                   controller.populateFromRecord(record);
-                  controller.fetchInvoiceProfileFromApi();
-                  controller.fetchClientsFromApi();
                   controller.editingRecordIndex.value = index;
                   Get.to(() => const CreateInvoiceView());
                 },
