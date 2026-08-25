@@ -169,7 +169,7 @@ class MarketplaceCard extends StatelessWidget {
                                 height: 12.sp,
                                 width: 12.sp,
                                 colorFilter: const ColorFilter.mode(
-                                  Colors.white,
+                                  Colors.black,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -177,7 +177,7 @@ class MarketplaceCard extends StatelessWidget {
                               Text(
                                 "Contact",
                                 style: GoogleFonts.inter(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 11.sp,
                                   fontWeight: FontWeight.bold,
                                 ),

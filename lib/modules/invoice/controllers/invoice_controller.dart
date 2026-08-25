@@ -291,11 +291,10 @@ class InvoiceController extends GetxController {
     businessWebsiteController = TextEditingController();
     businessAddressController = TextEditingController();
 
-    // Initialize with static mock invoices (API fallback)
-    _loadMockInvoices();
-
-    // Fetch invoices from backend API
+    // Fetch data from backend API
     fetchInvoicesFromApi();
+    fetchClientsFromApi();
+    fetchInvoiceProfileFromApi();
   }
 
   // --- SAVED CLIENTS ACTIONS ---
@@ -925,117 +924,6 @@ class InvoiceController extends GetxController {
     );
   }
 
-  // Initialize with rich static mock invoices (API fallback)
-  void _loadMockInvoices() {
-    final now = DateTime.now();
-    invoiceHistory.assignAll([
-      InvoiceHistoryRecord(
-        id: 'mock_1',
-        invoiceNumber: 'INV-88201',
-        clientName: 'David Sterling',
-        clientEmail: 'd.sterling@apexcharter.com',
-        issuedDate: DateTime(now.year, now.month, now.day - 3, 14, 30),
-        currency: 'USD',
-        status: 'Paid',
-        totalAmount: 485.00,
-        clientBusinessName: 'Apex Corporate Services',
-        clientPhone: '+1 (555) 234-8901',
-        invoiceDescription: 'Executive Chauffeur Service - JFK Airport Transfer & City Commute',
-        clientStreetAddress: '350 5th Ave, Suite 4200',
-        clientCity: 'New York',
-        clientState: 'NY',
-        clientZip: '10118',
-        clientCountry: 'United States',
-        messageToClient: 'Thank you for choosing our premium chauffeur services. Payment received with thanks!',
-        dueDate: 'On Receipt',
-        businessName: 'Apex Luxury Chauffeur LLC',
-        businessEmail: 'billing@apexluxury.com',
-        businessPhone: '+1 (800) 555-0199',
-        businessWebsite: 'www.apexluxurychauffeur.com',
-        businessAddress: '100 Wall Street, 15th Floor, New York, NY 10005',
-        businessLogoPath: '',
-      ),
-      InvoiceHistoryRecord(
-        id: 'mock_2',
-        invoiceNumber: 'INV-88202',
-        clientName: 'Elena Rostova',
-        clientEmail: 'elena.rostova@vipmiami.org',
-        issuedDate: DateTime(now.year, now.month, now.day - 1, 16, 0),
-        currency: 'USD',
-        status: 'Unpaid',
-        totalAmount: 320.00,
-        clientBusinessName: 'Rostova Global Holdings',
-        clientPhone: '+1 (555) 876-5432',
-        invoiceDescription: 'Luxury Sprinter Van Rental - PortMiami Cruise Transfer & Airport Dropoff',
-        clientStreetAddress: '100 Collins Ave, Apt 14B',
-        clientCity: 'Miami Beach',
-        clientState: 'FL',
-        clientZip: '33139',
-        clientCountry: 'United States',
-        messageToClient: 'Please remit payment upon receipt. Direct bank transfer & credit card accepted.',
-        dueDate: '7 Days',
-        businessName: 'Apex Luxury Chauffeur LLC',
-        businessEmail: 'billing@apexluxury.com',
-        businessPhone: '+1 (800) 555-0199',
-        businessWebsite: 'www.apexluxurychauffeur.com',
-        businessAddress: '100 Wall Street, 15th Floor, New York, NY 10005',
-        businessLogoPath: '',
-      ),
-      InvoiceHistoryRecord(
-        id: 'mock_3',
-        invoiceNumber: 'INV-88203',
-        clientName: 'Robert Vance',
-        clientEmail: 'robert@vancecorp.com',
-        issuedDate: DateTime(now.year, now.month, now.day - 7, 9, 15),
-        currency: 'USD',
-        status: 'Paid',
-        totalAmount: 650.00,
-        clientBusinessName: 'Vance Financial Capital',
-        clientPhone: '+1 (555) 345-6789',
-        invoiceDescription: 'Full-Day Executive Sedan Escort & Financial District Meetings',
-        clientStreetAddress: '200 Park Avenue',
-        clientCity: 'New York',
-        clientState: 'NY',
-        clientZip: '10166',
-        clientCountry: 'United States',
-        messageToClient: 'Payment received via Corporate Credit Card. Thank you for your business!',
-        dueDate: 'On Receipt',
-        businessName: 'Apex Luxury Chauffeur LLC',
-        businessEmail: 'billing@apexluxury.com',
-        businessPhone: '+1 (800) 555-0199',
-        businessWebsite: 'www.apexluxurychauffeur.com',
-        businessAddress: '100 Wall Street, 15th Floor, New York, NY 10005',
-        businessLogoPath: '',
-      ),
-      InvoiceHistoryRecord(
-        id: 'mock_4',
-        invoiceNumber: 'INV-88204',
-        clientName: 'Sophia Martinez',
-        clientEmail: 'sophia.m@martinezlaw.com',
-        issuedDate: DateTime(now.year, now.month, now.day, 11, 45),
-        currency: 'USD',
-        status: 'Unpaid',
-        totalAmount: 210.00,
-        clientBusinessName: 'Martinez & Partners LLC',
-        clientPhone: '+1 (555) 901-2345',
-        invoiceDescription: 'VIP Airport Pickup - LaGuardia Airport to Midtown Corporate Tower',
-        clientStreetAddress: '50 Rockefeller Plaza',
-        clientCity: 'New York',
-        clientState: 'NY',
-        clientZip: '10020',
-        clientCountry: 'United States',
-        messageToClient: 'Payment due within 14 days of invoice issue date.',
-        dueDate: '14 Days',
-        businessName: 'Apex Luxury Chauffeur LLC',
-        businessEmail: 'billing@apexluxury.com',
-        businessPhone: '+1 (800) 555-0199',
-        businessWebsite: 'www.apexluxurychauffeur.com',
-        businessAddress: '100 Wall Street, 15th Floor, New York, NY 10005',
-        businessLogoPath: '',
-      ),
-    ]);
-  }
-
   Future<void> fetchInvoicesFromApi() async {
     try {
       isLoading.value = true;
@@ -1044,25 +932,16 @@ class InvoiceController extends GetxController {
         final body = response.data;
         if (body['success'] == true && body['data'] is List) {
           final List list = body['data'];
-          if (list.isNotEmpty) {
-            final records = list.map((item) {
-              final model = InvoiceModel.fromJson(item as Map<String, dynamic>);
-              return _mapInvoiceModelToRecord(model);
-            }).toList();
+          final records = list.map((item) {
+            final model = InvoiceModel.fromJson(item as Map<String, dynamic>);
+            return _mapInvoiceModelToRecord(model);
+          }).toList();
 
-            invoiceHistory.assignAll(records);
-          } else if (invoiceHistory.isEmpty) {
-            _loadMockInvoices();
-          }
+          invoiceHistory.assignAll(records);
         }
-      } else if (invoiceHistory.isEmpty) {
-        _loadMockInvoices();
       }
     } catch (e) {
       debugPrint('Error fetching invoices from API: $e');
-      if (invoiceHistory.isEmpty) {
-        _loadMockInvoices();
-      }
     } finally {
       isLoading.value = false;
     }
