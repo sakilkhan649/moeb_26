@@ -8,6 +8,7 @@ import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/data/models/my_rides_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 
 class RideDetailSheet extends StatelessWidget {
   final RideData ride;
@@ -28,23 +29,23 @@ class RideDetailSheet extends StatelessWidget {
       String datePart = "Today";
       if (r.createdAt != null && r.createdAt!.isNotEmpty) {
         try {
-          final parsedDate = DateTime.parse(r.createdAt!).toLocal();
-          datePart = "Today, ${DateFormat('MMM dd').format(parsedDate)}";
+          final dt = DateTime.parse(r.createdAt!);
+          datePart = DateFormat("MMM dd, yyyy").format(dt);
         } catch (_) {}
       }
       return "$datePart • ASAP";
     }
 
-    String datePart = dateHeader ?? "Today";
-    if (dateHeader == null || dateHeader!.isEmpty) {
-      if (r.date != null && r.date!.isNotEmpty) {
-        try {
-          final parsedDate = DateTime.parse(r.date!).toLocal();
-          datePart = DateFormat("dd MMM, yyyy").format(parsedDate);
-        } catch (_) {
-          datePart = r.date!;
-        }
+    String datePart = "";
+    if (r.date != null && r.date!.isNotEmpty) {
+      try {
+        final dt = DateTime.parse(r.date!);
+        datePart = DateFormat("MMM dd, yyyy").format(dt);
+      } catch (_) {
+        datePart = r.date!;
       }
+    } else {
+      datePart = dateHeader ?? "Today";
     }
 
     String timePart = "";
@@ -54,8 +55,9 @@ class RideDetailSheet extends StatelessWidget {
           final parts = r.time!.split(":");
           final hour = int.parse(parts[0]);
           final minute = int.parse(parts[1]);
-          final dt = DateTime(2026, 1, 1, hour, minute);
-          timePart = DateFormat("hh:mm a").format(dt);
+          final now = DateTime.now();
+          final timeDt = DateTime(now.year, now.month, now.day, hour, minute);
+          timePart = DateFormat("hh:mm a").format(timeDt);
         } else {
           timePart = r.time!;
         }
@@ -71,21 +73,29 @@ class RideDetailSheet extends StatelessWidget {
   }
 
   String _getPosterName(RideData r) {
-    if (r.nickname != null && r.nickname!.isNotEmpty) return r.nickname!;
-    if (r.name != null && r.name!.isNotEmpty) return r.name!;
-    final driver = r.createdBy ?? r.assignedTo ?? r.applicant?.driver;
-    if (driver?.nickname != null && driver!.nickname!.isNotEmpty) {
-      return driver.nickname!;
+    if (r.name != null && r.name!.trim().isNotEmpty) return r.name!.trim();
+    if (r.createdBy?.name != null && r.createdBy!.name.trim().isNotEmpty) {
+      return r.createdBy!.name.trim();
     }
-    return driver?.name ?? r.companyName ?? r.company ?? "Job Poster";
+    if (r.companyName != null && r.companyName!.trim().isNotEmpty) {
+      return r.companyName!.trim();
+    }
+    return "Job Poster";
   }
 
-  String _getDriverName(RideData r) {
-    final driver = r.assignedTo ?? r.applicant?.driver ?? r.createdBy;
-    if (driver?.nickname != null && driver!.nickname!.isNotEmpty) {
-      return driver.nickname!;
+  String _getPosterImage(RideData r) {
+    if (r.profilePicture != null && r.profilePicture!.trim().isNotEmpty) {
+      return r.profilePicture!.trim();
     }
-    return driver?.name ?? "Chauffeur";
+    if (r.createdBy?.profilePicture != null &&
+        r.createdBy!.profilePicture.trim().isNotEmpty) {
+      return r.createdBy!.profilePicture.trim();
+    }
+    return "";
+  }
+
+  String _getPosterId(RideData r) {
+    return r.jobCreatorId ?? r.createdBy?.id ?? "";
   }
 
   String _getVehicleInfo(RideData r) {
@@ -98,9 +108,8 @@ class RideDetailSheet extends StatelessWidget {
   }
 
   void _openChat(RideData r) async {
-    final String? participantId =
-        r.createdBy?.id ?? r.assignedTo?.id ?? r.applicant?.driver?.id;
-    if (participantId != null && participantId.isNotEmpty && r.id.isNotEmpty) {
+    final String participantId = _getPosterId(r);
+    if (participantId.isNotEmpty && r.id.isNotEmpty) {
       try {
         final chat = await Get.find<SocketRepository>()
             .createChat(participantId, r.id);
@@ -116,14 +125,17 @@ class RideDetailSheet extends StatelessWidget {
     final chat = ChatPreview(
       id: "chat_${r.id}",
       participants: [
-        ChatParticipant(id: participantId ?? "user_1", name: posterName),
+        ChatParticipant(
+          id: participantId.isNotEmpty ? participantId : "poster_${r.id}",
+          name: posterName,
+          email: "",
+          profilePicture: _getPosterImage(r),
+        ),
       ],
-      lastMessage:
-          "Hi, I am assigned to your ride #${r.id.substring(r.id.length > 6 ? r.id.length - 6 : 0)}.",
-      lastMessageAt: DateTime.now().toIso8601String(),
-      createdBy: "current_user",
+      unreadCount: 0,
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: DateTime.now().toIso8601String(),
+      createdBy: "current_user",
     );
     Get.back();
     Get.toNamed(Routes.chatDetailView, arguments: chat);
@@ -136,7 +148,8 @@ class RideDetailSheet extends StatelessWidget {
     final amountStr =
         ride.paymentAmount != null ? "${ride.paymentAmount}" : "0.00";
     final posterName = _getPosterName(ride);
-    final driverName = _getDriverName(ride);
+    final posterImage = _getPosterImage(ride);
+    final posterId = _getPosterId(ride);
     final vehicleInfo = _getVehicleInfo(ride);
     final paymentTypeStr = ride.paymentType?.isNotEmpty == true
         ? ride.paymentType!
@@ -344,53 +357,86 @@ class RideDetailSheet extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(8.r),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF1C1C1F),
-                                borderRadius: BorderRadius.circular(8.r),
-                                border: Border.all(
-                                  color: const Color(0xFF2A2A32),
-                                  width: 1,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            final preferredController =
+                                Get.isRegistered<PreferredDriversController>()
+                                ? Get.find<PreferredDriversController>()
+                                : Get.put(PreferredDriversController());
+
+                            preferredController.openChauffeurProfile(
+                              userId: posterId,
+                              name: posterName,
+                              imageUrl: posterImage,
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 38.r,
+                                height: 38.r,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: const Color(0xFF1C1C1F),
+                                  border: Border.all(
+                                    color: const Color(0xFF2A2A32),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: posterImage.isNotEmpty
+                                      ? (posterImage.startsWith('http')
+                                          ? Image.network(
+                                              posterImage,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Icon(
+                                                Icons.person_outline,
+                                                color: Colors.white70,
+                                                size: 20.sp,
+                                              ),
+                                            )
+                                          : Image.asset(
+                                              posterImage,
+                                              fit: BoxFit.cover,
+                                            ))
+                                      : Icon(
+                                          Icons.person_outline,
+                                          color: Colors.white70,
+                                          size: 20.sp,
+                                        ),
                                 ),
                               ),
-                              child: Icon(
-                                Icons.person_outline,
-                                color: Colors.white70,
-                                size: 20.sp,
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "JOB POSTER",
-                                    style: GoogleFonts.inter(
-                                      color: const Color(0xFF94A3B8),
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.0,
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "JOB POSTER",
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFF94A3B8),
+                                        fontSize: 9.sp,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1.0,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 2.h),
-                                  Text(
-                                    posterName,
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      posterName,
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       if (!isPast) ...[
@@ -443,7 +489,7 @@ class RideDetailSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "CHAUFFEUR & VEHICLE",
+                              "VEHICLE",
                               style: GoogleFonts.inter(
                                 color: const Color(0xFF94A3B8),
                                 fontSize: 9.sp,
@@ -453,7 +499,7 @@ class RideDetailSheet extends StatelessWidget {
                             ),
                             SizedBox(height: 2.h),
                             Text(
-                              driverName,
+                              vehicleInfo.isNotEmpty ? vehicleInfo : "N/A",
                               style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 14.sp,
@@ -462,19 +508,6 @@ class RideDetailSheet extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            if (vehicleInfo.isNotEmpty) ...[
-                              SizedBox(height: 2.h),
-                              Text(
-                                vehicleInfo,
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFF94A3B8),
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
                           ],
                         ),
                       ),
