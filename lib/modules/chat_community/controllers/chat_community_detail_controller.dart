@@ -157,6 +157,9 @@ class CommunityChatDetailController extends GetxController {
     StorageService.setString(_kSelectedCommunityServiceArea, newState);
     socketService.joinRoom('community::$newState');
     fetchMessages();
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().fetchCommunityRoom(serviceArea: newState);
+    }
   }
 
   void setupSocket() {

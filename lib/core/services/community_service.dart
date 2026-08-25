@@ -12,9 +12,9 @@ class CommunityService extends GetxService {
     _communityRepo = CommunityRepo(apiClient: Get.find());
   }
 
-  Future<Response> getCommunityRoom() async {
+  Future<Response> getCommunityRoom({String? serviceArea}) async {
     try {
-      return await _communityRepo.getCommunityRoom();
+      return await _communityRepo.getCommunityRoom(serviceArea: serviceArea);
     } catch (e) {
       rethrow;
     }

@@ -7,8 +7,15 @@ class CommunityRepo {
   final ApiClient apiClient;
   CommunityRepo({required this.apiClient});
 
-  Future<Response> getCommunityRoom() async {
-    return await apiClient.getData(ApiConstants.communityRoom);
+  Future<Response> getCommunityRoom({String? serviceArea}) async {
+    final query = <String, dynamic>{};
+    if (serviceArea != null && serviceArea.isNotEmpty) {
+      query['serviceArea'] = serviceArea;
+    }
+    return await apiClient.getData(
+      ApiConstants.communityRoom,
+      query: query.isNotEmpty ? query : null,
+    );
   }
 
   Future<Response> getCommunityMessages({

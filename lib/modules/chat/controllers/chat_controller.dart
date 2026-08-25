@@ -1,3 +1,4 @@
+import 'package:moeb_26/core/services/storege_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/data/models/chat_model.dart';
@@ -39,9 +40,13 @@ class ChatController extends GetxController {
     setupRealtimeUpdates();
   }
 
-  Future<void> fetchCommunityRoom() async {
+  Future<void> fetchCommunityRoom({String? serviceArea}) async {
     try {
-      final response = await communityService.getCommunityRoom();
+      final String targetArea = serviceArea ??
+          await StorageService.getString('selected_community_service_area');
+      final response = await communityService.getCommunityRoom(
+        serviceArea: targetArea.isNotEmpty ? targetArea : null,
+      );
       if (response.statusCode == 200 && response.data != null) {
         communityRoom.value = CommunityRoom.fromJson(response.data['data']);
         return;
