@@ -18,7 +18,6 @@ class AllVehicleView extends StatelessWidget {
     // Automatically trigger fresh fetch when opening this view
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.fetchVehicles();
-      controller.fetchUserProfile();
     });
 
     return Scaffold(
@@ -39,12 +38,7 @@ class AllVehicleView extends StatelessWidget {
           return RefreshIndicator(
             color: AppColors.primaryColor,
             backgroundColor: const Color(0xFF1A1A1A),
-            onRefresh: () async {
-              await Future.wait([
-                controller.fetchVehicles(),
-                controller.fetchUserProfile(),
-              ]);
-            },
+            onRefresh: () => controller.fetchVehicles(),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(
                 parent: BouncingScrollPhysics(),
@@ -108,12 +102,7 @@ class AllVehicleView extends StatelessWidget {
               child: RefreshIndicator(
                 color: AppColors.primaryColor,
                 backgroundColor: const Color(0xFF1A1A1A),
-                onRefresh: () async {
-                  await Future.wait([
-                    controller.fetchVehicles(),
-                    controller.fetchUserProfile(),
-                  ]);
-                },
+                onRefresh: () => controller.fetchVehicles(),
                 child: ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(
                     parent: BouncingScrollPhysics(),
