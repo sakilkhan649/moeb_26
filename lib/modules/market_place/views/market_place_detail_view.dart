@@ -233,25 +233,28 @@ class _MarketplaceItemDetailViewState extends State<MarketplaceItemDetailView> {
                         SizedBox(height: 16.h),
 
                         // Specs Row (Condition / Status)
-                        Row(
+                        Wrap(
+                          spacing: 10.w,
+                          runSpacing: 8.h,
                           children: [
-                            if (widget.item.condition != null && widget.item.condition!.isNotEmpty) ...[
+                            if (widget.item.condition != null &&
+                                widget.item.condition!.isNotEmpty)
                               _buildBadge(
                                 label: "Condition: ${widget.item.condition}",
                                 backgroundColor: const Color(0xFF1F1C1C),
                                 textColor: const Color(0xFFD5C4AB),
                               ),
-                              SizedBox(width: 10.w),
-                            ],
                             if (widget.item.status != null)
                               _buildBadge(
                                 label: widget.item.status!.toUpperCase(),
-                                backgroundColor: widget.item.status == 'Active'
-                                    ? Colors.green.withValues(alpha: 0.15)
-                                    : Colors.orange.withValues(alpha: 0.15),
-                                textColor: widget.item.status == 'Active'
-                                    ? Colors.green
-                                    : Colors.orange,
+                                backgroundColor:
+                                    widget.item.status!.toUpperCase() == 'SOLD'
+                                        ? Colors.red.withValues(alpha: 0.15)
+                                        : Colors.green.withValues(alpha: 0.15),
+                                textColor:
+                                    widget.item.status!.toUpperCase() == 'SOLD'
+                                        ? Colors.redAccent
+                                        : Colors.green,
                               ),
                           ],
                         ),
@@ -400,62 +403,142 @@ class _MarketplaceItemDetailViewState extends State<MarketplaceItemDetailView> {
               ),
             ),
             child: widget.isOwnItem
-                ? Row(
-                    children: [
-                      // Edit Button
-                      Expanded(
-                        flex: 2,
-                        child: CustomButton(
-                          onPressed: () {
-                            final MarketplaceController mpc;
-                            if (Get.isRegistered<MarketplaceController>()) {
-                              mpc = Get.find<MarketplaceController>();
-                            } else {
-                              mpc = Get.put(MarketplaceController());
-                            }
-                            mpc.prefillForEdit(
-                              widget.item.title ?? '',
-                              widget.item.price?.toString() ?? '0',
-                              widget.item.location ?? '',
-                              widget.item.condition ?? '',
-                              widget.item.description ?? '',
-                              widget.item.photos ?? [],
-                            );
-                            Get.bottomSheet(
-                              SellItemBottomSheet(editItemId: widget.item.id),
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                            );
-                          },
-                          text: "Edit Item",
-                          icon: Icon(
-                            Icons.edit,
-                            size: 18.sp,
-                            color: Colors.black,
+                ? (widget.item.status?.toUpperCase() != 'SOLD'
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CustomButton(
+                            onPressed: () async {
+                              final MyItemsController controller;
+                              if (Get.isRegistered<MyItemsController>()) {
+                                controller = Get.find<MyItemsController>();
+                              } else {
+                                controller = Get.put(MyItemsController());
+                              }
+                              await controller.markAsSold(widget.item.id ?? '');
+                              setState(() {
+                                widget.item.status = 'SOLD';
+                              });
+                            },
+                            text: "Mark as Sold",
+                            backgroundColor: const Color(0xFF22C55E),
+                            textColor: Colors.black,
+                            icon: Icon(
+                              Icons.check_circle_outline,
+                              size: 18.sp,
+                              color: Colors.black,
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      // Delete Button
-                      Expanded(
-                        flex: 1,
-                        child: CustomButton(
-                          onPressed: () => _showDeleteDialog(context),
-                          text: "Delete",
-                          textColor: Colors.red,
-                          backgroundColor: const Color(0xFF1E1E1E),
-                          borderColor: const Color(0xFF2E2E2E),
-                          icon: Icon(
-                            Icons.delete_outline,
-                            size: 18.sp,
-                            color: Colors.red,
+                          SizedBox(height: 10.h),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomButton(
+                                  onPressed: () {
+                                    final MarketplaceController mpc;
+                                    if (Get.isRegistered<MarketplaceController>()) {
+                                      mpc = Get.find<MarketplaceController>();
+                                    } else {
+                                      mpc = Get.put(MarketplaceController());
+                                    }
+                                    mpc.prefillForEdit(
+                                      widget.item.title ?? '',
+                                      widget.item.price?.toString() ?? '0',
+                                      widget.item.location ?? '',
+                                      widget.item.condition ?? '',
+                                      widget.item.description ?? '',
+                                      widget.item.photos ?? [],
+                                    );
+                                    Get.bottomSheet(
+                                      SellItemBottomSheet(
+                                          editItemId: widget.item.id),
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                    );
+                                  },
+                                  text: "Edit Item",
+                                  icon: Icon(
+                                    Icons.edit_outlined,
+                                    size: 18.sp,
+                                    color: Colors.black,
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                child: CustomButton(
+                                  onPressed: () => _showDeleteDialog(context),
+                                  text: "Delete",
+                                  textColor: Colors.redAccent,
+                                  backgroundColor: const Color(0xFF1E1E1E),
+                                  borderColor: const Color(0xFF2E2E2E),
+                                  icon: Icon(
+                                    Icons.delete_outline,
+                                    size: 18.sp,
+                                    color: Colors.redAccent,
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                ),
+                              ),
+                            ],
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                        ),
-                      ),
-                    ],
-                  )
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: CustomButton(
+                              onPressed: () {
+                                final MarketplaceController mpc;
+                                if (Get.isRegistered<MarketplaceController>()) {
+                                  mpc = Get.find<MarketplaceController>();
+                                } else {
+                                  mpc = Get.put(MarketplaceController());
+                                }
+                                mpc.prefillForEdit(
+                                  widget.item.title ?? '',
+                                  widget.item.price?.toString() ?? '0',
+                                  widget.item.location ?? '',
+                                  widget.item.condition ?? '',
+                                  widget.item.description ?? '',
+                                  widget.item.photos ?? [],
+                                );
+                                Get.bottomSheet(
+                                  SellItemBottomSheet(
+                                      editItemId: widget.item.id),
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                );
+                              },
+                              text: "Edit Item",
+                              icon: Icon(
+                                Icons.edit_outlined,
+                                size: 18.sp,
+                                color: Colors.black,
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 14.h),
+                            ),
+                          ),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: CustomButton(
+                              onPressed: () => _showDeleteDialog(context),
+                              text: "Delete",
+                              textColor: Colors.redAccent,
+                              backgroundColor: const Color(0xFF1E1E1E),
+                              borderColor: const Color(0xFF2E2E2E),
+                              icon: Icon(
+                                Icons.delete_outline,
+                                size: 18.sp,
+                                color: Colors.redAccent,
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 14.h),
+                            ),
+                          ),
+                        ],
+                      ))
                 : Row(
                     children: [
                       Expanded(

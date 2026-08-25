@@ -15,9 +15,12 @@ class MarketplaceController extends GetxController {
   var filteredItems = <ItemData>[].obs;
   var isLoading = false.obs;
   var isLoadMore = false.obs;
-  var currentPage = 1;
-  var totalPage = 1;
+
+  // Strict Cursor Pagination
+  String? nextCursor;
+  bool hasMore = true;
   String currentQuery = "";
+  final RxString selectedFilterCondition = "".obs;
 
   final ScrollController scrollController = ScrollController();
 
@@ -25,7 +28,7 @@ class MarketplaceController extends GetxController {
   final RxString selectedCondition = "".obs;
   final List<String> conditions = [
     "New",
-    "Used", // Changed to match API/Postman
+    "Used",
     "Refurbished",
   ];
 
@@ -60,25 +63,33 @@ class MarketplaceController extends GetxController {
             scrollController.position.maxScrollExtent - 200 &&
         !isLoading.value &&
         !isLoadMore.value &&
-        currentPage < totalPage) {
+        hasMore &&
+        nextCursor != null &&
+        nextCursor!.isNotEmpty) {
       loadMoreItems();
     }
   }
 
-  Future<void> fetchItems({String? query}) async {
+  Future<void> fetchItems({String? query, String? condition}) async {
     try {
       isLoading.value = true;
-      currentPage = 1;
-      currentQuery = query ?? "";
+      nextCursor = null;
+      hasMore = true;
+      currentQuery = query ?? currentQuery;
+      final cond = condition ?? (selectedFilterCondition.value.isNotEmpty ? selectedFilterCondition.value : null);
+
       final response = await _marketplaceService.getAllItems(
         searchTerm: currentQuery.isNotEmpty ? currentQuery : null,
-        page: currentPage,
+        condition: cond,
+        limit: 10,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final marketplaceModel = MarketplaceModel.fromJson(response.data);
         final items = marketplaceModel.data ?? [];
-        totalPage = marketplaceModel.pagination?.totalPage ?? 1;
+
+        nextCursor = marketplaceModel.cursor?.nextCursor;
+        hasMore = marketplaceModel.cursor?.hasMore ?? (nextCursor != null && nextCursor!.isNotEmpty);
 
         allItems.assignAll(items);
         filteredItems.assignAll(items);
@@ -96,33 +107,48 @@ class MarketplaceController extends GetxController {
   }
 
   Future<void> loadMoreItems() async {
+    if (!hasMore || isLoadMore.value || nextCursor == null || nextCursor!.isEmpty) return;
+
     try {
       isLoadMore.value = true;
-      currentPage++;
+      final cond = selectedFilterCondition.value.isNotEmpty ? selectedFilterCondition.value : null;
+
       final response = await _marketplaceService.getAllItems(
         searchTerm: currentQuery.isNotEmpty ? currentQuery : null,
-        page: currentPage,
+        condition: cond,
+        cursor: nextCursor,
+        limit: 10,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final marketplaceModel = MarketplaceModel.fromJson(response.data);
         final items = marketplaceModel.data ?? [];
 
+        nextCursor = marketplaceModel.cursor?.nextCursor;
+        hasMore = marketplaceModel.cursor?.hasMore ?? (nextCursor != null && nextCursor!.isNotEmpty);
+
         allItems.addAll(items);
         filteredItems.assignAll(allItems);
       }
     } catch (e) {
       print("Error loading more items: $e");
-      currentPage--; // Reset page on error
     } finally {
       isLoadMore.value = false;
     }
   }
 
   void searchItems(String query) {
-    // We can either filter locally or fetch from API
-    // Let's fetch from API as it has search support
+    currentQuery = query;
     fetchItems(query: query);
+  }
+
+  void filterByCondition(String condition) {
+    if (selectedFilterCondition.value == condition) {
+      selectedFilterCondition.value = "";
+    } else {
+      selectedFilterCondition.value = condition;
+    }
+    fetchItems(condition: selectedFilterCondition.value.isNotEmpty ? selectedFilterCondition.value : null);
   }
 
   Future<void> pickImages(BuildContext context) async {
@@ -144,9 +170,9 @@ class MarketplaceController extends GetxController {
   }
 
   Future<void> listItem({String? editItemId}) async {
-    if (titleController.text.isEmpty ||
-        priceController.text.isEmpty ||
-        locationController.text.isEmpty) {
+    if (titleController.text.trim().isEmpty ||
+        priceController.text.trim().isEmpty ||
+        locationController.text.trim().isEmpty) {
       Get.snackbar(
         "Error",
         "Please fill title, price, and location",
@@ -161,14 +187,14 @@ class MarketplaceController extends GetxController {
       isLoading.value = true;
       final response = editItemId == null
           ? await _marketplaceService.createItem(
-              title: titleController.text,
-              price: priceController.text,
+              title: titleController.text.trim(),
+              price: priceController.text.trim(),
               condition: selectedCondition.value.isNotEmpty
                   ? selectedCondition.value
                   : null,
-              location: locationController.text,
-              description: descriptionController.text.isNotEmpty
-                  ? descriptionController.text
+              location: locationController.text.trim(),
+              description: descriptionController.text.trim().isNotEmpty
+                  ? descriptionController.text.trim()
                   : null,
               photos: selectedImages.isNotEmpty
                   ? selectedImages.toList()
@@ -176,19 +202,18 @@ class MarketplaceController extends GetxController {
             )
           : await _marketplaceService.updateItem(
               itemId: editItemId,
-              title: titleController.text,
-              price: priceController.text,
+              title: titleController.text.trim(),
+              price: priceController.text.trim(),
               condition: selectedCondition.value.isNotEmpty
                   ? selectedCondition.value
                   : null,
-              location: locationController.text,
-              description: descriptionController.text.isNotEmpty
-                  ? descriptionController.text
+              location: locationController.text.trim(),
+              description: descriptionController.text.trim().isNotEmpty
+                  ? descriptionController.text.trim()
                   : null,
               photos: selectedImages.isNotEmpty
                   ? selectedImages.toList()
                   : null,
-              // status could also be updated here if needed
             );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -203,7 +228,7 @@ class MarketplaceController extends GetxController {
           colorText: Colors.white,
         );
         clearFields();
-        fetchItems(); // Refresh the general list
+        fetchItems(); // Refresh the general marketplace list
 
         // Also refresh My Items list if that controller is active
         if (Get.isRegistered<my_items.MyItemsController>()) {

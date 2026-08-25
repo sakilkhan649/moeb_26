@@ -130,7 +130,70 @@ class MarketPlaceView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 15.h),
+              SizedBox(height: 12.h),
+
+              // Condition Filter Chips
+              SizedBox(
+                height: 34.h,
+                child: Obx(() {
+                  final filterOptions = ["All", "New", "Used", "Refurbished"];
+                  final selected = controller.selectedFilterCondition.value;
+
+                  return ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: filterOptions.length,
+                    separatorBuilder: (_, __) => SizedBox(width: 8.w),
+                    itemBuilder: (context, index) {
+                      final option = filterOptions[index];
+                      final isSelected = (option == "All" && selected.isEmpty) ||
+                          (selected == option);
+
+                      return GestureDetector(
+                        onTap: () {
+                          if (option == "All") {
+                            controller.selectedFilterCondition.value = "";
+                            controller.fetchItems();
+                          } else {
+                            controller.filterByCondition(option);
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.primaryColor
+                                : const Color(0xFF18181B),
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.primaryColor
+                                  : const Color(0xFF27272A),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              option,
+                              style: GoogleFonts.inter(
+                                color: isSelected ? Colors.black : Colors.white70,
+                                fontSize: 12.sp,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+              SizedBox(height: 12.h),
+
               Expanded(
                 child: Obx(() {
                   if (controller.isLoading.value &&

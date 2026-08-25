@@ -324,24 +324,19 @@ class SellItemBottomSheet extends StatelessWidget {
                       SizedBox(height: 30.h),
 
                       Obx(
-                        () => controller.isLoading.value
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              )
-                            : CustomButton(
-                                text: editItemId == null
-                                    ? "List Item"
-                                    : "Update Item",
-                                backgroundColor: Colors.white,
-                                textColor: Colors.black,
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    controller.listItem(editItemId: editItemId);
-                                  }
-                                },
-                              ),
+                        () => CustomButton(
+                          text: editItemId == null
+                              ? "List Item"
+                              : "Update Item",
+                          backgroundColor: AppColors.primaryColor,
+                          textColor: Colors.black,
+                          loading: controller.isLoading.value,
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              controller.listItem(editItemId: editItemId);
+                            }
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.h),
                     ],
