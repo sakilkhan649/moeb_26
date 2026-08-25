@@ -203,7 +203,8 @@ class ChatCommunityDetailView extends StatelessWidget {
   }
 
   Widget _buildMessageBubble(CommunityMessage message) {
-    final bool isMe = message.sender.id == controller.userService.userId;
+    final String currentUserId = controller.userService.userId;
+    final bool isMe = message.sender.id == currentUserId;
 
     final avatar = GestureDetector(
       onTap: () {
@@ -259,6 +260,26 @@ class ChatCommunityDetailView extends StatelessWidget {
     );
 
     final parsed = ReplyParsedMessage.parse(message.text);
+    String? replyUser = parsed.replyToUser;
+    String? replyText = parsed.replyToText;
+
+    if (replyUser == null && message.replyToMessage != null) {
+      final rMsg = message.replyToMessage!;
+      replyUser = rMsg.sender.id == currentUserId ? 'You' : rMsg.sender.name;
+      replyText = rMsg.text;
+    } else if (replyUser == null && message.replyTo != null) {
+      final original =
+          controller.messages.firstWhereOrNull((m) => m.id == message.replyTo);
+      if (original != null) {
+        replyUser =
+            original.sender.id == currentUserId ? 'You' : original.sender.name;
+        replyText = original.text;
+      }
+    }
+
+    if (replyText != null && replyText.startsWith('[REPLY:')) {
+      replyText = replyText.split(']').skip(1).join(']');
+    }
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6.h),
@@ -356,8 +377,7 @@ class ChatCommunityDetailView extends StatelessWidget {
                                   )
                                   .toList(),
                             ),
-                          if (parsed.replyToUser != null &&
-                              parsed.replyToText != null)
+                          if (replyUser != null && replyText != null)
                             Container(
                               margin: EdgeInsets.only(bottom: 6.h),
                               padding: EdgeInsets.symmetric(
@@ -378,7 +398,7 @@ class ChatCommunityDetailView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    parsed.replyToUser!,
+                                    replyUser,
                                     style: GoogleFonts.inter(
                                       color: const Color(0xFFD08700),
                                       fontSize: 11.sp,
@@ -389,7 +409,7 @@ class ChatCommunityDetailView extends StatelessWidget {
                                   ),
                                   SizedBox(height: 2.h),
                                   Text(
-                                    parsed.replyToText!,
+                                    replyText,
                                     style: GoogleFonts.inter(
                                       color: Colors.white70,
                                       fontSize: 12.sp,

@@ -47,6 +47,8 @@ class CommunityMessage {
   final ChatParticipant sender;
   final String text;
   final List<String> attachments;
+  final String? replyTo;
+  final CommunityMessage? replyToMessage;
   final String createdAt;
   final String updatedAt;
 
@@ -56,6 +58,8 @@ class CommunityMessage {
     required this.sender,
     required this.text,
     required this.attachments,
+    this.replyTo,
+    this.replyToMessage,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -71,6 +75,16 @@ class CommunityMessage {
       senderObj = ChatParticipant(id: '', name: '');
     }
 
+    String? replyToId;
+    CommunityMessage? populatedReplyTo;
+    final dynamic replyToData = json['replyTo'];
+    if (replyToData is Map<String, dynamic>) {
+      populatedReplyTo = CommunityMessage.fromJson(replyToData);
+      replyToId = populatedReplyTo.id;
+    } else if (replyToData is String) {
+      replyToId = replyToData;
+    }
+
     return CommunityMessage(
       id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
       serviceArea: json['serviceArea']?.toString() ?? '',
@@ -79,6 +93,8 @@ class CommunityMessage {
       attachments: json['attachments'] != null
           ? List<String>.from(json['attachments'])
           : [],
+      replyTo: replyToId,
+      replyToMessage: populatedReplyTo,
       createdAt: json['createdAt']?.toString() ?? '',
       updatedAt: json['updatedAt']?.toString() ?? '',
     );

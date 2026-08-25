@@ -29,9 +29,15 @@ class CommunityRepo {
   Future<Response> sendCommunityMessage({
     required String text,
     List<File>? attachments,
+    String? replyTo,
   }) async {
     final formData = FormData();
-    formData.fields.add(MapEntry('text', text));
+    if (text.isNotEmpty) {
+      formData.fields.add(MapEntry('text', text));
+    }
+    if (replyTo != null && replyTo.isNotEmpty) {
+      formData.fields.add(MapEntry('replyTo', replyTo));
+    }
 
     if (attachments != null && attachments.isNotEmpty) {
       for (var file in attachments) {

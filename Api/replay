@@ -1,0 +1,55 @@
+4:11:15 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.2 Seller quotes and replies to buyer inquiry message with photo attachment (POST /api/v1/messages/:chatId) | stdout
+
+📝 USER STORY:
+As a Seller
+I want to quote and reply to a specific inquiry message with text and an image attachment
+So that the buyer has clear context on which message I am answering and can see proof of condition
+
+📋 BUSINESS RULES & PAYLOAD SPECIFICATIONS:
+• Endpoint: POST /api/v1/messages/:chatId
+• Authentication: Bearer JWT Token required (sender must be chat participant)
+• Payload:
+  - text (string, optional): Reply content
+  - attachments (string[], optional): Photo URLs
+  - replyTo (string, optional): Target referenced message ID within the same chat
+• Population: replyTo with { text, attachments, sender: { name, profilePicture } }
+• Response: { success: true, message: 'Message sent successfully', data: IMessage }
+
+📖 BDD SCENARIO: Stage 2.2 — Quoted Message Reply with Attachment
+Feature: Messaging — Quoted Message Reply
+
+4:11:15 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.2 Seller quotes and replies to buyer inquiry message with photo attachment (POST /api/v1/messages/:chatId) | stdout
+
+
+ POST   /api/v1/messages/:chatId [CHAT-2.2-SEND-REPLY-WITH-ATTACHMENT] - Marcus quotes inquiry message and replies with condition confirmation and photo
+        ↳ /api/v1/messages/6a8d6a43b42e8fa7d09e0efb
+ REQUEST 
+{
+  "params": {
+    "chatId": "6a8d6a43b42e8fa7d09e0efb"
+  },
+  "query": {},
+  "body": {
+    "text": "Yes Alex! They are boxed and ready in Manhattan. Here is a photo of the tire tread.",
+    "attachments": [
+      "https://example.com/photos/wheel-tread-proof.jpg"
+    ],
+    "replyTo": "6a8d6a43b42e8fa7d09e0f17"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Message sent successfully",
+  "data": {
+    "sender": "6a8d6a42b42e8fa7d09e0ed5",
+    "text": "Yes Alex! They are boxed and ready in Manhattan. Here is a photo of the tire tread.",
+    "attachments": [
+      "https://example.com/photos/wheel-tread-proof.jpg"
+    ],
+    "replyTo": "6a8d6a43b42e8fa7d09e0f17",
+    "createdAt": "2026-08-25T10:11:15.318Z",
+    "updatedAt": "2026-08-25T10:11:15.318Z",
+    "id": "6a8d6a43b42e8fa7d09e0f2d"
+  }
+}

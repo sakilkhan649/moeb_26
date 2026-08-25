@@ -41,11 +41,13 @@ class CommunityService extends GetxService {
   Future<Response> sendCommunityMessage({
     required String text,
     List<File>? attachments,
+    String? replyTo,
   }) async {
     try {
       return await _communityRepo.sendCommunityMessage(
         text: text,
         attachments: attachments,
+        replyTo: replyTo,
       );
     } catch (e) {
       rethrow;

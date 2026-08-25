@@ -232,17 +232,13 @@ class ChatDetailController extends GetxController {
   }
 
   Future<void> sendMessage() async {
-    var text = messageController.text.trim();
+    final text = messageController.text.trim();
     if (text.isNotEmpty || selectedImages.isNotEmpty) {
+      String? replyToId;
+      ChatMessage? quotedMessage;
       if (replyingTo.value != null) {
-        final replyText = replyingTo.value!.text;
-        final cleanReplyText = replyText.startsWith('[REPLY:')
-            ? replyText.split(']').skip(1).join(']')
-            : replyText;
-        final senderName = replyingTo.value!.isSentBy(userService.userId)
-            ? 'You'
-            : (replyingTo.value!.sender?.name ?? 'Someone');
-        text = '[REPLY:$senderName|$cleanReplyText]$text';
+        quotedMessage = replyingTo.value;
+        replyToId = quotedMessage!.id;
         replyingTo.value = null;
       }
 
@@ -257,6 +253,8 @@ class ChatDetailController extends GetxController {
         text: text,
         senderId: userService.userId,
         sender: ChatParticipant(id: userService.userId, name: 'You'),
+        replyTo: replyToId,
+        replyToMessage: quotedMessage,
         createdAt: DateTime.now().toIso8601String(),
         updatedAt: DateTime.now().toIso8601String(),
       );
@@ -269,6 +267,7 @@ class ChatDetailController extends GetxController {
           chat.id,
           text,
           attachments: imagesToSend,
+          replyTo: replyToId,
         );
         if (sentMessage != null) {
           int index = messages.indexWhere((m) => m.id == tempId);

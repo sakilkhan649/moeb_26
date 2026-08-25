@@ -154,6 +154,7 @@ class SocketRepository {
     String chatId,
     String text, {
     List<File>? attachments,
+    String? replyTo,
   }) async {
     try {
       final url = '/messages/$chatId';
@@ -162,6 +163,9 @@ class SocketRepository {
         final formData = FormData();
         if (text.isNotEmpty) {
           formData.fields.add(MapEntry('text', text));
+        }
+        if (replyTo != null && replyTo.isNotEmpty) {
+          formData.fields.add(MapEntry('replyTo', replyTo));
         }
         for (var file in attachments) {
           formData.files.add(
@@ -176,7 +180,11 @@ class SocketRepository {
         }
         response = await apiClient.postData(url, formData);
       } else {
-        response = await apiClient.postData(url, {'text': text});
+        final body = <String, dynamic>{'text': text};
+        if (replyTo != null && replyTo.isNotEmpty) {
+          body['replyTo'] = replyTo;
+        }
+        response = await apiClient.postData(url, body);
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {

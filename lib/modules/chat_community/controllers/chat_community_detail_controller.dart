@@ -261,18 +261,14 @@ class CommunityChatDetailController extends GetxController {
   }
 
   Future<void> sendMessage() async {
-    var text = messageController.text.trim();
+    final text = messageController.text.trim();
     if (text.isEmpty && selectedImages.isEmpty) return;
 
+    String? replyToId;
+    CommunityMessage? quotedMessage;
     if (replyingTo.value != null) {
-      final replyText = replyingTo.value!.text;
-      final cleanReplyText = replyText.startsWith('[REPLY:')
-          ? replyText.split(']').skip(1).join(']')
-          : replyText;
-      final senderName = replyingTo.value!.sender.id == userService.userId
-          ? 'You'
-          : replyingTo.value!.sender.name;
-      text = '[REPLY:$senderName|$cleanReplyText]$text';
+      quotedMessage = replyingTo.value;
+      replyToId = quotedMessage!.id;
       replyingTo.value = null;
     }
 
@@ -290,6 +286,8 @@ class CommunityChatDetailController extends GetxController {
       ),
       text: text,
       attachments: [],
+      replyTo: replyToId,
+      replyToMessage: quotedMessage,
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: DateTime.now().toIso8601String(),
     );
@@ -303,6 +301,7 @@ class CommunityChatDetailController extends GetxController {
       final response = await communityService.sendCommunityMessage(
         text: text,
         attachments: imagesToSend,
+        replyTo: replyToId,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null && response.data['data'] != null) {
