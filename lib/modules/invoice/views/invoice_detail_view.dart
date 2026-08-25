@@ -347,18 +347,19 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                   Get.to(() => const InvoicePreviewView(isFromDetail: true));
                 },
               ),
-              SizedBox(height: 12.h),
-
-              _buildActionButton(
-                icon: Icons.edit_outlined,
-                title: 'Edit / Customize',
-                subtitle: 'Modify document entries or templates',
-                onTap: () {
-                  controller.populateFromRecord(record);
-                  controller.editingRecordIndex.value = index;
-                  Get.to(() => const CreateInvoiceView());
-                },
-              ),
+              if (!isPaid) ...[
+                SizedBox(height: 12.h),
+                _buildActionButton(
+                  icon: Icons.edit_outlined,
+                  title: 'Edit / Customize',
+                  subtitle: 'Modify document entries or templates',
+                  onTap: () {
+                    controller.populateFromRecord(record);
+                    controller.editingRecordIndex.value = index;
+                    Get.to(() => const CreateInvoiceView());
+                  },
+                ),
+              ],
               SizedBox(height: 12.h),
 
               _buildActionButton(
