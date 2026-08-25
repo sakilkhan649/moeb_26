@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 import '../controllers/chat_detail_controller.dart';
 import '../../../data/models/chat_message_model.dart';
@@ -109,15 +108,11 @@ class ChatDetailView extends StatelessWidget {
                         ? Get.find<PreferredDriversController>()
                         : Get.put(PreferredDriversController());
 
-                    final namePart =
-                        other?.name.split(' ').first.toLowerCase() ?? '';
-                    final chauffeur =
-                        preferredController.chauffeursList.firstWhere(
-                      (c) => c.name.toLowerCase().startsWith(namePart),
-                      orElse: () => preferredController.chauffeursList.first,
+                    preferredController.openChauffeurProfile(
+                      userId: other?.id ?? '',
+                      name: other?.name ?? 'Chauffeur',
+                      imageUrl: other?.profilePicture ?? '',
                     );
-                    preferredController.selectedChauffeur.value = chauffeur;
-                    Get.toNamed(Routes.preferredDriverProfileView);
                   },
             behavior: HitTestBehavior.opaque,
             child: Row(
@@ -212,33 +207,57 @@ class ChatDetailView extends StatelessWidget {
       final bool isMe = message.isSentBy(currentUserId);
       final other = controller.chat.getOtherParticipant(currentUserId);
 
-      final avatar = Container(
-        margin: EdgeInsets.only(right: 8.w, bottom: 4.h),
-        width: 32.r,
-        height: 32.r,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.grey[850]!, width: 1),
-        ),
-        child: ClipOval(
-          child:
-              other?.profilePicture != null && other!.profilePicture!.isNotEmpty
-              ? (other.profilePicture!.startsWith('http')
-                    ? Image.network(other.profilePicture!, fit: BoxFit.cover)
-                    : Image.asset(other.profilePicture!, fit: BoxFit.cover))
-              : Container(
-                  color: Colors.grey[800],
-                  child: Center(
-                    child: Text(
-                      other?.initials ?? '?',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
+      final avatar = GestureDetector(
+        onTap: (other?.name.toLowerCase() == 'support team' ||
+                other?.name.toLowerCase().contains('support') == true)
+            ? null
+            : () {
+                final preferredController =
+                    Get.isRegistered<PreferredDriversController>()
+                    ? Get.find<PreferredDriversController>()
+                    : Get.put(PreferredDriversController());
+
+                final targetId =
+                    message.sender?.id ?? message.senderId ?? other?.id ?? '';
+                final targetName =
+                    message.sender?.name ?? other?.name ?? 'Chauffeur';
+                final targetPic =
+                    message.sender?.profilePicture ?? other?.profilePicture ?? '';
+
+                preferredController.openChauffeurProfile(
+                  userId: targetId,
+                  name: targetName,
+                  imageUrl: targetPic,
+                );
+              },
+        child: Container(
+          margin: EdgeInsets.only(right: 8.w, bottom: 4.h),
+          width: 32.r,
+          height: 32.r,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey[850]!, width: 1),
+          ),
+          child: ClipOval(
+            child:
+                other?.profilePicture != null && other!.profilePicture!.isNotEmpty
+                ? (other.profilePicture!.startsWith('http')
+                      ? Image.network(other.profilePicture!, fit: BoxFit.cover)
+                      : Image.asset(other.profilePicture!, fit: BoxFit.cover))
+                : Container(
+                    color: Colors.grey[800],
+                    child: Center(
+                      child: Text(
+                        other?.initials ?? '?',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
+          ),
         ),
       );
 

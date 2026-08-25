@@ -541,6 +541,42 @@ class PreferredDriversController extends GetxController {
     fetchUserDetails(chauffeur.id);
   }
 
+  void openChauffeurProfile({
+    required String userId,
+    String? name,
+    String? imageUrl,
+  }) {
+    FavoriteChauffeur? existing;
+    if (userId.isNotEmpty) {
+      existing = chauffeursList.firstWhereOrNull((c) => c.id == userId) ??
+          globalChauffeursList.firstWhereOrNull((c) => c.id == userId);
+    }
+
+    if (existing == null && name != null && name.trim().isNotEmpty) {
+      final nameLower = name.trim().toLowerCase();
+      existing = chauffeursList
+              .firstWhereOrNull((c) => c.name.toLowerCase() == nameLower) ??
+          globalChauffeursList
+              .firstWhereOrNull((c) => c.name.toLowerCase() == nameLower);
+    }
+
+    if (existing != null) {
+      selectedChauffeur.value = existing;
+    } else {
+      selectedChauffeur.value = FavoriteChauffeur(
+        id: userId,
+        name: name ?? 'Chauffeur',
+        imageUrl: imageUrl ?? '',
+      );
+    }
+
+    reviewsList.clear();
+    Get.toNamed(Routes.preferredDriverProfileView);
+    if (userId.isNotEmpty) {
+      fetchUserDetails(userId);
+    }
+  }
+
   Future<void> fetchUserDetails(String userId) async {
     if (userId.isEmpty) return;
     isProfileLoading.value = true;

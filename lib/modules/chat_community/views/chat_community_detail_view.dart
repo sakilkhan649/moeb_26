@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
-import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/modules/chat_community/controllers/chat_community_detail_controller.dart';
 import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
@@ -213,13 +212,11 @@ class ChatCommunityDetailView extends StatelessWidget {
             ? Get.find<PreferredDriversController>()
             : Get.put(PreferredDriversController());
 
-        final namePart = message.sender.name.split(' ').first.toLowerCase();
-        final chauffeur = preferredController.chauffeursList.firstWhere(
-          (c) => c.name.toLowerCase().startsWith(namePart),
-          orElse: () => preferredController.chauffeursList.first,
+        preferredController.openChauffeurProfile(
+          userId: message.sender.id,
+          name: message.sender.name,
+          imageUrl: message.sender.profilePicture ?? '',
         );
-        preferredController.selectedChauffeur.value = chauffeur;
-        Get.toNamed(Routes.preferredDriverProfileView);
       },
       child: Container(
         margin: EdgeInsets.only(right: 8.w, bottom: 4.h),
@@ -304,19 +301,11 @@ class ChatCommunityDetailView extends StatelessWidget {
                             ? Get.find<PreferredDriversController>()
                             : Get.put(PreferredDriversController());
 
-                        final namePart = message.sender.name.trim().isNotEmpty
-                            ? message.sender.name.trim().split(' ').first.toLowerCase()
-                            : '';
-                        final chauffeur = preferredController.chauffeursList
-                            .firstWhere(
-                              (c) =>
-                                  namePart.isNotEmpty &&
-                                  c.name.toLowerCase().startsWith(namePart),
-                              orElse: () =>
-                                  preferredController.chauffeursList.first,
-                            );
-                        preferredController.selectedChauffeur.value = chauffeur;
-                        Get.toNamed(Routes.preferredDriverProfileView);
+                        preferredController.openChauffeurProfile(
+                          userId: message.sender.id,
+                          name: message.sender.name,
+                          imageUrl: message.sender.profilePicture ?? '',
+                        );
                       },
                       child: Padding(
                         padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
