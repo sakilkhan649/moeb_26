@@ -176,56 +176,8 @@ class ProfileController extends GetxController {
     isLoading.value = true;
     try {
       var response = await _profileService.getUserProfile();
-      if (response.statusCode == 200) {
-        var data = response.data['data'];
-        userProfile.value = UserProfileModel.fromJson(data);
-
-        // Update reactive variables
-        fullName.value = userProfile.value?.name ?? "";
-        email.value = userProfile.value?.email ?? "";
-        phone.value = userProfile.value?.phone ?? "";
-        serviceArea.value = userProfile.value?.serviceArea ?? "";
-        nickName.value = userProfile.value?.nickname ?? "";
-        profilePicture.value = userProfile.value?.profilePicture ?? "";
-        rating.value = userProfile.value?.averageRating ?? 5.0;
-        ecn.value = userProfile.value?.uid ?? "";
-
-        if (data['company'] != null && data['company'].toString().isNotEmpty) {
-          company.value = data['company'].toString();
-        }
-        if (data['carTag'] != null && data['carTag'].toString().isNotEmpty) {
-          carTag.value = data['carTag'].toString();
-        }
-        if (data['languages'] != null &&
-            data['languages'].toString().isNotEmpty) {
-          languages.value = data['languages'].toString();
-        }
-        if (data['zelle'] != null && data['zelle'].toString().isNotEmpty) {
-          zelle.value = data['zelle'].toString();
-        }
-        if (data['venmo'] != null && data['venmo'].toString().isNotEmpty) {
-          venmo.value = data['venmo'].toString();
-        }
-        if (data['cashApp'] != null && data['cashApp'].toString().isNotEmpty) {
-          cashApp.value = data['cashApp'].toString();
-        }
-        if (data['cardPaymentAccepted'] != null) {
-          cardPaymentAccepted.value = data['cardPaymentAccepted'] == true;
-        }
-
-        // Update controllers for the edit form
-        nameController.text = fullName.value;
-        emailController.text = email.value;
-        phoneController.text = phone.value;
-        serviceAreaController.text = serviceArea.value;
-        nickNameController.text = nickName.value;
-
-        companyController.text = company.value;
-        carTagController.text = carTag.value;
-        languagesController.text = languages.value;
-        zelleController.text = zelle.value;
-        venmoController.text = venmo.value;
-        cashAppController.text = cashApp.value;
+      if (response.statusCode == 200 && response.data?['data'] != null) {
+        _applyProfileData(response.data['data']);
       } else {
         Get.snackbar(
           "Error",
@@ -240,6 +192,60 @@ class ProfileController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void _applyProfileData(Map<String, dynamic> data) {
+    userProfile.value = UserProfileModel.fromJson(data);
+
+    fullName.value = data['name']?.toString() ?? "";
+    email.value = data['email']?.toString() ?? "";
+    phone.value = data['phone']?.toString() ?? "";
+    serviceArea.value = data['serviceArea']?.toString() ?? "";
+    nickName.value = data['nickname']?.toString() ?? "";
+    profilePicture.value = data['profilePicture']?.toString() ??
+        data['uploadedHeadshot']?.toString() ??
+        "";
+    rating.value = (data['averageRating'] is num)
+        ? (data['averageRating'] as num).toDouble()
+        : 5.0;
+    ecn.value = data['uid']?.toString() ?? "";
+
+    company.value = data['companyName']?.toString() ??
+        data['company']?.toString() ??
+        "";
+
+    if (data['languages'] is List) {
+      languages.value = (data['languages'] as List).join(', ');
+    } else if (data['languages'] != null) {
+      languages.value = data['languages'].toString();
+    }
+
+    final pm = data['paymentMethods'];
+    if (pm is Map) {
+      zelle.value = pm['zelle'] is Map
+          ? (pm['zelle']['email']?.toString() ?? '')
+          : '';
+      venmo.value = pm['venmo'] is Map
+          ? (pm['venmo']['username']?.toString() ?? '')
+          : '';
+      cashApp.value = pm['cashApp'] is Map
+          ? (pm['cashApp']['cashtag']?.toString() ?? '')
+          : '';
+      cardPaymentAccepted.value =
+          pm['cardPayment'] is Map && pm['cardPayment']['status'] == 'ACCEPTED';
+    }
+
+    // Sync Text Editing Controllers
+    nameController.text = fullName.value;
+    emailController.text = email.value;
+    phoneController.text = phone.value;
+    serviceAreaController.text = serviceArea.value;
+    nickNameController.text = nickName.value;
+    companyController.text = company.value;
+    languagesController.text = languages.value;
+    zelleController.text = zelle.value;
+    venmoController.text = venmo.value;
+    cashAppController.text = cashApp.value;
   }
 
   Future<void> pickImage(BuildContext context) async {
@@ -268,13 +274,10 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200) {
         var data = response.data['data'];
         String? newSelectedVehicleId;
-        if (data != null && data['selectedVehicle'] != null) {
-          if (data['selectedVehicle'] is Map) {
-            newSelectedVehicleId = data['selectedVehicle']['id']?.toString() ??
-                data['selectedVehicle']['_id']?.toString();
-          } else {
-            newSelectedVehicleId = data['selectedVehicle'].toString();
-          }
+        if (data != null && data is Map && data['selectedVehicle'] != null) {
+          newSelectedVehicleId = data['selectedVehicle']['_id']?.toString() ??
+              data['selectedVehicle']['id']?.toString() ??
+              data['selectedVehicle'].toString();
         } else {
           newSelectedVehicleId = vehicleId;
         }
@@ -297,7 +300,7 @@ class ProfileController extends GetxController {
             deviceTokens: userProfile.value!.deviceTokens,
             vehicles: userProfile.value!.vehicles,
             createdAt: userProfile.value!.createdAt,
-            updatedAt: userProfile.value!.updatedAt,
+            updatedAt: DateTime.now(),
             averageRating: userProfile.value!.averageRating,
             selectedVehicle: newSelectedVehicleId,
             nickname: userProfile.value!.nickname,
@@ -331,34 +334,45 @@ class ProfileController extends GetxController {
   Future<void> savePaymentDetails() async {
     isUpdating.value = true;
     try {
-      zelle.value = zelleController.text;
-      venmo.value = venmoController.text;
-      cashApp.value = cashAppController.text;
-
       Map<String, dynamic> body = {
-        "zelle": zelleController.text,
-        "venmo": venmoController.text,
-        "cashApp": cashAppController.text,
-        "cardPaymentAccepted": cardPaymentAccepted.value,
+        "paymentMethods": {
+          "zelle": {
+            "email": zelleController.text.trim(),
+          },
+          "venmo": {
+            "username": venmoController.text.trim(),
+          },
+          "cashApp": {
+            "cashtag": cashAppController.text.trim(),
+          },
+          "cardPayment": {
+            "status": cardPaymentAccepted.value ? "ACCEPTED" : "NOT_ACCEPTED",
+          }
+        }
       };
 
       var response = await _profileService.patchProfile(body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        var data = response.data['data'];
-        userProfile.value = UserProfileModel.fromJson(data);
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          response.data?['success'] != false &&
+          response.data?['data'] != null) {
+        _applyProfileData(response.data['data']);
+        Get.back();
+        Helpers.showCustomSnackBar(
+          response.data?['message'] ?? "Payment details updated successfully",
+          isError: false,
+        );
+      } else {
+        final errorMsg =
+            response.data?['message'] ?? "Failed to update payment details";
+        Helpers.showCustomSnackBar(errorMsg, isError: true);
       }
-      Get.back();
-      Helpers.showCustomSnackBar(
-        "Payment details updated successfully",
-        isError: false,
-      );
     } catch (e) {
       debugPrint("Error updating payment details: $e");
-      Get.back();
-      Helpers.showCustomSnackBar(
-        "Payment details updated successfully",
-        isError: false,
-      );
+      String errorMsg = "Failed to update payment details";
+      if (e is dio.DioException && e.response?.data != null) {
+        errorMsg = e.response?.data['message'] ?? errorMsg;
+      }
+      Helpers.showCustomSnackBar(errorMsg, isError: true);
     } finally {
       isUpdating.value = false;
     }
@@ -367,25 +381,20 @@ class ProfileController extends GetxController {
   Future<void> saveProfile() async {
     isUpdating.value = true;
     try {
-      // Update local reactive state
-      company.value = companyController.text;
-      carTag.value = carTagController.text;
-      languages.value = languagesController.text;
-      zelle.value = zelleController.text;
-      venmo.value = venmoController.text;
-      cashApp.value = cashAppController.text;
+      List<String> langList = languagesController.text
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+      if (!langList.any((l) => l.toLowerCase() == 'english')) {
+        langList.insert(0, 'English');
+      }
 
       Map<String, dynamic> body = {
-        "name": nameController.text,
-        "phone": phoneController.text,
-        "nickname": nickNameController.text,
-        "company": companyController.text,
-        "carTag": carTagController.text,
-        "languages": languagesController.text,
-        "zelle": zelleController.text,
-        "venmo": venmoController.text,
-        "cashApp": cashAppController.text,
-        "cardPaymentAccepted": cardPaymentAccepted.value,
+        "phone": phoneController.text.trim(),
+        "nickname": nickNameController.text.trim(),
+        "companyName": companyController.text.trim(),
+        "languages": langList,
       };
 
       dynamic requestBody;
@@ -402,38 +411,28 @@ class ProfileController extends GetxController {
       }
 
       var response = await _profileService.patchProfile(requestBody);
-      if (response.statusCode == 200) {
-        var data = response.data['data'];
-        userProfile.value = UserProfileModel.fromJson(data);
-
-        // Update reactive variables
-        fullName.value = userProfile.value?.name ?? "";
-        email.value = userProfile.value?.email ?? "";
-        phone.value = userProfile.value?.phone ?? "";
-        serviceArea.value = userProfile.value?.serviceArea ?? "";
-        nickName.value = userProfile.value?.nickname ?? "";
-        profilePicture.value = userProfile.value?.profilePicture ?? "";
-        rating.value = userProfile.value?.averageRating ?? 5.0;
-        ecn.value = userProfile.value?.uid ?? "";
-
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          response.data?['success'] != false &&
+          response.data?['data'] != null) {
+        _applyProfileData(response.data['data']);
         pickedImage.value = null; // Clear picked image after success
-        Get.back(); // Close bottom sheet
+        Get.back(); // Only close on actual success
         Helpers.showCustomSnackBar(
-          "Profile updated successfully",
+          response.data?['message'] ?? "Profile updated successfully",
           isError: false,
         );
       } else {
-        // Fallback: even if server API doesn't support the custom driver fields yet, close sheet & acknowledge
-        Get.back();
-        Helpers.showCustomSnackBar("Profile details updated", isError: false);
+        final errorMsg =
+            response.data?['message'] ?? "Failed to update profile";
+        Helpers.showCustomSnackBar(errorMsg, isError: true);
       }
     } catch (e) {
       debugPrint("Error updating profile: $e");
-      Get.back();
-      Helpers.showCustomSnackBar(
-        "Profile updated successfully",
-        isError: false,
-      );
+      String errorMsg = "Failed to update profile";
+      if (e is dio.DioException && e.response?.data != null) {
+        errorMsg = e.response?.data['message'] ?? errorMsg;
+      }
+      Helpers.showCustomSnackBar(errorMsg, isError: true);
     } finally {
       isUpdating.value = false;
     }

@@ -179,18 +179,17 @@ class PersonalInformationView extends StatelessWidget {
                 icon: Icons.business_outlined,
               ),
 
-              // Service Area
+              // Service Area (Locked like Email)
               _buildInputField(
                 label: 'Service Area',
                 controller: controller.serviceAreaController,
+                readOnly: true,
                 icon: Icons.map_outlined,
-              ),
-
-              // Car - Tag / Vehicle Class
-              _buildInputField(
-                label: 'Car - Tag / Vehicle Class',
-                controller: controller.carTagController,
-                icon: Icons.directions_car_outlined,
+                suffixIcon: Icon(
+                  Icons.lock_outline,
+                  color: const Color(0xFF71717A),
+                  size: 18.sp,
+                ),
               ),
 
               // Languages Spoken
