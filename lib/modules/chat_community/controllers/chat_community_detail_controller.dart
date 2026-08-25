@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/core/services/storege_service.dart';
 import 'package:moeb_26/core/services/user_profile_service.dart';
 import 'package:moeb_26/core/services/community_service.dart';
 import 'package:moeb_26/core/utils/media_picker_helper.dart';
@@ -14,6 +15,9 @@ import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/modules/chat/controllers/chat_controller.dart';
 
 class CommunityChatDetailController extends GetxController {
+  static const String _kSelectedCommunityServiceArea =
+      'selected_community_service_area';
+
   final UserService userService = Get.find<UserService>();
   final SocketService socketService = Get.find<SocketService>();
   final CommunityService communityService = Get.find<CommunityService>();
@@ -32,7 +36,7 @@ class CommunityChatDetailController extends GetxController {
   Worker? _commWorker;
 
   late CommunityRoom room;
-  var selectedState = 'New York Metro'.obs;
+  var selectedState = ''.obs;
   final RxList<String> states = <String>[].obs;
   final RxBool isServiceAreasLoading = false.obs;
 
@@ -47,10 +51,40 @@ class CommunityChatDetailController extends GetxController {
       }
     });
     scrollController.addListener(_onScroll);
-    if (room.serviceArea.isNotEmpty) {
+    _initServiceAreaAndMessages();
+  }
+
+  Future<void> _initServiceAreaAndMessages() async {
+    // 1. Check local storage first (if user manually switched before)
+    final savedArea =
+        await StorageService.getString(_kSelectedCommunityServiceArea);
+    if (savedArea.isNotEmpty) {
+      selectedState.value = savedArea;
+    } else if (room.serviceArea.isNotEmpty) {
       selectedState.value = room.serviceArea;
     }
-    fetchServiceAreas();
+
+    // 2. Fetch User Profile to get user's current serviceArea from API if still not set
+    if (selectedState.value.isEmpty) {
+      try {
+        final profileRes = await _profileService.getUserProfile();
+        if (profileRes.statusCode == 200 && profileRes.data?['data'] != null) {
+          final userArea = profileRes.data['data']['serviceArea']?.toString();
+          if (userArea != null && userArea.isNotEmpty) {
+            selectedState.value = userArea;
+          }
+        }
+      } catch (e) {
+        debugPrint("Error fetching user profile service area: $e");
+      }
+    }
+
+    // 3. Fallback default if still empty
+    if (selectedState.value.isEmpty) {
+      selectedState.value = 'New York Metro';
+    }
+
+    await fetchServiceAreas();
     fetchMessages();
     setupSocket();
   }
@@ -78,8 +112,8 @@ class CommunityChatDetailController extends GetxController {
             states.value = loadedAreas;
 
             // Sync selected state with dynamic list
-            if (room.serviceArea.isNotEmpty) {
-              final String areaLower = room.serviceArea.toLowerCase();
+            if (selectedState.value.isNotEmpty) {
+              final String areaLower = selectedState.value.toLowerCase();
               final matched = states.firstWhereOrNull(
                 (s) =>
                     s.toLowerCase() == areaLower ||
@@ -91,7 +125,7 @@ class CommunityChatDetailController extends GetxController {
               } else if (!states.contains(selectedState.value)) {
                 selectedState.value = states.first;
               }
-            } else if (!states.contains(selectedState.value)) {
+            } else {
               selectedState.value = states.first;
             }
           }
@@ -120,6 +154,7 @@ class CommunityChatDetailController extends GetxController {
     if (selectedState.value == newState) return;
     socketService.leaveRoom('community::${selectedState.value}');
     selectedState.value = newState;
+    StorageService.setString(_kSelectedCommunityServiceArea, newState);
     socketService.joinRoom('community::$newState');
     fetchMessages();
   }
@@ -342,6 +377,7 @@ class CommunityChatDetailController extends GetxController {
         text: text,
         attachments: imagesToSend,
         replyTo: replyToId,
+        serviceArea: selectedState.value,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null && response.data['data'] != null) {

@@ -42,12 +42,14 @@ class CommunityService extends GetxService {
     required String text,
     List<File>? attachments,
     String? replyTo,
+    String? serviceArea,
   }) async {
     try {
       return await _communityRepo.sendCommunityMessage(
         text: text,
         attachments: attachments,
         replyTo: replyTo,
+        serviceArea: serviceArea,
       );
     } catch (e) {
       rethrow;

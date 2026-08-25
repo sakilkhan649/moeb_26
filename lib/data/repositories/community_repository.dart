@@ -30,10 +30,14 @@ class CommunityRepo {
     required String text,
     List<File>? attachments,
     String? replyTo,
+    String? serviceArea,
   }) async {
     final formData = FormData();
     if (text.isNotEmpty) {
       formData.fields.add(MapEntry('text', text));
+    }
+    if (serviceArea != null && serviceArea.isNotEmpty) {
+      formData.fields.add(MapEntry('serviceArea', serviceArea));
     }
     if (replyTo != null && replyTo.isNotEmpty) {
       formData.fields.add(MapEntry('replyTo', replyTo));
