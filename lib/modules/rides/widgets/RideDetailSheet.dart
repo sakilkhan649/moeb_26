@@ -2,56 +2,152 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
+import 'package:moeb_26/data/models/chat_model.dart';
+import 'package:moeb_26/data/models/my_rides_model.dart';
+import 'package:moeb_26/data/repositories/socket_repository.dart';
 
 class RideDetailSheet extends StatelessWidget {
-  final String title;
-  final String bookingNo;
-  final String dateTimeStr;
-  final String pickupLocation;
-  final String? pickupNotes;
-  final String dropoffLocation;
-  final String? dropoffNotes;
-  final String jobPosterName;
-  final String driverName;
-  final String vehicleInfo;
-  final String vehicleType;
-  final String? paymentType;
-  final String? amount;
-  final String? flightNumber;
-  final String? specialInstructions;
-  final String? status;
-  final String? actionButtonText;
-  final VoidCallback? onActionButtonPressed;
-  final VoidCallback? onChatPressed;
+  final RideData ride;
+  final bool isPast;
+  final String? dateHeader;
   final VoidCallback? onReviewPressed;
 
   const RideDetailSheet({
     super.key,
-    required this.title,
-    required this.bookingNo,
-    required this.dateTimeStr,
-    required this.pickupLocation,
-    this.pickupNotes,
-    required this.dropoffLocation,
-    this.dropoffNotes,
-    required this.jobPosterName,
-    required this.driverName,
-    required this.vehicleInfo,
-    required this.vehicleType,
-    this.paymentType,
-    this.amount,
-    this.flightNumber,
-    this.specialInstructions,
-    this.status,
-    this.actionButtonText,
-    this.onActionButtonPressed,
-    this.onChatPressed,
+    required this.ride,
+    required this.isPast,
+    this.dateHeader,
     this.onReviewPressed,
   });
 
+  String _formatDateTime(RideData r) {
+    if (r.asap) {
+      String datePart = "Today";
+      if (r.createdAt != null && r.createdAt!.isNotEmpty) {
+        try {
+          final parsedDate = DateTime.parse(r.createdAt!).toLocal();
+          datePart = "Today, ${DateFormat('MMM dd').format(parsedDate)}";
+        } catch (_) {}
+      }
+      return "$datePart • ASAP";
+    }
+
+    String datePart = dateHeader ?? "Today";
+    if (dateHeader == null || dateHeader!.isEmpty) {
+      if (r.date != null && r.date!.isNotEmpty) {
+        try {
+          final parsedDate = DateTime.parse(r.date!).toLocal();
+          datePart = DateFormat("dd MMM, yyyy").format(parsedDate);
+        } catch (_) {
+          datePart = r.date!;
+        }
+      }
+    }
+
+    String timePart = "";
+    if (r.time != null && r.time!.isNotEmpty) {
+      try {
+        if (r.time!.contains(":")) {
+          final parts = r.time!.split(":");
+          final hour = int.parse(parts[0]);
+          final minute = int.parse(parts[1]);
+          final dt = DateTime(2026, 1, 1, hour, minute);
+          timePart = DateFormat("hh:mm a").format(dt);
+        } else {
+          timePart = r.time!;
+        }
+      } catch (_) {
+        timePart = r.time!;
+      }
+    }
+
+    if (timePart.isNotEmpty) {
+      return "$datePart • $timePart";
+    }
+    return datePart;
+  }
+
+  String _getPosterName(RideData r) {
+    if (r.nickname != null && r.nickname!.isNotEmpty) return r.nickname!;
+    if (r.name != null && r.name!.isNotEmpty) return r.name!;
+    final driver = r.createdBy ?? r.assignedTo ?? r.applicant?.driver;
+    if (driver?.nickname != null && driver!.nickname!.isNotEmpty) {
+      return driver.nickname!;
+    }
+    return driver?.name ?? r.companyName ?? r.company ?? "Job Poster";
+  }
+
+  String _getDriverName(RideData r) {
+    final driver = r.assignedTo ?? r.applicant?.driver ?? r.createdBy;
+    if (driver?.nickname != null && driver!.nickname!.isNotEmpty) {
+      return driver.nickname!;
+    }
+    return driver?.name ?? "Chauffeur";
+  }
+
+  String _getVehicleInfo(RideData r) {
+    final driver = r.assignedTo ?? r.applicant?.driver ?? r.createdBy;
+    if (driver?.vehicles != null && driver!.vehicles!.isNotEmpty) {
+      final v = driver.vehicles!.first;
+      return "${v.make} ${v.model}, ${v.colorOutside}";
+    }
+    return r.vehicleType.isNotEmpty ? r.vehicleType : "Sedan";
+  }
+
+  void _openChat(RideData r) async {
+    final String? participantId =
+        r.createdBy?.id ?? r.assignedTo?.id ?? r.applicant?.driver?.id;
+    if (participantId != null && participantId.isNotEmpty && r.id.isNotEmpty) {
+      try {
+        final chat = await Get.find<SocketRepository>()
+            .createChat(participantId, r.id);
+        if (chat != null) {
+          Get.back();
+          Get.toNamed(Routes.chatDetailView, arguments: chat);
+          return;
+        }
+      } catch (_) {}
+    }
+
+    final posterName = _getPosterName(r);
+    final chat = ChatPreview(
+      id: "chat_${r.id}",
+      participants: [
+        ChatParticipant(id: participantId ?? "user_1", name: posterName),
+      ],
+      lastMessage:
+          "Hi, I am assigned to your ride #${r.id.substring(r.id.length > 6 ? r.id.length - 6 : 0)}.",
+      lastMessageAt: DateTime.now().toIso8601String(),
+      createdBy: "current_user",
+      createdAt: DateTime.now().toIso8601String(),
+      updatedAt: DateTime.now().toIso8601String(),
+    );
+    Get.back();
+    Get.toNamed(Routes.chatDetailView, arguments: chat);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final title = isPast ? "Completed Ride" : "Upcoming Ride Details";
+    final bookingNo = ride.id.isNotEmpty
+        ? ride.id.substring(ride.id.length > 8 ? ride.id.length - 8 : 0)
+        : "";
+    final dateTimeStr = _formatDateTime(ride);
+    final amountStr =
+        ride.paymentAmount != null ? "${ride.paymentAmount}" : "0.00";
+    final posterName = _getPosterName(ride);
+    final driverName = _getDriverName(ride);
+    final vehicleInfo = _getVehicleInfo(ride);
+    final paymentTypeStr = ride.paymentType?.isNotEmpty == true
+        ? ride.paymentType!
+        : "Credit Card on File";
+    final flightNumberStr =
+        ride.flightNumber?.isNotEmpty == true ? ride.flightNumber! : "N/A";
+    final instructions = ride.instruction ?? "";
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       decoration: BoxDecoration(
@@ -78,17 +174,33 @@ class RideDetailSheet extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
 
-            // Header Row: Title & Booking No
+            // Header Row: Title & Close Button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: GoogleFonts.outfit(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.outfit(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (bookingNo.isNotEmpty) ...[
+                      SizedBox(height: 2.h),
+                      Text(
+                        "Booking #$bookingNo",
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF94A3B8),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 IconButton(
                   onPressed: () => Get.back(),
@@ -108,7 +220,7 @@ class RideDetailSheet extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // DateTime Row
+                  // DateTime & Amount Row
                   Row(
                     children: [
                       Icon(
@@ -126,9 +238,9 @@ class RideDetailSheet extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      if (amount != null && amount!.isNotEmpty) ...[
+                      if (amountStr.isNotEmpty) ...[
                         Text(
-                          "\$$amount",
+                          "\$$amountStr",
                           style: GoogleFonts.inter(
                             color: const Color(0xFFFEDB9B),
                             fontSize: 16.sp,
@@ -197,7 +309,7 @@ class RideDetailSheet extends StatelessWidget {
                                   ),
                                   SizedBox(height: 2.h),
                                   Text(
-                                    pickupLocation,
+                                    ride.pickupLocation,
                                     style: GoogleFonts.inter(
                                       color: Colors.white,
                                       fontSize: 14.sp,
@@ -221,7 +333,7 @@ class RideDetailSheet extends StatelessWidget {
                                   ),
                                   SizedBox(height: 2.h),
                                   Text(
-                                    dropoffLocation,
+                                    ride.dropoffLocation,
                                     style: GoogleFonts.inter(
                                       color: Colors.white,
                                       fontSize: 14.sp,
@@ -242,7 +354,7 @@ class RideDetailSheet extends StatelessWidget {
 
             SizedBox(height: 12.h),
 
-            // Section 2: Job Poster & Chauffeur / Vehicle Info
+            // Section 2: Job Poster & Chauffeur Info
             _buildSectionCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,9 +397,7 @@ class RideDetailSheet extends StatelessWidget {
                                   ),
                                   SizedBox(height: 2.h),
                                   Text(
-                                    jobPosterName.isNotEmpty
-                                        ? jobPosterName
-                                        : "Job Poster",
+                                    posterName,
                                     style: GoogleFonts.inter(
                                       color: Colors.white,
                                       fontSize: 14.sp,
@@ -302,24 +412,17 @@ class RideDetailSheet extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (onChatPressed != null) ...[
+                      if (!isPast) ...[
                         SizedBox(width: 8.w),
                         GestureDetector(
-                          onTap: () {
-                            Get.back();
-                            onChatPressed!();
-                          },
+                          onTap: () => _openChat(ride),
                           child: Container(
                             padding: EdgeInsets.all(10.r),
                             decoration: BoxDecoration(
-                              color: const Color(
-                                0xFFD08700,
-                              ).withValues(alpha: 0.15),
+                              color: const Color(0xFFD08700).withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10.r),
                               border: Border.all(
-                                color: const Color(
-                                  0xFFD08700,
-                                ).withValues(alpha: 0.3),
+                                color: const Color(0xFFD08700).withValues(alpha: 0.3),
                               ),
                             ),
                             child: Icon(
@@ -369,7 +472,7 @@ class RideDetailSheet extends StatelessWidget {
                             ),
                             SizedBox(height: 2.h),
                             Text(
-                              driverName.isNotEmpty ? driverName : "Bayzid",
+                              driverName,
                               style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 14.sp,
@@ -418,9 +521,7 @@ class RideDetailSheet extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        (paymentType != null && paymentType!.isNotEmpty)
-                            ? paymentType!
-                            : "Credit Card on File",
+                        paymentTypeStr,
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 13.sp,
@@ -442,9 +543,7 @@ class RideDetailSheet extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        (flightNumber != null && flightNumber!.isNotEmpty)
-                            ? flightNumber!
-                            : "N/A",
+                        flightNumberStr,
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 13.sp,
@@ -473,9 +572,8 @@ class RideDetailSheet extends StatelessWidget {
                       border: Border.all(color: const Color(0xFF1B2033)),
                     ),
                     child: Text(
-                      (specialInstructions != null &&
-                              specialInstructions!.isNotEmpty)
-                          ? specialInstructions!
+                      instructions.isNotEmpty
+                          ? instructions
                           : "No special instructions provided.",
                       style: GoogleFonts.inter(
                         color: Colors.white.withValues(alpha: 0.85),
@@ -488,13 +586,12 @@ class RideDetailSheet extends StatelessWidget {
               ),
             ),
 
-            if (onReviewPressed != null) ...[
+            if (isPast) ...[
               SizedBox(height: 20.h),
               CustomButton(
                 text: "Rate & Review Driver",
                 backgroundColor: const Color(0xFF22C55E),
                 textColor: Colors.black,
-
                 icon: Icon(
                   Icons.star_outline_rounded,
                   size: 18.sp,
@@ -502,19 +599,18 @@ class RideDetailSheet extends StatelessWidget {
                 ),
                 onPressed: () {
                   Get.back();
-                  onReviewPressed!.call();
+                  if (onReviewPressed != null) {
+                    onReviewPressed!();
+                  } else {
+                    Get.toNamed(Routes.ratingsFeedbackView);
+                  }
                 },
                 padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
-            ] else if (actionButtonText != null &&
-                onActionButtonPressed != null) ...[
+            ] else ...[
               SizedBox(height: 20.h),
               CustomButton(
-                text: actionButtonText!,
-                // backgroundColor: const Color(0xFFD08700),
-                // textColor: Colors.black,
-                // fontSize: 14.sp,
-                // fontWeight: FontWeight.bold,
+                text: "View Ride Progress",
                 icon: Icon(
                   Icons.navigation_outlined,
                   size: 18.sp,
@@ -522,9 +618,8 @@ class RideDetailSheet extends StatelessWidget {
                 ),
                 onPressed: () {
                   Get.back();
-                  onActionButtonPressed!();
+                  Get.toNamed(Routes.rideDetailsView, arguments: ride.id);
                 },
-                // padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
             ],
           ],

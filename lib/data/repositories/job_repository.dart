@@ -80,24 +80,25 @@ class JobRepo {
     );
   }
 
-  Future<Response> getPendingJobs({int page = 1, int limit = 10}) async {
+  Future<Response> getUpcomingJobs({String? cursor, int limit = 10}) async {
+    final query = <String, dynamic>{'type': 'upcoming', 'limit': limit};
+    if (cursor != null && cursor.isNotEmpty) {
+      query['cursor'] = cursor;
+    }
     return await apiClient.getData(
       ApiConstants.myRides,
-      query: {'type': 'pending', 'page': page, 'limit': limit},
+      query: query,
     );
   }
 
-  Future<Response> getUpcomingJobs({int page = 1, int limit = 10}) async {
+  Future<Response> getPastJobs({String? cursor, int limit = 10}) async {
+    final query = <String, dynamic>{'type': 'past', 'limit': limit};
+    if (cursor != null && cursor.isNotEmpty) {
+      query['cursor'] = cursor;
+    }
     return await apiClient.getData(
       ApiConstants.myRides,
-      query: {'type': 'upcoming', 'page': page, 'limit': limit},
-    );
-  }
-
-  Future<Response> getPastJobs({int page = 1, int limit = 10}) async {
-    return await apiClient.getData(
-      ApiConstants.myRides,
-      query: {'type': 'past', 'page': page, 'limit': limit},
+      query: query,
     );
   }
 

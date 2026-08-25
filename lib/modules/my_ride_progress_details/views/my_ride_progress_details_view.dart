@@ -4,9 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:moeb_26/Data/models/finish_rides_model.dart';
-import 'package:moeb_26/Data/models/my_rides_model.dart';
-import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
+import 'package:moeb_26/data/models/my_rides_model.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
@@ -28,63 +26,32 @@ class MyRideProgressDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the ride data passed from the previous screen (could be Ride, UpcomingRideData, or FinishRideData)
-    final dynamic ride = Get.arguments;
+    // Get the ride data passed from the previous screen (could be Ride, UpcomingRideData, FinishRideData, Map, or String ID)
+    final dynamic initialRide = Get.arguments;
 
-    if (ride == null) {
-      return Scaffold(
-        backgroundColor: Colors.black,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60.h),
-          child: Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
-              ),
-            ),
-            child: AppBar(
-              backgroundColor: Colors.black,
-              elevation: 0,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: Colors.white,
-                  size: 20.sp,
-                ),
-                onPressed: () => Get.back(),
-              ),
-              title: Text(
-                'Ride Details',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              centerTitle: true,
-            ),
-          ),
-        ),
-        body: const Center(
-          child: Text(
-            "No ride details found",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      );
+    String rideId = "";
+    if (initialRide is RideData) {
+      rideId = initialRide.id;
+    } else if (initialRide is Map) {
+      rideId = initialRide['_id']?.toString() ??
+          initialRide['id']?.toString() ??
+          initialRide['bookingNo']?.toString() ??
+          '';
+    } else if (initialRide is String) {
+      rideId = initialRide;
     }
 
-    // Extract all ride properties cleanly using helper class
-    final data = _RideDetailsData.fromRide(ride);
-
-    // Set initial status to controller (with ID to prevent stale overwrites)
-    String initialRideStatus = "PENDING";
-    if (ride is UpcomingRideData || ride is FinishRideData) {
-      initialRideStatus = ride.rideStatus ?? "PENDING";
-    } else if (ride is Ride) {
-      initialRideStatus = ride.rideStatus ?? "PENDING";
+    if (rideId.isNotEmpty) {
+      // Set initial status to controller to prevent stale state
+      String initialRideStatus = "PENDING";
+      if (initialRide is RideData) {
+        initialRideStatus = initialRide.rideStatus ?? initialRide.status ?? "PENDING";
+      } else if (initialRide is Map) {
+        initialRideStatus = initialRide['rideStatus'] ?? initialRide['status'] ?? "PENDING";
+      }
+      controller.setInitialStatus(rideId, initialRideStatus);
+      controller.fetchJobDetails(rideId);
     }
-    controller.setInitialStatus(data.id, initialRideStatus);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -122,29 +89,56 @@ class MyRideProgressDetailsView extends StatelessWidget {
       body: SafeArea(
         top: false,
         bottom: true,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 10.h),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildRideProgressTracker(),
-                  SizedBox(height: 6.h),
-                  _buildDriverSection(data),
-                  SizedBox(height: 12.h),
-                  _buildJobDetailsSection(data),
-                  SizedBox(height: 12.h),
-                  _buildSpecialInstructionsSection(data),
-                  SizedBox(height: 12.h),
-                  _buildActionButtonsSection(data, ride),
-                  SizedBox(height: 20.h),
-                ],
+        child: Obx(() {
+          if (controller.isLoading.value || controller.rideDetails.value == null) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 120.h),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(color: AppColors.primaryColor),
+                    SizedBox(height: 16.h),
+                    Text(
+                      "Loading ride details...",
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFA1A1A1),
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
+            );
+          }
+
+          final RideData rideObj = controller.rideDetails.value!;
+          final data = _RideDetailsData.fromRide(rideObj);
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 10.h),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildRideProgressTracker(),
+                    SizedBox(height: 6.h),
+                    _buildDriverSection(data),
+                    SizedBox(height: 12.h),
+                    _buildJobDetailsSection(data),
+                    SizedBox(height: 12.h),
+                    _buildSpecialInstructionsSection(data),
+                    SizedBox(height: 12.h),
+                    _buildActionButtonsSection(data, rideObj),
+                    SizedBox(height: 20.h),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -527,7 +521,7 @@ class _RideDetailsData {
     String pickupLocation = "N/A";
     String dropoffLocation = "N/A";
     String vehicleType = "N/A";
-    String paymentType = "N/A";
+    String paymentType = "Credit Card on File";
     String amount = "N/A";
     String rating = "0.0";
     String posterName = "Unknown";
@@ -541,74 +535,60 @@ class _RideDetailsData {
     String dateRaw = "";
     String timeRaw = "";
 
-    if (ride is UpcomingRideData || ride is FinishRideData) {
-      final dynamic r = ride;
-      id = r.id ?? "";
-      pickupLocation = r.pickupLocation ?? "N/A";
-      dropoffLocation = r.dropoffLocation ?? "N/A";
-      vehicleType = r.vehicleType ?? "N/A";
-      paymentType =
-          (r.paymentType == 'NO_COLLECT' || r.paymentType == 'NO COLLECT')
-          ? 'Credit Card on File'
-          : (r.paymentType == 'COLLECT'
-                ? 'Collect Payment'
-                : r.paymentType?.replaceAll('_', ' ') ?? 'N/A');
-      amount = r.paymentAmount != null ? "\$${r.paymentAmount}" : "N/A";
-      flightNumber = r.flightNumber ?? "N/A";
-
-      final driver = r.createdBy;
-      posterName = (driver?.nickname != null && driver!.nickname!.isNotEmpty)
-          ? driver.nickname!
-          : (driver?.name ?? "Unknown");
-      posterCompany = driver?.company ?? "Unknown";
-      participantId = driver?.id ?? "";
-      posterImage = driver?.profilePicture ?? AppImages.profile_image;
-      rating = driver?.averageRating?.toString() ?? "0.0";
-
-      if (driver?.vehicles != null && driver!.vehicles!.isNotEmpty) {
-        final v = driver.vehicles!.first;
-        vehicleInfo = "${v.make} ${v.model}, ${v.colorOutside}";
-        vehicleNumber = v.licensePlate ?? "N/A";
-      } else {
-        vehicleInfo = vehicleType;
+    String formatPayment(dynamic pType) {
+      if (pType == null) return 'Credit Card on File';
+      final str = pType.toString().trim().toUpperCase().replaceAll('_', ' ');
+      if (str.isEmpty || str == 'NO COLLECT') {
+        return 'Credit Card on File';
       }
+      if (str == 'COLLECT') {
+        return 'Collect Payment';
+      }
+      return pType.toString().replaceAll('_', ' ');
+    }
 
-      dateRaw = r.date ?? "";
-      timeRaw = r.time ?? "";
-    } else if (ride is Ride) {
+    if (ride is RideData) {
       final r = ride;
       id = r.id;
       pickupLocation = r.pickupLocation;
       dropoffLocation = r.dropoffLocation;
       vehicleType = r.vehicleType;
-      paymentType =
-          (r.paymentType == 'NO_COLLECT' || r.paymentType == 'NO COLLECT')
-          ? 'Credit Card on File'
-          : (r.paymentType == 'COLLECT'
-                ? 'Collect Payment'
-                : r.paymentType.replaceAll('_', ' '));
-      amount = "\$${r.paymentAmount}";
+      paymentType = formatPayment(r.paymentType);
+      amount = r.paymentAmount != null ? "\$${r.paymentAmount}" : "N/A";
+      flightNumber = r.flightNumber ?? "N/A";
+      instruction = r.instruction ?? "N/A";
 
       final driver = r.createdBy ?? r.assignedTo ?? r.applicant?.driver;
-      posterName = (driver?.nickname != null && driver!.nickname!.isNotEmpty)
-          ? driver.nickname!
-          : (driver?.name ?? "Unknown");
+      posterName = (r.nickname != null && r.nickname!.isNotEmpty)
+          ? r.nickname!
+          : (r.name ?? (driver?.nickname != null && driver!.nickname!.isNotEmpty
+              ? driver.nickname!
+              : (driver?.name ?? r.companyName ?? "Unknown")));
+      posterCompany = r.company ?? driver?.company ?? r.companyName ?? "Unknown";
       participantId = driver?.id ?? "";
-      posterImage =
-          (driver?.profilePicture != null && driver!.profilePicture.isNotEmpty)
-          ? driver.profilePicture
-          : AppImages.profile_image;
+      posterImage = (r.profilePicture != null && r.profilePicture!.isNotEmpty)
+          ? r.profilePicture!
+          : ((driver?.profilePicture != null && driver!.profilePicture.isNotEmpty)
+              ? driver.profilePicture
+              : AppImages.profile_image);
+      rating = driver?.averageRating?.toString() ?? "0.0";
 
-      vehicleInfo = vehicleType;
+      if (driver?.vehicles != null && driver!.vehicles!.isNotEmpty) {
+        final v = driver.vehicles!.first;
+        vehicleInfo = "${v.make} ${v.model}, ${v.colorOutside}";
+        vehicleNumber = v.licensePlate.isNotEmpty ? v.licensePlate : "N/A";
+      } else {
+        vehicleInfo = vehicleType;
+      }
+
       dateRaw = r.date?.toString() ?? "";
-      timeRaw = r.time;
+      timeRaw = r.time ?? "";
     } else if (ride is Map<String, dynamic>) {
       id = ride['bookingNo']?.toString() ?? ride['id']?.toString() ?? '';
       pickupLocation = ride['pickup'] ?? ride['pickupLocation'] ?? 'N/A';
       dropoffLocation = ride['dropoff'] ?? ride['dropoffLocation'] ?? 'N/A';
       vehicleType = ride['type'] ?? ride['vehicleType'] ?? 'N/A';
-      paymentType =
-          ride['payment'] ?? ride['paymentType'] ?? 'Credit Card on File';
+      paymentType = formatPayment(ride['payment'] ?? ride['paymentType']);
       amount = ride['price'] != null ? "\$${ride['price']}" : "N/A";
       flightNumber = ride['flight'] ?? ride['flightNumber'] ?? 'N/A';
       instruction =
@@ -628,14 +608,26 @@ class _RideDetailsData {
     String displayDateTime = "N/A";
 
     bool isAsap = false;
-    if (ride is UpcomingRideData || ride is FinishRideData) {
+    if (ride is RideData) {
       isAsap = ride.asap == true;
-    } else if (ride is Ride) {
-      isAsap = ride.asap == true;
+    } else if (ride is Map) {
+      isAsap = ride['asap'] == true;
     }
 
     if (isAsap) {
-      displayDateTime = "ASAP";
+      String datePart = "Today";
+      if (ride is RideData && ride.createdAt != null && ride.createdAt!.isNotEmpty) {
+        try {
+          final parsedDate = DateTime.parse(ride.createdAt!).toLocal();
+          datePart = "Today, ${DateFormat('MMM dd').format(parsedDate)}";
+        } catch (_) {}
+      } else if (ride is Map && ride['createdAt'] != null) {
+        try {
+          final parsedDate = DateTime.parse(ride['createdAt'].toString()).toLocal();
+          datePart = "Today, ${DateFormat('MMM dd').format(parsedDate)}";
+        } catch (_) {}
+      }
+      displayDateTime = "$datePart • ASAP";
     } else {
       String dateStr = "";
       if (dateRaw.isNotEmpty) {

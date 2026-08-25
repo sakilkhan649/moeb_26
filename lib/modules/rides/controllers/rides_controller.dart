@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:moeb_26/Data/models/finish_rides_model.dart';
-import 'package:moeb_26/Data/models/upcoming_rides_model.dart';
+import 'package:get/get.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/data/models/my_rides_model.dart';
 import 'package:moeb_26/data/repositories/job_repository.dart';
 
 class RidesController extends GetxController {
@@ -11,15 +10,19 @@ class RidesController extends GetxController {
   RxBool isLoadingList = false.obs;
   RxBool isLoadMore = false.obs;
 
-  var selectedTab = 0.obs; // Default to Upcoming
+  var selectedTab = 0.obs; // 0 = Upcoming, 1 = Past
 
-  // Pagination states
-  int upcomingPage = 1;
-  int upcomingTotalPage = 1;
-  int pastPage = 1;
-  int pastTotalPage = 1;
+  // Cursor pagination states
+  String? upcomingNextCursor;
+  bool upcomingHasMore = false;
+
+  String? pastNextCursor;
+  bool pastHasMore = false;
 
   final ScrollController scrollController = ScrollController();
+
+  RxList<RideData> upcomingRides = <RideData>[].obs;
+  RxList<RideData> pastRides = <RideData>[].obs;
 
   @override
   void onInit() {
@@ -51,28 +54,28 @@ class RidesController extends GetxController {
         !isLoadingList.value &&
         !isLoadMore.value) {
       if (selectedTab.value == 0) {
-        if (upcomingPage < upcomingTotalPage) {
+        if (upcomingHasMore && upcomingNextCursor != null) {
           loadMoreUpcomingJobs();
         }
-      } else if (selectedTab.value == 1 && pastPage < pastTotalPage) {
-        loadMorePastJobs();
+      } else if (selectedTab.value == 1) {
+        if (pastHasMore && pastNextCursor != null) {
+          loadMorePastJobs();
+        }
       }
     }
   }
 
-  RxList<UpcomingRideData> upcomingRides = <UpcomingRideData>[].obs;
-  RxList<FinishRideData> pastRides = <FinishRideData>[].obs;
-
   Future<void> fetchUpcomingJobs() async {
     try {
       isLoadingList.value = true;
-      upcomingPage = 1;
-      final response = await _jobRepo.getUpcomingJobs(page: upcomingPage);
+      upcomingNextCursor = null;
+      final response = await _jobRepo.getUpcomingJobs(cursor: null);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data != null && response.data['data'] != null) {
-          final jobResponse = UpcomingRidesModel.fromJson(response.data);
-          upcomingRides.assignAll(jobResponse.data ?? []);
-          upcomingTotalPage = jobResponse.pagination?.totalPage ?? 1;
+        if (response.data != null && response.data is Map<String, dynamic>) {
+          final ridesResponse = MyRidesModel.fromJson(response.data);
+          upcomingRides.assignAll(ridesResponse.data);
+          upcomingNextCursor = ridesResponse.cursor?.nextCursor;
+          upcomingHasMore = ridesResponse.cursor?.hasMore ?? false;
         }
       } else {
         final message = response.data is Map
@@ -93,19 +96,23 @@ class RidesController extends GetxController {
   }
 
   Future<void> loadMoreUpcomingJobs() async {
+    if (!upcomingHasMore || upcomingNextCursor == null || isLoadMore.value) {
+      return;
+    }
+
     try {
       isLoadMore.value = true;
-      upcomingPage++;
-      final response = await _jobRepo.getUpcomingJobs(page: upcomingPage);
+      final response = await _jobRepo.getUpcomingJobs(cursor: upcomingNextCursor);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data != null && response.data['data'] != null) {
-          final jobResponse = UpcomingRidesModel.fromJson(response.data);
-          upcomingRides.addAll(jobResponse.data ?? []);
+        if (response.data != null && response.data is Map<String, dynamic>) {
+          final ridesResponse = MyRidesModel.fromJson(response.data);
+          upcomingRides.addAll(ridesResponse.data);
+          upcomingNextCursor = ridesResponse.cursor?.nextCursor;
+          upcomingHasMore = ridesResponse.cursor?.hasMore ?? false;
         }
       }
     } catch (e) {
       print("Error loading more upcoming jobs: $e");
-      upcomingPage--;
     } finally {
       isLoadMore.value = false;
     }
@@ -114,13 +121,14 @@ class RidesController extends GetxController {
   Future<void> fetchPastJobs() async {
     try {
       isLoadingList.value = true;
-      pastPage = 1;
-      final response = await _jobRepo.getPastJobs(page: pastPage);
+      pastNextCursor = null;
+      final response = await _jobRepo.getPastJobs(cursor: null);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data != null && response.data['data'] != null) {
-          final jobResponse = FinishRidesModel.fromJson(response.data);
-          pastRides.assignAll(jobResponse.data ?? []);
-          pastTotalPage = jobResponse.pagination?.totalPage ?? 1;
+        if (response.data != null && response.data is Map<String, dynamic>) {
+          final ridesResponse = MyRidesModel.fromJson(response.data);
+          pastRides.assignAll(ridesResponse.data);
+          pastNextCursor = ridesResponse.cursor?.nextCursor;
+          pastHasMore = ridesResponse.cursor?.hasMore ?? false;
         }
       } else {
         final message = response.data is Map
@@ -141,19 +149,23 @@ class RidesController extends GetxController {
   }
 
   Future<void> loadMorePastJobs() async {
+    if (!pastHasMore || pastNextCursor == null || isLoadMore.value) {
+      return;
+    }
+
     try {
       isLoadMore.value = true;
-      pastPage++;
-      final response = await _jobRepo.getPastJobs(page: pastPage);
+      final response = await _jobRepo.getPastJobs(cursor: pastNextCursor);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data != null && response.data['data'] != null) {
-          final jobResponse = FinishRidesModel.fromJson(response.data);
-          pastRides.addAll(jobResponse.data ?? []);
+        if (response.data != null && response.data is Map<String, dynamic>) {
+          final ridesResponse = MyRidesModel.fromJson(response.data);
+          pastRides.addAll(ridesResponse.data);
+          pastNextCursor = ridesResponse.cursor?.nextCursor;
+          pastHasMore = ridesResponse.cursor?.hasMore ?? false;
         }
       }
     } catch (e) {
       print("Error loading more past jobs: $e");
-      pastPage--;
     } finally {
       isLoadMore.value = false;
     }
