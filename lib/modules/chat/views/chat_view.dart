@@ -250,29 +250,32 @@ class ChatView extends StatelessWidget {
         return await _showDeleteConfirmation(chat);
       },
       background: Container(
-        margin: EdgeInsets.symmetric(vertical: 6.h),
+        margin: EdgeInsets.symmetric(vertical: 4.h),
         alignment: Alignment.centerRight,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         decoration: BoxDecoration(
-          color: const Color(0xFFEF4444),
+          color: const Color(0xFF7F1D1D).withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(
+            color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.delete_outline_rounded,
-              color: Colors.white,
-              size: 24.sp,
-            ),
-            SizedBox(width: 6.w),
             Text(
               "Delete",
               style: GoogleFonts.inter(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
+                color: const Color(0xFFF87171),
+                fontWeight: FontWeight.w600,
+                fontSize: 13.sp,
               ),
+            ),
+            SizedBox(width: 8.w),
+            Icon(
+              Icons.delete_outline_rounded,
+              color: const Color(0xFFF87171),
+              size: 20.sp,
             ),
           ],
         ),
