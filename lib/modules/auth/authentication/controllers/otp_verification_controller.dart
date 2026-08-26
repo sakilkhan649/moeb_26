@@ -77,12 +77,37 @@ class OtpController extends GetxController {
           isError: false,
         );
 
-        final authData = response.data?['data'] ?? {};
-        final bool isApproved = authData['isApproved'] == true;
-        final bool isOnboard = authData['isOnboard'] == true;
-
         FocusManager.instance.primaryFocus?.unfocus();
         await Future.delayed(const Duration(milliseconds: 300));
+
+        if (!isRegister) {
+          // ─── Forgot Password Flow ───
+          String resetToken = '';
+          final rawData = response.data?['data'];
+          if (rawData is String) {
+            resetToken = rawData;
+          } else if (rawData is Map) {
+            resetToken = rawData['resetToken']?.toString() ??
+                rawData['token']?.toString() ??
+                '';
+          }
+
+          Get.toNamed(
+            Routes.resetpasswordthreeView,
+            arguments: {
+              'resetToken': resetToken,
+              'email': email,
+            },
+          );
+          return;
+        }
+
+        // ─── Registration Flow ───
+        final rawData = response.data?['data'];
+        final Map<String, dynamic> authData =
+            rawData is Map<String, dynamic> ? rawData : {};
+        final bool isApproved = authData['isApproved'] == true;
+        final bool isOnboard = authData['isOnboard'] == true;
 
         if (isApproved) {
           Get.offAllNamed(Routes.bottomNabbarView);
