@@ -145,111 +145,113 @@ class MediaPickerHelper {
     final File? selectedFile = await Get.dialog<File?>(
       Dialog(
         backgroundColor: Colors.transparent,
-        child: Container(
-          padding: EdgeInsets.all(20.w),
-          decoration: BoxDecoration(
-            color:
-                Colors.black, // Black background matching application dialogs
-            borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(
-              color: const Color(0xFF374151),
-              width: 1.w,
-            ), // Light grey border
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Select Upload Source",
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(20.w),
+            decoration: BoxDecoration(
+              color: Colors.black, // Black background matching application dialogs
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(
+                color: const Color(0xFF374151),
+                width: 1.w,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Select Upload Source",
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Get.back(result: null),
+                      child: Icon(Icons.close, color: Colors.grey, size: 20.sp),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: EdgeInsets.all(8.r),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withAlpha(51), // 20% opacity
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.image_outlined, color: Colors.grey),
+                  ),
+                  title: Text(
+                    "Image Gallery",
                     style: GoogleFonts.inter(
                       color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.sp,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => Get.back(result: null),
-                    child: Icon(Icons.close, color: Colors.grey, size: 20.sp),
+                  subtitle: Text(
+                    "Choose a photo from your library",
+                    style: GoogleFonts.inter(color: Colors.grey, fontSize: 11.sp),
                   ),
-                ],
-              ),
-              SizedBox(height: 20.h),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Container(
-                  padding: EdgeInsets.all(8.r),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withAlpha(51), // 20% opacity
-                    shape: BoxShape.circle,
+                  onTap: () async {
+                    final File? file = await pickSingleImage(context);
+                    Get.back(result: file);
+                  },
+                ),
+                const Divider(color: Colors.white12),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: EdgeInsets.all(8.r),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withAlpha(51), // 20% opacity
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.picture_as_pdf_outlined,
+                      color: Colors.grey,
+                    ),
                   ),
-                  child: const Icon(Icons.image_outlined, color: Colors.grey),
-                ),
-                title: Text(
-                  "Image Gallery",
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
+                  title: Text(
+                    "PDF Document",
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.sp,
+                    ),
                   ),
-                ),
-                subtitle: Text(
-                  "Choose a photo from your library",
-                  style: GoogleFonts.inter(color: Colors.grey, fontSize: 11.sp),
-                ),
-                onTap: () async {
-                  final File? file = await pickSingleImage(context);
-                  Get.back(result: file);
-                },
-              ),
-              const Divider(color: Colors.white12),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Container(
-                  padding: EdgeInsets.all(8.r),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withAlpha(51), // 20% opacity
-                    shape: BoxShape.circle,
+                  subtitle: Text(
+                    "Choose a PDF file from storage",
+                    style: GoogleFonts.inter(color: Colors.grey, fontSize: 11.sp),
                   ),
-                  child: const Icon(
-                    Icons.picture_as_pdf_outlined,
-                    color: Colors.grey,
-                  ),
-                ),
-                title: Text(
-                  "PDF Document",
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
-                  ),
-                ),
-                subtitle: Text(
-                  "Choose a PDF file from storage",
-                  style: GoogleFonts.inter(color: Colors.grey, fontSize: 11.sp),
-                ),
-                onTap: () async {
-                  try {
-                    final FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(
-                          type: FileType.custom,
-                          allowedExtensions: ['pdf'],
-                        );
-                    if (result != null && result.files.single.path != null) {
-                      Get.back(result: File(result.files.single.path!));
-                    } else {
+                  onTap: () async {
+                    try {
+                      final FilePickerResult? result = await FilePicker.platform
+                          .pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['pdf'],
+                          );
+                      if (result != null && result.files.single.path != null) {
+                        Get.back(result: File(result.files.single.path!));
+                      } else {
+                        Get.back(result: null);
+                      }
+                    } catch (e) {
+                      debugPrint("Error picking PDF: $e");
                       Get.back(result: null);
                     }
-                  } catch (e) {
-                    debugPrint("Error picking PDF: $e");
-                    Get.back(result: null);
-                  }
-                },
-              ),
-            ],
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

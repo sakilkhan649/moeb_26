@@ -31,21 +31,29 @@ class PersonalDocumentView extends StatelessWidget {
 
         return RefreshIndicator(
           color: AppColors.primaryColor,
-          backgroundColor: const Color(0xFF1A1A1A),
+          backgroundColor: const Color(0xFF1A1A1E),
           onRefresh: () => controller.fetchDocuments(),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
             children: [
-              // 1. Info Banner (Clean & Subtle)
-              _buildInfoBanner(),
-              SizedBox(height: 16.h),
+              // Clean Header Subtitle
+              Padding(
+                padding: EdgeInsets.only(left: 4.w, right: 4.w, bottom: 20.h),
+                child: Text(
+                  "Manage and keep your official documents verified to stay eligible for ride requests.",
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF94A3B8),
+                    fontSize: 13.sp,
+                    height: 1.45,
+                  ),
+                ),
+              ),
 
-              // 2. Document Cards (Clean, Uncluttered & Neutral Icons)
+              // Document Cards
               _buildDocumentCard(
-                context: context,
                 documentType: "DRIVING_LICENSE",
                 title: "Driving License",
                 icon: Icons.badge_outlined,
@@ -55,7 +63,6 @@ class PersonalDocumentView extends StatelessWidget {
               ),
 
               _buildDocumentCard(
-                context: context,
                 documentType: "HACK_LICENSE",
                 title: "Hack License",
                 icon: Icons.verified_user_outlined,
@@ -65,7 +72,6 @@ class PersonalDocumentView extends StatelessWidget {
               ),
 
               _buildDocumentCard(
-                context: context,
                 documentType: "LOCAL_PERMIT",
                 title: "Local Permit",
                 icon: Icons.location_city_outlined,
@@ -74,10 +80,28 @@ class PersonalDocumentView extends StatelessWidget {
                 expireController: controller.localPermitExpireController,
               ),
 
-              SizedBox(height: 12.h),
+              SizedBox(height: 16.h),
 
-              // 3. Footer Notice
-              _buildFooterNotice(),
+              // Subtle bottom compliance guarantee note
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.lock_outline_rounded,
+                    size: 13.sp,
+                    color: const Color(0xFF64748B),
+                  ),
+                  SizedBox(width: 6.w),
+                  Text(
+                    "Documents are encrypted & securely stored",
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF64748B),
+                      fontSize: 11.5.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(height: 30.h),
             ],
           ),
@@ -86,45 +110,8 @@ class PersonalDocumentView extends StatelessWidget {
     );
   }
 
-  /// Informative banner (Minimal & Clean)
-  Widget _buildInfoBanner() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFF141414),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFF222222)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 2.h),
-            child: Icon(
-              Icons.info_outline_rounded,
-              color: const Color(0xFF8E8E93),
-              size: 17.sp,
-            ),
-          ),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Text(
-              "Keep your official credentials active to receive chauffeur bookings. Tap any document to view details, replace files, or update expiry dates.",
-              style: GoogleFonts.inter(
-                color: const Color(0xFF9E9E9E),
-                fontSize: 12.sp,
-                height: 1.4,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Clean & Minimalist Document Card
+  /// Clean & Comfortable Document Card
   Widget _buildDocumentCard({
-    required BuildContext context,
     required String documentType,
     required String title,
     required IconData icon,
@@ -141,14 +128,14 @@ class PersonalDocumentView extends StatelessWidget {
       return Container(
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF141414),
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: const Color(0xFF242424)),
+          color: const Color(0xFF131316),
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(color: const Color(0xFF222228)),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(14.r),
             onTap: () {
               Get.toNamed(
                 Routes.personalDocumentDetailView,
@@ -156,7 +143,7 @@ class PersonalDocumentView extends StatelessWidget {
               )?.then((_) => controller.fetchDocuments());
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
               child: Row(
                 children: [
                   // Leading Neutral Icon Box
@@ -164,19 +151,19 @@ class PersonalDocumentView extends StatelessWidget {
                     width: 44.w,
                     height: 44.w,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E1E1E),
-                      borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: const Color(0xFF2A2A2A)),
+                      color: const Color(0xFF1C1C22),
+                      borderRadius: BorderRadius.circular(11.r),
+                      border: Border.all(color: const Color(0xFF282832)),
                     ),
                     child: Icon(
                       icon,
                       color: Colors.white,
-                      size: 22.sp,
+                      size: 21.sp,
                     ),
                   ),
                   SizedBox(width: 14.w),
 
-                  // Middle Content: Title, Expiry & Status info
+                  // Content
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,7 +175,7 @@ class PersonalDocumentView extends StatelessWidget {
                                 title,
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
-                                  fontSize: 14.5.sp,
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                                 maxLines: 1,
@@ -199,22 +186,16 @@ class PersonalDocumentView extends StatelessWidget {
                             _buildStatusBadge(status),
                           ],
                         ),
-                        SizedBox(height: 5.h),
+                        SizedBox(height: 6.h),
                         Row(
                           children: [
-                            Icon(
-                              Icons.calendar_today_outlined,
-                              color: const Color(0xFF757575),
-                              size: 11.sp,
-                            ),
-                            SizedBox(width: 4.w),
                             Text(
                               expiryDate.isNotEmpty
-                                  ? "Expires: $expiryDate"
-                                  : "Expiry not set",
+                                  ? "Expires $expiryDate"
+                                  : "No expiry set",
                               style: GoogleFonts.inter(
-                                color: const Color(0xFF888888),
-                                fontSize: 11.5.sp,
+                                color: const Color(0xFF94A3B8),
+                                fontSize: 12.sp,
                               ),
                             ),
                             if (hasUrl) ...[
@@ -222,16 +203,16 @@ class PersonalDocumentView extends StatelessWidget {
                               Text(
                                 "•",
                                 style: TextStyle(
-                                  color: const Color(0xFF555555),
-                                  fontSize: 11.sp,
+                                  color: const Color(0xFF475569),
+                                  fontSize: 12.sp,
                                 ),
                               ),
                               SizedBox(width: 6.w),
                               Text(
-                                "File Attached",
+                                "Attached",
                                 style: GoogleFonts.inter(
-                                  color: const Color(0xFFAAAAAA),
-                                  fontSize: 11.5.sp,
+                                  color: const Color(0xFF94A3B8),
+                                  fontSize: 12.sp,
                                 ),
                               ),
                             ],
@@ -241,10 +222,10 @@ class PersonalDocumentView extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 10.w),
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: const Color(0xFF555555),
+                    color: const Color(0xFF64748B),
                     size: 13.sp,
                   ),
                 ],
@@ -256,7 +237,7 @@ class PersonalDocumentView extends StatelessWidget {
     });
   }
 
-  /// Clean Status Badge
+  /// Clean, Soft Status Badge
   Widget _buildStatusBadge(String? status) {
     final normalized = (status ?? 'PENDING').toUpperCase();
     Color bg;
@@ -265,79 +246,43 @@ class PersonalDocumentView extends StatelessWidget {
     String label;
 
     if (normalized == 'APPROVED') {
-      bg = const Color(0xFF10B981).withValues(alpha: 0.12);
-      border = const Color(0xFF10B981).withValues(alpha: 0.35);
+      bg = const Color(0xFF064E3B).withValues(alpha: 0.35);
+      border = const Color(0xFF10B981).withValues(alpha: 0.3);
       textColor = const Color(0xFF34D399);
       label = "Approved";
     } else if (normalized.contains('PENDING') || normalized.contains('SCAN')) {
-      bg = const Color(0xFFF59E0B).withValues(alpha: 0.12);
-      border = const Color(0xFFF59E0B).withValues(alpha: 0.35);
+      bg = const Color(0xFF78350F).withValues(alpha: 0.35);
+      border = const Color(0xFFF59E0B).withValues(alpha: 0.3);
       textColor = const Color(0xFFFBBF24);
       label = "Pending";
     } else if (normalized == 'REJECTED') {
-      bg = const Color(0xFFEF4444).withValues(alpha: 0.12);
-      border = const Color(0xFFEF4444).withValues(alpha: 0.35);
+      bg = const Color(0xFF7F1D1D).withValues(alpha: 0.35);
+      border = const Color(0xFFEF4444).withValues(alpha: 0.3);
       textColor = const Color(0xFFF87171);
       label = "Rejected";
     } else {
-      bg = Colors.white10;
-      border = Colors.white24;
-      textColor = Colors.white70;
+      bg = const Color(0xFF1E293B);
+      border = const Color(0xFF334155);
+      textColor = const Color(0xFF94A3B8);
       label = normalized;
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.5.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: border, width: 0.7),
+        border: Border.all(color: border, width: 0.8),
       ),
       child: Text(
         label,
         style: GoogleFonts.inter(
           color: textColor,
-          fontSize: 10.sp,
+          fontSize: 10.5.sp,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
-
-  /// Footer Notice Box (Subtle & Clean)
-  Widget _buildFooterNotice() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFF141414),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFF222222)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 2.h),
-            child: Icon(
-              Icons.shield_outlined,
-              color: const Color(0xFF8E8E93),
-              size: 16.sp,
-            ),
-          ),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Text(
-              "Compliance & Verification: Updated documents are automatically submitted for security check. Your bookings remain protected.",
-              style: GoogleFonts.inter(
-                color: const Color(0xFF757575),
-                fontSize: 11.sp,
-                height: 1.35,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
+

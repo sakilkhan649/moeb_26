@@ -102,16 +102,15 @@ class _PersonalDocumentDetailViewState
       appBar: CustomSubAppBar(title: "$docTitle Details"),
       body: RefreshIndicator(
         color: AppColors.primaryColor,
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: const Color(0xFF1A1A1E),
         onRefresh: () => controller.fetchDocuments(),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
           child: Obx(() {
             final currentStatus = statusRx.value;
-            final currentDocId = docIdRx.value;
             final currentUrl = urlRx.value;
             final currentFile = fileRx.value;
             final isUpdating = isUpdatingRx.value;
@@ -119,20 +118,11 @@ class _PersonalDocumentDetailViewState
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Status Notice Banner (Clean)
-                _buildStatusNotice(currentStatus),
+                // 1. Single Unified Document Header Card
+                _buildHeaderCard(currentStatus),
                 SizedBox(height: 14.h),
 
-                // 2. Hero Header Card (Neutral Icon)
-                _buildHeroHeader(
-                  docTitle: docTitle,
-                  docType: docType,
-                  docId: currentDocId,
-                  status: currentStatus,
-                ),
-                SizedBox(height: 14.h),
-
-                // 3. Document File / Preview Card
+                // 2. Document Attachment & Preview Card
                 _buildDocumentPreviewCard(
                   context: context,
                   file: currentFile,
@@ -140,11 +130,11 @@ class _PersonalDocumentDetailViewState
                 ),
                 SizedBox(height: 14.h),
 
-                // 4. Expiration Date Card
+                // 3. Expiration Date Card
                 _buildExpiryDateCard(context),
                 SizedBox(height: 24.h),
 
-                // 5. Update Action Button
+                // 4. Update Action Button
                 CustomButton(
                   text: isUpdating ? "Updating..." : "Save & Update Document",
                   loading: isUpdating,
@@ -152,7 +142,7 @@ class _PersonalDocumentDetailViewState
                     await controller.updateSingleDocument(docType);
                   },
                 ),
-                SizedBox(height: 14.h),
+                SizedBox(height: 16.h),
 
                 // Helper Note
                 Center(
@@ -160,8 +150,8 @@ class _PersonalDocumentDetailViewState
                     "All document updates are verified for transport compliance.",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF707070),
-                      fontSize: 11.sp,
+                      color: const Color(0xFF64748B),
+                      fontSize: 11.5.sp,
                     ),
                   ),
                 ),
@@ -174,9 +164,9 @@ class _PersonalDocumentDetailViewState
     );
   }
 
-  /// Status Notice Banner
-  Widget _buildStatusNotice(String? status) {
-    final normalized = (status ?? '').toUpperCase();
+  /// Unified Header Card (No duplicate cards)
+  Widget _buildHeaderCard(String? status) {
+    final normalized = (status ?? 'PENDING').toUpperCase();
     final isApproved = normalized == 'APPROVED';
     final isPending =
         normalized.contains('PENDING') ||
@@ -185,118 +175,42 @@ class _PersonalDocumentDetailViewState
     final isRejected =
         normalized.contains('REJECT') || normalized.contains('DECLIN');
 
-    Color bgColor;
-    Color borderColor;
-    Color textColor;
-    IconData icon;
-    String title;
     String subtitle;
+    Color subtitleColor;
 
     if (isApproved) {
-      bgColor = const Color(0xFF0F2417);
-      borderColor = const Color(0xFF1B4D2E);
-      textColor = const Color(0xFF34D399);
-      icon = Icons.check_circle_outline_rounded;
-      title = "Document Verified & Active";
-      subtitle = "Your $docTitle is currently approved and active.";
+      subtitle = "Verified & Active";
+      subtitleColor = const Color(0xFF34D399);
     } else if (isPending) {
-      bgColor = const Color(0xFF261D0A);
-      borderColor = const Color(0xFF4D3A14);
-      textColor = const Color(0xFFFBBF24);
-      icon = Icons.hourglass_top_rounded;
-      title = "Verification Under Review";
-      subtitle =
-          "Your $docTitle has been submitted and is currently being verified.";
+      subtitle = "Under Verification Review";
+      subtitleColor = const Color(0xFFFBBF24);
     } else if (isRejected) {
-      bgColor = const Color(0xFF261010);
-      borderColor = const Color(0xFF4D2020);
-      textColor = const Color(0xFFF87171);
-      icon = Icons.error_outline_rounded;
-      title = "Update Required / Rejected";
-      subtitle =
-          "Your document could not be verified. Please upload a clear replacement.";
+      subtitle = "Action Required (Rejected)";
+      subtitleColor = const Color(0xFFF87171);
     } else {
-      bgColor = const Color(0xFF141414);
-      borderColor = const Color(0xFF242424);
-      textColor = const Color(0xFF9E9E9E);
-      icon = Icons.info_outline_rounded;
-      title = "Compliance Document";
-      subtitle =
-          "Ensure your $docTitle details and expiration date remain up-to-date.";
+      subtitle = "Official Credential";
+      subtitleColor = const Color(0xFF94A3B8);
     }
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: borderColor, width: 0.8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 2.h),
-            child: Icon(icon, color: textColor, size: 18.sp),
-          ),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.inter(
-                    color: textColor,
-                    fontSize: 12.5.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.inter(
-                    color: textColor.withValues(alpha: 0.85),
-                    fontSize: 11.5.sp,
-                    height: 1.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Hero Header Card
-  Widget _buildHeroHeader({
-    required String docTitle,
-    required String docType,
-    required String? docId,
-    required String? status,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFF141414),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFF242424)),
+        color: const Color(0xFF131316),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: const Color(0xFF222228)),
       ),
       child: Row(
         children: [
-          // Neutral Icon Box
           Container(
             width: 44.w,
             height: 44.w,
             decoration: BoxDecoration(
-              color: const Color(0xFF1E1E1E),
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: const Color(0xFF2A2A2A)),
+              color: const Color(0xFF1C1C22),
+              borderRadius: BorderRadius.circular(11.r),
+              border: Border.all(color: const Color(0xFF282832)),
             ),
-            child: Icon(docIcon, color: Colors.white, size: 22.sp),
+            child: Icon(docIcon, color: Colors.white, size: 21.sp),
           ),
           SizedBox(width: 14.w),
           Expanded(
@@ -307,20 +221,19 @@ class _PersonalDocumentDetailViewState
                   docTitle,
                   style: GoogleFonts.inter(
                     color: Colors.white,
-                    fontSize: 15.sp,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                // if (docId != null && docId.isNotEmpty) ...[
-                //   SizedBox(height: 2.h),
-                //   Text(
-                //     "Doc ID: $docId",
-                //     style: GoogleFonts.inter(
-                //       color: const Color(0xFF757575),
-                //       fontSize: 11.sp,
-                //     ),
-                //   ),
-                // ],
+                SizedBox(height: 3.h),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.inter(
+                    color: subtitleColor,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
           ),
@@ -344,11 +257,11 @@ class _PersonalDocumentDetailViewState
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF141414),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFF242424)),
+        color: const Color(0xFF131316),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: const Color(0xFF222228)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,10 +270,10 @@ class _PersonalDocumentDetailViewState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Document Attachment",
+                "Document File",
                 style: GoogleFonts.inter(
                   color: Colors.white,
-                  fontSize: 13.5.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -374,38 +287,46 @@ class _PersonalDocumentDetailViewState
                       title: "$docTitle Preview",
                     );
                   },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.visibility_outlined,
-                        color: const Color(0xFFCCCCCC),
-                        size: 15.sp,
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        "Preview",
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFCCCCCC),
-                          fontSize: 11.5.sp,
-                          fontWeight: FontWeight.w500,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1C1C22),
+                      borderRadius: BorderRadius.circular(6.r),
+                      border: Border.all(color: const Color(0xFF282832)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.visibility_outlined,
+                          color: const Color(0xFFE2E8F0),
+                          size: 13.sp,
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 4.w),
+                        Text(
+                          "Preview",
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFFE2E8F0),
+                            fontSize: 11.5.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
             ],
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 12.h),
 
-          // Preview Area
+          // Preview Container
           if (hasFile || hasUrl) ...[
             Container(
               width: double.infinity,
-              height: 150.h,
+              height: 140.h,
               decoration: BoxDecoration(
-                color: const Color(0xFF0D0D0D),
+                color: const Color(0xFF0C0C0E),
                 borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: const Color(0xFF262626)),
+                border: Border.all(color: const Color(0xFF202026)),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
@@ -418,8 +339,8 @@ class _PersonalDocumentDetailViewState
                         children: [
                           Icon(
                             Icons.picture_as_pdf_rounded,
-                            color: Colors.redAccent,
-                            size: 38.sp,
+                            color: const Color(0xFFEF4444),
+                            size: 36.sp,
                           ),
                           SizedBox(height: 8.h),
                           Text(
@@ -432,12 +353,12 @@ class _PersonalDocumentDetailViewState
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          SizedBox(height: 4.h),
+                          SizedBox(height: 3.h),
                           Text(
-                            "Tap 'Preview' to view full PDF",
+                            "Tap 'Preview' to open document",
                             style: GoogleFonts.inter(
-                              color: const Color(0xFF757575),
-                              fontSize: 10.sp,
+                              color: const Color(0xFF64748B),
+                              fontSize: 10.5.sp,
                             ),
                           ),
                         ],
@@ -458,13 +379,13 @@ class _PersonalDocumentDetailViewState
                         errorBuilder: (_, __, ___) => Center(
                           child: Icon(
                             Icons.broken_image_rounded,
-                            color: const Color(0xFF666666),
-                            size: 32.sp,
+                            color: const Color(0xFF64748B),
+                            size: 30.sp,
                           ),
                         ),
                       ),
 
-                    // Tap to zoom overlay
+                    // Tap to zoom
                     Positioned.fill(
                       child: Material(
                         color: Colors.transparent,
@@ -488,7 +409,7 @@ class _PersonalDocumentDetailViewState
                         child: GestureDetector(
                           onTap: () => fileRx.value = null,
                           child: Container(
-                            padding: EdgeInsets.all(4.w),
+                            padding: EdgeInsets.all(5.w),
                             decoration: const BoxDecoration(
                               color: Colors.black87,
                               shape: BoxShape.circle,
@@ -496,7 +417,7 @@ class _PersonalDocumentDetailViewState
                             child: Icon(
                               Icons.close_rounded,
                               color: Colors.white,
-                              size: 14.sp,
+                              size: 13.sp,
                             ),
                           ),
                         ),
@@ -505,69 +426,121 @@ class _PersonalDocumentDetailViewState
                 ),
               ),
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 12.h),
           ] else ...[
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 20.h),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0D0D0D),
-                borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: const Color(0xFF222222)),
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.cloud_upload_outlined,
-                    color: const Color(0xFF555555),
-                    size: 32.sp,
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    "No document attached yet",
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF757575),
-                      fontSize: 11.5.sp,
+            GestureDetector(
+              onTap: () => controller.pickFromFile(context, fileRx),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 22.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0C0C0E),
+                  borderRadius: BorderRadius.circular(10.r),
+                  border: Border.all(color: const Color(0xFF202026)),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.cloud_upload_outlined,
+                      color: const Color(0xFF64748B),
+                      size: 28.sp,
                     ),
-                  ),
-                ],
+                    SizedBox(height: 6.h),
+                    Text(
+                      "No document file attached",
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF94A3B8),
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 12.h),
           ],
 
-          // Pick / Replace Document Action
-          OutlinedButton(
-            onPressed: () => _showPickerBottomSheet(context),
-            style: OutlinedButton.styleFrom(
-              minimumSize: Size(double.infinity, 42.h),
-              backgroundColor: const Color(0xFF1E1E1E),
-              side: const BorderSide(color: Color(0xFF2E2E2E)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.file_upload_outlined,
-                  color: Colors.white,
-                  size: 16.sp,
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  hasFile || hasUrl
-                      ? "Replace Document File"
-                      : "Upload Document File",
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 12.5.sp,
-                    fontWeight: FontWeight.w500,
+          // Actions: Camera & Upload File buttons
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => controller.pickFromCamera(fileRx),
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 6.w),
+                    minimumSize: Size(0, 42.h),
+                    backgroundColor: const Color(0xFF1C1C22),
+                    side: const BorderSide(color: Color(0xFF282832)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.white,
+                        size: 15.sp,
+                      ),
+                      SizedBox(width: 5.w),
+                      Flexible(
+                        child: Text(
+                          "Camera",
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 12.5.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => controller.pickFromFile(context, fileRx),
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 6.w),
+                    minimumSize: Size(0, 42.h),
+                    backgroundColor: const Color(0xFF1C1C22),
+                    side: const BorderSide(color: Color(0xFF282832)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.file_upload_outlined,
+                        color: Colors.white,
+                        size: 15.sp,
+                      ),
+                      SizedBox(width: 5.w),
+                      Flexible(
+                        child: Text(
+                          hasFile || hasUrl ? "Replace File" : "Upload File",
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 12.5.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -578,11 +551,11 @@ class _PersonalDocumentDetailViewState
   Widget _buildExpiryDateCard(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF141414),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFF242424)),
+        color: const Color(0xFF131316),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: const Color(0xFF222228)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,28 +564,28 @@ class _PersonalDocumentDetailViewState
             "Expiration Date",
             style: GoogleFonts.inter(
               color: Colors.white,
-              fontSize: 13.5.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(height: 4.h),
           Text(
-            "Set the official expiration date as printed on your credential.",
+            "Set the official expiry date as printed on your credential.",
             style: GoogleFonts.inter(
-              color: const Color(0xFF757575),
-              fontSize: 11.sp,
+              color: const Color(0xFF94A3B8),
+              fontSize: 11.5.sp,
             ),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 12.h),
 
           GestureDetector(
             onTap: () => controller.selectDate(context, expireController),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
               decoration: BoxDecoration(
-                color: const Color(0xFF0D0D0D),
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: const Color(0xFF262626)),
+                color: const Color(0xFF0C0C0E),
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(color: const Color(0xFF202026)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -620,12 +593,12 @@ class _PersonalDocumentDetailViewState
                   Text(
                     expireController.text.isNotEmpty
                         ? expireController.text
-                        : "Select Expiry Date (YYYY-MM-DD)",
+                        : "YYYY-MM-DD",
                     style: GoogleFonts.inter(
                       color: expireController.text.isNotEmpty
                           ? Colors.white
-                          : const Color(0xFF555555),
-                      fontSize: 12.5.sp,
+                          : const Color(0xFF64748B),
+                      fontSize: 13.sp,
                       fontWeight: expireController.text.isNotEmpty
                           ? FontWeight.w500
                           : FontWeight.w400,
@@ -633,7 +606,7 @@ class _PersonalDocumentDetailViewState
                   ),
                   Icon(
                     Icons.calendar_today_rounded,
-                    color: const Color(0xFF9E9E9E),
+                    color: const Color(0xFF94A3B8),
                     size: 16.sp,
                   ),
                 ],
@@ -645,7 +618,7 @@ class _PersonalDocumentDetailViewState
     );
   }
 
-  /// Status Badge Helper
+  /// Clean, Soft Status Badge
   Widget _buildStatusBadge(String? status) {
     final normalized = (status ?? 'PENDING').toUpperCase();
     Color bg;
@@ -654,157 +627,40 @@ class _PersonalDocumentDetailViewState
     String label;
 
     if (normalized == 'APPROVED') {
-      bg = const Color(0xFF10B981).withValues(alpha: 0.12);
-      border = const Color(0xFF10B981).withValues(alpha: 0.35);
+      bg = const Color(0xFF064E3B).withValues(alpha: 0.35);
+      border = const Color(0xFF10B981).withValues(alpha: 0.3);
       textColor = const Color(0xFF34D399);
       label = "Approved";
     } else if (normalized.contains('PENDING') || normalized.contains('SCAN')) {
-      bg = const Color(0xFFF59E0B).withValues(alpha: 0.12);
-      border = const Color(0xFFF59E0B).withValues(alpha: 0.35);
+      bg = const Color(0xFF78350F).withValues(alpha: 0.35);
+      border = const Color(0xFFF59E0B).withValues(alpha: 0.3);
       textColor = const Color(0xFFFBBF24);
       label = "Pending";
     } else if (normalized == 'REJECTED') {
-      bg = const Color(0xFFEF4444).withValues(alpha: 0.12);
-      border = const Color(0xFFEF4444).withValues(alpha: 0.35);
+      bg = const Color(0xFF7F1D1D).withValues(alpha: 0.35);
+      border = const Color(0xFFEF4444).withValues(alpha: 0.3);
       textColor = const Color(0xFFF87171);
       label = "Rejected";
     } else {
-      bg = Colors.white10;
-      border = Colors.white24;
-      textColor = Colors.white70;
+      bg = const Color(0xFF1E293B);
+      border = const Color(0xFF334155);
+      textColor = const Color(0xFF94A3B8);
       label = normalized;
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.5.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: border, width: 0.7),
+        border: Border.all(color: border, width: 0.8),
       ),
       child: Text(
         label,
         style: GoogleFonts.inter(
           color: textColor,
-          fontSize: 10.sp,
+          fontSize: 10.5.sp,
           fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  /// Bottom sheet to choose image/camera/pdf
-  void _showPickerBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 16.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF444444),
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-              SizedBox(height: 14.h),
-              Text(
-                "Upload $docTitle",
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 16.h),
-              ListTile(
-                leading: Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF262626),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    Icons.camera_alt_outlined,
-                    color: Colors.white,
-                    size: 18.sp,
-                  ),
-                ),
-                title: Text(
-                  "Take Photo (Camera)",
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 13.5.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  controller.pickFromCamera(fileRx);
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF262626),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    Icons.photo_library_outlined,
-                    color: Colors.white,
-                    size: 18.sp,
-                  ),
-                ),
-                title: Text(
-                  "Choose from Gallery",
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 13.5.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  controller.pickFromGallery(context, fileRx);
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF262626),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    Icons.picture_as_pdf_outlined,
-                    color: Colors.white,
-                    size: 18.sp,
-                  ),
-                ),
-                title: Text(
-                  "Select PDF / Document File",
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 13.5.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  controller.pickFromFile(context, fileRx);
-                },
-              ),
-            ],
-          ),
         ),
       ),
     );
