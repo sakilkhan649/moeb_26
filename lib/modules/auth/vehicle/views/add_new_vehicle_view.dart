@@ -9,8 +9,8 @@ import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
+import 'package:moeb_26/core/services/vehicle_config_service.dart';
 import 'package:moeb_26/modules/auth/vehicle/controllers/vehicle_action_controller.dart';
-import 'package:moeb_26/modules/auth/vehicle/views/vehicle_Information_view.dart';
 
 class AddNewVehicleView extends StatefulWidget {
   const AddNewVehicleView({super.key});
@@ -23,6 +23,7 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
   // Use a unique tag for each navigation to ensure NO data leaks from previous visits
   late final String tag;
   late final VehicleActionController controller;
+  late final VehicleConfigService vehicleConfigService;
 
   final _formKey = GlobalKey<FormState>();
   final RxBool showErrors = false.obs;
@@ -34,6 +35,9 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
     tag = DateTime.now().millisecondsSinceEpoch.toString();
     // Inject a completely fresh and unique controller instance
     controller = Get.put(VehicleActionController(), tag: tag);
+    vehicleConfigService = Get.isRegistered<VehicleConfigService>()
+        ? Get.find<VehicleConfigService>()
+        : Get.put(VehicleConfigService());
   }
 
   @override
@@ -162,7 +166,7 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
           // Make & Model Dropdown Selection
           Obx(() {
             final type = controller.selectedVehicleType.value;
-            final cars = vehicleMakeModelMap[type] ?? [];
+            final cars = vehicleConfigService.getMakesAndModelsForType(type);
             final currentSelection =
                 (controller.makeController.text.isEmpty &&
                     controller.modelController.text.isEmpty)
@@ -191,7 +195,7 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                 ),
                 SizedBox(height: 8.h),
                 DropdownButtonFormField<String>(
-                  key: ValueKey(type),
+                  key: ValueKey("${type}_${cars.length}"),
                   value: value,
                   dropdownColor: const Color(0xFF1A1A1E),
                   menuMaxHeight: 260.h,
@@ -323,14 +327,13 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                     SizedBox(height: 8.h),
                     Obx(() {
                       final type = controller.selectedVehicleType.value;
-                      final isLimo = type == "LimoStretch";
-                      final colors = isLimo ? ["Black", "White"] : ["Black"];
+                      final colors = vehicleConfigService.getAllowedColorsForType(type);
 
-                      // Auto-populate "Black" for non-limo
-                      if (!isLimo &&
-                          controller.colorOutsideController.text != "Black") {
+                      // Auto-populate first allowed color if only 1 color is allowed and current text doesn't match
+                      if (colors.length == 1 &&
+                          controller.colorOutsideController.text != colors.first) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          controller.colorOutsideController.text = "Black";
+                          controller.colorOutsideController.text = colors.first;
                         });
                       }
 
@@ -338,10 +341,10 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                           controller.colorOutsideController.text;
                       final value = colors.contains(currentSelection)
                           ? currentSelection
-                          : null;
+                          : (colors.length == 1 ? colors.first : null);
 
                       return DropdownButtonFormField<String>(
-                        key: ValueKey(type),
+                        key: ValueKey("${type}_${colors.join('_')}"),
                         value: value,
                         dropdownColor: const Color(0xFF1A1A1E),
                         menuMaxHeight: 260.h,
@@ -464,7 +467,7 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         final type = controller.selectedVehicleType.value;
-                        final maxAge = (type == "LimoStretch") ? 15 : 5;
+                        final maxAge = vehicleConfigService.getMaxAgeForType(type);
                         return Validators.year(
                           value,
                           min: DateTime.now().year - maxAge,
@@ -1001,15 +1004,19 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
 
   Widget _buildVehicleTypeChip(String vehicleType) {
     return Obx(() {
-      bool isSelected = controller.selectedVehicleType.value == vehicleType;
+      final selectedType = controller.selectedVehicleType.value;
+      final isSelected =
+          selectedType.toLowerCase().trim() == vehicleType.toLowerCase().trim();
       return GestureDetector(
         onTap: () {
           if (controller.selectedVehicleType.value != vehicleType) {
             controller.makeController.clear();
             controller.modelController.clear();
             controller.yearController.clear();
-            if (vehicleType != "LimoStretch") {
-              controller.colorOutsideController.text = "Black";
+            final allowedColors =
+                vehicleConfigService.getAllowedColorsForType(vehicleType);
+            if (allowedColors.length == 1) {
+              controller.colorOutsideController.text = allowedColors.first;
             } else {
               controller.colorOutsideController.clear();
             }
@@ -1021,7 +1028,11 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFF181F26) : Colors.transparent,
             borderRadius: BorderRadius.circular(30.r),
-            border: Border.all(color: const Color(0xFF364153)),
+            border: Border.all(
+              color: isSelected
+                  ? const Color(0xFFFFDCA1)
+                  : const Color(0xFF364153),
+            ),
           ),
           child: CustomTextgray(
             text: vehicleType,

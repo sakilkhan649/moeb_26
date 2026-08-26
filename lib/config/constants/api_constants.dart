@@ -15,6 +15,7 @@ class ApiConstants {
   static const String resendVerifyEmail = '/auth/resend-otp';
   static const String verifyEmail = '/auth/verify-otp';
   static const String vehicles = '/vehicles';
+  static const String vehicleConfigOptions = '/vehicle-configs/options';
   static const String documents = '/documents';
 
   // Password Management

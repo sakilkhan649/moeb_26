@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/modules/auth/authentication/controllers/signup_controller.dart';
+import 'package:moeb_26/core/services/vehicle_config_service.dart';
 import 'package:moeb_26/data/models/vehicle_model.dart';
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
@@ -22,11 +23,15 @@ class VehicleInformationView extends StatefulWidget {
 
 class _VehicleInformationViewState extends State<VehicleInformationView> {
   late SignupController controller;
+  late VehicleConfigService vehicleConfigService;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
+    vehicleConfigService = Get.isRegistered<VehicleConfigService>()
+        ? Get.find<VehicleConfigService>()
+        : Get.put(VehicleConfigService());
     // Initialize controller lazily in initState so that GetX has fully
     // disposed and recreated SignupController before we grab it.
     // This prevents "TextEditingController used after dispose" crash.
@@ -252,7 +257,7 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
           // Make & Model Dropdown Selection
           Obx(() {
             final type = model.selectedVehicleType.value;
-            final cars = vehicleMakeModelMap[type] ?? [];
+            final cars = vehicleConfigService.getMakesAndModelsForType(type);
             final currentSelection =
                 (model.makeController.text.isEmpty &&
                     model.modelController.text.isEmpty)
@@ -268,7 +273,7 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
               children: [
                 _buildFieldLabel("Make & Model"),
                 DropdownButtonFormField<String>(
-                  key: ValueKey(type),
+                  key: ValueKey("${type}_${cars.length}"),
                   value: value,
                   dropdownColor: const Color(0xFF1A1A1E),
                   menuMaxHeight: 260.h,
@@ -379,14 +384,15 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
                     _buildFieldLabel("Color (Outside)", isRequired: true),
                     Obx(() {
                       final type = model.selectedVehicleType.value;
-                      final isLimo = type == "LimoStretch";
-                      final colors = isLimo ? ["Black", "White"] : ["Black"];
+                      final colors = vehicleConfigService.getAllowedColorsForType(type);
 
-                      // Auto-populate "Black" for non-limo
-                      if (!isLimo &&
-                          model.colorOutsideController.text != "Black") {
+                      // Auto-populate first allowed color if only 1 color is allowed and current text doesn't match
+                      if (colors.length == 1 &&
+                          model.colorOutsideController.text != colors.first) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          model.colorOutsideController.text = "Black";
+                          if (!model.isDisposed) {
+                            model.colorOutsideController.text = colors.first;
+                          }
                         });
                       }
 
@@ -394,10 +400,10 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
                           model.colorOutsideController.text;
                       final value = colors.contains(currentSelection)
                           ? currentSelection
-                          : null;
+                          : (colors.length == 1 ? colors.first : null);
 
                       return DropdownButtonFormField<String>(
-                        key: ValueKey(type),
+                        key: ValueKey("${type}_${colors.join('_')}"),
                         value: value,
                         dropdownColor: const Color(0xFF1A1A1E),
                         menuMaxHeight: 260.h,
@@ -504,7 +510,7 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         final type = model.selectedVehicleType.value;
-                        final maxAge = (type == "LimoStretch") ? 15 : 5;
+                        final maxAge = vehicleConfigService.getMaxAgeForType(type);
                         return Validators.year(
                           value,
                           min: DateTime.now().year - maxAge,
@@ -1004,7 +1010,9 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
 
   Widget _buildVehicleTypeChip(VehicleModel model, String type) {
     return Obx(() {
-      bool isSelected = model.selectedVehicleType.value == type;
+      final selectedType = model.selectedVehicleType.value;
+      final isSelected =
+          selectedType.toLowerCase().trim() == type.toLowerCase().trim();
       return GestureDetector(
         onTap: () {
           if (model.isDisposed) return;
@@ -1013,8 +1021,12 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
             if (!model.isDisposed) model.makeController.clear();
             if (!model.isDisposed) model.modelController.clear();
             if (!model.isDisposed) model.yearController.clear();
-            if (type != "LimoStretch") {
-              if (!model.isDisposed) model.colorOutsideController.text = "Black";
+            final allowedColors =
+                vehicleConfigService.getAllowedColorsForType(type);
+            if (allowedColors.length == 1) {
+              if (!model.isDisposed) {
+                model.colorOutsideController.text = allowedColors.first;
+              }
             } else {
               if (!model.isDisposed) model.colorOutsideController.clear();
             }
@@ -1025,7 +1037,11 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFF181F26) : Colors.transparent,
             borderRadius: BorderRadius.circular(30.r),
-            border: Border.all(color: const Color(0xFF364153)),
+            border: Border.all(
+              color: isSelected
+                  ? const Color(0xFFFFDCA1)
+                  : const Color(0xFF364153),
+            ),
           ),
           child: CustomTextgray(
             text: type,
@@ -1072,46 +1088,3 @@ class CustomAddButton extends StatelessWidget {
   }
 }
 
-const Map<String, List<String>> vehicleMakeModelMap = {
-  "Sedan": [
-    "Mercedes-Benz S-Class",
-    "Mercedes-Benz E-Class",
-    "Mercedes-Benz GLE",
-    "BMW 7 Series",
-    "BMW 5 Series",
-    "BMW X7",
-    "BMW X5",
-    "Audi A8",
-    "Audi A6",
-    "Audi Q5",
-    "Audi Q7",
-    "Genesis G90",
-    "Genesis GV80",
-    "Cadillac CT5",
-    "Cadillac XT6",
-    "Lincoln Aviator",
-    "Lincoln Nautilus",
-    "Volvo S90",
-    "Volvo XC90",
-  ],
-  "SUV": [
-    "Chevrolet Suburban",
-    "GMC Yukon XL",
-    "Cadillac Escalade",
-    "Lincoln Navigator L",
-    "Ford Expedition MAX",
-    "Jeep Grand Wagoneer L",
-  ],
-  "Sprinter": ["Mercedes-Benz Sprinter"],
-  "LimoStretch": [
-    "Chrysler 300 Stretch",
-    "Lincoln MKT Stretch",
-    "Lincoln Town Car Stretch",
-    "Lincoln Continental",
-    "Cadillac XTS Stretch",
-    "Cadilac XT5 Stretch",
-    "Cadillac Escalade Stretch",
-    "Hummer H2 Stretch",
-    "Lincoln Navigator Stretch",
-  ],
-};
