@@ -5,12 +5,12 @@ import 'package:moeb_26/core/services/auth_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 
 class SigninController extends GetxController {
-  final AuthService _authService = Get.find();
+  final AuthService _authService = Get.find<AuthService>();
 
   final isLoading = false.obs;
   final isPasswordVisible = false.obs;
   final errorMessage = ''.obs;
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -25,73 +25,48 @@ class SigninController extends GetxController {
     if (!formKey.currentState!.validate()) return;
 
     isLoading.value = true;
+    errorMessage.value = '';
 
     try {
       final response = await _authService.login(
-        email: emailController.text,
+        email: emailController.text.trim(),
         password: passwordController.text,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = response.data;
-        final authData = data['data'] ?? {};
+        final authData = response.data?['data'] ?? {};
+        final bool isApproved = authData['isApproved'] == true;
+        final bool isOnboard = authData['isOnboard'] == true;
 
-        // Check if user is restricted
-        if (authData['isRestricted'] == true) {
-          final blockReason =
-              authData['blockReason']?.toString() ??
-              "Incomplete documents or vehicle not meeting standards";
-
-          Helpers.showCustomSnackBar('Account Restricted', isError: true);
-
-          Get.offAllNamed(
-            Routes.applicationNotApprovedView,
-            arguments: {
-              "title": "Account Restricted",
-              "description":
-                  "Unfortunately, your account access has been restricted.",
-              "reason": blockReason,
-            },
-          );
-          return;
-        }
-
-        // Check if application is pending
-        if (authData['isPending'] == true) {
+        if (isApproved) {
+          Helpers.showCustomSnackBar('Login successful', isError: false);
+          Get.offAllNamed(Routes.bottomNabbarView);
+        } else if (!isOnboard) {
           Helpers.showCustomSnackBar(
-            'Application is pending review',
-            isError: false,
-          );
-          Get.offAllNamed(Routes.applicationSubmitedView);
-          return;
-        }
-
-        // Check if onboarding setup is completed (supports both isOnboard and isOnboardingCompleted)
-        final dynamic isAccountSetupCompleted =
-            authData['isOnboard'];
-
-        if (isAccountSetupCompleted == false) {
-          Helpers.showCustomSnackBar(
-            'Please complete your vehicle & document setup',
+            'Please complete vehicle information',
             isError: false,
           );
           Get.offAllNamed(Routes.vehicleinformationView);
-          return;
+        } else {
+          Helpers.showCustomSnackBar(
+            'Your application is under review',
+            isError: false,
+          );
+          Get.offAllNamed(Routes.applicationSubmitedView);
         }
-
-        Helpers.showCustomSnackBar('Login successful', isError: false);
-        Get.offAllNamed(Routes.bottomNabbarView);
       } else {
-        final data = response.data;
-        final String errorMsg = (data is Map && data['message'] != null)
-            ? data['message'].toString()
-            : (response.statusMessage ?? 'Invalid email or password');
+        final String errorMsg =
+            response.data?['message'] ?? 'Invalid email or password';
+        errorMessage.value = errorMsg;
         Helpers.showCustomSnackBar(errorMsg, isError: true);
       }
     } catch (e) {
       Helpers.showDebugLog("login error => $e");
-      // Fallback navigation for dev testing when backend API is unavailable
-      Get.offAllNamed(Routes.bottomNabbarView);
+      errorMessage.value = 'Login failed. Please try again.';
+      Helpers.showCustomSnackBar(
+        'Login failed. Please try again.',
+        isError: true,
+      );
     } finally {
       isLoading.value = false;
     }

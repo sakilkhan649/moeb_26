@@ -9,7 +9,7 @@ class OtpController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
 
   final pinController = TextEditingController();
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   var isLoading = false.obs;
   var remainingSeconds = 90.obs;
@@ -17,7 +17,7 @@ class OtpController extends GetxController {
   var otpError = ''.obs;
   Timer? _timer;
 
-  String email = ''; // 👈 final সরিয়ে empty রাখো
+  String email = '';
   bool isRegister = false;
 
   @override
@@ -66,7 +66,10 @@ class OtpController extends GetxController {
 
     try {
       isLoading.value = true;
-      final response = await _authService.verifyOtp(email: email, otp: otpCode);
+      final response = await _authService.verifyOtp(
+        email: email,
+        otp: otpCode,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Helpers.showCustomSnackBar(
@@ -74,17 +77,19 @@ class OtpController extends GetxController {
           isError: false,
         );
 
-        final resData = response.data?['data'];
-        final dynamic isAccountSetupComplete =
-            resData?['isOnboard'];
+        final authData = response.data?['data'] ?? {};
+        final bool isApproved = authData['isApproved'] == true;
+        final bool isOnboard = authData['isOnboard'] == true;
 
         FocusManager.instance.primaryFocus?.unfocus();
         await Future.delayed(const Duration(milliseconds: 300));
 
-        if (isAccountSetupComplete == false) {
+        if (isApproved) {
+          Get.offAllNamed(Routes.bottomNabbarView);
+        } else if (!isOnboard) {
           Get.offAllNamed(Routes.vehicleinformationView);
         } else {
-          Get.offAllNamed(Routes.bottomNabbarView);
+          Get.offAllNamed(Routes.applicationSubmitedView);
         }
       } else {
         final msg = response.data?['message'] ?? 'OTP verification failed';

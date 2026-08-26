@@ -1,13 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
+import 'package:get/get.dart' hide Response;
 import 'package:moeb_26/config/constants/app_constants.dart';
 import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
@@ -21,40 +16,23 @@ import 'package:moeb_26/data/models/vehicle_model.dart';
 class AuthService extends GetxService {
   late AuthRepo _authRepo;
 
-  // Reactive state
   final isLoggedIn = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Explicitly find ApiClient to ensure it's initialized before AuthRepo
     _authRepo = AuthRepo(apiClient: Get.find<ApiClient>());
-
-    // Check initial login state
     _checkLoginStatus();
   }
 
   Future<void> _checkLoginStatus() async {
     final token = await StorageService.getString(StorageConstants.bearerToken);
-    final userData = await StorageService.getString(StorageConstants.userData);
-    if (userData.isNotEmpty) {
-      try {
-        final Map<String, dynamic> user = jsonDecode(userData);
-        final id = user['_id'] ?? user['id'];
-        if (id != null) {
-          Get.find<UserService>().userId = id.toString();
-          debugPrint("✅ Logged in user ID: $id");
-        }
-      } catch (_) {}
-    }
     isLoggedIn.value = token.isNotEmpty;
   }
 
-  Future<AuthService> init() async {
-    return this;
-  }
+  Future<AuthService> init() async => this;
 
-  /// ===================== SIGNUP (CLEAN & SIMPLE) =====================
+  /// ===================== SIGNUP =====================
   Future<Response> signup({
     required String name,
     required String email,
@@ -65,32 +43,23 @@ class AuthService extends GetxService {
     required String companyRole,
     List<String>? languages,
   }) async {
-    try {
-      final response = await _authRepo.signup(
-        name: name,
-        email: email,
-        password: password,
-        phone: phone,
-        serviceAreaId: serviceAreaId,
-        companyName: companyName,
-        companyRole: companyRole,
-        languages: languages,
-      );
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+    return await _authRepo.signup(
+      name: name,
+      email: email,
+      password: password,
+      phone: phone,
+      serviceAreaId: serviceAreaId,
+      companyName: companyName,
+      companyRole: companyRole,
+      languages: languages,
+    );
   }
 
   /// ===================== VEHICLE SETUP =====================
   Future<Response> addVehicle({
     required List<VehicleModel> vehicles,
   }) async {
-    try {
-      return await _authRepo.addVehicle(vehicles: vehicles);
-    } catch (e) {
-      rethrow;
-    }
+    return await _authRepo.addVehicle(vehicles: vehicles);
   }
 
   /// ===================== DOCUMENTS UPLOAD =====================
@@ -103,19 +72,15 @@ class AuthService extends GetxService {
     String? localPermitExpiry,
     required File headshotFile,
   }) async {
-    try {
-      return await _authRepo.uploadDocuments(
-        drivingLicenseFile: drivingLicenseFile,
-        drivingLicenseExpiry: drivingLicenseExpiry,
-        hackLicenseFile: hackLicenseFile,
-        hackLicenseExpiry: hackLicenseExpiry,
-        localPermitFile: localPermitFile,
-        localPermitExpiry: localPermitExpiry,
-        headshotFile: headshotFile,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return await _authRepo.uploadDocuments(
+      drivingLicenseFile: drivingLicenseFile,
+      drivingLicenseExpiry: drivingLicenseExpiry,
+      hackLicenseFile: hackLicenseFile,
+      hackLicenseExpiry: hackLicenseExpiry,
+      localPermitFile: localPermitFile,
+      localPermitExpiry: localPermitExpiry,
+      headshotFile: headshotFile,
+    );
   }
 
   /// ===================== LOGIN =====================
@@ -127,7 +92,6 @@ class AuthService extends GetxService {
       String? fcmToken;
       try {
         fcmToken = await FirebaseMessaging.instance.getToken();
-        debugPrint("FCM Token dynamically fetched for login: $fcmToken");
       } catch (e) {
         debugPrint("Error fetching FCM token: $e");
       }
@@ -144,15 +108,7 @@ class AuthService extends GetxService {
         deviceToken: AppConstants.fcmToken,
       );
 
-      final data = response.data;
-      final authData = data['data'] ?? data;
-      bool isRestricted = authData['isRestricted'] == true;
-      bool isPending = authData['isPending'] == true;
-
-      await handleAuthResponse(
-        response,
-        isTemporary: isRestricted || isPending,
-      );
+      await handleAuthResponse(response);
       return response;
     } catch (e) {
       rethrow;
@@ -162,64 +118,40 @@ class AuthService extends GetxService {
   /// ===================== LOGOUT =====================
   Future<Response> logout() async {
     try {
-      String? fcmToken;
-      try {
-        fcmToken = await FirebaseMessaging.instance.getToken();
-        debugPrint("FCM Token dynamically fetched for logout: $fcmToken");
-      } catch (e) {
-        debugPrint("Error fetching FCM token: $e");
-      }
-
       final response = await _authRepo.logout(
         deviceToken: AppConstants.fcmToken,
       );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        await _clearLocalAuth();
-        Get.offAllNamed(Routes.signinView);
-      } else {
-        await _clearLocalAuth();
-        Get.offAllNamed(Routes.signinView);
-      }
+      await clearLocalAuth();
+      Get.offAllNamed(Routes.signinView);
       return response;
     } catch (e) {
+      await clearLocalAuth();
+      Get.offAllNamed(Routes.signinView);
       rethrow;
     }
   }
 
   /// ===================== FORGOT PASSWORD =====================
   Future<Response> forgotPassword(String email) async {
-    try {
-      final response = await _authRepo.forgotPassword(email: email);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+    return await _authRepo.forgotPassword(email: email);
   }
 
   /// ===================== OTP VERIFY =====================
   Future<Response> verifyOtp({
     required String email,
-    required int otp, // 👈 controller থেকে আসছে
+    required int otp,
   }) async {
-    try {
-      final response = await _authRepo.otpVerify(
-        email: email,
-        oneTimeCode: otp, // 👈 repo এ oneTimeCode
-      );
-      await handleAuthResponse(response);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+    final response = await _authRepo.otpVerify(
+      email: email,
+      oneTimeCode: otp,
+    );
+    await handleAuthResponse(response);
+    return response;
   }
 
   /// ===================== RESEND OTP =====================
   Future<Response> resendOtp(String email) async {
-    try {
-      return await _authRepo.resentOtp(email: email);
-    } catch (e) {
-      rethrow;
-    }
+    return await _authRepo.resentOtp(email: email);
   }
 
   /// ===================== RESET PASSWORD =====================
@@ -228,16 +160,11 @@ class AuthService extends GetxService {
     required String newPassword,
     required String confirmPassword,
   }) async {
-    try {
-      final response = await _authRepo.resetPassword(
-        resetToken: resetToken, // 👈 যোগ করো
-        newPassword: newPassword,
-        confirmPassword: confirmPassword,
-      );
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+    return await _authRepo.resetPassword(
+      resetToken: resetToken,
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+    );
   }
 
   /// ===================== CHANGE PASSWORD =====================
@@ -246,115 +173,70 @@ class AuthService extends GetxService {
     required String newPassword,
     required String confirmPassword,
   }) async {
-    try {
-      final response = await _authRepo.changePassword(
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-        confirmPassword: confirmPassword,
-      );
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+    return await _authRepo.changePassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+    );
   }
 
-  /// ===================== HELPER METHODS =====================
-
-  /// Handles successful auth response (Login/Signup/Verify)
-  Future<void> handleAuthResponse(
-    Response response, {
-    bool isTemporary = false,
-  }) async {
+  /// ===================== HANDLE AUTH RESPONSE =====================
+  Future<void> handleAuthResponse(Response response) async {
     try {
-      final data = response.data;
-      if (data == null) return;
+      final authData = response.data?['data'] ?? response.data;
+      if (authData is! Map<String, dynamic>) return;
 
-      // Check if data is nested
-      final authData = data['data'] ?? data;
+      final String? accessToken = authData['accessToken'] ?? authData['token'];
+      final bool isApproved = authData['isApproved'] == true;
+      final bool isOnboard = authData['isOnboard'] == true;
 
-      if (authData is Map<String, dynamic>) {
-        final String? accessToken =
-            authData['accessToken'] ?? authData['token'];
-        final String? refreshToken = authData['refreshToken'];
+      // 1. Save Token
+      if (accessToken != null && accessToken.isNotEmpty) {
+        await StorageService.setString(
+          StorageConstants.bearerToken,
+          accessToken,
+        );
+        isLoggedIn.value = true;
 
-        if (accessToken != null) {
-          if (isTemporary) {
-            ApiClient.temporaryToken = accessToken;
-            debugPrint("⚠️ Token saved temporarily (Restricted mode)");
-          } else {
-            ApiClient.temporaryToken = null; // Clear if previously restricted
-            await StorageService.setString(
-              StorageConstants.bearerToken,
-              accessToken,
-            );
-          }
-          isLoggedIn.value = true;
-          // Refresh socket with new token
-          try {
-            Get.find<SocketService>().initSocket();
-          } catch (_) {}
-        }
+        try {
+          Get.find<SocketService>().initSocket();
+        } catch (_) {}
+      }
 
-        if (refreshToken != null && !isTemporary) {
-          await StorageService.setString(
-            StorageConstants.refreshToken,
-            refreshToken,
-          );
-        }
+      // 2. Save Status Flags
+      await StorageService.setBool(StorageConstants.isApproved, isApproved);
+      await StorageService.setBool(StorageConstants.isOnboard, isOnboard);
+      await StorageService.setBool(
+        StorageConstants.isOnboardingCompleted,
+        isOnboard,
+      );
 
-        final dynamic onboardVal =
-            authData['isOnboard'] ??
-            authData['isOnboardingCompleted'] ??
-            (authData['user'] is Map
-                ? (authData['user']['isOnboard'] ??
-                    authData['user']['isOnboardingCompleted'])
-                : null);
-
-        if (onboardVal != null) {
-          await StorageService.setBool(
-            StorageConstants.isOnboardingCompleted,
-            onboardVal == true,
-          );
-        }
-
-        final user = authData['user'] ?? authData;
-        if (user is Map<String, dynamic>) {
-          final id = user['_id'] ?? user['id'];
-          if (id != null) {
-            if (!isTemporary) {
-              await StorageService.setString(
-                StorageConstants.userData,
-                jsonEncode(user),
-              );
-            }
-            final userService = Get.find<UserService>();
-            userService.userId = id.toString();
-            // Fetch latest profile data after successful login
-            if (!isTemporary) {
-              userService.fetchUserId();
-            }
-          }
+      // 3. User info if present
+      final user = authData['user'] ?? authData;
+      if (user is Map<String, dynamic>) {
+        final id = user['_id'] ?? user['id'];
+        if (id != null) {
+          final userService = Get.find<UserService>();
+          userService.userId = id.toString();
+          userService.fetchUserId();
         }
       }
     } catch (e) {
-      print("Error parsing auth response: $e");
+      debugPrint("Error handling auth response: $e");
     }
   }
 
-  /// Clears all local auth data
-  Future<void> _clearLocalAuth() async {
+  /// ===================== CLEAR LOCAL AUTH =====================
+  Future<void> clearLocalAuth() async {
     await StorageService.remove(StorageConstants.bearerToken);
     await StorageService.remove(StorageConstants.refreshToken);
     await StorageService.remove(StorageConstants.userData);
+    await StorageService.remove(StorageConstants.isApproved);
+    await StorageService.remove(StorageConstants.isOnboard);
+    await StorageService.remove(StorageConstants.isOnboardingCompleted);
     ApiClient.temporaryToken = null;
     isLoggedIn.value = false;
   }
 
-  /// Public method to clear local authentication credentials
-  Future<void> clearLocalAuth() async {
-    await _clearLocalAuth();
-  }
-
-  /// Check if user is authenticated
   bool get isAuthenticated => isLoggedIn.value;
 }

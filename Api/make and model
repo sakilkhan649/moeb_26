@@ -1,0 +1,105 @@
+📝 USER STORY:
+As an Onboarding Chauffeur
+I want to fetch all vehicle options with their rules and flat makesAndModels lists
+So that the mobile app renders the exact dropdown choices requested
+
+📖 BDD SCENARIO: Stage 2.1 — All Active Options Retrieval
+Feature: Vehicle Configuration — Cascading Option Selection
+
+Given an authenticated Chauffeur Marcus
+When I send GET /api/v1/vehicle-configs/options
+Then I receive HTTP 200 OK with all 4 active vehicle categories and flat string array makesAndModels
+
+10:26:48 AM | E2E Test Suite: Vehicle Configuration & Dynamic Make/Model Management Lifecycle > 2. Chauffeur / Driver Cascading Dropdown Options (GET /api/v1/vehicle-configs/options) > 2.1 Chauffeur Marcus fetches all active vehicle options matching user response structure | stdout
+
+
+ GET   /api/v1/vehicle-configs/options [VCONFIG-2.1-ALL-OPTIONS] - Chauffeur fetches all vehicle options for cascading dropdowns
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Vehicle options retrieved successfully",
+  "data": [
+    {
+      "_id": "6a8e6b08c5935f3cc0c18bd1",
+      "vehicleType": "Sedan",
+      "maxAge": 5,
+      "allowedColors": [
+        "Black"
+      ],
+      "makesAndModels": [
+        "Mercedes-Benz S-Class",
+        "Mercedes-Benz E-Class",
+        "Mercedes-Benz GLE",
+        "BMW 7 Series",
+        "BMW 5 Series",
+        "BMW X7",
+        "BMW X5",
+        "Audi A8",
+        "Audi A6",
+        "Audi Q5",
+        "Audi Q7",
+        "Genesis G90",
+        "Genesis GV80",
+        "Cadillac CT5",
+        "Cadillac XT6",
+        "Lincoln Aviator",
+        "Lincoln Nautilus",
+        "Volvo S90",
+        "Volvo XC90"
+      ]
+    },
+    {
+      "_id": "6a8e6b08c5935f3cc0c18bd2",
+      "vehicleType": "SUV",
+      "maxAge": 5,
+      "allowedColors": [
+        "Black"
+      ],
+      "makesAndModels": [
+        "Chevrolet Suburban",
+        "GMC Yukon XL",
+        "Cadillac Escalade",
+        "Lincoln Navigator L",
+        "Ford Expedition MAX",
+        "Jeep Grand Wagoneer L"
+      ]
+    },
+    {
+      "_id": "6a8e6b08c5935f3cc0c18bd3",
+      "vehicleType": "Van/Sprinter",
+      "maxAge": 5,
+      "allowedColors": [
+        "Black"
+      ],
+      "makesAndModels": [
+        "Mercedes-Benz Sprinter"
+      ]
+    },
+    {
+      "_id": "6a8e6b08c5935f3cc0c18bd4",
+      "vehicleType": "Stretch Limousine",
+      "maxAge": 15,
+      "allowedColors": [
+        "Black",
+        "White"
+      ],
+      "makesAndModels": [
+        "Chrysler 300 Stretch",
+        "Lincoln MKT Stretch",
+        "Lincoln Town Car Stretch",
+        "Lincoln Continental",
+        "Lincoln Navigator Stretch",
+        "Cadillac XTS Stretch",
+        "Cadillac XT5 Stretch",
+        "Cadillac Escalade Stretch",
+        "Hummer H2 Stretch"
+      ]
+    }
+  ]
+}
