@@ -104,7 +104,7 @@ class LogoutBottomSheet extends StatelessWidget {
                     child: CustomButton(
                       text: 'Log Out',
                       backgroundColor: const Color(0xFFEF4444),
-                      textColor: Colors.white,
+                      textColor: Colors.black,
                       onPressed: () async {
                         Get.back(); // close bottom sheet
                         await Get.find<AuthService>().logout();
@@ -121,4 +121,3 @@ class LogoutBottomSheet extends StatelessWidget {
     );
   }
 }
-
