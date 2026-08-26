@@ -72,11 +72,18 @@ class SigninController extends GetxController {
     }
   }
 
+  @override
+  void onInit() {
+    super.onInit();
+    emailController.clear();
+    passwordController.clear();
+    isLoading.value = false;
+    errorMessage.value = '';
+  }
+
   // ─── Dispose ─────────────────────────────────────────────────
   @override
   void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
     super.onClose();
   }
 }
