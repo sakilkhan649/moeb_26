@@ -345,29 +345,29 @@ class BookingController extends GetxController {
   //   }
   // }
 
-  Future<void> cancelJobOffer({required String jobId}) async {
+  Future<bool> cancelJobOffer({required String jobId}) async {
     try {
       isActionLoading.value = true;
       final response = await _jobRepo.cancelJobOffer(jobId: jobId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Refresh the list after cancellation
         await fetchJobs(isRefresh: true);
-        Helpers.showCustomSnackBar(
-          'Job cancelled successfully.',
-          isError: false,
-        );
+        return true;
       } else {
         final message = response.data is Map
             ? (response.data['message'] ?? 'Failed to cancel job.')
             : 'Failed to cancel job.';
         Helpers.showCustomSnackBar(message, isError: true);
+        return false;
       }
     } on DioException catch (e) {
       final message = e.response?.data['message'] ?? 'Failed to cancel job.';
       Helpers.showCustomSnackBar(message, isError: true);
+      return false;
     } catch (e) {
       debugPrint("Error canceling job: $e");
       Helpers.showCustomSnackBar('Something went wrong.', isError: true);
+      return false;
     } finally {
       isActionLoading.value = false;
     }

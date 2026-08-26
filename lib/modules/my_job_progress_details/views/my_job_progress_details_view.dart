@@ -3,15 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/Custom_Card_Ditails.dart';
 import 'package:moeb_26/core/widgets/Custom_InfoBox.dart';
 import 'package:moeb_26/data/models/my_jobs_model.dart';
+import 'package:moeb_26/core/services/api_client.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 import '../../my_jobs/controllers/my_jobs_controller.dart';
 
 class MyJobProgressDetailsView extends StatefulWidget {
@@ -167,16 +169,25 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                 ? "${vehicle.make} ${vehicle.model}, ${vehicle.colorOutside}"
                 : job.vehicleType ?? "N/A";
 
-            String driverName = "Driver";
+            String driverDisplayName = "Driver";
             if (driver != null) {
-              if (driver.nickname != null &&
-                  driver.nickname!.trim().isNotEmpty) {
-                driverName = driver.nickname!;
-              } else if (driver.name != null &&
-                  driver.name!.trim().isNotEmpty) {
-                driverName = driver.name!;
+              final hasName = driver.name != null && driver.name!.trim().isNotEmpty;
+              final hasNick = driver.nickname != null && driver.nickname!.trim().isNotEmpty;
+              if (hasName && hasNick && driver.name!.trim().toLowerCase() != driver.nickname!.trim().toLowerCase()) {
+                driverDisplayName = "${driver.name!.trim()} (${driver.nickname!.trim()})";
+              } else if (hasName) {
+                driverDisplayName = driver.name!.trim();
+              } else if (hasNick) {
+                driverDisplayName = driver.nickname!.trim();
               }
             }
+
+            final String? participantId =
+                driver?.id ?? job.assignedTo?.id ?? job.applicant?.driver?.id;
+            final String driverProfileImage = driver?.profilePicture ??
+                job.assignedTo?.profilePicture ??
+                job.applicant?.driver?.profilePicture ??
+                AppImages.profile_image;
 
             return SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -193,33 +204,61 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                       ),
                       SizedBox(height: 6.h),
                       _buildDriverSection(
-                        driverName: driverName,
-                        driverImage:
-                            driver?.profilePicture ?? AppImages.profile_image,
+                        driverName: driverDisplayName,
+                        driverImage: driverProfileImage,
                         rating: "${driver?.averageRating ?? 0.0}",
+                        onProfilePressed: (participantId != null && participantId.isNotEmpty)
+                            ? () {
+                                final preferredController =
+                                    Get.isRegistered<PreferredDriversController>()
+                                        ? Get.find<PreferredDriversController>()
+                                        : Get.put(PreferredDriversController());
+
+                                preferredController.openChauffeurProfile(
+                                  userId: participantId,
+                                  name: driver?.name ?? driver?.nickname ?? 'Chauffeur',
+                                  imageUrl: driver?.profilePicture ?? '',
+                                );
+                              }
+                            : null,
                         onChatPressed: () async {
-                          final String? participantId =
-                              job.assignedTo?.id ?? job.applicant?.driver?.id;
-                          if (participantId != null && job.id != null) {
+                          if (participantId != null &&
+                              participantId.isNotEmpty &&
+                              job.id != null &&
+                              job.id!.isNotEmpty) {
                             try {
-                              final chat = await Get.find<SocketRepository>()
-                                  .createChat(participantId, job.id!);
+                              final socketRepo = Get.isRegistered<SocketRepository>()
+                                  ? Get.find<SocketRepository>()
+                                  : Get.put(SocketRepository(apiClient: Get.find<ApiClient>()));
+
+                              final chat = await socketRepo.createChat(participantId, job.id!);
                               if (chat != null) {
                                 Get.toNamed(
                                   Routes.chatDetailView,
                                   arguments: chat,
                                 );
+                                return;
                               }
                             } catch (e) {
+                              debugPrint("Error opening chat: $e");
                               Get.snackbar(
                                 "Error",
-                                "Failed to open chat",
+                                "Could not create chat session. Please try again.",
                                 snackPosition: SnackPosition.BOTTOM,
                                 backgroundColor: const Color(0xFFEF4444),
                                 colorText: Colors.white,
                               );
+                              return;
                             }
                           }
+
+                          Get.snackbar(
+                            "Notice",
+                            "Chauffeur is not available to chat right now.",
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: const Color(0xFF1E1E1E),
+                            colorText: Colors.white,
+                          );
                         },
                       ),
                       SizedBox(height: 12.h),
@@ -561,6 +600,7 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
     required String driverName,
     required String driverImage,
     required String rating,
+    VoidCallback? onProfilePressed,
     required VoidCallback onChatPressed,
   }) {
     return Container(
@@ -573,39 +613,96 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 20.r,
-            backgroundImage: driverImage.startsWith('http')
-                ? NetworkImage(driverImage)
-                : AssetImage(driverImage) as ImageProvider,
-          ),
-          SizedBox(width: 12.w),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  driverName,
-                  style: GoogleFonts.inter(
-                    fontSize: 15.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onProfilePressed,
+              child: Row(
+                children: [
+                  Container(
+                    width: 40.r,
+                    height: 40.r,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFF24242A),
+                      border: Border.all(
+                        color: const Color(0xFF33333E),
+                        width: 1,
+                      ),
+                    ),
+                    child: ClipOval(
+                      child: driverImage.isNotEmpty
+                          ? (driverImage.startsWith('http')
+                              ? Image.network(
+                                  driverImage,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Icon(
+                                    Icons.person_outline,
+                                    color: const Color(0xFFFEDB9B),
+                                    size: 20.sp,
+                                  ),
+                                )
+                              : Image.asset(
+                                  driverImage,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Icon(
+                                    Icons.person_outline,
+                                    color: const Color(0xFFFEDB9B),
+                                    size: 20.sp,
+                                  ),
+                                ))
+                          : Icon(
+                              Icons.person_outline,
+                              color: const Color(0xFFFEDB9B),
+                              size: 20.sp,
+                            ),
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  "Assigned Driver • ⭐ $rating",
-                  style: GoogleFonts.inter(
-                    fontSize: 12.sp,
-                    color: const Color(0xFFA1A1A1),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                driverName,
+                                style: GoogleFonts.inter(
+                                  fontSize: 15.sp,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (onProfilePressed != null) ...[
+                              SizedBox(width: 4.w),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: const Color(0xFF94A3B8),
+                                size: 10.sp,
+                              ),
+                            ],
+                          ],
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          "Assigned Driver • ⭐ $rating",
+                          style: GoogleFonts.inter(
+                            fontSize: 12.sp,
+                            color: const Color(0xFFA1A1A1),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           IconButton(
@@ -687,9 +784,18 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () async {
-                        Get.back(); // Close dialog
-                        await controller.cancelJobOffer(jobId: jobId);
-                        Get.back(); // Return to My Jobs page
+                        if (Get.isDialogOpen == true) {
+                          Get.back(); // 1. Close dialog
+                        }
+                        final success =
+                            await controller.cancelJobOffer(jobId: jobId);
+                        if (success) {
+                          Get.back(); // 2. Exit ride details page and return to My Jobs
+                          Helpers.showCustomSnackBar(
+                            'Job cancelled successfully.',
+                            isError: false,
+                          );
+                        }
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 16.h),
