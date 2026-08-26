@@ -189,11 +189,10 @@ class MyRideProgressDetailsView extends StatelessWidget {
           ),
           IconButton(
             onPressed: () async {
-              if (data.participantId.isNotEmpty && data.id.isNotEmpty) {
+              if (data.participantId.isNotEmpty) {
                 try {
                   final chat = await Get.find<SocketRepository>().createChat(
                     data.participantId,
-                    data.id,
                   );
                   if (chat != null) {
                     Get.toNamed(Routes.chatDetailView, arguments: chat);

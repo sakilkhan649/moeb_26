@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
-import 'package:moeb_26/data/models/chat_model.dart';
+import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/data/models/my_rides_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/modules/rides/widgets/RideCard.dart';
@@ -436,30 +436,29 @@ class _RidesViewState extends State<RidesView> {
   void _openChatWithUser(RideData ride) async {
     final String? participantId =
         ride.createdBy?.id ?? ride.assignedTo?.id ?? ride.applicant?.driver?.id;
-    if (participantId != null && participantId.isNotEmpty && ride.id.isNotEmpty) {
+    if (participantId != null && participantId.isNotEmpty) {
       try {
-        final chat = await Get.find<SocketRepository>()
-            .createChat(participantId, ride.id);
+        final socketRepo = Get.isRegistered<SocketRepository>()
+            ? Get.find<SocketRepository>()
+            : Get.put(SocketRepository(apiClient: Get.find<ApiClient>()));
+
+        final chat = await socketRepo.createChat(participantId);
         if (chat != null) {
           Get.toNamed(Routes.chatDetailView, arguments: chat);
           return;
         }
-      } catch (_) {}
+      } catch (e) {
+        debugPrint("Error opening chat: $e");
+      }
     }
 
-    final posterName = _getJobPosterName(ride);
-    final chat = ChatPreview(
-      id: "chat_${ride.id}",
-      participants: [
-        ChatParticipant(id: participantId ?? "user_1", name: posterName),
-      ],
-      lastMessage: "Hi, I am assigned to your ride #${ride.id.substring(ride.id.length > 6 ? ride.id.length - 6 : 0)}.",
-      lastMessageAt: DateTime.now().toIso8601String(),
-      createdBy: "current_user",
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
+    Get.snackbar(
+      "Notice",
+      "Unable to start chat session with user right now.",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: const Color(0xFF1E1E1E),
+      colorText: Colors.white,
     );
-    Get.toNamed(Routes.chatDetailView, arguments: chat);
   }
 
   void _openDetailSheet(

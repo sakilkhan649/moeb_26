@@ -11,9 +11,8 @@ class ServiceAreaController extends GetxController {
   RxList<ServiceAreaModel> serviceAreas = <ServiceAreaModel>[].obs;
   var isLoading = false.obs;
   var isMoreLoading = false.obs;
-  var currentPage = 1.obs;
-  var totalPages = 1.obs;
-  var limit = 10;
+  var nextCursor = RxnString();
+  var hasMore = false.obs;
 
   final ScrollController scrollController = ScrollController();
 
@@ -25,14 +24,12 @@ class ServiceAreaController extends GetxController {
   void onInit() {
     super.onInit();
     _initCurrentServiceArea();
-    // Default load (initial fetch)
     fetchServiceAreas();
     scrollController.addListener(_onScroll);
   }
 
   void _initCurrentServiceArea() {
-    // If the UserService has the profile data, we could pre-select it
-    // For now, it will be updated when the user selects one
+    // Current service area initialization if needed
   }
 
   void selectServiceArea(String areaName) {
@@ -55,7 +52,7 @@ class ServiceAreaController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.back(); // Go back immediately after success for snappy UX
+        Get.back();
         Helpers.showCustomSnackBar(
           "Service area updated successfully",
           isError: false,
@@ -68,7 +65,7 @@ class ServiceAreaController extends GetxController {
         }
       } else {
         Helpers.showCustomSnackBar(
-          response.data['message'] ?? "Failed to update service area",
+          response.data?['message'] ?? "Failed to update service area",
           isError: true,
         );
       }
@@ -98,35 +95,28 @@ class ServiceAreaController extends GetxController {
             scrollController.position.maxScrollExtent - 200 &&
         !isLoading.value &&
         !isMoreLoading.value &&
-        currentPage.value < totalPages.value) {
+        hasMore.value &&
+        nextCursor.value != null) {
       loadMoreServiceAreas();
     }
     return Future.value();
   }
 
   Future<void> fetchServiceAreas({bool isRefresh = false}) async {
-    // If already loading, don't trigger again
     if (isLoading.value || isMoreLoading.value) return;
 
     if (isRefresh) {
-      currentPage.value = 1;
+      nextCursor.value = null;
     }
 
     try {
-      if (currentPage.value == 1) {
+      if (nextCursor.value == null) {
         isLoading.value = true;
       } else {
         isMoreLoading.value = true;
       }
 
-      debugPrint("Service Areas Request: Page ${currentPage.value}, Limit $limit");
-
-      final response = await _serviceAreasService.getAllServiceAreas(
-        page: currentPage.value,
-        limit: limit,
-      );
-
-      debugPrint("Service Areas API Response Code: ${response.statusCode}");
+      final response = await _serviceAreasService.getAllServiceAreas();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         ServiceAreaResponseModel data;
@@ -139,16 +129,11 @@ class ServiceAreaController extends GetxController {
           data = ServiceAreaResponseModel(
             success: true,
             message: '',
-            pagination: PaginationModel(
-              total: (response.data as List).length,
-              limit: limit,
-              page: 1,
-              totalPage: 1,
-            ),
             data: (response.data as List)
                 .map(
-                  (e) =>
-                      ServiceAreaModel.fromJson(Map<String, dynamic>.from(e)),
+                  (e) => ServiceAreaModel.fromJson(
+                    e is Map ? Map<String, dynamic>.from(e) : {'areaName': e.toString()},
+                  ),
                 )
                 .toList(),
           );
@@ -157,19 +142,17 @@ class ServiceAreaController extends GetxController {
           return;
         }
 
-        totalPages.value = data.pagination.totalPage;
+        hasMore.value = data.cursor?.hasMore ?? false;
+        nextCursor.value = data.cursor?.nextCursor;
 
-        if (currentPage.value == 1) {
+        if (isRefresh || nextCursor.value == null) {
           serviceAreas.assignAll(data.data);
-          if (serviceAreas.isEmpty) {
-            debugPrint("Service Areas API: Response successful but data list is empty");
-          }
         } else {
           serviceAreas.addAll(data.data);
         }
-        debugPrint("Service Areas loaded: ${serviceAreas.length} items (Page ${currentPage.value}/${totalPages.value})");
+        debugPrint("Service Areas loaded: ${serviceAreas.length} items");
       } else {
-        debugPrint("Service Areas API Error: ${response.statusCode} - ${response.statusMessage}");
+        debugPrint("Service Areas API Error: ${response.statusCode}");
       }
     } catch (e) {
       debugPrint("Error fetching service areas: $e");
@@ -182,17 +165,16 @@ class ServiceAreaController extends GetxController {
   void loadMoreServiceAreas() {
     if (!isLoading.value &&
         !isMoreLoading.value &&
-        currentPage.value < totalPages.value) {
-      currentPage.value++;
+        hasMore.value &&
+        nextCursor.value != null) {
       fetchServiceAreas();
     }
   }
 
-  // Function to toggle the expanded state of a service area
   void toggleExpansion(int index) {
     if (index >= 0 && index < serviceAreas.length) {
       serviceAreas[index].isExpanded = !serviceAreas[index].isExpanded;
-      serviceAreas.refresh(); // Notify Rx listeners
+      serviceAreas.refresh();
     }
   }
 }

@@ -312,16 +312,13 @@ class _MyJobsViewState extends State<MyJobsView> {
             : null,
         onChatPressed: () async {
           final String? participantId = driverId;
-          if (participantId != null &&
-              participantId.isNotEmpty &&
-              job.id != null &&
-              job.id!.isNotEmpty) {
+          if (participantId != null && participantId.isNotEmpty) {
             try {
               final socketRepo = Get.isRegistered<SocketRepository>()
                   ? Get.find<SocketRepository>()
                   : Get.put(SocketRepository(apiClient: Get.find<ApiClient>()));
 
-              final chat = await socketRepo.createChat(participantId, job.id!);
+              final chat = await socketRepo.createChat(participantId);
               if (chat != null) {
                 Get.toNamed(Routes.chatDetailView, arguments: chat);
                 return;

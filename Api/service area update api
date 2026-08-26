@@ -1,0 +1,50 @@
+📝 USER STORY:
+As an onboarding driver
+I want to fetch active service area options containing only ID and Area Name
+So that the mobile app renders a clean service area dropdown during registration
+
+📖 BDD SCENARIO: 0. FETCH SERVICE AREA OPTIONS
+Feature: Authentication & Onboarding — Dropdown Options
+
+Given the system has configured active service areas
+When I GET /api/v1/service-areas/options
+Then I receive HTTP 200 OK with 4 active service area options containing only _id and areaName
+
+11:32:47 AM | Chauffeur Registration-to-Approval E2E Lifecycle > BDD-00 FETCH SERVICE AREAS > Happy Paths > BDD-00 public user fetches available service area options for registration dropdown | stdout
+
+
+ GET   /api/v1/service-areas/options [BDD-00-FETCH-AREA-OPTIONS] - Fetch active service area options for registration dropdown
+ REQUEST 
+{
+  "params": {},
+  "query": {},
+  "body": {}
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Service area options retrieved successfully",
+  "cursor": {
+    "nextCursor": null,
+    "hasMore": false,
+    "limit": 10
+  },
+  "data": [
+    {
+      "_id": "6a8e7a7f07427c91a372850a",
+      "areaName": "New York (Tri-State)"
+    },
+    {
+      "_id": "6a8e7a7f07427c91a372850b",
+      "areaName": "Los Angeles Metro"
+    },
+    {
+      "_id": "6a8e7a7f07427c91a372850c",
+      "areaName": "Miami & South Florida"
+    },
+    {
+      "_id": "6a8e7a7f07427c91a372850d",
+      "areaName": "Chicago Greater Area"
+    }
+  ]
+}

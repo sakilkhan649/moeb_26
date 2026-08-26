@@ -1,0 +1,46 @@
+📝 USER STORY:
+As a Buyer
+I want to send a text message in the chat
+So that the seller receives my inquiry and question
+
+📋 BUSINESS RULES & PAYLOAD SPECIFICATIONS:
+• Endpoint: POST /api/v1/messages/:chatId
+• Authentication: Bearer JWT Token required (sender must be a chat participant)
+• Body:
+  - text (string, optional if attachments provided, max 4000 chars)
+  - attachments (string | string[], optional)
+• Chat Side Effects: Updates Chat.lastMessage and Chat.lastMessageAt
+• Response: { success: true, message: 'Message sent successfully', data: IMessage }
+
+📖 BDD SCENARIO: Stage 2.1 — Send Text Message
+Feature: Messaging — Direct Chat Communication
+
+4:20:16 PM | E2E Test Suite: Chat & Messaging Lifecycle > 2. Direct Messaging in Chat (POST & GET /api/v1/messages/:chatId) > 2.1 Buyer sends initial text message inquiry in the marketplace chat (POST /api/v1/messages/:chatId) | stdout
+
+
+ POST   /api/v1/messages/:chatId [CHAT-2.1-SEND-TEXT-MESSAGE] - Alex sends an inquiry message to Marcus about the AMG wheels
+        ↳ /api/v1/messages/6a8ebde0e243bf507b911252
+ REQUEST 
+{
+  "params": {
+    "chatId": "6a8ebde0e243bf507b911252"
+  },
+  "query": {},
+  "body": {
+    "text": "Hi Marcus, are these AMG wheels still available for pickup this weekend?"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Message sent successfully",
+  "data": {
+    "sender": "6a8ebddfe243bf507b91120f",
+    "text": "Hi Marcus, are these AMG wheels still available for pickup this weekend?",
+    "attachments": [],
+    "replyTo": null,
+    "createdAt": "2026-08-26T10:20:16.602Z",
+    "updatedAt": "2026-08-26T10:20:16.602Z",
+    "id": "6a8ebde0e243bf507b91127d"
+  }
+}

@@ -38,13 +38,17 @@ class SocketRepository {
     return null;
   }
 
-  /// Create chat with a participant for a job
-  Future<ChatPreview?> createChat(String participantId, String jobId) async {
+  /// Create chat with a participant (optionally for a job)
+  Future<ChatPreview?> createChat(String participantId, [String? jobId]) async {
     try {
-      final response = await apiClient.postData(ApiConstants.chats, {
+      final Map<String, dynamic> body = {
         'participantId': participantId,
-        'jobId': jobId,
-      });
+      };
+      if (jobId != null && jobId.trim().isNotEmpty) {
+        body['jobId'] = jobId.trim();
+      }
+
+      final response = await apiClient.postData(ApiConstants.chats, body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null && response.data['data'] != null) {
           return ChatPreview.fromJson(response.data['data']);
@@ -52,17 +56,28 @@ class SocketRepository {
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 409) {
+        if (e.response?.data != null && e.response?.data['data'] != null) {
+          try {
+            return ChatPreview.fromJson(e.response!.data['data']);
+          } catch (_) {}
+        }
         // Chat already exists, fetch the chat list to find it
         final chats = await getChats();
         try {
-          return chats.firstWhere(
-            (chat) =>
-                chat.participants.any((p) => p.id == participantId) &&
-                chat.jobId == jobId,
-            orElse: () => chats.firstWhere(
+          if (jobId != null && jobId.trim().isNotEmpty) {
+            return chats.firstWhere(
+              (chat) =>
+                  chat.participants.any((p) => p.id == participantId) &&
+                  chat.jobId == jobId,
+              orElse: () => chats.firstWhere(
+                (chat) => chat.participants.any((p) => p.id == participantId),
+              ),
+            );
+          } else {
+            return chats.firstWhere(
               (chat) => chat.participants.any((p) => p.id == participantId),
-            ),
-          );
+            );
+          }
         } catch (_) {
           rethrow;
         }

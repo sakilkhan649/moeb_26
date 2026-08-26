@@ -1,0 +1,95 @@
+4:44:47 PM | E2E Test Suite: Chauffeur Profile Lifecycle & Credential Management > 3. Compliance & Verification Documents (PATCH & GET /api/v1/documents) > 3.1 Chauffeur Marcus updates DRIVING_LICENSE expiry date via JSON PATCH (PATCH /api/v1/documents/:id) | stdout
+
+📝 USER STORY:
+As an Active Chauffeur
+I want to update my DRIVING_LICENSE compliance document expiry date via JSON payload
+So that my official credentials stay valid and active without uploading a duplicate record
+
+📋 BUSINESS RULES & PAYLOAD SPECIFICATIONS:
+• Endpoint: PATCH /api/v1/documents/:id
+• Authentication: Bearer JWT Token required (scoped to document owner)
+• Payload: JSON object with { expiryDate }
+• Target Document: DRIVING_LICENSE
+• Response: { statusCode: 200, success: true, message: 'Document updated successfully', data: IDocument }
+
+📖 BDD SCENARIO: Stage 3.1 — Driving License Expiry Date Update
+Feature: Document Management — Compliance Update
+
+4:44:47 PM | E2E Test Suite: Chauffeur Profile Lifecycle & Credential Management > 3. Compliance & Verification Documents (PATCH & GET /api/v1/documents) > 3.1 Chauffeur Marcus updates DRIVING_LICENSE expiry date via JSON PATCH (PATCH /api/v1/documents/:id) | stdout
+
+
+ PATCH   /api/v1/documents/:id [DOC-3.1-UPDATE-DRIVING-LICENSE] - Marcus updates Driving License expiry date to 2032-12-31
+        ↳ /api/v1/documents/6a8ec39ed0ba3804c8bfd27f
+ REQUEST 
+{
+  "params": {
+    "id": "6a8ec39ed0ba3804c8bfd27f"
+  },
+  "query": {},
+  "body": {
+    "expiryDate": "2032-12-31T00:00:00.000Z"
+  }
+}
+ RESPONSE SUCCESS 
+{
+  "success": true,
+  "message": "Document updated successfully",
+  "data": {
+    "_id": "6a8ec39ed0ba3804c8bfd27f",
+    "documentType": "DRIVING_LICENSE",
+    "expiryDate": "2032-12-31T00:00:00.000Z",
+    "status": "SCANNING_PENDING",
+    "version": 1,
+    "scanResult": null,
+    "scanAttempts": 0,
+    "createdAt": "2026-08-26T10:44:46.630Z",
+    "updatedAt": "2026-08-26T10:44:47.022Z"
+  }
+}
+
+
+GET /api/v1/documents/licenses
+Auth: Bearer <token> (Chauffeur / User / Admin)
+কাজ: এই এন্ডপয়েন্টটি কল করলে ইউজারের শুধুমাত্র ৩টি কমপ্লায়েন্স লাইসেন্স আসবে:
+DRIVING_LICENSE
+LOCAL_PERMIT
+HACK_LICENSE
+Response Example:
+json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Compliance documents retrieved successfully",
+  "data": [
+    {
+      "_id": "6a8ec5ef438e6633c34b012e",
+      "documentType": "DRIVING_LICENSE",
+      "storageKey": "documents/driving_license_123.pdf",
+      "expiryDate": "2032-12-31T00:00:00.000Z",
+      "status": "APPROVED",
+      "version": 1,
+      "createdAt": "2026-08-26T10:54:39.919Z",
+      "updatedAt": "2026-08-26T10:54:40.102Z"
+    },
+    {
+      "_id": "6a8ec5ef438e6633c34b0130",
+      "documentType": "HACK_LICENSE",
+      "storageKey": "documents/hack_license_123.pdf",
+      "expiryDate": "2033-06-30T00:00:00.000Z",
+      "status": "APPROVED",
+      "version": 1,
+      "createdAt": "2026-08-26T10:54:39.928Z",
+      "updatedAt": "2026-08-26T10:54:40.188Z"
+    },
+    {
+      "_id": "6a8ec5ef438e6633c34b0132",
+      "documentType": "LOCAL_PERMIT",
+      "storageKey": "documents/local_permit_123.pdf",
+      "expiryDate": "2034-01-01T00:00:00.000Z",
+      "status": "APPROVED",
+      "version": 1,
+      "createdAt": "2026-08-26T10:54:39.936Z",
+      "updatedAt": "2026-08-26T10:54:40.218Z"
+    }
+  ]
+}

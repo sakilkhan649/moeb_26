@@ -191,9 +191,8 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
 
                         setState(() => _isSending = true);
                         try {
-                          final chat = await _socketRepo.contactSeller(
+                          final chat = await _socketRepo.createChat(
                             widget.item.createdBy?.id ?? '',
-                            widget.item.id ?? '',
                           );
                           if (chat != null) {
                             await _socketRepo.sendMessage(chat.id, text);

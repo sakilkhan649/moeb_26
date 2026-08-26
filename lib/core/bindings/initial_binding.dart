@@ -21,6 +21,7 @@ import 'package:moeb_26/core/services/support_service.dart';
 import 'package:moeb_26/core/services/community_service.dart';
 import 'package:moeb_26/core/services/notifications_service.dart';
 import 'package:moeb_26/core/services/vehicle_config_service.dart';
+import 'package:moeb_26/data/repositories/compliance_document_repository.dart';
 import 'package:moeb_26/data/repositories/invoice_repository.dart';
 import 'package:moeb_26/core/services/invoice_service.dart';
 
@@ -41,6 +42,7 @@ class InitialBinding extends Bindings {
     Get.put(VehicleConfigService(), permanent: true);
 
     // Feature Repositories & Services (Lazy loaded on-demand when accessed)
+    Get.lazyPut(() => ComplianceDocumentRepository(apiClient: Get.find()), fenix: true);
     Get.lazyPut(() => UserProfileRepo(apiClient: Get.find()), fenix: true);
     Get.lazyPut(() => UserProfileService(userProfileRepo: Get.find()), fenix: true);
 

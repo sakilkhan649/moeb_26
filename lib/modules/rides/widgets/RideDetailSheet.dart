@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
-import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/data/models/my_rides_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
@@ -109,36 +109,30 @@ class RideDetailSheet extends StatelessWidget {
 
   void _openChat(RideData r) async {
     final String participantId = _getPosterId(r);
-    if (participantId.isNotEmpty && r.id.isNotEmpty) {
+    if (participantId.isNotEmpty) {
       try {
-        final chat = await Get.find<SocketRepository>()
-            .createChat(participantId, r.id);
+        final socketRepo = Get.isRegistered<SocketRepository>()
+            ? Get.find<SocketRepository>()
+            : Get.put(SocketRepository(apiClient: Get.find<ApiClient>()));
+
+        final chat = await socketRepo.createChat(participantId);
         if (chat != null) {
           Get.back();
           Get.toNamed(Routes.chatDetailView, arguments: chat);
           return;
         }
-      } catch (_) {}
+      } catch (e) {
+        debugPrint("Error opening chat: $e");
+      }
     }
 
-    final posterName = _getPosterName(r);
-    final chat = ChatPreview(
-      id: "chat_${r.id}",
-      participants: [
-        ChatParticipant(
-          id: participantId.isNotEmpty ? participantId : "poster_${r.id}",
-          name: posterName,
-          email: "",
-          profilePicture: _getPosterImage(r),
-        ),
-      ],
-      unreadCount: 0,
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
-      createdBy: "current_user",
+    Get.snackbar(
+      "Notice",
+      "Unable to start chat session with user right now.",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: const Color(0xFF1E1E1E),
+      colorText: Colors.white,
     );
-    Get.back();
-    Get.toNamed(Routes.chatDetailView, arguments: chat);
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:moeb_26/modules/auth/Term_and_policy/bindings/term_and_policy_bi
 import 'package:moeb_26/modules/auth/Term_and_policy/views/privacy_policy_signup_view.dart';
 import 'package:moeb_26/modules/auth/Term_and_policy/views/term_policy_view.dart';
 import 'package:moeb_26/modules/auth/authentication/bindings/auth_binding.dart';
+import 'package:moeb_26/modules/auth/authentication/bindings/personal_document_binding.dart';
 import 'package:moeb_26/modules/auth/vehicle/views/add_new_vehicle_view.dart';
 import 'package:moeb_26/modules/bottom_nab_bar/bindings/bottom_nabbar_binding.dart';
 import 'package:moeb_26/modules/chat/bindings/chat_bindings.dart';
@@ -27,6 +28,7 @@ import 'package:moeb_26/modules/auth/authentication/views/create_account_view.da
 import 'package:moeb_26/modules/auth/authentication/views/documents_upload_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/otp_verifications_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/personal_document_view.dart';
+import 'package:moeb_26/modules/auth/authentication/views/personal_document_detail_view.dart';
 import 'package:moeb_26/modules/auth/profile/views/profile_view.dart';
 import 'package:moeb_26/modules/auth/profile/views/settings_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/reset_password_view.dart';
@@ -123,6 +125,7 @@ class Routes {
   static const String addNewVehicleView = "/AddNewVehicleView";
   static const String vehicleDetailsView = "/VehicleDetailsView";
   static const String personalDocumentView = "/PersonalDocumentView";
+  static const String personalDocumentDetailView = "/PersonalDocumentDetailView";
   static const String dealsView = "/DealsView";
   static const String createInvoiceView = "/CreateInvoiceView";
   static const String invoiceHistoryView = "/InvoiceHistoryView";
@@ -366,7 +369,13 @@ class Routes {
       name: personalDocumentView,
       page: () => PersonalDocumentView(),
       transition: Transition.noTransition,
-      binding: AuthBinding(),
+      binding: PersonalDocumentBinding(),
+    ),
+    GetPage(
+      name: personalDocumentDetailView,
+      page: () => const PersonalDocumentDetailView(),
+      transition: Transition.noTransition,
+      binding: PersonalDocumentBinding(),
     ),
     GetPage(
       name: dealsView,

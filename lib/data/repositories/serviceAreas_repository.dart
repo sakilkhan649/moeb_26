@@ -7,10 +7,15 @@ class ServiceAreasRepo {
 
   ServiceAreasRepo({required this.apiClient});
 
-  Future<Response> getAllServiceAreas({int page = 1, int limit = 10}) async {
+  /// GET /api/v1/service-areas/options
+  Future<Response> getAllServiceAreas({int? page, int? limit, String? cursor}) async {
+    final Map<String, dynamic> queryParams = {};
+    if (cursor != null && cursor.isNotEmpty) queryParams['cursor'] = cursor;
+    if (limit != null) queryParams['limit'] = limit;
+
     return await apiClient.getData(
       ApiConstants.serviceAreas,
-      query: {'page': page, 'limit': limit},
+      query: queryParams.isNotEmpty ? queryParams : null,
     );
   }
 

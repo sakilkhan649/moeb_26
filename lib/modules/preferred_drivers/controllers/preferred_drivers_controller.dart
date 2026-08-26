@@ -548,16 +548,20 @@ class PreferredDriversController extends GetxController {
   }) {
     FavoriteChauffeur? existing;
     if (userId.isNotEmpty) {
-      existing = chauffeursList.firstWhereOrNull((c) => c.id == userId) ??
+      existing =
+          chauffeursList.firstWhereOrNull((c) => c.id == userId) ??
           globalChauffeursList.firstWhereOrNull((c) => c.id == userId);
     }
 
     if (existing == null && name != null && name.trim().isNotEmpty) {
       final nameLower = name.trim().toLowerCase();
-      existing = chauffeursList
-              .firstWhereOrNull((c) => c.name.toLowerCase() == nameLower) ??
-          globalChauffeursList
-              .firstWhereOrNull((c) => c.name.toLowerCase() == nameLower);
+      existing =
+          chauffeursList.firstWhereOrNull(
+            (c) => c.name.toLowerCase() == nameLower,
+          ) ??
+          globalChauffeursList.firstWhereOrNull(
+            (c) => c.name.toLowerCase() == nameLower,
+          );
     }
 
     if (existing != null) {
@@ -701,72 +705,28 @@ class PreferredDriversController extends GetxController {
   Future<void> startConversation(FavoriteChauffeur chauffeur) async {
     try {
       final SocketRepository socketRepo = Get.find<SocketRepository>();
-      final UserService userService = Get.find<UserService>();
 
-      final chats = await socketRepo.getChats();
-      ChatPreview? existingChat;
-      for (var chat in chats) {
-        if (chat.participants.any((p) => p.id == chauffeur.id)) {
-          existingChat = chat;
-          break;
-        }
-      }
-
-      if (existingChat != null) {
-        Get.toNamed(Routes.chatDetailView, arguments: existingChat);
+      final chat = await socketRepo.createChat(chauffeur.id);
+      if (chat != null) {
+        Get.toNamed(Routes.chatDetailView, arguments: chat);
       } else {
-        final newChat = await socketRepo.createChat(chauffeur.id, '');
-        if (newChat != null) {
-          Get.toNamed(Routes.chatDetailView, arguments: newChat);
-        } else {
-          final fallbackChat = ChatPreview(
-            id: 'mock_chat_${chauffeur.id}',
-            participants: [
-              ChatParticipant(
-                id: userService.userId.isNotEmpty
-                    ? userService.userId
-                    : 'user_id',
-                name: 'Me',
-              ),
-              ChatParticipant(
-                id: chauffeur.id,
-                name: chauffeur.name,
-                profilePicture: chauffeur.imageUrl,
-                email: chauffeur.email,
-              ),
-            ],
-            createdBy: userService.userId.isNotEmpty
-                ? userService.userId
-                : 'user_id',
-            createdAt: DateTime.now().toIso8601String(),
-            updatedAt: DateTime.now().toIso8601String(),
-          );
-          Get.toNamed(Routes.chatDetailView, arguments: fallbackChat);
-        }
+        Get.snackbar(
+          "Notice",
+          "Could not start chat session with chauffeur.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF1E1E1E),
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
-      final UserService userService = Get.find<UserService>();
-      final fallbackChat = ChatPreview(
-        id: 'mock_chat_${chauffeur.id}',
-        participants: [
-          ChatParticipant(
-            id: userService.userId.isNotEmpty ? userService.userId : 'user_id',
-            name: 'Me',
-          ),
-          ChatParticipant(
-            id: chauffeur.id,
-            name: chauffeur.name,
-            profilePicture: chauffeur.imageUrl,
-            email: chauffeur.email,
-          ),
-        ],
-        createdBy: userService.userId.isNotEmpty
-            ? userService.userId
-            : 'user_id',
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
+      debugPrint("Error opening chauffeur chat: $e");
+      Get.snackbar(
+        "Notice",
+        "Could not start chat session with chauffeur.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFF1E1E1E),
+        colorText: Colors.white,
       );
-      Get.toNamed(Routes.chatDetailView, arguments: fallbackChat);
     }
   }
 

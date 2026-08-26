@@ -243,11 +243,42 @@ class ChatView extends StatelessWidget {
     final other = chat.getOtherParticipant(userService.userId);
     final isUnread = !chat.isRead || chat.unreadCount > 0;
 
-    return InkWell(
-      onTap: () {
-        if (controller.selectedChatIdForDelete.value != "") {
-          controller.clearDeleteSelection();
-        } else {
+    return Dismissible(
+      key: Key('chat_tile_${chat.id}'),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (direction) async {
+        return await _showDeleteConfirmation(chat);
+      },
+      background: Container(
+        margin: EdgeInsets.symmetric(vertical: 6.h),
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEF4444),
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.delete_outline_rounded,
+              color: Colors.white,
+              size: 24.sp,
+            ),
+            SizedBox(width: 6.w),
+            Text(
+              "Delete",
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+              ),
+            ),
+          ],
+        ),
+      ),
+      child: InkWell(
+        onTap: () {
           // Mark locally as read when user taps to open
           chat.isRead = true;
           chat.unreadCount = 0;
@@ -255,116 +286,99 @@ class ChatView extends StatelessWidget {
           Get.toNamed(Routes.chatDetailView, arguments: chat)?.then((_) {
             controller.chats.refresh();
           });
-        }
-      },
-      onLongPress: () {
-        controller.toggleDeleteIcon(chat.id);
-      },
-      borderRadius: BorderRadius.circular(12.r),
-      splashColor: Colors.white10,
-      highlightColor: Colors.white10,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        child: Row(
-          children: [
-            // ── Avatar ──
-            _buildAvatar(chat),
-            SizedBox(width: 12.w),
+        },
+        borderRadius: BorderRadius.circular(12.r),
+        splashColor: Colors.white10,
+        highlightColor: Colors.white10,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          child: Row(
+            children: [
+              // ── Avatar ──
+              _buildAvatar(chat),
+              SizedBox(width: 12.w),
 
-            // ── Chat Info ──
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Name & Time
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          other?.name ?? 'Chat',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight:
-                                isUnread ? FontWeight.bold : FontWeight.w600,
+              // ── Chat Info ──
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Name & Time
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            other?.name ?? 'Chat',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight:
+                                  isUnread ? FontWeight.bold : FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Obx(() {
-                        final isDeleteMode =
-                            controller.selectedChatIdForDelete.value == chat.id;
-                        return isDeleteMode
-                            ? GestureDetector(
-                                onTap: () => _showDeleteConfirmation(chat),
-                                child: Icon(
-                                  Icons.delete_outline,
-                                  color: Colors.red,
-                                  size: 22.sp,
-                                ),
-                              )
-                            : chat.lastMessageAt != null
-                            ? Text(
-                                _formatTime(chat.lastMessageAt!),
-                                style: GoogleFonts.inter(
-                                  color: isUnread ? Colors.white : Colors.grey,
-                                  fontSize: 12.sp,
-                                  fontWeight: isUnread
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
-                              )
-                            : const SizedBox.shrink();
-                      }),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-
-                  // Last Message & Unread Dot
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          chat.lastMessage ?? 'No messages yet',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            color: isUnread ? Colors.white : Colors.grey,
-                            fontSize: 14.sp,
-                            fontWeight:
-                                isUnread ? FontWeight.w700 : FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      if (isUnread) ...[
                         SizedBox(width: 8.w),
-                        Container(
-                          width: 8.r,
-                          height: 8.r,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
+                        if (chat.lastMessageAt != null)
+                          Text(
+                            _formatTime(chat.lastMessageAt!),
+                            style: GoogleFonts.inter(
+                              color: isUnread ? Colors.white : Colors.grey,
+                              fontSize: 12.sp,
+                              fontWeight: isUnread
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
+
+                    // Last Message & Unread Dot
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            chat.lastMessage ?? 'No messages yet',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: isUnread ? Colors.white : Colors.grey,
+                              fontSize: 14.sp,
+                              fontWeight:
+                                  isUnread ? FontWeight.w700 : FontWeight.w400,
+                            ),
                           ),
                         ),
+                        if (isUnread) ...[
+                          SizedBox(width: 8.w),
+                          Container(
+                            width: 8.r,
+                            height: 8.r,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _showDeleteConfirmation(ChatPreview chat) {
-    Get.dialog(
+  Future<bool> _showDeleteConfirmation(ChatPreview chat) async {
+    final bool? confirmed = await Get.dialog<bool>(
       Dialog(
         backgroundColor: Colors.black,
         shape: RoundedRectangleBorder(
@@ -399,7 +413,7 @@ class ChatView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () => Get.back(),
+                      onPressed: () => Get.back(result: false),
                       child: Text(
                         "Cancel",
                         style: GoogleFonts.inter(color: Colors.white),
@@ -409,11 +423,11 @@ class ChatView extends StatelessWidget {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () async {
-                        await controller.deleteChat(chat.id);
+                      onPressed: () {
+                        Get.back(result: true);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: const Color(0xFFEF4444),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.r),
                         ),
@@ -434,6 +448,12 @@ class ChatView extends StatelessWidget {
         ),
       ),
     );
+
+    if (confirmed == true) {
+      await controller.deleteChat(chat.id);
+      return true;
+    }
+    return false;
   }
 
   /// ── Avatar Widget ──

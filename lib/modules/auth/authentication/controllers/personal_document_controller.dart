@@ -1,27 +1,56 @@
 import 'dart:io';
-import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:intl/intl.dart';
+import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
-import 'package:moeb_26/modules/auth/profile/controllers/profile_controller.dart';
-import 'package:moeb_26/core/services/user_profile_service.dart';
+import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:moeb_26/core/widgets/ImagePreviewPopup.dart';
+import 'package:moeb_26/data/models/compliance_document_model.dart';
+import 'package:moeb_26/data/repositories/compliance_document_repository.dart';
 
+/// Standalone controller for Compliance Documents
+/// Dedicated solely to:
+/// 1. Fetching compliance documents (GET /api/v1/documents/licenses)
+/// 2. Updating compliance document expiry date & file (PATCH /api/v1/documents/:id)
 class PersonalDocumentController extends GetxController {
-  final UserProfileService _profileService = Get.find<UserProfileService>();
   final ImagePicker _imagePicker = ImagePicker();
 
+  late final ComplianceDocumentRepository _documentRepo;
+
+  PersonalDocumentController() {
+    _documentRepo = Get.isRegistered<ComplianceDocumentRepository>()
+        ? Get.find<ComplianceDocumentRepository>()
+        : Get.put(
+            ComplianceDocumentRepository(apiClient: Get.find<ApiClient>()),
+            permanent: true,
+          );
+  }
+
   var isLoading = false.obs;
+
+  // Document IDs from server (for PATCH /api/v1/documents/:id)
+  var drivingLicenseId = RxnString();
+  var hackLicenseId = RxnString();
+  var localPermitId = RxnString();
+
+  // Document Statuses from server
+  var drivingLicenseStatus = RxnString();
+  var hackLicenseStatus = RxnString();
+  var localPermitStatus = RxnString();
+
+  // Individual Card Loading States
+  var isUpdatingDrivingLicense = false.obs;
+  var isUpdatingHackLicense = false.obs;
+  var isUpdatingLocalPermit = false.obs;
 
   // RX variables for newly picked local files
   var drivingLicenseFile = Rx<File?>(null);
   var hackLicenseFile = Rx<File?>(null);
   var localPermitFile = Rx<File?>(null);
 
-  // Existing image URLs from server (for eye-preview)
+  // Existing image/file URLs from server
   var drivingLicenseUrl = RxnString();
   var hackLicenseUrl = RxnString();
   var localPermitUrl = RxnString();
@@ -37,70 +66,166 @@ class PersonalDocumentController extends GetxController {
     _loadExistingDocuments();
   }
 
-  /// Fetches existing document URLs and expiry dates from the profile API.
+  Future<void> fetchDocuments() => _loadExistingDocuments();
+
+  /// 1. GET /api/v1/documents/licenses
   Future<void> _loadExistingDocuments() async {
+    isLoading.value = true;
     try {
-      final response = await _profileService.getUserProfile();
-      if (response.statusCode == 200) {
-        final data = response.data['data'];
-        if (data == null) return;
+      final response = await _documentRepo.getComplianceDocuments();
+      if (response.statusCode == 200 &&
+          response.data != null &&
+          response.data['data'] is List) {
+        final List list = response.data['data'];
+        for (var item in list) {
+          if (item is! Map) continue;
+          final doc = ComplianceDocumentModel.fromJson(
+            Map<String, dynamic>.from(item),
+          );
+          final docType = doc.documentType.toUpperCase();
 
-        // Driving License
-        final dl = data['drivingLicense'];
-        if (dl != null) {
-          drivingLicenseUrl.value = dl['image']?.toString();
-          final dlExpiry = dl['expiryDate']?.toString();
-          if (dlExpiry != null && dlExpiry.isNotEmpty) {
-            try {
-              final parsed = DateTime.parse(dlExpiry);
-              drivingLicenseExpireController.text = DateFormat(
-                'yyyy-MM-dd',
-              ).format(parsed);
-            } catch (_) {
-              drivingLicenseExpireController.text = dlExpiry;
+          if (docType == 'DRIVING_LICENSE') {
+            drivingLicenseId.value = doc.id;
+            drivingLicenseStatus.value = doc.status;
+            drivingLicenseUrl.value = doc.fullFileUrl;
+            if (doc.formattedExpiryDate.isNotEmpty) {
+              drivingLicenseExpireController.text = doc.formattedExpiryDate;
             }
-          }
-        }
-
-        // Hack License
-        final hl = data['hackLicense'];
-        if (hl != null) {
-          hackLicenseUrl.value = hl['image']?.toString();
-          final hlExpiry = hl['expiryDate']?.toString();
-          if (hlExpiry != null && hlExpiry.isNotEmpty) {
-            try {
-              final parsed = DateTime.parse(hlExpiry);
-              hackLicenseExpireController.text = DateFormat(
-                'yyyy-MM-dd',
-              ).format(parsed);
-            } catch (_) {
-              hackLicenseExpireController.text = hlExpiry;
+          } else if (docType == 'HACK_LICENSE') {
+            hackLicenseId.value = doc.id;
+            hackLicenseStatus.value = doc.status;
+            hackLicenseUrl.value = doc.fullFileUrl;
+            if (doc.formattedExpiryDate.isNotEmpty) {
+              hackLicenseExpireController.text = doc.formattedExpiryDate;
             }
-          }
-        }
-
-        // Local Permit
-        final lp = data['localPermit'];
-        if (lp != null) {
-          localPermitUrl.value = lp['image']?.toString();
-          final lpExpiry = lp['expiryDate']?.toString();
-          if (lpExpiry != null && lpExpiry.isNotEmpty) {
-            try {
-              final parsed = DateTime.parse(lpExpiry);
-              localPermitExpireController.text = DateFormat(
-                'yyyy-MM-dd',
-              ).format(parsed);
-            } catch (_) {
-              localPermitExpireController.text = lpExpiry;
+          } else if (docType == 'LOCAL_PERMIT') {
+            localPermitId.value = doc.id;
+            localPermitStatus.value = doc.status;
+            localPermitUrl.value = doc.fullFileUrl;
+            if (doc.formattedExpiryDate.isNotEmpty) {
+              localPermitExpireController.text = doc.formattedExpiryDate;
             }
           }
         }
       }
     } catch (e) {
-      debugPrint('Error loading existing documents: $e');
+      debugPrint('Error fetching compliance documents: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 
+  /// 2. PATCH /api/v1/documents/:id
+  Future<void> updateSingleDocument(String documentType) async {
+    final bool isDL = documentType == 'DRIVING_LICENSE';
+    final bool isHL = documentType == 'HACK_LICENSE';
+
+    final String title = isDL
+        ? "Driving License"
+        : isHL
+            ? "Hack License"
+            : "Local Permit";
+
+    final RxnString docIdRx = isDL
+        ? drivingLicenseId
+        : isHL
+            ? hackLicenseId
+            : localPermitId;
+
+    final RxnString statusRx = isDL
+        ? drivingLicenseStatus
+        : isHL
+            ? hackLicenseStatus
+            : localPermitStatus;
+
+    final RxnString urlRx = isDL
+        ? drivingLicenseUrl
+        : isHL
+            ? hackLicenseUrl
+            : localPermitUrl;
+
+    final Rx<File?> fileRx = isDL
+        ? drivingLicenseFile
+        : isHL
+            ? hackLicenseFile
+            : localPermitFile;
+
+    final TextEditingController expireController = isDL
+        ? drivingLicenseExpireController
+        : isHL
+            ? hackLicenseExpireController
+            : localPermitExpireController;
+
+    final RxBool isUpdatingRx = isDL
+        ? isUpdatingDrivingLicense
+        : isHL
+            ? isUpdatingHackLicense
+            : isUpdatingLocalPermit;
+
+    final docId = docIdRx.value;
+    final file = fileRx.value;
+    final expiryText = expireController.text.trim();
+
+    if (file == null && expiryText.isEmpty) {
+      Helpers.showCustomSnackBar(
+        'Please select an expiration date or attach a file to update $title.',
+        isError: true,
+      );
+      return;
+    }
+
+    if (docId == null || docId.isEmpty) {
+      Helpers.showCustomSnackBar(
+        'Document ID not found for $title.',
+        isError: true,
+      );
+      return;
+    }
+
+    try {
+      isUpdatingRx.value = true;
+
+      final response = await _documentRepo.updateDocument(
+        documentId: docId,
+        expiryDate: expiryText.isNotEmpty ? expiryText : null,
+        file: file,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        fileRx.value = null; // Clear local picked file
+        if (response.data?['data'] is Map) {
+          final updatedDoc = ComplianceDocumentModel.fromJson(
+            Map<String, dynamic>.from(response.data['data']),
+          );
+          statusRx.value = updatedDoc.status;
+          if (updatedDoc.fullFileUrl != null &&
+              updatedDoc.fullFileUrl!.isNotEmpty) {
+            urlRx.value = updatedDoc.fullFileUrl;
+          }
+          if (updatedDoc.formattedExpiryDate.isNotEmpty) {
+            expireController.text = updatedDoc.formattedExpiryDate;
+          }
+        }
+        Helpers.showCustomSnackBar(
+          '$title updated successfully.',
+          isError: false,
+        );
+      } else {
+        final msg = response.data?['message'] ?? 'Failed to update $title.';
+        Helpers.showCustomSnackBar(msg, isError: true);
+      }
+    } catch (e) {
+      debugPrint("Error updating $title: $e");
+      Helpers.showCustomSnackBar(
+        'Something went wrong updating $title.',
+        isError: true,
+      );
+    } finally {
+      isUpdatingRx.value = false;
+    }
+  }
+
+  /// Date picker dialog
   Future<void> selectDate(
     BuildContext context,
     TextEditingController controller,
@@ -237,7 +362,7 @@ class PersonalDocumentController extends GetxController {
     return name;
   }
 
-  /// Shows the existing server image or the newly picked local file in a dialog.
+  /// Shows preview dialog for server URL or local picked file
   void previewImage(
     BuildContext context,
     Rx<File?> fileRx,
@@ -258,90 +383,6 @@ class PersonalDocumentController extends GetxController {
     Get.dialog(
       ImagePreviewPopup(file: localFile, imageUrl: serverUrl, title: title),
     );
-  }
-
-  Future<void> submitDocuments() async {
-    isLoading.value = true;
-    try {
-      final formData = dio.FormData();
-
-      if (drivingLicenseExpireController.text.isNotEmpty) {
-        formData.fields.add(
-          MapEntry(
-            'drivingLicenseExpiryDate',
-            drivingLicenseExpireController.text,
-          ),
-        );
-      }
-      if (hackLicenseExpireController.text.isNotEmpty) {
-        formData.fields.add(
-          MapEntry('hackLicenseExpiryDate', hackLicenseExpireController.text),
-        );
-      }
-      if (localPermitExpireController.text.isNotEmpty) {
-        formData.fields.add(
-          MapEntry('localPermitExpiryDate', localPermitExpireController.text),
-        );
-      }
-
-      if (drivingLicenseFile.value != null) {
-        formData.files.add(
-          MapEntry(
-            'drivingLicenseImage',
-            await dio.MultipartFile.fromFile(drivingLicenseFile.value!.path),
-          ),
-        );
-      }
-      if (hackLicenseFile.value != null) {
-        formData.files.add(
-          MapEntry(
-            'hackLicenseImage',
-            await dio.MultipartFile.fromFile(hackLicenseFile.value!.path),
-          ),
-        );
-      }
-      if (localPermitFile.value != null) {
-        formData.files.add(
-          MapEntry(
-            'localPermitImage',
-            await dio.MultipartFile.fromFile(localPermitFile.value!.path),
-          ),
-        );
-      }
-
-      if (formData.fields.isEmpty && formData.files.isEmpty) {
-        Helpers.showCustomSnackBar(
-          'Please select at least one document or date to update.',
-          isError: true,
-        );
-        isLoading.value = false;
-        return;
-      }
-
-      var response = await _profileService.patchProfile(formData);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.back();
-        Helpers.showCustomSnackBar(
-          'Documents updated successfully',
-          isError: false,
-        );
-        try {
-          Get.find<ProfileController>().fetchUserProfile();
-        } catch (e) {
-          debugPrint('Failed to update profile silently');
-        }
-      } else {
-        Helpers.showCustomSnackBar(
-          response.data['message'] ?? 'Failed to update documents',
-          isError: true,
-        );
-      }
-    } catch (e) {
-      debugPrint('Error submitting documents: $e');
-      Helpers.showCustomSnackBar('Something went wrong', isError: true);
-    } finally {
-      isLoading.value = false;
-    }
   }
 
   @override

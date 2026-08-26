@@ -1,371 +1,342 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
-import '../../../../core/widgets/CustomButton.dart';
-import '../../../../core/widgets/CustomText.dart';
-import '../../../../core/widgets/CustomTextGary.dart';
-import '../controllers/personal_document_controller.dart';
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
+import '../controllers/personal_document_controller.dart';
 
-class PersonalDocumentView extends GetView<PersonalDocumentController> {
-  const PersonalDocumentView({super.key});
+class PersonalDocumentView extends StatelessWidget {
+  PersonalDocumentView({super.key});
+
+  final PersonalDocumentController controller =
+      Get.isRegistered<PersonalDocumentController>()
+          ? Get.find<PersonalDocumentController>()
+          : Get.put(PersonalDocumentController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: const CustomSubAppBar(title: "My Personal Documents"),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 15.h),
-              CustomTextgray(
-                text:
-                    "View, update or replace your professional documents and expiration dates.",
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w400,
-              ),
-              SizedBox(height: 24.h),
+      appBar: const CustomSubAppBar(title: "Compliance Documents"),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.primaryColor,
+            ),
+          );
+        }
 
-              // 1. Driving License Card
-              _buildUnifiedDocumentCard(
+        return RefreshIndicator(
+          color: AppColors.primaryColor,
+          backgroundColor: const Color(0xFF1A1A1A),
+          onRefresh: () => controller.fetchDocuments(),
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+            children: [
+              // 1. Info Banner (Clean & Subtle)
+              _buildInfoBanner(),
+              SizedBox(height: 16.h),
+
+              // 2. Document Cards (Clean, Uncluttered & Neutral Icons)
+              _buildDocumentCard(
                 context: context,
+                documentType: "DRIVING_LICENSE",
                 title: "Driving License",
-                fileRx: controller.drivingLicenseFile,
+                icon: Icons.badge_outlined,
+                statusRx: controller.drivingLicenseStatus,
                 urlRx: controller.drivingLicenseUrl,
                 expireController: controller.drivingLicenseExpireController,
               ),
 
-              // 2. Hack License Card
-              _buildUnifiedDocumentCard(
+              _buildDocumentCard(
                 context: context,
+                documentType: "HACK_LICENSE",
                 title: "Hack License",
-                fileRx: controller.hackLicenseFile,
+                icon: Icons.verified_user_outlined,
+                statusRx: controller.hackLicenseStatus,
                 urlRx: controller.hackLicenseUrl,
                 expireController: controller.hackLicenseExpireController,
               ),
 
-              // 3. Local Permit Card
-              _buildUnifiedDocumentCard(
+              _buildDocumentCard(
                 context: context,
+                documentType: "LOCAL_PERMIT",
                 title: "Local Permit",
-                fileRx: controller.localPermitFile,
+                icon: Icons.location_city_outlined,
+                statusRx: controller.localPermitStatus,
                 urlRx: controller.localPermitUrl,
                 expireController: controller.localPermitExpireController,
               ),
 
-              SizedBox(height: 10.h),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF141414),
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: const Color(0xFF262626)),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: const Color(0xFF9EA3AE),
-                      size: 20.sp,
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: CustomTextgray(
-                        text:
-                            "Updates to your documents may take up to 24-48 hours to be reviewed and approved by our admin team.",
-                        fontSize: 11.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 32.h),
+              SizedBox(height: 12.h),
 
-              Obx(
-                () => controller.isLoading.value
-                    ? const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      )
-                    : CustomButton(
-                        text: "Update Documents",
-                        onPressed: () {
-                          controller.submitDocuments();
-                        },
-                      ),
-              ),
-              SizedBox(height: 60.h),
+              // 3. Footer Notice
+              _buildFooterNotice(),
+              SizedBox(height: 30.h),
             ],
           ),
-        ),
+        );
+      }),
+    );
+  }
+
+  /// Informative banner (Minimal & Clean)
+  Widget _buildInfoBanner() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF141414),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: const Color(0xFF222222)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 2.h),
+            child: Icon(
+              Icons.info_outline_rounded,
+              color: const Color(0xFF8E8E93),
+              size: 17.sp,
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              "Keep your official credentials active to receive chauffeur bookings. Tap any document to view details, replace files, or update expiry dates.",
+              style: GoogleFonts.inter(
+                color: const Color(0xFF9E9E9E),
+                fontSize: 12.sp,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // --- Unified Card Container ---
-  Widget _buildUnifiedDocumentCard({
+  /// Clean & Minimalist Document Card
+  Widget _buildDocumentCard({
     required BuildContext context,
+    required String documentType,
     required String title,
-    required Rx<File?> fileRx,
+    required IconData icon,
+    required RxnString statusRx,
     required RxnString urlRx,
     required TextEditingController expireController,
-    bool onlyCamera = false,
   }) {
     return Obx(() {
-      final hasLocalFile = fileRx.value != null;
-      final hasServerUrl = urlRx.value != null && urlRx.value!.isNotEmpty;
-      final canPreview = hasLocalFile || hasServerUrl;
+      final status = statusRx.value;
+      final url = urlRx.value;
+      final expiryDate = expireController.text.trim();
+      final hasUrl = url != null && url.isNotEmpty;
 
       return Container(
-        margin: EdgeInsets.only(bottom: 20.h),
-        padding: EdgeInsets.all(16.w),
+        margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
           color: const Color(0xFF141414),
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: const Color(0xFF262626),
-            width: 1.2,
-          ),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: const Color(0xFF242424)),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header Row: Icon/Thumbnail + Title & File Status + Action Buttons
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                canPreview
-                    ? _buildDocumentThumbnail(context, fileRx, urlRx, title)
-                    : _buildIcon(Icons.badge_outlined),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: CustomText(
-                              text: title,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13.sp,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const Text(" *", style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                      SizedBox(height: 4.h),
-                      if (hasLocalFile)
-                        Text(
-                          controller.getFileName(fileRx),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.greenAccent,
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      else if (hasServerUrl)
-                        Text(
-                          "Current file on record",
-                          style: TextStyle(
-                            color: const Color(0xFF9EA3AE),
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      else
-                        CustomTextgray(
-                          text: "No file attached",
-                          fontSize: 11.sp,
-                        ),
-                    ],
-                  ),
-                ),
-
-                // Action Buttons Group (Camera, Upload)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      constraints: const BoxConstraints(),
-                      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-                      onPressed: () => controller.pickFromCamera(fileRx),
-                      icon: Icon(
-                        Icons.camera_alt_outlined,
-                        color: Colors.white,
-                        size: 18.sp,
-                      ),
-                      tooltip: "Camera",
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12.r),
+            onTap: () {
+              Get.toNamed(
+                Routes.personalDocumentDetailView,
+                arguments: {"documentType": documentType},
+              )?.then((_) => controller.fetchDocuments());
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+              child: Row(
+                children: [
+                  // Leading Neutral Icon Box
+                  Container(
+                    width: 44.w,
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E1E1E),
+                      borderRadius: BorderRadius.circular(10.r),
+                      border: Border.all(color: const Color(0xFF2A2A2A)),
                     ),
-                    if (!onlyCamera) ...[
-                      SizedBox(width: 2.w),
-                      IconButton(
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-                        onPressed: () =>
-                            controller.pickFromFile(context, fileRx),
-                        icon: Icon(
-                          Icons.file_upload_outlined,
-                          color: Colors.white,
-                          size: 18.sp,
-                        ),
-                        tooltip: "Upload File",
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
+                    child: Icon(
+                      icon,
+                      color: Colors.white,
+                      size: 22.sp,
+                    ),
+                  ),
+                  SizedBox(width: 14.w),
 
-            // Embedded Expiration Date Section
-            SizedBox(height: 14.h),
-            const Divider(color: Color(0xFF262626), height: 1),
-            SizedBox(height: 14.h),
-            _buildFieldLabel("Expiration Date"),
-            _buildExpireDateField(context, expireController),
-          ],
+                  // Middle Content: Title, Expiry & Status info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                title,
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14.5.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            _buildStatusBadge(status),
+                          ],
+                        ),
+                        SizedBox(height: 5.h),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today_outlined,
+                              color: const Color(0xFF757575),
+                              size: 11.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              expiryDate.isNotEmpty
+                                  ? "Expires: $expiryDate"
+                                  : "Expiry not set",
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF888888),
+                                fontSize: 11.5.sp,
+                              ),
+                            ),
+                            if (hasUrl) ...[
+                              SizedBox(width: 6.w),
+                              Text(
+                                "•",
+                                style: TextStyle(
+                                  color: const Color(0xFF555555),
+                                  fontSize: 11.sp,
+                                ),
+                              ),
+                              SizedBox(width: 6.w),
+                              Text(
+                                "File Attached",
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFFAAAAAA),
+                                  fontSize: 11.5.sp,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(width: 8.w),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: const Color(0xFF555555),
+                    size: 13.sp,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       );
     });
   }
 
-  Widget _buildDocumentThumbnail(
-    BuildContext context,
-    Rx<File?> fileRx,
-    RxnString urlRx,
-    String title,
-  ) {
-    final file = fileRx.value;
-    final url = urlRx.value;
-    final hasLocal = file != null;
-    final hasUrl = url != null && url.isNotEmpty;
+  /// Clean Status Badge
+  Widget _buildStatusBadge(String? status) {
+    final normalized = (status ?? 'PENDING').toUpperCase();
+    Color bg;
+    Color border;
+    Color textColor;
+    String label;
 
-    final isLocalImage = hasLocal &&
-        (file.path.toLowerCase().endsWith('.jpg') ||
-            file.path.toLowerCase().endsWith('.jpeg') ||
-            file.path.toLowerCase().endsWith('.png'));
-
-    final isNetworkImage = hasUrl &&
-        (url.toLowerCase().contains('.jpg') ||
-            url.toLowerCase().contains('.jpeg') ||
-            url.toLowerCase().contains('.png') ||
-            url.toLowerCase().startsWith('http'));
-
-    Widget child;
-    if (isLocalImage) {
-      child = Image.file(file, fit: BoxFit.cover);
-    } else if (isNetworkImage) {
-      child = Image.network(
-        url,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return const Icon(
-            Icons.description_outlined,
-            color: Color(0xFFD08700),
-            size: 16,
-          );
-        },
-      );
+    if (normalized == 'APPROVED') {
+      bg = const Color(0xFF10B981).withValues(alpha: 0.12);
+      border = const Color(0xFF10B981).withValues(alpha: 0.35);
+      textColor = const Color(0xFF34D399);
+      label = "Approved";
+    } else if (normalized.contains('PENDING') || normalized.contains('SCAN')) {
+      bg = const Color(0xFFF59E0B).withValues(alpha: 0.12);
+      border = const Color(0xFFF59E0B).withValues(alpha: 0.35);
+      textColor = const Color(0xFFFBBF24);
+      label = "Pending";
+    } else if (normalized == 'REJECTED') {
+      bg = const Color(0xFFEF4444).withValues(alpha: 0.12);
+      border = const Color(0xFFEF4444).withValues(alpha: 0.35);
+      textColor = const Color(0xFFF87171);
+      label = "Rejected";
     } else {
-      child = const Icon(
-        Icons.description_outlined,
-        color: Color(0xFFD08700),
-        size: 16,
-      );
+      bg = Colors.white10;
+      border = Colors.white24;
+      textColor = Colors.white70;
+      label = normalized;
     }
 
-    return GestureDetector(
-      onTap: () => controller.previewImage(context, fileRx, urlRx, title: title),
-      child: Container(
-        width: 38.r,
-        height: 38.r,
-        decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: const Color(0xFF2C2C2C)),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8.r),
-          child: child,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIcon(IconData icon) {
     return Container(
-      padding: EdgeInsets.all(6.r),
+      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.5.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: const Color(0xFF2C2C2C)),
+        color: bg,
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(color: border, width: 0.7),
       ),
-      child: Icon(icon, color: Colors.white, size: 16.sp),
-    );
-  }
-
-  Widget _buildFieldLabel(String text) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 6.h),
-      child: CustomText(
-        text: text,
-        fontWeight: FontWeight.w500,
-        fontSize: 12.sp,
-        color: const Color(0xFF9EA3AE),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(
+          color: textColor,
+          fontSize: 10.sp,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
 
-  Widget _buildExpireDateField(
-    BuildContext context,
-    TextEditingController textController,
-  ) {
-    return TextFormField(
-      controller: textController,
-      readOnly: true,
-      onTap: () => controller.selectDate(context, textController),
-      style: TextStyle(color: Colors.white, fontSize: 13.sp),
-      decoration: InputDecoration(
-        hintText: "Select Date",
-        hintStyle: TextStyle(color: AppColors.gray100, fontSize: 13.sp),
-        contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-        filled: true,
-        fillColor: const Color(0xFF1E1E1E),
-        suffixIcon: Icon(
-          Icons.calendar_month_outlined,
-          color: const Color(0xFF9EA3AE),
-          size: 18.sp,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
-        ),
+  /// Footer Notice Box (Subtle & Clean)
+  Widget _buildFooterNotice() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF141414),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: const Color(0xFF222222)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 2.h),
+            child: Icon(
+              Icons.shield_outlined,
+              color: const Color(0xFF8E8E93),
+              size: 16.sp,
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              "Compliance & Verification: Updated documents are automatically submitted for security check. Your bookings remain protected.",
+              style: GoogleFonts.inter(
+                color: const Color(0xFF757575),
+                fontSize: 11.sp,
+                height: 1.35,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

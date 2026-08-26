@@ -70,9 +70,7 @@ class SignupController extends GetxController {
       .toList();
   bool get isCitiesLoading => _serviceAreaController.isLoading.value;
   bool get isMoreCitiesLoading => _serviceAreaController.isMoreLoading.value;
-  bool get hasNextCitiesPage =>
-      _serviceAreaController.currentPage.value <
-      _serviceAreaController.totalPages.value;
+  bool get hasNextCitiesPage => _serviceAreaController.hasMore.value;
 
   void togglePassword() => showPassword.value = !showPassword.value;
   void toggleConfirmPassword() =>

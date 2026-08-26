@@ -58,7 +58,7 @@ class ApiConstants {
   static const String notifications = '/notifications';
   static const String notificationsReadAll = '/notifications/read-all';
   //Service Areas
-  static const String serviceAreas = '/service-areas';
+  static const String serviceAreas = '/service-areas/options';
 
   // Legal Endpoints
   static const String legals = '/legals';
