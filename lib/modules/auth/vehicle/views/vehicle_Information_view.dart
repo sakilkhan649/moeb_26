@@ -32,15 +32,21 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
     vehicleConfigService = Get.isRegistered<VehicleConfigService>()
         ? Get.find<VehicleConfigService>()
         : Get.put(VehicleConfigService());
-    // Initialize controller lazily in initState so that GetX has fully
-    // disposed and recreated SignupController before we grab it.
-    // This prevents "TextEditingController used after dispose" crash.
+
     controller = Get.isRegistered<SignupController>()
         ? Get.find<SignupController>()
-        : Get.put(SignupController());
+        : Get.put(SignupController(), permanent: true);
+
+    if (controller.vehiclesList.isEmpty) {
+      controller.vehiclesList.add(VehicleModel());
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         controller.showErrors.value = false;
+        if (controller.vehiclesList.any((v) => v.isDisposed)) {
+          controller.vehiclesList.assignAll([VehicleModel()]);
+        }
       }
     });
   }
@@ -74,26 +80,30 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
 
                 // Vehicle list
                 Expanded(
-                  child: Obx(
-                    () => ListView(
-                      children: [
-                        ...List.generate(
-                          controller.vehiclesList.length,
-                          (index) => _buildVehicleCard(
-                            context,
-                            index,
-                            controller.vehiclesList[index],
-                            key: ValueKey(controller.vehiclesList[index].id),
+                  child: ListView(
+                    children: [
+                      Obx(
+                        () => Column(
+                          children: List.generate(
+                            controller.vehiclesList.length,
+                            (index) => _buildVehicleCard(
+                              context,
+                              index,
+                              controller.vehiclesList[index],
+                              key: ValueKey(controller.vehiclesList[index].id),
+                            ),
                           ),
                         ),
+                      ),
 
-                        SizedBox(height: 25.h),
-                        CustomAddButton(
-                          onPressed: () => controller.addVehicle(),
-                        ),
-                        SizedBox(height: 30.h),
+                      SizedBox(height: 25.h),
+                      CustomAddButton(
+                        onPressed: () => controller.addVehicle(),
+                      ),
+                      SizedBox(height: 30.h),
 
-                        CustomButton(
+                      Obx(
+                        () => CustomButton(
                           loading: controller.isLoading.value,
                           text: "Continue",
                           onPressed: () {
@@ -106,9 +116,9 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
                             }
                           },
                         ),
-                        SizedBox(height: 60.h),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 60.h),
+                    ],
                   ),
                 ),
               ],
@@ -385,17 +395,6 @@ class _VehicleInformationViewState extends State<VehicleInformationView> {
                     Obx(() {
                       final type = model.selectedVehicleType.value;
                       final colors = vehicleConfigService.getAllowedColorsForType(type);
-
-                      // Auto-populate first allowed color if only 1 color is allowed and current text doesn't match
-                      if (colors.length == 1 &&
-                          model.colorOutsideController.text != colors.first) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (!model.isDisposed) {
-                            model.colorOutsideController.text = colors.first;
-                          }
-                        });
-                      }
-
                       final currentSelection =
                           model.colorOutsideController.text;
                       final value = colors.contains(currentSelection)

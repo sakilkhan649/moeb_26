@@ -25,7 +25,7 @@ class _DocumentsuploadViewState extends State<DocumentsuploadView> {
     super.initState();
     controller = Get.isRegistered<SignupController>()
         ? Get.find<SignupController>()
-        : Get.put(SignupController());
+        : Get.put(SignupController(), permanent: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         controller.showErrors.value = false;

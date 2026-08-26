@@ -17,10 +17,10 @@ class VehicleModel {
 
   // New Fields from DocumentsUpload
   final Rx<File?> commercialInsuranceFile = Rx<File?>(null);
-  final TextEditingController commercialInsuranceExpireController = TextEditingController();
+  final TextEditingController commercialInsuranceExpireController;
 
   final Rx<File?> vehicleRegistrationFile = Rx<File?>(null);
-  final TextEditingController vehicleRegistrationExpireController = TextEditingController();
+  final TextEditingController vehicleRegistrationExpireController;
 
   final Rx<File?> frontViewFile = Rx<File?>(null);
   final Rx<File?> rearViewFile = Rx<File?>(null);
@@ -33,7 +33,9 @@ class VehicleModel {
       yearController = TextEditingController(),
       colorInsideController = TextEditingController(),
       colorOutsideController = TextEditingController(),
-      licensePlateController = TextEditingController();
+      licensePlateController = TextEditingController(),
+      commercialInsuranceExpireController = TextEditingController(),
+      vehicleRegistrationExpireController = TextEditingController();
 
   factory VehicleModel.fromVehicle(dynamic vehicle) {
     final model = VehicleModel(initialType: vehicle.carType);

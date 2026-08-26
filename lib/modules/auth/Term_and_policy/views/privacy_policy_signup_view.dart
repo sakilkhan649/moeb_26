@@ -49,7 +49,7 @@ class _PrivacyPolicySignUpViewState extends State<PrivacyPolicySignUpView> {
     super.initState();
     controller = Get.isRegistered<SignupController>()
         ? Get.find<SignupController>()
-        : Get.put(SignupController());
+        : Get.put(SignupController(), permanent: true);
   }
 
   final List<TermSection> originalSections = [

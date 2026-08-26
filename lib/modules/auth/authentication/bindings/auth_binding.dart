@@ -11,7 +11,7 @@ class AuthBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => ChangePasswordController(), fenix: true);
-    Get.lazyPut(() => SignupController(), fenix: true);
+    Get.put(SignupController(), permanent: true);
     Get.lazyPut(() => OtpController(), fenix: true);
     Get.lazyPut(() => PersonalDocumentController(), fenix: true);
     Get.lazyPut(() => ResetPasswordController(), fenix: true);
