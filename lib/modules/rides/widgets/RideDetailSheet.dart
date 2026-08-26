@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/data/models/my_rides_model.dart';
@@ -599,26 +600,60 @@ class RideDetailSheet extends StatelessWidget {
             ),
 
             if (isPast) ...[
-              SizedBox(height: 20.h),
-              CustomButton(
-                text: "Rate & Review Driver",
-                backgroundColor: const Color(0xFF22C55E),
-                textColor: Colors.black,
-                icon: Icon(
-                  Icons.star_outline_rounded,
-                  size: 18.sp,
-                  color: Colors.black,
+              if (ride.hasReview != true && ride.isReviewedByDriver != true) ...[
+                SizedBox(height: 20.h),
+                CustomButton(
+                  text: "Rate & Review",
+                  backgroundColor: AppColors.primaryColor,
+                  textColor: Colors.black,
+                  icon: Icon(
+                    Icons.star_outline_rounded,
+                    size: 18.sp,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Get.back();
+                    if (onReviewPressed != null) {
+                      onReviewPressed!();
+                    } else {
+                      Get.toNamed(Routes.rideCompletedView, arguments: ride);
+                    }
+                  },
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
                 ),
-                onPressed: () {
-                  Get.back();
-                  if (onReviewPressed != null) {
-                    onReviewPressed!();
-                  } else {
-                    Get.toNamed(Routes.ratingsFeedbackView);
-                  }
-                },
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-              ),
+              ] else ...[
+                SizedBox(height: 20.h),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(14.r),
+                    border: Border.all(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.star_rounded,
+                        color: Color(0xFF10B981),
+                        size: 20,
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        "Review Submitted",
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF10B981),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ] else ...[
               SizedBox(height: 20.h),
               CustomButton(

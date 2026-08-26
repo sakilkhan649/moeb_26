@@ -5,15 +5,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:moeb_26/data/models/my_rides_model.dart';
-import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
-import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/Custom_InfoBox.dart';
 import 'package:moeb_26/core/widgets/custom_swipe_button.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 import '../../../core/widgets/Custom_Card_Ditails.dart';
 import '../controllers/my_ride_progress_details_controller.dart';
 
@@ -144,6 +143,8 @@ class MyRideProgressDetailsView extends StatelessWidget {
   }
 
   Widget _buildDriverSection(_RideDetailsData data) {
+    final bool canOpenProfile = data.participantId.isNotEmpty;
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 14.w),
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
@@ -154,37 +155,69 @@ class MyRideProgressDetailsView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 20.r,
-            backgroundImage: data.posterImage.startsWith('http')
-                ? NetworkImage(data.posterImage)
-                : AssetImage(data.posterImage) as ImageProvider,
+          GestureDetector(
+            onTap: canOpenProfile
+                ? () {
+                    final preferredController =
+                        Get.isRegistered<PreferredDriversController>()
+                            ? Get.find<PreferredDriversController>()
+                            : Get.put(PreferredDriversController());
+
+                    preferredController.openChauffeurProfile(
+                      userId: data.participantId,
+                      name: data.posterName,
+                      imageUrl: data.posterImage,
+                    );
+                  }
+                : null,
+            child: CircleAvatar(
+              radius: 20.r,
+              backgroundImage: data.posterImage.startsWith('http')
+                  ? NetworkImage(data.posterImage)
+                  : AssetImage(data.posterImage) as ImageProvider,
+            ),
           ),
           SizedBox(width: 12.w),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  data.posterName,
-                  style: GoogleFonts.inter(
-                    fontSize: 15.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+            child: GestureDetector(
+              onTap: canOpenProfile
+                  ? () {
+                      final preferredController =
+                          Get.isRegistered<PreferredDriversController>()
+                              ? Get.find<PreferredDriversController>()
+                              : Get.put(PreferredDriversController());
+
+                      preferredController.openChauffeurProfile(
+                        userId: data.participantId,
+                        name: data.posterName,
+                        imageUrl: data.posterImage,
+                      );
+                    }
+                  : null,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    data.posterName,
+                    style: GoogleFonts.inter(
+                      fontSize: 15.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  "Job Poster",
-                  style: GoogleFonts.inter(
-                    fontSize: 12.sp,
-                    color: const Color(0xFFA1A1A1),
+                  SizedBox(height: 2.h),
+                  Text(
+                    "Job Poster",
+                    style: GoogleFonts.inter(
+                      fontSize: 12.sp,
+                      color: const Color(0xFFA1A1A1),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           IconButton(
@@ -211,13 +244,13 @@ class MyRideProgressDetailsView extends StatelessWidget {
             icon: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: AppColors.orange100.withValues(alpha: 0.15),
+                color: AppColors.primaryColor.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.orange100),
+                border: Border.all(color: AppColors.primaryColor),
               ),
               child: const Icon(
                 Icons.chat_bubble_outline,
-                color: AppColors.orange100,
+                color: AppColors.primaryColor,
                 size: 18,
               ),
             ),
@@ -303,7 +336,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
               )
             : CustomButton(
                 text: buttonText,
-                backgroundColor: AppColors.orange100,
+                backgroundColor: AppColors.primaryColor,
                 textColor: Colors.black,
                 onPressed: () => controller.updateStatus(data.id, nextStatus),
               ),
@@ -366,12 +399,12 @@ class MyRideProgressDetailsView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isFinished
                         ? const Color(0xFF10B981).withValues(alpha: 0.15)
-                        : AppColors.orange100.withValues(alpha: 0.15),
+                        : AppColors.primaryColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
                       color: isFinished
                           ? const Color(0xFF10B981)
-                          : AppColors.orange100,
+                          : AppColors.primaryColor,
                     ),
                   ),
                   child: Text(
@@ -379,7 +412,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
                     style: GoogleFonts.inter(
                       color: isFinished
                           ? const Color(0xFF10B981)
-                          : AppColors.orange100,
+                          : AppColors.primaryColor,
                       fontSize: 11.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -397,7 +430,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
                 final Color color = isCompletedStep
                     ? const Color(0xFF10B981)
                     : (isCurrentStep
-                          ? AppColors.orange100
+                          ? AppColors.primaryColor
                           : const Color(0xFF52525B));
 
                 return Expanded(
@@ -416,7 +449,7 @@ class MyRideProgressDetailsView extends StatelessWidget {
                                         0xFF10B981,
                                       ).withValues(alpha: 0.15)
                                     : (isCurrentStep
-                                          ? AppColors.orange100.withValues(
+                                          ? AppColors.primaryColor.withValues(
                                               alpha: 0.15,
                                             )
                                           : Colors.white.withValues(
@@ -558,11 +591,27 @@ class _RideDetailsData {
       instruction = r.instruction ?? "N/A";
 
       final driver = r.createdBy ?? r.assignedTo ?? r.applicant?.driver;
-      posterName = (r.nickname != null && r.nickname!.isNotEmpty)
-          ? r.nickname!
-          : (r.name ?? (driver?.nickname != null && driver!.nickname!.isNotEmpty
-              ? driver.nickname!
-              : (driver?.name ?? r.companyName ?? "Unknown")));
+      final rawName = (r.name != null && r.name!.trim().isNotEmpty)
+          ? r.name!.trim()
+          : (driver?.name != null && driver!.name.trim().isNotEmpty
+              ? driver.name.trim()
+              : "");
+      final rawNick = (r.nickname != null && r.nickname!.trim().isNotEmpty)
+          ? r.nickname!.trim()
+          : (driver?.nickname != null && driver!.nickname!.trim().isNotEmpty
+              ? driver.nickname!.trim()
+              : "");
+
+      if (rawName.isNotEmpty && rawNick.isNotEmpty && rawName.toLowerCase() != rawNick.toLowerCase()) {
+        posterName = "$rawName ($rawNick)";
+      } else if (rawName.isNotEmpty) {
+        posterName = rawName;
+      } else if (rawNick.isNotEmpty) {
+        posterName = rawNick;
+      } else {
+        posterName = r.companyName ?? driver?.company ?? "Unknown";
+      }
+
       posterCompany = r.company ?? driver?.company ?? r.companyName ?? "Unknown";
       participantId = driver?.id ?? "";
       posterImage = (r.profilePicture != null && r.profilePicture!.isNotEmpty)
@@ -592,11 +641,25 @@ class _RideDetailsData {
       flightNumber = ride['flight'] ?? ride['flightNumber'] ?? 'N/A';
       instruction =
           ride['instructions'] ?? ride['specialInstructions'] ?? 'N/A';
-      posterName =
-          ride['jobPoster'] ??
-          ride['passenger'] ??
-          ride['driver'] ??
-          'Mohamed El Bakkali';
+      final rawName = (ride['name'] ??
+              ride['jobPoster'] ??
+              ride['passenger'] ??
+              ride['driver'] ??
+              '')
+          .toString()
+          .trim();
+      final rawNick = (ride['nickname'] ?? '').toString().trim();
+      if (rawName.isNotEmpty &&
+          rawNick.isNotEmpty &&
+          rawName.toLowerCase() != rawNick.toLowerCase()) {
+        posterName = "$rawName ($rawNick)";
+      } else if (rawName.isNotEmpty) {
+        posterName = rawName;
+      } else if (rawNick.isNotEmpty) {
+        posterName = rawNick;
+      } else {
+        posterName = 'Mohamed El Bakkali';
+      }
       vehicleInfo = ride['vehicle'] ?? vehicleType;
       vehicleNumber = ride['vehicle'] ?? 'N/A';
       dateRaw = ride['dateHeader'] ?? ride['date'] ?? '';

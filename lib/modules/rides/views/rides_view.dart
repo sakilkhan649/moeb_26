@@ -473,7 +473,7 @@ class _RidesViewState extends State<RidesView> {
         dateHeader: dateHeader,
         onReviewPressed: isPast
             ? () {
-                Get.toNamed(Routes.ratingsFeedbackView);
+                Get.toNamed(Routes.rideCompletedView, arguments: ride);
               }
             : null,
       ),

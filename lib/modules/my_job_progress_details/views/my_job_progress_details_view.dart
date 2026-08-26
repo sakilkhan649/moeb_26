@@ -337,8 +337,8 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       const Icon(
-                                        Icons.star,
-                                        color: Color(0xFFFEDB9B),
+                                        Icons.star_rounded,
+                                        color: Color(0xFF10B981),
                                       ),
                                       SizedBox(width: 8.w),
                                       Text(
@@ -356,7 +356,7 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                               // Ride finished, show Review button
                               return CustomButton(
                                 text: "Review Driver",
-                                backgroundColor: AppColors.orange100,
+                                backgroundColor: AppColors.primaryColor,
                                 textColor: Colors.black,
                                 onPressed: () {
                                   Get.toNamed(

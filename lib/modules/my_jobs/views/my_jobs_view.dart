@@ -353,7 +353,7 @@ class _MyJobsViewState extends State<MyJobsView> {
           }
         },
         onReviewPressed: () {
-          Get.toNamed(Routes.ratingsFeedbackView);
+          Get.toNamed(Routes.rideCompletedView, arguments: job);
         },
         onEditPressed: canEdit && job.id != null
             ? () {

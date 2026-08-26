@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
+import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 
@@ -702,25 +704,57 @@ class MyJobDetailSheet extends StatelessWidget {
                 },
                 padding: EdgeInsets.symmetric(vertical: 16.h),
               ),
-            ] else if (status == 'COMPLETED') ...[
+            ] else if (currentStatus == 'COMPLETED' || currentStatus == 'FINISHED') ...[
               if (!isReviewedByCreator) ...[
                 SizedBox(height: 20.h),
                 CustomButton(
-                  text: "Rate & Review Driver",
-                  backgroundColor: const Color(0xFF22C55E),
-                  textColor: Colors.white,
+                  text: "Rate & Review",
+                  backgroundColor: AppColors.primaryColor,
+                  textColor: Colors.black,
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                   icon: Icon(
                     Icons.star_outline_rounded,
                     size: 18.sp,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   onPressed: () {
                     Get.back();
                     onReviewPressed?.call();
                   },
                   padding: EdgeInsets.symmetric(vertical: 16.h),
+                ),
+              ] else ...[
+                SizedBox(height: 20.h),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(14.r),
+                    border: Border.all(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.star_rounded,
+                        color: Color(0xFF10B981),
+                        size: 20,
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        "Review Submitted",
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF10B981),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ] else if (actionButtonText != null &&
