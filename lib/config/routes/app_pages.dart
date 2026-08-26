@@ -45,7 +45,6 @@ import 'package:moeb_26/modules/chat_detail/views/chat_detail_view.dart';
 import 'package:moeb_26/modules/chat/views/chat_view.dart';
 import 'package:moeb_26/modules/chat_community/views/chat_community_detail_view.dart';
 import 'package:moeb_26/modules/chat_support_detail/views/chat_support_detail_view.dart';
-import 'package:moeb_26/modules/jobs_approve/views/job_approve_view.dart';
 import 'package:moeb_26/modules/job_edit/views/job_edit_view.dart';
 import 'package:moeb_26/modules/ratings_feedback/views/ratings_feedback_view.dart';
 import 'package:moeb_26/modules/my_job_progress_details/views/my_job_progress_details_view.dart';
@@ -102,7 +101,6 @@ class Routes {
   static const String chatCommunityDetailView = "/ChatCommunityDetailView";
   static const String rideDetailsView = "/RideDetailsView";
   static const String rideCompletedView = "/RideCompletedView";
-  static const String jobApproveView = "/JobApproveView";
   static const String rideProgressWay = "/RideProgressWay";
   static const String rideProgressWayLocationView =
       "/RideProgressWayLocationView";
@@ -279,11 +277,6 @@ class Routes {
       page: () => RideCompletedView(),
       transition: Transition.noTransition,
       binding: RideCompletedBinding(),
-    ),
-    GetPage(
-      name: jobApproveView,
-      page: () => JobApproveView(),
-      transition: Transition.noTransition,
     ),
     GetPage(
       name: rideProgressWayLocationView,

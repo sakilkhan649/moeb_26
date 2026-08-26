@@ -8,6 +8,7 @@ import 'one_way_view.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 
 class JobPostSheetTabBarView extends StatelessWidget {
   const JobPostSheetTabBarView({super.key});
@@ -502,32 +503,47 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                       size: 22.sp,
                                     ),
                                     SizedBox(width: 14.w),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: isSelected
-                                              ? const Color(0xFFFF9800)
-                                              : const Color(0xFF2C2C2C),
-                                          width: 1,
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () {
+                                        final preferredController =
+                                            Get.isRegistered<PreferredDriversController>()
+                                                ? Get.find<PreferredDriversController>()
+                                                : Get.put(PreferredDriversController());
+
+                                        preferredController.openChauffeurProfile(
+                                          userId: driver.id,
+                                          name: driver.name,
+                                          imageUrl: driver.profilePicture,
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? const Color(0xFFFF9800)
+                                                : const Color(0xFF2C2C2C),
+                                            width: 1,
+                                          ),
                                         ),
-                                      ),
-                                      child: CircleAvatar(
-                                        radius: 22.r,
-                                        backgroundImage:
-                                            driver.profilePicture.isNotEmpty
-                                                ? NetworkImage(
-                                                    driver.profilePicture,
-                                                  )
-                                                : null,
-                                        backgroundColor:
-                                            const Color(0xFF27272A),
-                                        child: driver.profilePicture.isEmpty
-                                            ? const Icon(
-                                                Icons.person,
-                                                color: Colors.white54,
-                                              )
-                                            : null,
+                                        child: CircleAvatar(
+                                          radius: 22.r,
+                                          backgroundImage:
+                                              driver.profilePicture.isNotEmpty
+                                                  ? NetworkImage(
+                                                      driver.profilePicture,
+                                                    )
+                                                  : null,
+                                          backgroundColor:
+                                              const Color(0xFF27272A),
+                                          child: driver.profilePicture.isEmpty
+                                              ? const Icon(
+                                                  Icons.person,
+                                                  color: Colors.white54,
+                                                )
+                                              : null,
+                                        ),
                                       ),
                                     ),
                                     SizedBox(width: 14.w),
@@ -617,6 +633,37 @@ class JobPostSheetTabBarView extends StatelessWidget {
                                         ],
                                       ),
                                     ),
+                                    SizedBox(width: 8.w),
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () {
+                                        final preferredController =
+                                            Get.isRegistered<PreferredDriversController>()
+                                                ? Get.find<PreferredDriversController>()
+                                                : Get.put(PreferredDriversController());
+
+                                        preferredController.openChauffeurProfile(
+                                          userId: driver.id,
+                                          name: driver.name,
+                                          imageUrl: driver.profilePicture,
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8.r),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF27272A),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: const Color(0xFF3F3F46),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          size: 13.sp,
+                                          color: AppColors.primaryColor,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -627,8 +674,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                     }),
                   ],
                 ),
-              ),
-            ),
+              ),),
 
             SizedBox(height: 16.h),
 
