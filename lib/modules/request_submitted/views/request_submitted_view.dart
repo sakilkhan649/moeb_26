@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
@@ -476,52 +477,148 @@ class _JobSubmittedData {
     required this.paymentType,
   });
 
+  static String _formatDateTime(dynamic dateVal, dynamic timeVal) {
+    String datePart = '';
+    String timePart = '';
+
+    if (dateVal != null) {
+      final str = dateVal.toString().trim();
+      final dt = DateTime.tryParse(str)?.toLocal();
+      if (dt != null) {
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        final jobDay = DateTime(dt.year, dt.month, dt.day);
+
+        if (jobDay == today) {
+          datePart = "Today, ${DateFormat('MMM dd').format(dt)}";
+        } else if (jobDay == today.add(const Duration(days: 1))) {
+          datePart = "Tomorrow, ${DateFormat('MMM dd').format(dt)}";
+        } else if (jobDay == today.subtract(const Duration(days: 1))) {
+          datePart = "Yesterday, ${DateFormat('MMM dd').format(dt)}";
+        } else {
+          datePart = DateFormat('EEE, MMM dd').format(dt);
+        }
+      } else if (str.isNotEmpty && str != 'null') {
+        datePart = str;
+      }
+    }
+
+    if (timeVal != null) {
+      final str = timeVal.toString().trim();
+      final timeDt = DateTime.tryParse(str)?.toLocal();
+      if (timeDt != null && (str.contains('T') || str.contains('-'))) {
+        timePart = DateFormat('hh:mm a').format(timeDt);
+      } else if (str.isNotEmpty && str != 'null') {
+        try {
+          final parsed = DateFormat("HH:mm").parse(str);
+          timePart = DateFormat("hh:mm a").format(parsed);
+        } catch (_) {
+          try {
+            final parsed = DateFormat("HH:mm:ss").parse(str);
+            timePart = DateFormat("hh:mm a").format(parsed);
+          } catch (_) {
+            timePart = str;
+          }
+        }
+      }
+    }
+
+    if (datePart.isNotEmpty && timePart.isNotEmpty) {
+      return "$datePart • $timePart";
+    } else if (datePart.isNotEmpty) {
+      return datePart;
+    } else if (timePart.isNotEmpty) {
+      return timePart;
+    }
+    return "ASAP";
+  }
+
   factory _JobSubmittedData.from(dynamic job) {
     if (job == null) {
       return _JobSubmittedData(
-        bookingNo: "1094",
-        pickup: "123 Main Street, Beverly Hills",
-        dropoff: "LAX International Airport",
-        dateTime: "Today • 04:30 PM",
-        vehicleType: "Luxury Sedan",
-        amount: "\$185",
+        bookingNo: "",
+        pickup: "N/A",
+        dropoff: "N/A",
+        dateTime: "ASAP",
+        vehicleType: "Standard",
+        amount: "\$0.00",
         paymentType: "Credit Card",
       );
     }
     if (job is Map) {
+      final rawId = job['_id']?.toString() ?? job['id']?.toString() ?? '';
+      final rawBookingNo = job['bookingNo']?.toString() ??
+          (rawId.length >= 6
+              ? 'OFFER-${rawId.substring(rawId.length - 6).toUpperCase()}'
+              : (rawId.isNotEmpty ? 'OFFER-$rawId' : ''));
+
+      final isAsap = job['asap'] == true;
+      final rawAmount = job['paymentAmount'] ?? job['price'] ?? job['amount'];
+      final formattedAmount = rawAmount != null
+          ? (num.tryParse(rawAmount.toString()) != null
+              ? "\$${num.parse(rawAmount.toString()).toStringAsFixed(2)}"
+              : "\$$rawAmount")
+          : "\$0.00";
+
       return _JobSubmittedData(
-        bookingNo: job['bookingNo']?.toString() ?? "1094",
-        pickup: job['pickup']?.toString() ?? "Pickup Location",
-        dropoff: job['dropoff']?.toString() ?? "Dropoff Location",
-        dateTime: "${job['date'] ?? ''} • ${job['time'] ?? 'ASAP'}".trim(),
-        vehicleType:
+        bookingNo: rawBookingNo,
+        pickup: job['pickup']?.toString() ??
+            job['pickupLocation']?.toString() ??
+            job['pickupAddress']?.toString() ??
+            "Pickup Location",
+        dropoff: job['dropoff']?.toString() ??
+            job['dropoffLocation']?.toString() ??
+            job['dropoffAddress']?.toString() ??
+            "Dropoff Location",
+        dateTime: isAsap
+            ? "ASAP"
+            : _formatDateTime(
+                job['date'] ?? job['pickupDate'] ?? job['pickupDateTime'],
+                job['time'] ?? job['pickupTime'],
+              ),
+        vehicleType: job['vehicleType']?.toString() ??
+            job['carType']?.toString() ??
             job['type']?.toString() ??
-            job['vehicleType']?.toString() ??
             "Standard",
-        amount:
-            job['price']?.toString() ?? job['amount']?.toString() ?? "\$150",
-        paymentType: job['payment']?.toString() ?? "Cash",
+        amount: formattedAmount,
+        paymentType: job['paymentType']?.toString() ??
+            job['payment']?.toString() ??
+            "Credit Card",
       );
     }
     try {
+      final rawBookingNo = (job.bookingNo ?? job.id ?? "").toString();
+      final bool isAsap = (job.asap == true);
+      final rawAmount = job.paymentAmount ?? job.price ?? job.amount;
+      final formattedAmount = rawAmount != null
+          ? (num.tryParse(rawAmount.toString()) != null
+              ? "\$${num.parse(rawAmount.toString()).toStringAsFixed(2)}"
+              : "\$$rawAmount")
+          : "\$0.00";
+
       return _JobSubmittedData(
-        bookingNo: (job.id ?? job.bookingNo ?? "1094").toString(),
-        pickup: (job.pickupLocation ?? "Pickup Location").toString(),
-        dropoff: (job.dropoffLocation ?? "Dropoff Location").toString(),
-        dateTime: (job.time ?? "ASAP").toString(),
-        vehicleType: (job.vehicleType ?? "Standard").toString(),
-        amount: "\$${job.paymentAmount ?? job.price ?? 150}",
-        paymentType: (job.paymentType ?? "Cash").toString(),
+        bookingNo: rawBookingNo,
+        pickup: (job.pickupLocation ?? job.pickup ?? "Pickup Location").toString(),
+        dropoff: (job.dropoffLocation ?? job.dropoff ?? "Dropoff Location").toString(),
+        dateTime: isAsap
+            ? "ASAP"
+            : _formatDateTime(
+                job.date ?? job.pickupDate ?? job.pickupDateTime,
+                job.time ?? job.pickupTime,
+              ),
+        vehicleType: (job.vehicleType ?? job.carType ?? job.type ?? "Standard").toString(),
+        amount: formattedAmount,
+        paymentType: (job.paymentType ?? job.payment ?? "Credit Card").toString(),
       );
     } catch (_) {
       return _JobSubmittedData(
-        bookingNo: "1094",
+        bookingNo: "",
         pickup: "Pickup Location",
         dropoff: "Dropoff Location",
         dateTime: "ASAP",
         vehicleType: "Standard",
-        amount: "\$150",
-        paymentType: "Cash",
+        amount: "\$0.00",
+        paymentType: "Credit Card",
       );
     }
   }

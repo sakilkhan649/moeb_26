@@ -3,11 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
-import 'package:moeb_26/data/models/chat_model.dart';
+import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/data/models/my_jobs_model.dart';
+import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/modules/my_jobs/widgets/MyJobCard.dart';
 import 'package:moeb_26/modules/my_jobs/widgets/MyJobDetailSheet.dart';
-import 'package:moeb_26/modules/my_job_progress_details/views/my_job_progress_details_view.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/my_jobs_controller.dart';
 
@@ -272,6 +272,9 @@ class _MyJobsViewState extends State<MyJobsView> {
 
     final double? driverRating =
         job.assignedTo?.averageRating ?? job.applicant?.driver?.averageRating;
+    final String? driverId = job.assignedTo?.id ?? job.applicant?.driver?.id;
+    final String? driverImage =
+        job.assignedTo?.profilePicture ?? job.applicant?.driver?.profilePicture;
 
     final bool hasApplicant = (job.applicant != null && job.applicant?.driver != null) ||
         ((job.applicantCount ?? 0) > 0);
@@ -285,6 +288,8 @@ class _MyJobsViewState extends State<MyJobsView> {
         dropoffLocation: job.dropoffLocation ?? '',
         passengerName: job.companyName ?? 'Fleet Operator',
         driverName: driverName,
+        driverId: driverId,
+        driverImage: driverImage,
         driverRating: driverRating,
         vehicleInfo: job.vehicleType ?? 'Vehicle',
         vehicleType: job.vehicleType ?? 'Sedan',
@@ -305,17 +310,42 @@ class _MyJobsViewState extends State<MyJobsView> {
                 controller.rejectApplicant(jobId: job.id!);
               }
             : null,
-        onChatPressed: () {
-          final chat = ChatPreview(
-            id: "job_chat_${job.id}",
-            participants: [ChatParticipant(id: job.assignedTo?.id ?? "driver", name: driverName)],
-            lastMessage: "Hello, regarding Job #${job.id}",
-            lastMessageAt: DateTime.now().toIso8601String(),
-            createdBy: "creator",
-            createdAt: DateTime.now().toIso8601String(),
-            updatedAt: DateTime.now().toIso8601String(),
+        onChatPressed: () async {
+          final String? participantId = driverId;
+          if (participantId != null &&
+              participantId.isNotEmpty &&
+              job.id != null &&
+              job.id!.isNotEmpty) {
+            try {
+              final socketRepo = Get.isRegistered<SocketRepository>()
+                  ? Get.find<SocketRepository>()
+                  : Get.put(SocketRepository(apiClient: Get.find<ApiClient>()));
+
+              final chat = await socketRepo.createChat(participantId, job.id!);
+              if (chat != null) {
+                Get.toNamed(Routes.chatDetailView, arguments: chat);
+                return;
+              }
+            } catch (e) {
+              debugPrint("Error opening chat: $e");
+              Get.snackbar(
+                "Error",
+                "Could not create chat session. Please try again.",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: const Color(0xFFEF4444),
+                colorText: Colors.white,
+              );
+              return;
+            }
+          }
+
+          Get.snackbar(
+            "Notice",
+            "Chauffeur is not available to chat right now.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color(0xFF1E1E1E),
+            colorText: Colors.white,
           );
-          Get.toNamed(Routes.chatDetailView, arguments: chat);
         },
         onActionButtonPressed: () {
           if (upperStatus == 'ASSIGNED' || upperStatus == 'IN PROGRESS') {

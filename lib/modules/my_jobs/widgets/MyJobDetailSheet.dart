@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
+import 'package:moeb_26/modules/preferred_drivers/controllers/preferred_drivers_controller.dart';
 
 class MyJobDetailSheet extends StatelessWidget {
   final String title;
@@ -17,6 +18,8 @@ class MyJobDetailSheet extends StatelessWidget {
   final String? dropoffNotes;
   final String passengerName;
   final String driverName;
+  final String? driverId;
+  final String? driverImage;
   final double? driverRating;
   final String vehicleInfo;
   final String vehicleType;
@@ -35,6 +38,7 @@ class MyJobDetailSheet extends StatelessWidget {
   final VoidCallback? onReviewPressed;
   final VoidCallback? onEditPressed;
   final VoidCallback? onDeletePressed;
+  final VoidCallback? onDriverPressed;
 
   const MyJobDetailSheet({
     super.key,
@@ -47,6 +51,8 @@ class MyJobDetailSheet extends StatelessWidget {
     this.dropoffNotes,
     required this.passengerName,
     required this.driverName,
+    this.driverId,
+    this.driverImage,
     this.driverRating,
     required this.vehicleInfo,
     required this.vehicleType,
@@ -65,6 +71,7 @@ class MyJobDetailSheet extends StatelessWidget {
     this.onReviewPressed,
     this.onEditPressed,
     this.onDeletePressed,
+    this.onDriverPressed,
   });
 
   @override
@@ -106,18 +113,27 @@ class MyJobDetailSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: GoogleFonts.outfit(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.outfit(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+                SizedBox(width: 8.w),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     if (canEdit) ...[
                       IconButton(
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.all(6.r),
+                        constraints: const BoxConstraints(),
                         onPressed: onEditPressed,
                         icon: SvgPicture.asset(
                           AppIcons.edit_icon_myjob,
@@ -129,9 +145,13 @@ class MyJobDetailSheet extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(width: 4.w),
                     ],
                     if (canDelete) ...[
                       IconButton(
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.all(6.r),
+                        constraints: const BoxConstraints(),
                         onPressed: onDeletePressed,
                         icon: SvgPicture.asset(
                           AppIcons.deletemyjob_icon,
@@ -143,8 +163,12 @@ class MyJobDetailSheet extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(width: 4.w),
                     ],
                     IconButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.all(6.r),
+                      constraints: const BoxConstraints(),
                       onPressed: () => Get.back(),
                       icon: Icon(
                         Icons.close_rounded,
@@ -306,77 +330,142 @@ class MyJobDetailSheet extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1C1C1F),
-                              borderRadius: BorderRadius.circular(8.r),
-                              border: Border.all(
-                                color: const Color(0xFF2A2A32),
-                                width: 1,
-                              ),
-                            ),
-                            child: Icon(
-                              status == 'PENDING'
-                                  ? Icons.person_outline
-                                  : Icons.directions_car_outlined,
-                              color: const Color(0xFFFEDB9B),
-                              size: 20.sp,
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            if (onDriverPressed != null) {
+                              onDriverPressed!();
+                            } else if (driverId != null &&
+                                driverId!.isNotEmpty) {
+                              final preferredController =
+                                  Get.isRegistered<PreferredDriversController>()
+                                      ? Get.find<PreferredDriversController>()
+                                      : Get.put(PreferredDriversController());
+
+                              preferredController.openChauffeurProfile(
+                                userId: driverId!,
+                                name: driverName,
+                                imageUrl: driverImage ?? '',
+                              );
+                            }
+                          },
+                          child: Row(
                             children: [
-                              Text(
-                                "CHAUFFEUR",
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFF94A3B8),
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.0,
+                              Container(
+                                width: 40.r,
+                                height: 40.r,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: const Color(0xFF1C1C1F),
+                                  border: Border.all(
+                                    color: const Color(0xFF2A2A32),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: (driverImage != null &&
+                                          driverImage!.trim().isNotEmpty)
+                                      ? (driverImage!.startsWith('http')
+                                          ? Image.network(
+                                              driverImage!,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Icon(
+                                                Icons.person_outline,
+                                                color: const Color(0xFFFEDB9B),
+                                                size: 20.sp,
+                                              ),
+                                            )
+                                          : Image.asset(
+                                              driverImage!,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Icon(
+                                                Icons.person_outline,
+                                                color: const Color(0xFFFEDB9B),
+                                                size: 20.sp,
+                                              ),
+                                            ))
+                                      : Icon(
+                                          status == 'PENDING'
+                                              ? Icons.person_outline
+                                              : Icons.directions_car_outlined,
+                                          color: const Color(0xFFFEDB9B),
+                                          size: 20.sp,
+                                        ),
                                 ),
                               ),
-                              SizedBox(height: 2.h),
-                              Text(
-                                driverName.isNotEmpty
-                                    ? driverName
-                                    : "Not Assigned",
-                                style: GoogleFonts.inter(
-                                  color: Colors.white,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              if (driverRating != null &&
-                                  driverRating! > 0) ...[
-                                SizedBox(height: 2.h),
-                                Row(
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.star,
-                                      color: const Color(0xFFFEDB9B),
-                                      size: 12.sp,
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "CHAUFFEUR",
+                                          style: GoogleFonts.inter(
+                                            color: const Color(0xFF94A3B8),
+                                            fontSize: 9.sp,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.0,
+                                          ),
+                                        ),
+                                        if ((driverId != null &&
+                                                driverId!.isNotEmpty) ||
+                                            onDriverPressed != null) ...[
+                                          SizedBox(width: 4.w),
+                                          Icon(
+                                            Icons.arrow_forward_ios_rounded,
+                                            color: const Color(0xFF94A3B8),
+                                            size: 8.sp,
+                                          ),
+                                        ],
+                                      ],
                                     ),
-                                    SizedBox(width: 4.w),
+                                    SizedBox(height: 2.h),
                                     Text(
-                                      driverRating!.toStringAsFixed(1),
+                                      driverName.isNotEmpty
+                                          ? driverName
+                                          : "Not Assigned",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                        color: Colors.white70,
-                                        fontSize: 11.sp,
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
+                                    if (driverRating != null &&
+                                        driverRating! > 0) ...[
+                                      SizedBox(height: 2.h),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.star,
+                                            color: const Color(0xFFFEDB9B),
+                                            size: 12.sp,
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            driverRating!.toStringAsFixed(1),
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white70,
+                                              fontSize: 11.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ],
                                 ),
-                              ],
+                              ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                       if (onChatPressed != null &&
                           (currentStatus != 'PENDING' || hasApplicant)) ...[
+                        SizedBox(width: 8.w),
                         InkWell(
                           onTap: () {
                             Get.back();
@@ -439,14 +528,19 @@ class MyJobDetailSheet extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text(
-                        (paymentType != null && paymentType!.isNotEmpty)
-                            ? paymentType!
-                            : "Credit Card on File",
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.bold,
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Text(
+                          (paymentType != null && paymentType!.isNotEmpty)
+                              ? paymentType!
+                              : "Credit Card on File",
+                          textAlign: TextAlign.end,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -463,14 +557,19 @@ class MyJobDetailSheet extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text(
-                        (flightNumber != null && flightNumber!.isNotEmpty)
-                            ? flightNumber!
-                            : "N/A",
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.bold,
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Text(
+                          (flightNumber != null && flightNumber!.isNotEmpty)
+                              ? flightNumber!
+                              : "N/A",
+                          textAlign: TextAlign.end,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
