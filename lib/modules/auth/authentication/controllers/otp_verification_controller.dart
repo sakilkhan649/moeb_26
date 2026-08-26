@@ -132,13 +132,19 @@ class OtpController extends GetxController {
     if (!canResend.value) return;
     try {
       isLoading.value = true;
-      final response = await _authService.resendOtp(email);
-      final msg = response.data?['message'] ?? 'OTP Resent Successfully';
+      final response = isRegister
+          ? await _authService.resendOtp(email)
+          : await _authService.forgotPassword(email);
+
+      final msg = response.data?['message'] ??
+          (isRegister
+              ? 'OTP Resent Successfully'
+              : 'A new verification code has been sent to your email.');
       Helpers.showCustomSnackBar(msg, isError: false);
       pinController.clear();
       startTimer();
     } catch (e) {
-      Helpers.showCustomSnackBar(e.toString());
+      Helpers.showCustomSnackBar(e.toString(), isError: true);
     } finally {
       isLoading.value = false;
     }
