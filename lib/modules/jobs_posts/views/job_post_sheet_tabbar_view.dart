@@ -114,7 +114,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
                     ),
                     const Icon(
                       Icons.keyboard_arrow_down,
-                      color: Color(0xFFD5C4AB),
+                      color: AppColors.primaryColor,
                     ),
                   ],
                 ),
@@ -130,12 +130,15 @@ class JobPostSheetTabBarView extends StatelessWidget {
     BuildContext context,
     PostJobController controller,
   ) {
+    final activeTab =
+        (controller.chauffeurSelectionType.value == 'favorites' ? 1 : 0).obs;
+
     Get.bottomSheet(
       Container(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.85,
         ),
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: const Color(0xFF0A0A0A),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
@@ -158,523 +161,114 @@ class JobPostSheetTabBarView extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 12.h),
 
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            // Top Navigation Bar with Close (Cross) Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Chauffeur Selection',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  icon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 22.sp,
+                  ),
+                  onPressed: () => Get.back(),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+
+            // Tab Bar Switcher for "Service Area" and "Favorite Chauffeur"
+            Obx(
+              () => Container(
+                padding: EdgeInsets.all(4.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1F1C1C),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: const Color(0xFF364153)),
+                ),
+                child: Row(
                   children: [
-                    // Section 1: Service Area
-                    Text(
-                      'Service Area',
-                      style: GoogleFonts.inter(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFFD5C4AB),
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-
-                    // Auto-assign Chauffeur Card
-                    Obx(
-                      () => GestureDetector(
-                        onTap: () => controller.selectGlobal(),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => activeTab.value = 0,
                         child: Container(
-                          padding: EdgeInsets.all(16.w),
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1E1E1E),
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                              color:
-                                  controller.chauffeurSelectionType.value ==
-                                      'global'
-                                  ? const Color(0xFFFF9800)
-                                  : const Color(0xFF2C2C2C),
-                              width: 1,
-                            ),
+                            color: activeTab.value == 0
+                                ? AppColors.primaryColor
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                controller.chauffeurSelectionType.value ==
-                                        'global'
-                                    ? Icons.check_circle
-                                    : Icons.radio_button_unchecked,
-                                color:
-                                    controller.chauffeurSelectionType.value ==
-                                        'global'
-                                    ? const Color(0xFFFF9800)
-                                    : Colors.grey.shade600,
-                                size: 22.sp,
-                              ),
-                              SizedBox(width: 14.w),
-                              Container(
-                                width: 44.w,
-                                height: 44.w,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF27272A),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.public,
-                                  color: Color(0xFFD5C4AB),
-                                ),
-                              ),
-                              SizedBox(width: 14.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Auto-assign Chauffeur',
-                                      style: GoogleFonts.inter(
-                                        color: Colors.white,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4.h),
-                                    Text(
-                                      'Closest available chauffeur',
-                                      style: GoogleFonts.inter(
-                                        color: Colors.grey.shade500,
-                                        fontSize: 13.sp,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // State & City Hierarchy List (Multi-Select)
-                    Obx(() {
-                      if (controller.chauffeurSelectionType.value != 'global') {
-                        return const SizedBox.shrink();
-                      }
-
-                      if (controller.isServiceAreasLoading.value &&
-                          controller.serviceAreas.isEmpty) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.h),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primaryColor,
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (controller.serviceAreas.isEmpty) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          child: Text(
-                            'No service areas found.',
-                            style: GoogleFonts.inter(
-                              color: Colors.grey.shade500,
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                        );
-                      }
-
-                      return Padding(
-                        padding: EdgeInsets.only(top: 16.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Choose Service Area Cities (Multi-select)',
+                          child: Center(
+                            child: Text(
+                              'Service Area',
                               style: GoogleFonts.inter(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.white70,
+                                color: activeTab.value == 0
+                                    ? Colors.black
+                                    : Colors.grey.shade400,
                               ),
                             ),
-                            SizedBox(height: 12.h),
-                            ...controller.serviceAreas.map((areaItem) {
-                              final areaName = areaItem.areaName;
-                              final isActive = areaItem.status == 'ACTIVE';
-                              final cities = areaItem.cities.isNotEmpty
-                                  ? areaItem.cities
-                                  : (areaItem.city.isNotEmpty
-                                      ? [areaItem.city]
-                                      : [areaName]);
-
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: 16.h),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // State / Area Header
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 8.h),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            areaName,
-                                            style: GoogleFonts.inter(
-                                              color: const Color(0xFFD5C4AB),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14.sp,
-                                            ),
-                                          ),
-                                          SizedBox(width: 8.w),
-                                          Icon(
-                                            isActive
-                                                ? Icons.check_circle_outline
-                                                : Icons.lock_outline,
-                                            color: isActive
-                                                ? const Color(0xFFFF9800)
-                                                : Colors.grey[600],
-                                            size: 16.sp,
-                                          ),
-                                          if (!isActive) ...[
-                                            SizedBox(width: 6.w),
-                                            Text(
-                                              "INACTIVE",
-                                              style: GoogleFonts.inter(
-                                                color: Colors.grey[600],
-                                                fontSize: 10.sp,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-                                    // Wrap of custom Filter Chips
-                                    Wrap(
-                                      spacing: 8.w,
-                                      runSpacing: 8.h,
-                                      children: cities.map((cityFull) {
-                                        final isSelected = controller
-                                            .selectedServiceAreas
-                                            .contains(cityFull);
-                                        final isLocked = !isActive;
-                                        return GestureDetector(
-                                          onTap: () {
-                                            if (isLocked) {
-                                              Helpers.showCustomSnackBar(
-                                                "The $areaName service area is currently inactive.",
-                                                isError: true,
-                                              );
-                                            } else {
-                                              controller
-                                                  .toggleServiceAreaSelection(
-                                                    cityFull,
-                                                  );
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 12.w,
-                                              vertical: 8.h,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: isSelected
-                                                  ? const Color(
-                                                      0xFFFF9800,
-                                                    ).withValues(alpha: 0.15)
-                                                  : isLocked
-                                                  ? const Color(0xFF161618)
-                                                  : const Color(0xFF1E1E1E),
-                                              borderRadius:
-                                                  BorderRadius.circular(20.r),
-                                              border: Border.all(
-                                                color: isSelected
-                                                    ? const Color(0xFFFF9800)
-                                                    : isLocked
-                                                    ? const Color(0xFF222224)
-                                                    : const Color(0xFF2C2C2C),
-                                                width: 1,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              cityFull,
-                                              style: GoogleFonts.inter(
-                                                color: isSelected
-                                                    ? const Color(0xFFFF9800)
-                                                    : isLocked
-                                                    ? Colors.grey[700]
-                                                    : Colors.white70,
-                                                fontSize: 12.sp,
-                                                fontWeight: isSelected
-                                                    ? FontWeight.bold
-                                                    : FontWeight.normal,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ],
+                          ),
                         ),
-                      );
-                    }),
-
-                    SizedBox(height: 24.h),
-
-                    // Section 2: Favorite Chauffeurs
-                    Text(
-                      'Favorite Chauffeurs',
-                      style: GoogleFonts.inter(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFFD5C4AB),
                       ),
                     ),
-                    SizedBox(height: 8.h),
-
-                    // Chauffeur list items from API
-                    Obx(() {
-                      if (controller.isFavoriteDriversLoading.value &&
-                          controller.favoriteDrivers.isEmpty) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                    SizedBox(width: 4.w),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => activeTab.value = 1,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          decoration: BoxDecoration(
+                            color: activeTab.value == 1
+                                ? AppColors.primaryColor
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
                           child: Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primaryColor,
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (controller.favoriteDrivers.isEmpty) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          child: Text(
-                            'No chauffeurs found.',
-                            style: GoogleFonts.inter(
-                              color: Colors.grey.shade500,
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                        );
-                      }
-
-                      return Column(
-                        children: controller.favoriteDrivers.map((driver) {
-                          final isSelected = controller
-                                  .chauffeurSelectionType.value ==
-                              'favorites' &&
-                              controller.selectedDrivers.contains(driver.id);
-
-                          final subtitleText = driver.company.isNotEmpty
-                              ? driver.company
-                              : (driver.serviceArea.isNotEmpty
-                                  ? driver.serviceArea
-                                  : 'Chauffeur');
-
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: GestureDetector(
-                              onTap: () =>
-                                  controller.toggleDriverSelection(driver.id),
-                              child: Container(
-                                padding: EdgeInsets.all(16.w),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF1E1E1E),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? const Color(0xFFFF9800)
-                                        : const Color(0xFF2C2C2C),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      isSelected
-                                          ? Icons.check_circle
-                                          : Icons.radio_button_unchecked,
-                                      color: isSelected
-                                          ? const Color(0xFFFF9800)
-                                          : Colors.grey.shade600,
-                                      size: 22.sp,
-                                    ),
-                                    SizedBox(width: 14.w),
-                                    GestureDetector(
-                                      behavior: HitTestBehavior.opaque,
-                                      onTap: () {
-                                        final preferredController =
-                                            Get.isRegistered<PreferredDriversController>()
-                                                ? Get.find<PreferredDriversController>()
-                                                : Get.put(PreferredDriversController());
-
-                                        preferredController.openChauffeurProfile(
-                                          userId: driver.id,
-                                          name: driver.name,
-                                          imageUrl: driver.profilePicture,
-                                        );
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: isSelected
-                                                ? const Color(0xFFFF9800)
-                                                : const Color(0xFF2C2C2C),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: 22.r,
-                                          backgroundImage:
-                                              driver.profilePicture.isNotEmpty
-                                                  ? NetworkImage(
-                                                      driver.profilePicture,
-                                                    )
-                                                  : null,
-                                          backgroundColor:
-                                              const Color(0xFF27272A),
-                                          child: driver.profilePicture.isEmpty
-                                              ? const Icon(
-                                                  Icons.person,
-                                                  color: Colors.white54,
-                                                )
-                                              : null,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 14.w),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  driver.name,
-                                                  style: GoogleFonts.inter(
-                                                    color: Colors.white,
-                                                    fontSize: 15.sp,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              if (driver.badges.isNotEmpty) ...[
-                                                SizedBox(width: 8.w),
-                                                Container(
-                                                  padding:
-                                                      EdgeInsets.symmetric(
-                                                    horizontal: 6.w,
-                                                    vertical: 2.h,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        AppColors.primaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                      4.r,
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    driver.badges.first
-                                                        .toUpperCase(),
-                                                    style: GoogleFonts.inter(
-                                                      color: Colors.black,
-                                                      fontSize: 9.sp,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ],
-                                          ),
-                                          SizedBox(height: 4.h),
-                                          Row(
-                                            children: [
-                                              Flexible(
-                                                child: Text(
-                                                  '$subtitleText • ',
-                                                  style: GoogleFonts.inter(
-                                                    color: Colors.grey.shade500,
-                                                    fontSize: 13.sp,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: AppColors.primaryColor,
-                                                size: 13.sp,
-                                              ),
-                                              SizedBox(width: 2.w),
-                                              Text(
-                                                driver.averageRating > 0
-                                                    ? driver.averageRating
-                                                        .toString()
-                                                    : '0.0',
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.grey.shade500,
-                                                  fontSize: 13.sp,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    GestureDetector(
-                                      behavior: HitTestBehavior.opaque,
-                                      onTap: () {
-                                        final preferredController =
-                                            Get.isRegistered<PreferredDriversController>()
-                                                ? Get.find<PreferredDriversController>()
-                                                : Get.put(PreferredDriversController());
-
-                                        preferredController.openChauffeurProfile(
-                                          userId: driver.id,
-                                          name: driver.name,
-                                          imageUrl: driver.profilePicture,
-                                        );
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(8.r),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF27272A),
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: const Color(0xFF3F3F46),
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.arrow_forward_ios_rounded,
-                                          size: 13.sp,
-                                          color: AppColors.primaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            child: Text(
+                              'Favorite Chauffeur',
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                                color: activeTab.value == 1
+                                    ? Colors.black
+                                    : Colors.grey.shade400,
                               ),
                             ),
-                          );
-                        }).toList(),
-                      );
-                    }),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),),
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // Tab Content Body
+            Expanded(
+              child: SingleChildScrollView(
+                child: Obx(
+                  () => activeTab.value == 0
+                      ? _buildServiceAreaTab(context, controller)
+                      : _buildFavoriteChauffeurTab(context, controller),
+                ),
+              ),
+            ),
 
             SizedBox(height: 16.h),
 
@@ -689,6 +283,503 @@ class JobPostSheetTabBarView extends StatelessWidget {
       ),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+    );
+  }
+
+  static Widget _buildServiceAreaTab(
+    BuildContext context,
+    PostJobController controller,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Service Area Auto-Assign',
+          style: GoogleFonts.inter(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        SizedBox(height: 8.h),
+
+        // Auto-assign Chauffeur Card
+        Obx(
+          () => GestureDetector(
+            onTap: () => controller.selectGlobal(),
+            child: Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E1E1E),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: controller.chauffeurSelectionType.value == 'global'
+                      ? AppColors.primaryColor
+                      : const Color(0xFF2C2C2C),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    controller.chauffeurSelectionType.value == 'global'
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
+                    color: controller.chauffeurSelectionType.value == 'global'
+                        ? AppColors.primaryColor
+                        : Colors.grey.shade600,
+                    size: 22.sp,
+                  ),
+                  SizedBox(width: 14.w),
+                  Container(
+                    width: 44.w,
+                    height: 44.w,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF27272A),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.public,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  SizedBox(width: 14.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Auto-assign Chauffeur',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          'Closest available chauffeur',
+                          style: GoogleFonts.inter(
+                            color: Colors.grey.shade500,
+                            fontSize: 13.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // State & City Hierarchy List (Multi-Select)
+        Obx(() {
+          if (controller.isServiceAreasLoading.value &&
+              controller.serviceAreas.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            );
+          }
+
+          if (controller.serviceAreas.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              child: Text(
+                'No service areas found.',
+                style: GoogleFonts.inter(
+                  color: Colors.grey.shade500,
+                  fontSize: 13.sp,
+                ),
+              ),
+            );
+          }
+
+          return Padding(
+            padding: EdgeInsets.only(top: 16.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Choose Service Area Cities (Multi-select)',
+                  style: GoogleFonts.inter(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white70,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                ...controller.serviceAreas.map((areaItem) {
+                  final areaName = areaItem.areaName;
+                  final isActive = areaItem.status == 'ACTIVE';
+                  final cities = areaItem.cities.isNotEmpty
+                      ? areaItem.cities
+                      : (areaItem.city.isNotEmpty
+                          ? [areaItem.city]
+                          : [areaName]);
+
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 16.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // State / Area Header
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: Row(
+                            children: [
+                              Text(
+                                areaName,
+                                style: GoogleFonts.inter(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Icon(
+                                isActive
+                                    ? Icons.check_circle_outline
+                                    : Icons.lock_outline,
+                                color: isActive
+                                    ? AppColors.primaryColor
+                                    : Colors.grey[600],
+                                size: 16.sp,
+                              ),
+                              if (!isActive) ...[
+                                SizedBox(width: 6.w),
+                                Text(
+                                  "INACTIVE",
+                                  style: GoogleFonts.inter(
+                                    color: Colors.grey[600],
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        // Wrap of custom Filter Chips
+                        Wrap(
+                          spacing: 8.w,
+                          runSpacing: 8.h,
+                          children: cities.map((cityFull) {
+                            final isSelected = controller
+                                .selectedServiceAreas
+                                .contains(cityFull);
+                            final isLocked = !isActive;
+                            return GestureDetector(
+                              onTap: () {
+                                if (isLocked) {
+                                  Helpers.showCustomSnackBar(
+                                    "The $areaName service area is currently inactive.",
+                                    isError: true,
+                                  );
+                                } else {
+                                  controller.toggleServiceAreaSelection(
+                                    cityFull,
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 8.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColors.primaryColor
+                                          .withValues(alpha: 0.15)
+                                      : isLocked
+                                      ? const Color(0xFF161618)
+                                      : const Color(0xFF1E1E1E),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColors.primaryColor
+                                        : isLocked
+                                        ? const Color(0xFF222224)
+                                        : const Color(0xFF2C2C2C),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  cityFull,
+                                  style: GoogleFonts.inter(
+                                    color: isSelected
+                                        ? AppColors.primaryColor
+                                        : isLocked
+                                        ? Colors.grey[700]
+                                        : Colors.white70,
+                                    fontSize: 12.sp,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  static Widget _buildFavoriteChauffeurTab(
+    BuildContext context,
+    PostJobController controller,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Favorite Chauffeurs',
+          style: GoogleFonts.inter(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        SizedBox(height: 8.h),
+
+        // Chauffeur list items from API
+        Obx(() {
+          if (controller.isFavoriteDriversLoading.value &&
+              controller.favoriteDrivers.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            );
+          }
+
+          if (controller.favoriteDrivers.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              child: Text(
+                'No favorite chauffeurs found.',
+                style: GoogleFonts.inter(
+                  color: Colors.grey.shade500,
+                  fontSize: 13.sp,
+                ),
+              ),
+            );
+          }
+
+          return Column(
+            children: controller.favoriteDrivers.map((driver) {
+              final isSelected =
+                  controller.chauffeurSelectionType.value == 'favorites' &&
+                      controller.selectedDrivers.contains(driver.id);
+
+              final subtitleText = driver.company.isNotEmpty
+                  ? driver.company
+                  : (driver.serviceArea.isNotEmpty
+                      ? driver.serviceArea
+                      : 'Chauffeur');
+
+              return Padding(
+                padding: EdgeInsets.only(bottom: 12.h),
+                child: GestureDetector(
+                  onTap: () => controller.toggleDriverSelection(driver.id),
+                  child: Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E1E1E),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primaryColor
+                            : const Color(0xFF2C2C2C),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          isSelected
+                              ? Icons.check_circle
+                              : Icons.radio_button_unchecked,
+                          color: isSelected
+                              ? AppColors.primaryColor
+                              : Colors.grey.shade600,
+                          size: 22.sp,
+                        ),
+                        SizedBox(width: 14.w),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            final preferredController =
+                                Get.isRegistered<PreferredDriversController>()
+                                    ? Get.find<PreferredDriversController>()
+                                    : Get.put(PreferredDriversController());
+
+                            preferredController.openChauffeurProfile(
+                              userId: driver.id,
+                              name: driver.name,
+                              imageUrl: driver.profilePicture,
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primaryColor
+                                    : const Color(0xFF2C2C2C),
+                                width: 1,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 22.r,
+                              backgroundImage: driver.profilePicture.isNotEmpty
+                                  ? NetworkImage(driver.profilePicture)
+                                  : null,
+                              backgroundColor: const Color(0xFF27272A),
+                              child: driver.profilePicture.isEmpty
+                                  ? const Icon(
+                                      Icons.person,
+                                      color: Colors.white54,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 14.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      driver.name,
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  if (driver.badges.isNotEmpty) ...[
+                                    SizedBox(width: 8.w),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 6.w,
+                                        vertical: 2.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryColor,
+                                        borderRadius: BorderRadius.circular(
+                                          4.r,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        driver.badges.first.toUpperCase(),
+                                        style: GoogleFonts.inter(
+                                          color: Colors.black,
+                                          fontSize: 9.sp,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              SizedBox(height: 4.h),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '$subtitleText • ',
+                                      style: GoogleFonts.inter(
+                                        color: Colors.grey.shade500,
+                                        fontSize: 13.sp,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.star,
+                                    color: AppColors.primaryColor,
+                                    size: 13.sp,
+                                  ),
+                                  SizedBox(width: 2.w),
+                                  Text(
+                                    driver.averageRating > 0
+                                        ? driver.averageRating.toString()
+                                        : '0.0',
+                                    style: GoogleFonts.inter(
+                                      color: Colors.grey.shade500,
+                                      fontSize: 13.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            final preferredController =
+                                Get.isRegistered<PreferredDriversController>()
+                                    ? Get.find<PreferredDriversController>()
+                                    : Get.put(PreferredDriversController());
+
+                            preferredController.openChauffeurProfile(
+                              userId: driver.id,
+                              name: driver.name,
+                              imageUrl: driver.profilePicture,
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF27272A),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFF3F3F46),
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 13.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        }),
+      ],
     );
   }
 
