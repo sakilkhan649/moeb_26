@@ -46,22 +46,8 @@ class SignupController extends GetxController {
   var selectedRole = ''.obs;
   var selectedArea = ''.obs;
   var selectedAreaId = ''.obs;
-  var selectedLanguages = <String>['English'].obs;
 
   final roles = ['Company manager', 'Owner operator', 'Chauffeur'];
-  final List<String> availableLanguages = [
-    'English',
-    'Spanish',
-    'Portuguese',
-    'Arabic',
-    'French',
-    'Bengali',
-    'German',
-    'Russian',
-    'Mandarin',
-    'Hindi',
-    'Urdu',
-  ];
 
   // Service Area data
   List<String> get cities => _serviceAreaController.serviceAreas
@@ -329,7 +315,7 @@ class SignupController extends GetxController {
         serviceAreaId: selectedAreaId.value,
         companyName: companyNameController.text,
         companyRole: roleToSubmit,
-        languages: selectedLanguages.toList(),
+        languages: ['English'],
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

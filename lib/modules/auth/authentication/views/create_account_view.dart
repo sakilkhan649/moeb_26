@@ -9,7 +9,6 @@ import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
-import 'package:moeb_26/core/widgets/CustomTextGary.dart';
 import 'package:moeb_26/core/widgets/CustomTextField.dart';
 import 'package:moeb_26/core/widgets/Custom_dropdown.dart';
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
@@ -24,7 +23,6 @@ class CreateAccountView extends StatefulWidget {
 class _CreateAccountViewState extends State<CreateAccountView> {
   final RxString areaError = ''.obs;
   final RxString roleError = ''.obs;
-  final RxString languageError = ''.obs;
 
   // Using the unified SignupController
   SignupController get controller => Get.find<SignupController>();
@@ -200,12 +198,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                     ),
                   ),
 
-                  // ========== Languages Speaking ==========
-                  _buildInputField(
-                    label: "Languages Speaking",
-                    isRequired: true,
-                    child: _buildLanguageMultiSelect(context),
-                  ),
+
 
                   // ========== Password ==========
                   _buildInputField(
@@ -326,191 +319,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
     );
   }
 
-  Widget _buildLanguageMultiSelect(BuildContext context) {
-    return Obx(() {
-      final selected = controller.selectedLanguages;
-      final displayText = selected.isEmpty
-          ? "Select languages"
-          : selected.join(", ");
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InkWell(
-            onTap: () => _showLanguageSelectionSheet(context),
-            borderRadius: BorderRadius.circular(16.r),
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-              decoration: BoxDecoration(
-                color: const Color(0xFF141416),
-                borderRadius: BorderRadius.circular(16.r),
-                border: Border.all(color: const Color(0xFF2C2C2C)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      displayText,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        color: selected.isEmpty ? AppColors.gray100 : Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: const Color(0xFFD5C4AB),
-                    size: 22.sp,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (languageError.value.isNotEmpty)
-            Padding(
-              padding: EdgeInsets.only(left: 12.w, top: 6.h),
-              child: Text(
-                languageError.value,
-                style: TextStyle(color: Colors.red, fontSize: 12.sp),
-              ),
-            ),
-        ],
-      );
-    });
-  }
-
-  void _showLanguageSelectionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF141416),
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-      ),
-      builder: (context) {
-        return Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.65,
-          ),
-          padding: EdgeInsets.only(
-            left: 20.w,
-            right: 20.w,
-            top: 20.h,
-            bottom: 20.h,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Languages Spoken",
-                    style: GoogleFonts.inter(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white70),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                "Select all languages you speak fluently.",
-                style: GoogleFonts.inter(
-                  fontSize: 13.sp,
-                  color: AppColors.gray100,
-                ),
-              ),
-              SizedBox(height: 16.h),
-              Expanded(
-                child: Obx(
-                  () {
-                    final selectedLangs = controller.selectedLanguages.toList();
-                    return ListView.separated(
-                      itemCount: controller.availableLanguages.length,
-                      separatorBuilder: (_, __) => Divider(
-                        color: const Color(0xFF2C2C2C),
-                        height: 1.h,
-                      ),
-                      itemBuilder: (context, index) {
-                        final lang = controller.availableLanguages[index];
-                        final isSelected = selectedLangs.contains(lang);
-                        final isEnglish = lang == 'English';
-
-                      return InkWell(
-                        onTap: () {
-                          if (isEnglish) return;
-                          if (isSelected) {
-                            controller.selectedLanguages.remove(lang);
-                          } else {
-                            controller.selectedLanguages.add(lang);
-                          }
-                          if (controller.selectedLanguages.isNotEmpty) {
-                            languageError.value = '';
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                          child: Row(
-                            children: [
-                              Text(
-                                lang,
-                                style: GoogleFonts.inter(
-                                  fontSize: 15.sp,
-                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              if (isEnglish) ...[
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "(Default)",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 12.sp,
-                                    color: AppColors.gray100,
-                                  ),
-                                ),
-                              ],
-                              const Spacer(),
-                              Icon(
-                                isSelected
-                                    ? Icons.check_box_rounded
-                                    : Icons.check_box_outline_blank_rounded,
-                                color: isSelected
-                                    ? AppColors.primaryColor
-                                    : const Color(0xFF444444),
-                                size: 22.sp,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),),
-              SizedBox(height: 16.h),
-              CustomButton(
-                text: "Done",
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   // --- Logic ---
 
@@ -533,13 +342,6 @@ class _CreateAccountViewState extends State<CreateAccountView> {
       isCustomValid = false;
     } else {
       roleError.value = '';
-    }
-
-    if (controller.selectedLanguages.isEmpty) {
-      languageError.value = 'Select at least one language';
-      isCustomValid = false;
-    } else {
-      languageError.value = '';
     }
 
     if (isFormValid && isCustomValid) {

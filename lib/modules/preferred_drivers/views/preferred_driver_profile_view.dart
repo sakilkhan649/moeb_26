@@ -535,14 +535,7 @@ class _PreferredDriverProfileViewState
                 ? chauffeur.serviceArea
                 : 'N/A',
           ),
-          _buildDivider(),
-          _buildCompactInfoRow(
-            icon: Icons.translate_outlined,
-            title: 'Languages',
-            value: chauffeur.languages.trim().isNotEmpty
-                ? chauffeur.languages
-                : 'N/A',
-          ),
+
           _buildDivider(),
           _buildCompactInfoRow(
             icon: Icons.calendar_today_outlined,

@@ -192,12 +192,7 @@ class PersonalInformationView extends StatelessWidget {
                 ),
               ),
 
-              // Languages Spoken
-              _buildInputField(
-                label: 'Languages Spoken',
-                controller: controller.languagesController,
-                icon: Icons.translate_outlined,
-              ),
+
 
               // Nick Name
               _buildInputField(
