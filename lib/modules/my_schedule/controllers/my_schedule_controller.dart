@@ -23,13 +23,13 @@ class MyScheduleController extends GetxController {
         pickupDateTime: DateTime(now.year, now.month, now.day, 10, 30),
         pickupLocation: 'JFK International Airport Terminal 4',
         dropoffLocation: 'The Plaza Hotel, 5th Ave, NYC',
-        vehicleType: 'Executive Sedan',
+        vehicleType: 'SEDAN',
         fare: '\$145.00',
         notes: 'Flight BA178. VIP client, prefers quiet ride.',
         isPaid: true,
         assignedChauffeurId: 'ch_1',
         assignedChauffeurName: 'Alex Rivera (Miami FL - Suburban)',
-        paymentMethod: 'Credit Card',
+        paymentMethod: 'Credit Card On File',
         paymentInfo: 'Paid via Stripe (Receipt #INV-8921)',
       ),
       MyScheduleJobModel(
@@ -39,11 +39,11 @@ class MyScheduleController extends GetxController {
         pickupDateTime: DateTime(now.year, now.month, now.day, 14, 15),
         pickupLocation: 'Wall Street Financial District',
         dropoffLocation: 'LaGuardia Airport Terminal B',
-        vehicleType: 'Luxury SUV',
+        vehicleType: 'SUV',
         fare: '\$180.00',
         notes: '2 Large Luggage bags.',
         isPaid: false,
-        paymentMethod: 'Zelle / Cash',
+        paymentMethod: 'Collect Payment',
         paymentInfo: 'Client requested cash payment upon arrival',
       ),
       MyScheduleJobModel(
@@ -76,12 +76,6 @@ class MyScheduleController extends GetxController {
       final updated = current.copyWith(isPaid: !current.isPaid);
       jobsList[index] = updated;
       jobsList.refresh();
-      Helpers.showCustomSnackBar(
-        updated.isPaid
-            ? 'Marked job for ${updated.clientName} as Paid'
-            : 'Marked job for ${updated.clientName} as Not Paid',
-        isError: false,
-      );
     }
   }
 
@@ -156,6 +150,20 @@ class MyScheduleController extends GetxController {
       }
     } catch (_) {
       Helpers.showCustomSnackBar('Calling $phoneNumber...', isError: false);
+    }
+  }
+
+  Future<void> sendTextMessage(String phoneNumber) async {
+    final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+    final Uri launchUri = Uri(scheme: 'sms', path: cleanPhone);
+    try {
+      if (await canLaunchUrl(launchUri)) {
+        await launchUrl(launchUri);
+      } else {
+        Helpers.showCustomSnackBar('Messaging $phoneNumber...', isError: false);
+      }
+    } catch (_) {
+      Helpers.showCustomSnackBar('Messaging $phoneNumber...', isError: false);
     }
   }
 }

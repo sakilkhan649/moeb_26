@@ -444,13 +444,18 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () => setState(() => _isPaid = false),
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         decoration: BoxDecoration(
-                          color: !_isPaid ? const Color(0xFF3D1F1F) : const Color(0xFF1F1C1C),
+                          color: !_isPaid
+                              ? const Color(0xFF2C1618)
+                              : const Color(0xFF1F1C1C),
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
-                            color: !_isPaid ? Colors.redAccent : const Color(0xFF364153),
+                            color: !_isPaid
+                                ? const Color(0xFF991B1B)
+                                : const Color(0xFF364153),
                             width: !_isPaid ? 1.5 : 1.0,
                           ),
                         ),
@@ -458,17 +463,21 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.error_outline,
+                              Icons.pending_actions_rounded,
                               size: 16.sp,
-                              color: !_isPaid ? Colors.redAccent : Colors.white54,
+                              color: !_isPaid
+                                  ? const Color(0xFFF87171)
+                                  : Colors.white38,
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              "Not Paid",
+                              "Unpaid",
                               style: GoogleFonts.inter(
                                 fontSize: 13.sp,
                                 fontWeight: !_isPaid ? FontWeight.bold : FontWeight.w500,
-                                color: !_isPaid ? Colors.redAccent : Colors.white70,
+                                color: !_isPaid
+                                    ? const Color(0xFFF87171)
+                                    : Colors.white70,
                               ),
                             ),
                           ],
@@ -480,13 +489,18 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () => setState(() => _isPaid = true),
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         decoration: BoxDecoration(
-                          color: _isPaid ? const Color(0xFF1F3D24) : const Color(0xFF1F1C1C),
+                          color: _isPaid
+                              ? const Color(0xFF102A1C)
+                              : const Color(0xFF1F1C1C),
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
-                            color: _isPaid ? Colors.greenAccent : const Color(0xFF364153),
+                            color: _isPaid
+                                ? const Color(0xFF166534)
+                                : const Color(0xFF364153),
                             width: _isPaid ? 1.5 : 1.0,
                           ),
                         ),
@@ -494,9 +508,11 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.check_circle_outline,
+                              Icons.check_circle_rounded,
                               size: 16.sp,
-                              color: _isPaid ? Colors.greenAccent : Colors.white54,
+                              color: _isPaid
+                                  ? const Color(0xFF4ADE80)
+                                  : Colors.white38,
                             ),
                             SizedBox(width: 8.w),
                             Text(
@@ -504,7 +520,9 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
                               style: GoogleFonts.inter(
                                 fontSize: 13.sp,
                                 fontWeight: _isPaid ? FontWeight.bold : FontWeight.w500,
-                                color: _isPaid ? Colors.greenAccent : Colors.white70,
+                                color: _isPaid
+                                    ? const Color(0xFF4ADE80)
+                                    : Colors.white70,
                               ),
                             ),
                           ],

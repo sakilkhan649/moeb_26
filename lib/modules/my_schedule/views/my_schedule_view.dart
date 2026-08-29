@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
-import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/modules/my_schedule/controllers/my_schedule_controller.dart';
 import 'package:moeb_26/modules/my_schedule/models/my_schedule_job_model.dart';
 import 'package:moeb_26/modules/my_schedule/views/widgets/add_schedule_job_sheet.dart';
+import 'package:moeb_26/modules/my_schedule/views/schedule_job_detail_view.dart';
 
 class MyScheduleView extends GetView<MyScheduleController> {
   const MyScheduleView({super.key});
@@ -318,479 +316,312 @@ class MyScheduleView extends GetView<MyScheduleController> {
   // Job Card Widget
   Widget _buildJobCard(BuildContext context, MyScheduleJobModel job) {
     final isDispatched = job.isDispatchedToNetwork;
+    final vehicleStyle = VehicleTypeColors.getVehicleStyle(job.vehicleType);
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 14.h),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFF141416),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: isDispatched
-              ? AppColors.primaryColor.withValues(alpha: 0.6)
-              : const Color(0xFF24242A),
-          width: 1,
+    return GestureDetector(
+      onTap: () => Get.to(() => ScheduleJobDetailView(job: job)),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 14.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF141416),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: isDispatched
+                ? AppColors.primaryColor.withValues(alpha: 0.6)
+                : const Color(0xFF24242A),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Row: Time & Vehicle Type & Price
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF222228),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 13.sp,
-                      color: AppColors.gray100,
-                    ),
-                    SizedBox(width: 6.w),
-                    Text(
-                      DateFormat('hh:mm a').format(job.pickupDateTime),
-                      style: GoogleFonts.inter(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF222228),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Text(
-                  job.vehicleType,
-                  style: GoogleFonts.inter(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.gray100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Row: Time & Vehicle Type & Price
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
                   ),
-                ),
-              ),
-              const Spacer(),
-              if (job.fare.isNotEmpty)
-                Text(
-                  job.fare,
-                  style: GoogleFonts.inter(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF222228),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                ),
-            ],
-          ),
-
-          SizedBox(height: 14.h),
-
-          // Client Name & Phone Call Action
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 17.r,
-                backgroundColor: const Color(0xFF24242A),
-                child: Icon(Icons.person, size: 18.sp, color: Colors.white70),
-              ),
-              SizedBox(width: 10.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      job.clientName,
-                      style: GoogleFonts.inter(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      job.clientPhone,
-                      style: GoogleFonts.inter(
-                        fontSize: 12.sp,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 13.sp,
                         color: AppColors.gray100,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () => controller.makePhoneCall(job.clientPhone),
-                child: Container(
-                  padding: EdgeInsets.all(8.r),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF24242A),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.phone,
-                    size: 16.sp,
-                    color: AppColors.primaryColor,
+                      SizedBox(width: 6.w),
+                      Text(
+                        DateFormat('hh:mm a').format(job.pickupDateTime),
+                        style: GoogleFonts.inter(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 12.h),
-          const Divider(height: 1, color: Color(0xFF24242A)),
-          SizedBox(height: 12.h),
-
-          // Route Visualiser: Pickup -> Dropoff
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                children: [
-                  Container(
-                    width: 9.r,
-                    height: 9.r,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white70, width: 2),
-                      color: Colors.transparent,
+                SizedBox(width: 8.w),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: vehicleStyle is Color ? vehicleStyle : null,
+                    gradient: vehicleStyle is Gradient ? vehicleStyle : null,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Text(
+                    job.vehicleType,
+                    style: GoogleFonts.inter(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
                   ),
-                  Container(
-                    width: 1.5.w,
-                    height: 24.h,
-                    color: const Color(0xFF33333D),
-                  ),
-                  Container(
-                    width: 9.r,
-                    height: 9.r,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
+                ),
+                const Spacer(),
+                if (job.fare.isNotEmpty)
+                  Text(
+                    job.fare,
+                    style: GoogleFonts.inter(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
                       color: AppColors.primaryColor,
                     ),
                   ),
-                ],
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      job.pickupLocation,
-                      style: GoogleFonts.inter(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 12.h),
-                    Text(
-                      job.dropoffLocation,
-                      style: GoogleFonts.inter(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          if (job.notes.isNotEmpty) ...[
-            SizedBox(height: 10.h),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(10.w),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1C1C20),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Text(
-                "Notes: ${job.notes}",
-                style: GoogleFonts.inter(
-                  fontSize: 11.sp,
-                  fontStyle: FontStyle.italic,
-                  color: AppColors.gray100,
-                ),
-              ),
+              ],
             ),
-          ],
 
-          // Client Payment & Chauffeur Info Details Box
-          SizedBox(height: 10.h),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: const Color(0xFF18181C),
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: const Color(0xFF2C2C34)),
+            SizedBox(height: 14.h),
+
+            // Client Name & Contact Actions (SMS & Call)
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 17.r,
+                  backgroundColor: const Color(0xFF24242A),
+                  child: Icon(Icons.person, size: 18.sp, color: Colors.white70),
+                ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        job.clientName,
+                        style: GoogleFonts.inter(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        job.clientPhone,
+                        style: GoogleFonts.inter(
+                          fontSize: 12.sp,
+                          color: AppColors.gray100,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Text Message (SMS) Icon Button
+                GestureDetector(
+                  onTap: () => controller.sendTextMessage(job.clientPhone),
+                  child: Container(
+                    padding: EdgeInsets.all(8.r),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF24242A),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      size: 16.sp,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                // Call Phone Icon Button
+                GestureDetector(
+                  onTap: () => controller.makePhoneCall(job.clientPhone),
+                  child: Container(
+                    padding: EdgeInsets.all(8.r),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF24242A),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.phone,
+                      size: 16.sp,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            child: Column(
+
+            SizedBox(height: 12.h),
+            const Divider(height: 1, color: Color(0xFF24242A)),
+            SizedBox(height: 12.h),
+
+            // Route Visualiser: Pickup -> Dropoff
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
                   children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.payment,
-                            size: 14.sp,
-                            color: AppColors.primaryColor,
-                          ),
-                          SizedBox(width: 6.w),
-                          Text(
-                            "Payment: ",
-                            style: GoogleFonts.inter(
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              job.paymentMethod +
-                                  (job.paymentInfo.isNotEmpty
-                                      ? " (${job.paymentInfo})"
-                                      : ""),
-                              style: GoogleFonts.inter(
-                                fontSize: 11.sp,
-                                color: Colors.white70,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                    Container(
+                      width: 9.r,
+                      height: 9.r,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white70, width: 2),
+                        color: Colors.transparent,
                       ),
                     ),
-                    SizedBox(width: 8.w),
-                    // Sleek Interactive Paid / Not Paid Badge Button
-                    GestureDetector(
-                      onTap: () => controller.togglePaymentStatus(job.id),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: job.isPaid
-                              ? const Color(0xFF1F3D24)
-                              : const Color(0xFF3D1F1F),
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: job.isPaid
-                                ? Colors.greenAccent
-                                : Colors.redAccent,
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              job.isPaid
-                                  ? Icons.check_circle_outline
-                                  : Icons.error_outline,
-                              size: 12.sp,
-                              color: job.isPaid
-                                  ? Colors.greenAccent
-                                  : Colors.redAccent,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              job.isPaid ? "PAID" : "NOT PAID",
-                              style: GoogleFonts.inter(
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.bold,
-                                color: job.isPaid
-                                    ? Colors.greenAccent
-                                    : Colors.redAccent,
-                              ),
-                            ),
-                          ],
-                        ),
+                    Container(
+                      width: 1.5.w,
+                      height: 24.h,
+                      color: const Color(0xFF33333D),
+                    ),
+                    Container(
+                      width: 9.r,
+                      height: 9.r,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 8.h),
-                Row(
-                  children: [
-                    Icon(
-                      job.assignedChauffeurName != null
-                          ? Icons.directions_car_filled
-                          : Icons.people_outline,
-                      size: 14.sp,
-                      color: job.assignedChauffeurName != null
-                          ? AppColors.primaryColor
-                          : AppColors.gray100,
-                    ),
-                    SizedBox(width: 6.w),
-                    Text(
-                      "Chauffeur: ",
-                      style: GoogleFonts.inter(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        job.assignedChauffeurName ??
-                            "Public Network Dispatch (Unassigned)",
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        job.pickupLocation,
                         style: GoogleFonts.inter(
-                          fontSize: 11.sp,
-                          color: job.assignedChauffeurName != null
-                              ? Colors.white
-                              : Colors.white60,
-                          fontWeight: job.assignedChauffeurName != null
-                              ? FontWeight.w600
-                              : FontWeight.normal,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        job.dropoffLocation,
+                        style: GoogleFonts.inter(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 12.h),
+            const Divider(height: 1, color: Color(0xFF24242A)),
+            SizedBox(height: 10.h),
+
+            // Sleek Footer: Payment Status Pill & "View Details >" link
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Paid / Unpaid Status Chip
+                GestureDetector(
+                  onTap: () => controller.togglePaymentStatus(job.id),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: job.isPaid
+                          ? const Color(0xFF102A1C)
+                          : const Color(0xFF2C1618),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(
+                        color: job.isPaid
+                            ? const Color(0xFF166534)
+                            : const Color(0xFF991B1B),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          job.isPaid
+                              ? Icons.check_circle_rounded
+                              : Icons.pending_actions_rounded,
+                          size: 12.sp,
+                          color: job.isPaid
+                              ? const Color(0xFF4ADE80)
+                              : const Color(0xFFF87171),
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          job.isPaid ? "PAID" : "UNPAID",
+                          style: GoogleFonts.inter(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                            color: job.isPaid
+                                ? const Color(0xFF4ADE80)
+                                : const Color(0xFFF87171),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // "View Details >" Prompt
+                Row(
+                  children: [
+                    Text(
+                      "View Details",
+                      style: GoogleFonts.inter(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 11.sp,
+                      color: AppColors.primaryColor,
                     ),
                   ],
                 ),
               ],
             ),
-          ),
-
-          SizedBox(height: 14.h),
-          const Divider(height: 1, color: Color(0xFF24242A)),
-          SizedBox(height: 12.h),
-
-          // Card Action Buttons (Edit, Cancel, Dispatch to Network)
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => _openEditJobSheet(context, job),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        AppIcons.edit_icon,
-                        width: 16.sp,
-                        height: 16.sp,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.gray100,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        "Edit",
-                        style: GoogleFonts.inter(
-                          fontSize: 12.sp,
-                          color: AppColors.gray100,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(width: 16.w),
-              GestureDetector(
-                onTap: () => _confirmDeleteJob(context, job.id),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        AppIcons.delete_icon,
-                        width: 16.sp,
-                        height: 16.sp,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.gray100,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        "Delete",
-                        style: GoogleFonts.inter(
-                          fontSize: 12.sp,
-                          color: AppColors.gray100,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const Spacer(),
-              if (isDispatched)
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF24242A),
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(color: AppColors.primaryColor, width: 1),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline,
-                        size: 14.sp,
-                        color: AppColors.primaryColor,
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        "Dispatched",
-                        style: GoogleFonts.inter(
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              else
-                SizedBox(
-                  width: 145.w,
-                  child: CustomButton(
-                    text: "Dispatch to Network",
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.bold,
-                    onPressed: () => _confirmDispatchToNetwork(context, job),
-                  ),
-                ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -847,103 +678,5 @@ class MyScheduleView extends GetView<MyScheduleController> {
 
   void _openAddJobSheet(BuildContext context) {
     Get.to(() => const AddScheduleJobSheet());
-  }
-
-  void _openEditJobSheet(BuildContext context, MyScheduleJobModel job) {
-    Get.to(() => AddScheduleJobSheet(existingJob: job));
-  }
-
-  void _confirmDeleteJob(BuildContext context, String jobId) {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: const Color(0xFF1E1E22),
-        title: Text(
-          "Cancel Booking?",
-          style: GoogleFonts.inter(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          "Are you sure you want to remove this booking from your private schedule?",
-          style: GoogleFonts.inter(color: AppColors.gray100),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              "No",
-              style: GoogleFonts.inter(color: AppColors.gray100),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF24242A),
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () {
-              Get.back();
-              controller.deleteJob(jobId);
-            },
-            child: Text(
-              "Yes, Remove",
-              style: GoogleFonts.inter(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _confirmDispatchToNetwork(BuildContext context, MyScheduleJobModel job) {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: const Color(0xFF1E1E22),
-        title: Row(
-          children: [
-            Icon(Icons.share, color: AppColors.primaryColor, size: 20.sp),
-            SizedBox(width: 8.w),
-            Text(
-              "Pass Job to Network?",
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
-              ),
-            ),
-          ],
-        ),
-        content: Text(
-          "Do you want to dispatch ${job.clientName}'s trip (${job.pickupLocation} -> ${job.dropoffLocation}) to the public chauffeur network?",
-          style: GoogleFonts.inter(color: AppColors.gray100, fontSize: 13.sp),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              "Cancel",
-              style: GoogleFonts.inter(color: AppColors.gray100),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              foregroundColor: Colors.black,
-            ),
-            onPressed: () {
-              Get.back();
-              controller.dispatchToNetwork(job);
-            },
-            child: Text(
-              "Dispatch Now",
-              style: GoogleFonts.inter(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
