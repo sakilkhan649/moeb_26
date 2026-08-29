@@ -553,46 +553,54 @@ class ExpenseListView extends GetView<ExpenseController> {
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 2,
-                        child: Text(
-                          DateFormat('dd MMM').format(e.date),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11.sp,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 4,
+                        flex: 8,
                         child: GestureDetector(
                           onTap: () => Get.bottomSheet(
                             ExpenseDetailSheet(expense: e),
                             isScrollControlled: true,
                             ignoreSafeArea: false,
                           ),
-                          child: Text(
-                            e.description.isNotEmpty
-                                ? e.description
-                                : "No description",
-                            style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 11.sp,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          behavior: HitTestBehavior.opaque,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  DateFormat('dd MMM').format(e.date),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11.sp,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 4,
+                                child: Text(
+                                  e.description.isNotEmpty
+                                      ? e.description
+                                      : "No description",
+                                  style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 11.sp,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  "\$${e.amount.toStringAsFixed(2)}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          "\$${e.amount.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.right,
                         ),
                       ),
                       Expanded(

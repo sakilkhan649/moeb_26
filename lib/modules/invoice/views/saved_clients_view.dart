@@ -55,12 +55,10 @@ class SavedClientsView extends GetView<InvoiceController> {
         child: Obx(() {
           if (controller.isLoading.value && controller.savedClients.isEmpty) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primaryColor,
-              ),
+              child: CircularProgressIndicator(color: AppColors.primaryColor),
             );
           }
- 
+
           if (controller.savedClients.isEmpty) {
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -99,7 +97,7 @@ class SavedClientsView extends GetView<InvoiceController> {
               ],
             );
           }
- 
+
           return ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
@@ -555,8 +553,9 @@ class SavedClientsView extends GetView<InvoiceController> {
                     country: selectedCountry,
                   );
 
-                  final success =
-                      await controller.addOrUpdateSavedClient(newClient);
+                  final success = await controller.addOrUpdateSavedClient(
+                    newClient,
+                  );
                   if (success) {
                     if (context.mounted) {
                       Navigator.pop(context);
@@ -609,8 +608,10 @@ class SavedClientsView extends GetView<InvoiceController> {
             ),
             filled: true,
             fillColor: const Color(0xFF1E1E1E),
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 14.w,
+              vertical: 12.h,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: const BorderSide(color: Color(0xFF2C2C2C)),
