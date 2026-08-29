@@ -293,85 +293,100 @@ class JobPostSheetTabBarView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Service Area Auto-Assign',
-          style: GoogleFonts.inter(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.primaryColor,
-          ),
-        ),
-        SizedBox(height: 8.h),
+        // Informative Auto-Assign Header Banner with Quick "Select All" Button
+        Obx(() {
+          final isGlobalActive = controller.chauffeurSelectionType.value == 'global';
+          final count = controller.selectedServiceAreas.length;
 
-        // Auto-assign Chauffeur Card
-        Obx(
-          () => GestureDetector(
-            onTap: () => controller.selectGlobal(),
-            child: Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: controller.chauffeurSelectionType.value == 'global'
-                      ? AppColors.primaryColor
-                      : const Color(0xFF2C2C2C),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    controller.chauffeurSelectionType.value == 'global'
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
-                    color: controller.chauffeurSelectionType.value == 'global'
-                        ? AppColors.primaryColor
-                        : Colors.grey.shade600,
-                    size: 22.sp,
-                  ),
-                  SizedBox(width: 14.w),
-                  Container(
-                    width: 44.w,
-                    height: 44.w,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF27272A),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.public,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                  SizedBox(width: 14.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Auto-assign Chauffeur',
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          'Closest available chauffeur',
-                          style: GoogleFonts.inter(
-                            color: Colors.grey.shade500,
-                            fontSize: 13.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+          return Container(
+            padding: EdgeInsets.all(14.w),
+            decoration: BoxDecoration(
+              color: isGlobalActive
+                  ? AppColors.primaryColor.withValues(alpha: 0.12)
+                  : const Color(0xFF1E1E1E),
+              borderRadius: BorderRadius.circular(14.r),
+              border: Border.all(
+                color: isGlobalActive
+                    ? AppColors.primaryColor.withValues(alpha: 0.6)
+                    : const Color(0xFF2C2C2C),
+                width: 1,
               ),
             ),
-          ),
-        ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40.w,
+                  height: 40.w,
+                  decoration: BoxDecoration(
+                    color: isGlobalActive
+                        ? AppColors.primaryColor
+                        : const Color(0xFF27272A),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.explore_outlined,
+                    color: isGlobalActive ? Colors.black : AppColors.primaryColor,
+                    size: 22.sp,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Auto-Assign Chauffeur',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        count == 0
+                            ? 'Tap cities below to auto-assign in your area'
+                            : 'Auto-assigning in $count selected ${count == 1 ? "city" : "cities"}',
+                        style: GoogleFonts.inter(
+                          color: isGlobalActive && count > 0
+                              ? AppColors.primaryColor
+                              : Colors.grey.shade400,
+                          fontSize: 12.sp,
+                          fontWeight: count > 0 ? FontWeight.w500 : FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Quick "Select All" / "Clear All" Toggle Action
+                GestureDetector(
+                  onTap: () => controller.toggleAllActiveCities(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF28282E),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(
+                        color: count > 0 ? AppColors.primaryColor : const Color(0xFF383842),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      count > 0 ? "Clear All" : "Select All",
+                      style: GoogleFonts.inter(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.bold,
+                        color: count > 0 ? AppColors.primaryColor : Colors.white70,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+
+        SizedBox(height: 16.h),
 
         // State & City Hierarchy List (Multi-Select)
         Obx(() {
@@ -400,139 +415,161 @@ class JobPostSheetTabBarView extends StatelessWidget {
             );
           }
 
-          return Padding(
-            padding: EdgeInsets.only(top: 16.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Choose Service Area Cities (Multi-select)',
-                  style: GoogleFonts.inter(
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white70,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Select Service Area Cities',
+                    style: GoogleFonts.inter(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                SizedBox(height: 12.h),
-                ...controller.serviceAreas.map((areaItem) {
-                  final areaName = areaItem.areaName;
-                  final isActive = areaItem.status == 'ACTIVE';
-                  final cities = areaItem.cities.isNotEmpty
-                      ? areaItem.cities
-                      : (areaItem.city.isNotEmpty
-                          ? [areaItem.city]
-                          : [areaName]);
+                  Text(
+                    'Multi-select',
+                    style: GoogleFonts.inter(
+                      fontSize: 11.sp,
+                      color: AppColors.gray100,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              ...controller.serviceAreas.map((areaItem) {
+                final areaName = areaItem.areaName;
+                final isActive = areaItem.status == 'ACTIVE';
+                final cities = areaItem.cities.isNotEmpty
+                    ? areaItem.cities
+                    : (areaItem.city.isNotEmpty
+                        ? [areaItem.city]
+                        : [areaName]);
 
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 16.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // State / Area Header
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: Row(
-                            children: [
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 16.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // State / Area Header
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: Row(
+                          children: [
+                            Text(
+                              areaName,
+                              style: GoogleFonts.inter(
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13.sp,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Icon(
+                              isActive
+                                  ? Icons.check_circle_outline
+                                  : Icons.lock_outline,
+                              color: isActive
+                                  ? AppColors.primaryColor
+                                  : Colors.grey[600],
+                              size: 15.sp,
+                            ),
+                            if (!isActive) ...[
+                              SizedBox(width: 6.w),
                               Text(
-                                areaName,
+                                "INACTIVE",
                                 style: GoogleFonts.inter(
-                                  color: AppColors.primaryColor,
+                                  color: Colors.grey[600],
+                                  fontSize: 10.sp,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14.sp,
                                 ),
                               ),
-                              SizedBox(width: 8.w),
-                              Icon(
-                                isActive
-                                    ? Icons.check_circle_outline
-                                    : Icons.lock_outline,
-                                color: isActive
-                                    ? AppColors.primaryColor
-                                    : Colors.grey[600],
-                                size: 16.sp,
-                              ),
-                              if (!isActive) ...[
-                                SizedBox(width: 6.w),
-                                Text(
-                                  "INACTIVE",
-                                  style: GoogleFonts.inter(
-                                    color: Colors.grey[600],
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
                             ],
-                          ),
+                          ],
                         ),
-                        // Wrap of custom Filter Chips
-                        Wrap(
-                          spacing: 8.w,
-                          runSpacing: 8.h,
-                          children: cities.map((cityFull) {
-                            final isSelected = controller
-                                .selectedServiceAreas
-                                .contains(cityFull);
-                            final isLocked = !isActive;
-                            return GestureDetector(
-                              onTap: () {
-                                if (isLocked) {
-                                  Helpers.showCustomSnackBar(
-                                    "The $areaName service area is currently inactive.",
-                                    isError: true,
-                                  );
-                                } else {
-                                  controller.toggleServiceAreaSelection(
-                                    cityFull,
-                                  );
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 8.h,
-                                ),
-                                decoration: BoxDecoration(
+                      ),
+                      // Wrap of custom Filter Chips
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 8.h,
+                        children: cities.map((cityFull) {
+                          final isSelected = controller
+                              .selectedServiceAreas
+                              .contains(cityFull);
+                          final isLocked = !isActive;
+                          return GestureDetector(
+                            onTap: () {
+                              if (isLocked) {
+                                Helpers.showCustomSnackBar(
+                                  "The $areaName service area is currently inactive.",
+                                  isError: true,
+                                );
+                              } else {
+                                controller.toggleServiceAreaSelection(
+                                  cityFull,
+                                );
+                              }
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 150),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.primaryColor.withValues(alpha: 0.18)
+                                    : isLocked
+                                    ? const Color(0xFF161618)
+                                    : const Color(0xFF1E1E1E),
+                                borderRadius: BorderRadius.circular(20.r),
+                                border: Border.all(
                                   color: isSelected
                                       ? AppColors.primaryColor
-                                          .withValues(alpha: 0.15)
                                       : isLocked
-                                      ? const Color(0xFF161618)
-                                      : const Color(0xFF1E1E1E),
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColors.primaryColor
-                                        : isLocked
-                                        ? const Color(0xFF222224)
-                                        : const Color(0xFF2C2C2C),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  cityFull,
-                                  style: GoogleFonts.inter(
-                                    color: isSelected
-                                        ? AppColors.primaryColor
-                                        : isLocked
-                                        ? Colors.grey[700]
-                                        : Colors.white70,
-                                    fontSize: 12.sp,
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                  ),
+                                      ? const Color(0xFF222224)
+                                      : const Color(0xFF2C2C2C),
+                                  width: 1,
                                 ),
                               ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ],
-            ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (isSelected) ...[
+                                    Icon(
+                                      Icons.check_circle_rounded,
+                                      size: 14.sp,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                    SizedBox(width: 5.w),
+                                  ],
+                                  Text(
+                                    cityFull,
+                                    style: GoogleFonts.inter(
+                                      color: isSelected
+                                          ? AppColors.primaryColor
+                                          : isLocked
+                                          ? Colors.grey[700]
+                                          : Colors.white70,
+                                      fontSize: 12.sp,
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
           );
         }),
       ],

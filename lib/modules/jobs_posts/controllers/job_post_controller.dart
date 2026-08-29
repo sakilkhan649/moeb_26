@@ -144,6 +144,27 @@ class PostJobController extends GetxController {
     }
   }
 
+  void toggleAllActiveCities() {
+    final allActiveCities = <String>[];
+    for (var areaItem in serviceAreas) {
+      if (areaItem.status == 'ACTIVE') {
+        final cities = areaItem.cities.isNotEmpty
+            ? areaItem.cities
+            : (areaItem.city.isNotEmpty ? [areaItem.city] : [areaItem.areaName]);
+        allActiveCities.addAll(cities);
+      }
+    }
+
+    if (selectedServiceAreas.length == allActiveCities.length && allActiveCities.isNotEmpty) {
+      selectedServiceAreas.clear();
+      chauffeurSelectionType.value = '';
+    } else {
+      chauffeurSelectionType.value = 'global';
+      selectedDrivers.clear();
+      selectedServiceAreas.assignAll(allActiveCities);
+    }
+  }
+
   // Shared Date, Time, and Payment State
   var selectedRole = 'Credit Card on File'.obs;
   var roles = ['Credit Card on File', 'Collect Payment'].obs;
