@@ -35,9 +35,6 @@ class MyScheduleView extends GetView<MyScheduleController> {
       ),
       body: Column(
         children: [
-          // Sub-Header Banner indicating privacy
-          _buildPrivacyHeader(),
-
           // Horizontal Weekly Calendar Strip with Header & Date Picker
           _buildWeeklyCalendarStrip(context),
 
@@ -64,31 +61,6 @@ class MyScheduleView extends GetView<MyScheduleController> {
                 },
               );
             }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Sub-Header Privacy Banner
-  Widget _buildPrivacyHeader() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-      color: const Color(0xFF141416),
-      child: Row(
-        children: [
-          Icon(Icons.lock_outline, size: 16.sp, color: AppColors.primaryColor),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: Text(
-              "Private Schedule • Jobs are visible only to you until dispatched.",
-              style: GoogleFonts.inter(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w400,
-                color: AppColors.gray100,
-              ),
-            ),
           ),
         ],
       ),
