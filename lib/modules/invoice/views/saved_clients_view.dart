@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moeb_26/config/constants/icon_paths.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/invoice_controller.dart';
@@ -111,11 +112,20 @@ class SavedClientsView extends GetView<InvoiceController> {
           );
         }),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.black,
+        elevation: 6,
         onPressed: () => _showAddOrEditClientBottomSheet(context),
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add, color: Colors.black),
+        label: Text(
+          'New Client',
+          style: GoogleFonts.inter(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 14.sp,
+          ),
+        ),
       ),
     );
   }
@@ -320,7 +330,7 @@ class SavedClientsView extends GetView<InvoiceController> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.white70),
-                  onPressed: () => Get.back(),
+                  onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
@@ -548,7 +558,9 @@ class SavedClientsView extends GetView<InvoiceController> {
                   final success =
                       await controller.addOrUpdateSavedClient(newClient);
                   if (success) {
-                    Get.back();
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
                   }
                 },
                 padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -633,8 +645,9 @@ class SavedClientsView extends GetView<InvoiceController> {
   }
 
   void _showDeleteConfirmDialog(BuildContext context, SavedClient client) {
-    Get.dialog(
-      Dialog(
+    showDialog(
+      context: context,
+      builder: (dialogContext) => Dialog(
         backgroundColor: const Color(0xFF18181B),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
@@ -683,8 +696,8 @@ class SavedClientsView extends GetView<InvoiceController> {
                       text: 'Cancel',
                       backgroundColor: Colors.transparent,
                       textColor: Colors.white,
-                      borderColor:  Color(0xFF3F3F46),
-                      onPressed: () => Get.back(),
+                      borderColor: const Color(0xFF3F3F46),
+                      onPressed: () => Navigator.pop(dialogContext),
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                     ),
                   ),
@@ -695,14 +708,12 @@ class SavedClientsView extends GetView<InvoiceController> {
                       backgroundColor: const Color(0xFFEF4444),
                       textColor: Colors.white,
                       onPressed: () async {
-                        Get.back();
+                        Navigator.pop(dialogContext);
                         await controller.deleteSavedClient(client.id);
-                        Get.snackbar(
-                          'Deleted',
+                        Helpers.showCustomSnackBar(
                           'Client removed successfully',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.redAccent,
-                          colorText: Colors.white,
+                          title: 'Deleted',
+                          isError: false,
                         );
                       },
                       padding: EdgeInsets.symmetric(vertical: 12.h),
