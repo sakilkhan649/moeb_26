@@ -1,612 +1,250 @@
+[GETX] GOING TO ROUTE /MyScheduleView
+[GETX] Instance "MyScheduleController" has been created
+[GETX] Instance "MyScheduleController" has been initialized
+flutter:
+flutter: ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+flutter: │ GET https://nayem5001.binarybards.online/api/v1/jobs/calendar?month=8&year=2026
+flutter: │ Headers: {Content-Type: application/json, Authorization: ***}
+flutter: │ Query: {month: 8, year: 2026}
+flutter: └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+flutter:
+flutter:
 flutter: ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
-flutter: │ [ GET 200] https://nayem5001.binarybards.online/api/v1/service-areas/options?limit=50
+flutter: │ [ GET 200] https://nayem5001.binarybards.online/api/v1/jobs/calendar?month=8&year=2026
 flutter: │ {
 flutter: │   "success": true,
-flutter: │   "message": "Service area options retrieved successfully",
-flutter: │   "cursor": {
-flutter: │     "nextCursor": null,
-flutter: │     "hasMore": false,
-flutter: │     "limit": 50
-flutter: │   },
-flutter: │   "data": [
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe5f",
-flutter: │       "areaName": "Miami, FL",
-flutter: │       "cities": [
-flutter: │         "Miami",
-flutter: │         "Miami Beach",
-flutter: │         "Coral Gables",
-flutter: │         "Brickell",
-flutter: │         "Doral",
-flutter: │         "Aventura",
-flutter: │         "Key Biscayne"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe60",
-flutter: │       "areaName": "Fort Lauderdale, FL",
-flutter: │       "cities": [
-flutter: │         "Fort Lauderdale",
-flutter: │         "Hollywood",
-flutter: │         "Pompano Beach",
-flutter: │         "Davie",
-flutter: │         "Plantation",
-flutter: │         "Sunrise"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe61",
-flutter: │       "areaName": "West Palm Beach, FL",
-flutter: │       "cities": [
-flutter: │         "West Palm Beach",
-flutter: │         "Palm Beach",
-flutter: │         "Jupiter",
-flutter: │         "Wellington",
-flutter: │         "Palm Beach Gardens"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe62",
-flutter: │       "areaName": "Boca Raton, FL",
-flutter: │       "cities": [
-flutter: │         "Boca Raton",
-flutter: │         "Delray Beach",
-flutter: │         "Boynton Beach",
-flutter: │         "Deerfield Beach"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe63",
-flutter: │       "areaName": "Orlando, FL",
-flutter: │       "cities": [
-flutter: │         "Orlando",
-flutter: │         "Kissimmee",
-flutter: │         "Winter Park",
-flutter: │         "Lake Buena Vista",
-flutter: │         "Sanford",
-flutter: │         "Altamonte Springs"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe64",
-flutter: │       "areaName": "Tampa, FL",
-flutter: │       "cities": [
-flutter: │         "Tampa",
-flutter: │         "St. Petersburg",
-flutter: │         "Clearwater",
-flutter: │         "Brandon",
-flutter: │         "Ybor City"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe65",
-flutter: │       "areaName": "Jacksonville, FL",
-flutter: │       "cities": [
-flutter: │         "Jacksonville",
-flutter: │         "Jacksonville Beach",
-flutter: │         "St. Augustine",
-flutter: │         "Ponte Vedra Beach",
-flutter: │         "Orange Park"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe66",
-flutter: │       "areaName": "Naples, FL",
-flutter: │       "cities": [
-flutter: │         "Naples",
-flutter: │         "Marco Island",
-flutter: │         "Bonita Springs",
-flutter: │         "Estero"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe67",
-flutter: │       "areaName": "Sarasota, FL",
-flutter: │       "cities": [
-flutter: │         "Sarasota",
-flutter: │         "Bradenton",
-flutter: │         "Venice",
-flutter: │         "Lakewood Ranch",
-flutter: │         "Siesta Key"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe68",
-flutter: │       "areaName": "Fort Myers, FL",
-flutter: │       "cities": [
-flutter: │         "Fort Myers",
-flutter: │         "Cape Coral",
-flutter: │         "Sanibel",
-flutter: │         "Fort Myers Beach",
-flutter: │         "Lehigh Acres"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbe61f4ff5a4cbcfe69",
-flutter: │       "areaName": "Los Angeles, CA",
-flutter: │       "cities": [
-flutter: │         "Los Angeles",
-flutter: │         "Beverly Hills",
-flutter: │         "Santa Monica",
-flutter: │         "West Hollywood",
-flutter: │         "Pasadena",
-flutter: │         "Long Beach",
-flutter: │         "Burbank",
-flutter: │         "Culver City"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe6a",
-flutter: │       "areaName": "San Francisco, CA",
-flutter: │       "cities": [
-flutter: │         "San Francisco",
-flutter: │         "Oakland",
-flutter: │         "Berkeley",
-flutter: │         "San Mateo",
-flutter: │         "Palo Alto",
-flutter: │         "Sausalito"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe6b",
-flutter: │       "areaName": "San Diego, CA",
-flutter: │       "cities": [
-flutter: │         "San Diego",
-flutter: │         "La Jolla",
-flutter: │         "Chula Vista",
-flutter: │         "Coronado",
-flutter: │         "Carlsbad",
-flutter: │         "Del Mar",
-flutter: │         "Encinitas"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe6c",
-flutter: │       "areaName": "San Jose, CA",
-flutter: │       "cities": [
-flutter: │         "San Jose",
-flutter: │         "Santa Clara",
-flutter: │         "Sunnyvale",
-flutter: │         "Mountain View",
-flutter: │         "Cupertino",
-flutter: │         "Los Gatos"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe6d",
-flutter: │       "areaName": "Sacramento, CA",
-flutter: │       "cities": [
-flutter: │         "Sacramento",
-flutter: │         "Roseville",
-flutter: │         "Folsom",
-flutter: │         "Elk Grove",
-flutter: │         "Davis",
-flutter: │         "Rocklin"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe6e",
-flutter: │       "areaName": "Santa Barbara, CA",
-flutter: │       "cities": [
-flutter: │         "Santa Barbara",
-flutter: │         "Montecito",
-flutter: │         "Goleta",
-flutter: │         "Carpinteria",
-flutter: │         "Summerland"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe6f",
-flutter: │       "areaName": "Dallas, TX",
-flutter: │       "cities": [
-flutter: │         "Dallas",
-flutter: │         "Fort Worth",
-flutter: │         "Arlington",
-flutter: │         "Plano",
-flutter: │         "Irving",
-flutter: │         "Frisco",
-flutter: │         "McKinney"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe70",
-flutter: │       "areaName": "Houston, TX",
-flutter: │       "cities": [
-flutter: │         "Houston",
-flutter: │         "The Woodlands",
-flutter: │         "Sugar Land",
-flutter: │         "Katy",
-flutter: │         "Pearland",
-flutter: │         "Spring"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe71",
-flutter: │       "areaName": "Austin, TX",
-flutter: │       "cities": [
-flutter: │         "Austin",
-flutter: │         "Round Rock",
-flutter: │         "Cedar Park",
-flutter: │         "Georgetown",
-flutter: │         "San Marcos",
-flutter: │         "Pflugerville"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe72",
-flutter: │       "areaName": "San Antonio, TX",
-flutter: │       "cities": [
-flutter: │         "San Antonio",
-flutter: │         "New Braunfels",
-flutter: │         "Boerne",
-flutter: │         "Schertz",
-flutter: │         "Cibolo"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe73",
-flutter: │       "areaName": "New York City, NY",
-flutter: │       "cities": [
-flutter: │         "New York City, NY",
-flutter: │         "Manhattan, NY",
-flutter: │         "Brooklyn, NY",
-flutter: │         "Queens, NY",
-flutter: │         "Bronx, NY",
-flutter: │         "Staten Island, NY",
-flutter: │         "Long Island, NY"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe74",
-flutter: │       "areaName": "Chicago, IL",
-flutter: │       "cities": [
-flutter: │         "Chicago",
-flutter: │         "Naperville",
-flutter: │         "Evanston",
-flutter: │         "Schaumburg",
-flutter: │         "Oak Park",
-flutter: │         "Rosemont"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe75",
-flutter: │       "areaName": "Washington, DC",
-flutter: │       "cities": [
-flutter: │         "Washington",
-flutter: │         "Arlington",
-flutter: │         "Alexandria",
-flutter: │         "Bethesda",
-flutter: │         "Silver Spring",
-flutter: │         "Tysons",
-flutter: │         "Reston"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe76",
-flutter: │       "areaName": "Las Vegas, NV",
-flutter: │       "cities": [
-flutter: │         "Las Vegas",
-flutter: │         "Henderson",
-flutter: │         "North Las Vegas",
-flutter: │         "Paradise",
-flutter: │         "Summerlin",
-flutter: │         "Spring Valley"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe77",
-flutter: │       "areaName": "Boston, MA",
-flutter: │       "cities": [
-flutter: │         "Boston",
-flutter: │         "Cambridge",
-flutter: │         "Brookline",
-flutter: │         "Newton",
-flutter: │         "Somerville",
-flutter: │         "Quincy",
-flutter: │         "Waltham"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe78",
-flutter: │       "areaName": "Atlanta, GA",
-flutter: │       "cities": [
-flutter: │         "Atlanta",
-flutter: │         "Sandy Springs",
-flutter: │         "Alpharetta",
-flutter: │         "Marietta",
-flutter: │         "Roswell",
-flutter: │         "Buckhead",
-flutter: │         "Duluth"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe79",
-flutter: │       "areaName": "Seattle, WA",
-flutter: │       "cities": [
-flutter: │         "Seattle",
-flutter: │         "Bellevue",
-flutter: │         "Redmond",
-flutter: │         "Tacoma",
-flutter: │         "Kirkland",
-flutter: │         "Renton",
-flutter: │         "Everett"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe7a",
-flutter: │       "areaName": "Denver, CO",
-flutter: │       "cities": [
-flutter: │         "Denver",
-flutter: │         "Aurora",
-flutter: │         "Boulder",
-flutter: │         "Lakewood",
-flutter: │         "Centennial",
-flutter: │         "Cherry Creek"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe7b",
-flutter: │       "areaName": "Aspen, CO",
-flutter: │       "cities": [
-flutter: │         "Aspen",
-flutter: │         "Snowmass Village",
-flutter: │         "Basalt",
-flutter: │         "Carbondale",
-flutter: │         "Glenwood Springs"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe7c",
-flutter: │       "areaName": "Phoenix, AZ",
-flutter: │       "cities": [
-flutter: │         "Phoenix",
-flutter: │         "Mesa",
-flutter: │         "Chandler",
-flutter: │         "Tempe",
-flutter: │         "Glendale",
-flutter: │         "Gilbert"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe7d",
-flutter: │       "areaName": "Scottsdale, AZ",
-flutter: │       "cities": [
-flutter: │         "Scottsdale",
-flutter: │         "Paradise Valley",
-flutter: │         "Fountain Hills",
-flutter: │         "Cave Creek",
-flutter: │         "Carefree"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe7e",
-flutter: │       "areaName": "Philadelphia, PA",
-flutter: │       "cities": [
-flutter: │         "Philadelphia",
-flutter: │         "King of Prussia",
-flutter: │         "Center City",
-flutter: │         "Main Line",
-flutter: │         "Chester",
-flutter: │         "Bensalem"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe7f",
-flutter: │       "areaName": "Pittsburgh, PA",
-flutter: │       "cities": [
-flutter: │         "Pittsburgh",
-flutter: │         "Monroeville",
-flutter: │         "Cranberry Township",
-flutter: │         "Mount Lebanon",
-flutter: │         "Shadyside"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe80",
-flutter: │       "areaName": "Charlotte, NC",
-flutter: │       "cities": [
-flutter: │         "Charlotte",
-flutter: │         "Concord",
-flutter: │         "Huntersville",
-flutter: │         "Matthews",
-flutter: │         "Ballantyne",
-flutter: │         "Gastonia"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe81",
-flutter: │       "areaName": "Raleigh, NC",
-flutter: │       "cities": [
-flutter: │         "Raleigh",
-flutter: │         "Durham",
-flutter: │         "Chapel Hill",
-flutter: │         "Cary",
-flutter: │         "Wake Forest",
-flutter: │         "Morrisville"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe82",
-flutter: │       "areaName": "Nashville, TN",
-flutter: │       "cities": [
-flutter: │         "Nashville",
-flutter: │         "Franklin",
-flutter: │         "Brentwood",
-flutter: │         "Murfreesboro",
-flutter: │         "Hendersonville",
-flutter: │         "Mount Juliet"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe83",
-flutter: │       "areaName": "Minneapolis, MN",
-flutter: │       "cities": [
-flutter: │         "Minneapolis",
-flutter: │         "St. Paul",
-flutter: │         "Bloomington",
-flutter: │         "Edina",
-flutter: │         "Minnetonka",
-flutter: │         "Plymouth"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe84",
-flutter: │       "areaName": "New Orleans, LA",
-flutter: │       "cities": [
-flutter: │         "New Orleans",
-flutter: │         "Metairie",
-flutter: │         "Kenner",
-flutter: │         "French Quarter",
-flutter: │         "Garden District",
-flutter: │         "Slidell"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe85",
-flutter: │       "areaName": "Salt Lake City, UT",
-flutter: │       "cities": [
-flutter: │         "Salt Lake City",
-flutter: │         "Park City",
-flutter: │         "Provo",
-flutter: │         "Sandy",
-flutter: │         "West Valley City",
-flutter: │         "Draper"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe86",
-flutter: │       "areaName": "Portland, OR",
-flutter: │       "cities": [
-flutter: │         "Portland",
-flutter: │         "Beaverton",
-flutter: │         "Gresham",
-flutter: │         "Hillsboro",
-flutter: │         "Lake Oswego",
-flutter: │         "Tigard"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe87",
-flutter: │       "areaName": "Detroit, MI",
-flutter: │       "cities": [
-flutter: │         "Detroit",
-flutter: │         "Troy",
-flutter: │         "Dearborn",
-flutter: │         "Ann Arbor",
-flutter: │         "Birmingham",
-flutter: │         "Royal Oak",
-flutter: │         "Southfield"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe88",
-flutter: │       "areaName": "Kansas City, MO",
-flutter: │       "cities": [
-flutter: │         "Kansas City",
-flutter: │         "Overland Park",
-flutter: │         "Olathe",
-flutter: │         "Lee's Summit",
-flutter: │         "Independence",
-flutter: │         "Blue Springs"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe89",
-flutter: │       "areaName": "St. Louis, MO",
-flutter: │       "cities": [
-flutter: │         "St. Louis",
-flutter: │         "Clayton",
-flutter: │         "Chesterfield",
-flutter: │         "St. Charles",
-flutter: │         "Creve Coeur",
-flutter: │         "Ballwin"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe8a",
-flutter: │       "areaName": "Columbus, OH",
-flutter: │       "cities": [
-flutter: │         "Columbus",
-flutter: │         "Dublin",
-flutter: │         "Westerville",
-flutter: │         "Upper Arlington",
-flutter: │         "New Albany",
-flutter: │         "Grove City"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe8b",
-flutter: │       "areaName": "Cincinnati, OH",
-flutter: │       "cities": [
-flutter: │         "Cincinnati",
-flutter: │         "Mason",
-flutter: │         "Norwood",
-flutter: │         "Blue Ash",
-flutter: │         "Hyde Park",
-flutter: │         "West Chester"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe8c",
-flutter: │       "areaName": "Cleveland, OH",
-flutter: │       "cities": [
-flutter: │         "Cleveland",
-flutter: │         "Akron",
-flutter: │         "Parma",
-flutter: │         "Lakewood",
-flutter: │         "Beachwood",
-flutter: │         "Westlake"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe8d",
-flutter: │       "areaName": "Indianapolis, IN",
-flutter: │       "cities": [
-flutter: │         "Indianapolis",
-flutter: │         "Carmel",
-flutter: │         "Fishers",
-flutter: │         "Noblesville",
-flutter: │         "Zionsville",
-flutter: │         "Greenwood"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe8e",
-flutter: │       "areaName": "Richmond, VA",
-flutter: │       "cities": [
-flutter: │         "Richmond",
-flutter: │         "Henrico",
-flutter: │         "Chesterfield",
-flutter: │         "Short Pump",
-flutter: │         "Glen Allen",
-flutter: │         "Midlothian"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe8f",
-flutter: │       "areaName": "Charleston, SC",
-flutter: │       "cities": [
-flutter: │         "Charleston",
-flutter: │         "North Charleston",
-flutter: │         "Mount Pleasant",
-flutter: │         "Summerville",
-flutter: │         "Kiawah Island",
-flutter: │         "Isle of Palms"
-flutter: │       ]
-flutter: │     },
-flutter: │     {
-flutter: │       "_id": "6a929cbf61f4ff5a4cbcfe90",
-flutter: │       "areaName": "Greenwich, CT",
-flutter: │       "cities": [
-flutter: │         "Greenwich",
-flutter: │         "Stamford",
-flutter: │         "Norwalk",
-flutter: │         "Darien",
-flutter: │         "New Canaan",
-flutter: │         "Westport"
-flutter: │       ]
-flutter: │     }
-flutter: │   ]
+flutter: │   "message": "Calendar jobs retrieved successfully",
+flutter: │   "data": {
+flutter: │     "eventDates": [
+flutter: │       "2026-08-10",
+flutter: │       "2026-08-14",
+flutter: │       "2026-08-18",
+flutter: │       "2026-08-28",
+flutter: │       "2026-08-29"
+flutter: │     ],
+flutter: │     "events": [
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab66",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Fort Lauderdale-Hollywood Int Airport (FLL)",
+flutter: │         "dropoff": "1 Hotel South Beach, 2341 Collins Ave",
+flutter: │         "date": "2026-08-10T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 240,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.347Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.347Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab32",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Hotel Bel-Air, 701 Stone Canyon Rd",
+flutter: │         "dropoff": "Century City Plaza Towers, 2029 Century Park E",
+flutter: │         "date": "2026-08-10T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "Sedan",
+flutter: │         "paymentAmount": 170,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.243Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.243Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab27",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Fort Lauderdale-Hollywood Int Airport (FLL)",
+flutter: │         "dropoff": "1 Hotel South Beach, 2341 Collins Ave",
+flutter: │         "date": "2026-08-10T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 240,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.221Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.221Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab1a",
+flutter: │         "jobType": "BY THE HOUR",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Four Seasons Hotel Downtown, 27 Barclay St",
+flutter: │         "dropoff": "Teterboro Airport, Jet Aviation FBO",
+flutter: │         "date": "2026-08-10T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "Sedan",
+flutter: │         "paymentAmount": 260,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.199Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.199Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab0d",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "The St. Regis New York, Two E 55th St",
+flutter: │         "dropoff": "Greenwich Polo Club, VIP Pavilion",
+flutter: │         "date": "2026-08-14T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 380,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.176Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.176Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab5d",
+flutter: │         "jobType": "BY THE HOUR",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Van Nuys Private Airport (VNY), Signature FBO",
+flutter: │         "dropoff": "Waldorf Astoria Beverly Hills, 9850 Wilshire Blvd",
+flutter: │         "date": "2026-08-18T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 230,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.329Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.329Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab52",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Fisher Island Ferry Terminal",
+flutter: │         "dropoff": "MIA Signature Flight Support Private Jet FBO",
+flutter: │         "date": "2026-08-18T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 220,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.309Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.309Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab45",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Hudson Yards, 30 Hudson Yards",
+flutter: │         "dropoff": "Newark Liberty International Airport, Terminal C",
+flutter: │         "date": "2026-08-18T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "Sedan",
+flutter: │         "paymentAmount": 210,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.285Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.285Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb8dfbe4898364b6a80f",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": null,
+flutter: │         "passengerPhone": null,
+flutter: │         "pickup": "Four Seasons Hotel at The Surf Club (9011 Collins Ave)",
+flutter: │         "dropoff": "Fort Lauderdale-Hollywood Int Airport (FLL), Sheltair FBO",
+flutter: │         "date": "2026-08-28T10:10:21.514Z",
+flutter: │         "time": "16:00",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 260,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "PENDING",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": "PRIVATE-G650",
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:21.629Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:21.629Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a92bbceb195b25e429cbcd6",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "Nayeeem",
+flutter: │         "passengerPhone": "1654654256",
+flutter: │         "pickup": "Dhaka",
+flutter: │         "dropoff": "faridpur",
+flutter: │         "date": "2026-08-29T00:00:00.000Z",
+flutter: │         "time": "16:55",
+flutter: │         "vehicleType": "SEDAN",
+flutter: │         "paymentAmount": 500,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "PENDING",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "PERSONAL NOTE",
+flutter: │         "isPersonalNote": true,
+flutter: │         "createdAt": "2026-08-29T11:00:30.287Z",
+flutter: │         "updatedAt": "2026-08-29T11:00:30.287Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb8dfbe4898364b6a807",
+flutter: │         "jobType": "BY THE HOUR",
+flutter: │         "passengerName": null,
+flutter: │         "passengerPhone": null,
+flutter: │         "pickup": "Fisher Island Ferry Terminal, VIP Slip",
+flutter: │         "dropoff": "Hard Rock Stadium VIP Lounge (Multi-Stop F1 Event)",
+flutter: │         "date": "2026-08-29T10:10:21.514Z",
+flutter: │         "time": "11:30",
+flutter: │         "vehicleType": "Van",
+flutter: │         "paymentAmount": 650,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "PENDING",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:21.615Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:21.615Z"
+flutter: │       }
+flutter: │     ]
+flutter: │   }
 flutter: │ }
 flutter: └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅│
 flutter:

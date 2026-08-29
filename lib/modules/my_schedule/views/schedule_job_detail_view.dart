@@ -121,24 +121,27 @@ class ScheduleJobDetailView extends StatelessWidget {
       appBar: CustomSubAppBar(
         title: "Booking Details",
         actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              AppIcons.edit_icon,
-              width: 18.sp,
-              height: 18.sp,
-              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          if (!job.isDispatchedToNetwork)
+            IconButton(
+              icon: SvgPicture.asset(
+                AppIcons.edit_icon,
+                width: 18.sp,
+                height: 18.sp,
+                colorFilter:
+                    const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              ),
+              onPressed: () {
+                Get.back();
+                Get.to(() => AddScheduleJobSheet(existingJob: job));
+              },
             ),
-            onPressed: () {
-              Get.back();
-              Get.to(() => AddScheduleJobSheet(existingJob: job));
-            },
-          ),
           IconButton(
             icon: SvgPicture.asset(
               AppIcons.delete_icon,
               width: 18.sp,
               height: 18.sp,
-              colorFilter: const ColorFilter.mode(Color(0xFFF87171), BlendMode.srcIn),
+              colorFilter:
+                  const ColorFilter.mode(Color(0xFFF87171), BlendMode.srcIn),
             ),
             onPressed: () => _confirmDeleteJob(context, job.id),
           ),
@@ -216,52 +219,49 @@ class ScheduleJobDetailView extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // Payment Status Badge Button
-                          GestureDetector(
-                            onTap: () => controller.togglePaymentStatus(currentJob.id),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10.w,
-                                vertical: 6.h,
-                              ),
-                              decoration: BoxDecoration(
+                          // Payment Status Badge (Read-Only)
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 6.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: currentJob.isPaid
+                                  ? const Color(0xFF102A1C)
+                                  : const Color(0xFF2C1618),
+                              borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(
                                 color: currentJob.isPaid
-                                    ? const Color(0xFF102A1C)
-                                    : const Color(0xFF2C1618),
-                                borderRadius: BorderRadius.circular(20.r),
-                                border: Border.all(
-                                  color: currentJob.isPaid
-                                      ? const Color(0xFF166534)
-                                      : const Color(0xFF991B1B),
-                                  width: 1,
-                                ),
+                                    ? const Color(0xFF166534)
+                                    : const Color(0xFF991B1B),
+                                width: 1,
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    currentJob.isPaid
-                                        ? Icons.check_circle_rounded
-                                        : Icons.pending_actions_rounded,
-                                    size: 13.sp,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  currentJob.isPaid
+                                      ? Icons.check_circle_rounded
+                                      : Icons.pending_actions_rounded,
+                                  size: 13.sp,
+                                  color: currentJob.isPaid
+                                      ? const Color(0xFF4ADE80)
+                                      : const Color(0xFFF87171),
+                                ),
+                                SizedBox(width: 5.w),
+                                Text(
+                                  currentJob.isPaid ? "PAID" : "UNPAID",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.bold,
                                     color: currentJob.isPaid
                                         ? const Color(0xFF4ADE80)
                                         : const Color(0xFFF87171),
                                   ),
-                                  SizedBox(width: 5.w),
-                                  Text(
-                                    currentJob.isPaid ? "PAID" : "UNPAID",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: currentJob.isPaid
-                                          ? const Color(0xFF4ADE80)
-                                          : const Color(0xFFF87171),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -560,6 +560,38 @@ class ScheduleJobDetailView extends StatelessWidget {
                               ),
                             ],
                           ),
+                          SizedBox(height: 14.h),
+                          const Divider(color: Color(0xFF24242A), height: 1),
+                          SizedBox(height: 10.h),
+                          Row(
+                            children: [
+                              Icon(Icons.flight_land,
+                                  size: 16.sp, color: AppColors.primaryColor),
+                              SizedBox(width: 8.w),
+                              Text(
+                                "FLIGHT NUMBER: ",
+                                style: GoogleFonts.inter(
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.gray100,
+                                ),
+                              ),
+                              Text(
+                                (currentJob.flightNumber != null &&
+                                        currentJob.flightNumber!.isNotEmpty)
+                                    ? currentJob.flightNumber!
+                                    : "Not Specified",
+                                style: GoogleFonts.inter(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: (currentJob.flightNumber != null &&
+                                          currentJob.flightNumber!.isNotEmpty)
+                                      ? AppColors.primaryColor
+                                      : Colors.white38,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -630,17 +662,47 @@ class ScheduleJobDetailView extends StatelessWidget {
                               ),
                             ],
                           ),
-                          if (currentJob.paymentInfo.isNotEmpty) ...[
-                            SizedBox(height: 8.h),
-                            Text(
-                              "Note: ${currentJob.paymentInfo}",
-                              style: GoogleFonts.inter(
-                                fontSize: 11.sp,
-                                fontStyle: FontStyle.italic,
-                                color: AppColors.gray100,
+                          SizedBox(height: 10.h),
+                          const Divider(color: Color(0xFF24242A), height: 1),
+                          SizedBox(height: 10.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Payment Status",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13.sp,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                  SizedBox(height: 2.h),
+                                  Text(
+                                    currentJob.isPaid ? "PAID" : "UNPAID",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: currentJob.isPaid
+                                          ? const Color(0xFF4ADE80)
+                                          : const Color(0xFFF87171),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              Switch(
+                                value: currentJob.isPaid,
+                                activeThumbColor: const Color(0xFF4ADE80),
+                                activeTrackColor: const Color(0xFF166534),
+                                inactiveThumbColor: const Color(0xFFF87171),
+                                inactiveTrackColor: const Color(0xFF451A1A),
+                                onChanged: (val) {
+                                  controller.togglePaymentStatus(currentJob.id);
+                                },
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -694,17 +756,17 @@ class ScheduleJobDetailView extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Expanded(
-                    child: CustomButton(
-                      text: "Edit Booking",
-                      onPressed: () {
-                        Get.back();
-                        Get.to(() => AddScheduleJobSheet(existingJob: currentJob));
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 10.w),
                   if (!isDispatched) ...[
+                    Expanded(
+                      child: CustomButton(
+                        text: "Edit Booking",
+                        onPressed: () {
+                          Get.back();
+                          Get.to(() => AddScheduleJobSheet(existingJob: currentJob));
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
                     Expanded(
                       child: GestureDetector(
                         onTap: () => _confirmDispatchToNetwork(context, currentJob),
@@ -730,25 +792,27 @@ class ScheduleJobDetailView extends StatelessWidget {
                     ),
                   ] else ...[
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () => _confirmDeleteJob(context, currentJob.id),
-                        child: Container(
-                          height: 48.h,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2C1618),
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: const Color(0xFF991B1B), width: 1.2),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Delete Booking",
+                      child: Container(
+                        height: 48.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: AppColors.primaryColor, width: 1),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.public, size: 16.sp, color: AppColors.primaryColor),
+                            SizedBox(width: 6.w),
+                            Text(
+                              "Dispatched to Network",
                               style: GoogleFonts.inter(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFFF87171),
+                                color: AppColors.primaryColor,
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),

@@ -29,6 +29,7 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
   late TextEditingController _pickupController;
   late TextEditingController _dropoffController;
   late TextEditingController _fareController;
+  late TextEditingController _flightNumberController;
   late TextEditingController _notesController;
   late TextEditingController _paymentInfoController;
   late TextEditingController _dateController;
@@ -63,6 +64,7 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
     _pickupController = TextEditingController(text: job?.pickupLocation ?? '');
     _dropoffController = TextEditingController(text: job?.dropoffLocation ?? '');
     _fareController = TextEditingController(text: job?.fare ?? '');
+    _flightNumberController = TextEditingController(text: job?.flightNumber ?? '');
     _notesController = TextEditingController(text: job?.notes ?? '');
     _paymentInfoController = TextEditingController(text: job?.paymentInfo ?? '');
 
@@ -105,6 +107,7 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
     _pickupController.dispose();
     _dropoffController.dispose();
     _fareController.dispose();
+    _flightNumberController.dispose();
     _notesController.dispose();
     _paymentInfoController.dispose();
     _dateController.dispose();
@@ -180,7 +183,7 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
     });
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
       final controller = Get.find<MyScheduleController>();
       final isEdit = widget.existingJob != null;
@@ -195,6 +198,9 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
         vehicleType: _selectedVehicleType,
         fare: _fareController.text.trim(),
         notes: _notesController.text.trim(),
+        flightNumber: _flightNumberController.text.trim().isNotEmpty
+            ? _flightNumberController.text.trim()
+            : null,
         isDispatchedToNetwork: widget.existingJob?.isDispatchedToNetwork ?? false,
         status: widget.existingJob?.status ?? "Scheduled",
         isPaid: _isPaid,
@@ -204,18 +210,23 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
         paymentInfo: _paymentInfoController.text.trim(),
       );
 
-      Navigator.of(context).pop();
-
       if (isEdit) {
-        controller.updateJob(job);
+        final success = await controller.updateDirectBooking(job);
+        if (success && mounted) {
+          Navigator.of(context).pop();
+        }
       } else {
-        controller.addJob(job);
+        final success = await controller.createDirectBooking(job);
+        if (success && mounted) {
+          Navigator.of(context).pop();
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<MyScheduleController>();
     final isEdit = widget.existingJob != null;
 
     return Scaffold(
@@ -579,11 +590,13 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
                 ],
               ),
 
-              // Client Payment Info
+
+
+              // Flight Number (Optional)
               _buildFieldWithLabel(
-                "Client Payment Details / Notes",
-                _paymentInfoController,
-                "e.g. Receipt #, Zelle phone",
+                "Flight Number",
+                _flightNumberController,
+                "e.g. BA-178 (Optional)",
                 null,
                 isRequired: false,
               ),
@@ -592,15 +605,23 @@ class _AddScheduleJobSheetState extends State<AddScheduleJobSheet> {
               _buildFieldWithLabel(
                 "Notes / Special Requests",
                 _notesController,
-                "e.g. Flight details, luggage specs",
+                "e.g. Special instructions, luggage specs",
                 null,
                 isRequired: false,
               ),
               SizedBox(height: 24.h),
 
-              CustomButton(
-                text: isEdit ? "Update Booking" : "Save Direct Booking",
-                onPressed: _submit,
+              Obx(
+                () => controller.isSubmitting.value
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
+                        ),
+                      )
+                    : CustomButton(
+                        text: isEdit ? "Update Booking" : "Save Direct Booking",
+                        onPressed: _submit,
+                      ),
               ),
               SizedBox(height: 10.h),
             ],

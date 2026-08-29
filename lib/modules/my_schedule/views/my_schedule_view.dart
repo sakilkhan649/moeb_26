@@ -98,6 +98,40 @@ class MyScheduleView extends GetView<MyScheduleController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (isDispatched) ...[
+              Container(
+                margin: EdgeInsets.only(bottom: 10.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(
+                    color: AppColors.primaryColor,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.public_rounded,
+                      size: 13.sp,
+                      color: AppColors.primaryColor,
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      "DISPATCHED TO NETWORK",
+                      style: GoogleFonts.inter(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryColor,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             // Header Row: Time & Vehicle Type & Price
             Row(
               children: [
@@ -306,10 +340,8 @@ class MyScheduleView extends GetView<MyScheduleController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Paid / Unpaid Status Chip
-                GestureDetector(
-                  onTap: () => controller.togglePaymentStatus(job.id),
-                  child: AnimatedContainer(
+                // Paid / Unpaid Status Chip (Read Only on List Page)
+                AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: EdgeInsets.symmetric(
                       horizontal: 10.w,
@@ -353,7 +385,6 @@ class MyScheduleView extends GetView<MyScheduleController> {
                       ],
                     ),
                   ),
-                ),
                 // "View Details >" Prompt
                 Row(
                   children: [

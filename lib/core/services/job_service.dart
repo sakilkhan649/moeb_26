@@ -28,7 +28,11 @@ class JobService extends GetxService {
     String? time,
     String? flightNumber,
     String? instruction,
+    String? paymentStatus,
+    String? passengerName,
+    String? passengerPhone,
     List<String>? targetedChauffeurs,
+    String? serviceAreaId,
   }) async {
     try {
       return await _jobRepo.createJob(
@@ -44,8 +48,20 @@ class JobService extends GetxService {
         time: time,
         flightNumber: flightNumber,
         instruction: instruction,
+        paymentStatus: paymentStatus,
+        passengerName: passengerName,
+        passengerPhone: passengerPhone,
         targetedChauffeurs: targetedChauffeurs,
+        serviceAreaId: serviceAreaId,
       );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getCalendarJobs({required int month, required int year}) async {
+    try {
+      return await _jobRepo.getCalendarJobs(month: month, year: year);
     } catch (e) {
       rethrow;
     }
@@ -94,6 +110,58 @@ class JobService extends GetxService {
   Future<Response> rejectApplicant({required String jobId}) async {
     try {
       return await _jobRepo.rejectApplicant(jobId: jobId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> updateJob({
+    required String jobId,
+    String? pickupLocation,
+    double? paymentAmount,
+    String? instruction,
+    String? dropoffLocation,
+    String? date,
+    String? time,
+    String? vehicleType,
+    String? paymentType,
+    String? jobType,
+    String? flightNumber,
+    String? paymentStatus,
+    String? passengerName,
+    String? passengerPhone,
+    String? dispatchType,
+    String? serviceAreaId,
+    List<String>? targetedChauffeurs,
+  }) async {
+    try {
+      return await _jobRepo.updateJob(
+        jobId: jobId,
+        pickupLocation: pickupLocation,
+        paymentAmount: paymentAmount,
+        instruction: instruction,
+        dropoffLocation: dropoffLocation,
+        date: date,
+        time: time,
+        vehicleType: vehicleType,
+        paymentType: paymentType,
+        jobType: jobType,
+        flightNumber: flightNumber,
+        paymentStatus: paymentStatus,
+        passengerName: passengerName,
+        passengerPhone: passengerPhone,
+        dispatchType: dispatchType,
+        serviceAreaId: serviceAreaId,
+        targetedChauffeurs: targetedChauffeurs,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> deleteJob({required String jobId}) async {
+    try {
+      return await _jobRepo.deleteJob(jobId: jobId);
     } catch (e) {
       rethrow;
     }

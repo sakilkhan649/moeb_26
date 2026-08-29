@@ -301,6 +301,19 @@ class PostJobController extends GetxController {
       final List<String> targetedChauffeurs =
           isTargeted ? selectedDrivers.toList() : [];
 
+      String? serviceAreaId;
+      if (!isTargeted && selectedServiceAreas.isNotEmpty) {
+        final areaName = selectedServiceAreas.first;
+        final areaModel = serviceAreas.firstWhereOrNull(
+          (a) =>
+              a.areaName.trim().toLowerCase() ==
+              areaName.trim().toLowerCase(),
+        );
+        if (areaModel != null) {
+          serviceAreaId = areaModel.id;
+        }
+      }
+
       final response = await _jobService.createJob(
         jobType: "ONE WAY",
         pickup: pickupLocation,
@@ -316,6 +329,7 @@ class PostJobController extends GetxController {
         instruction:
             instruction?.isNotEmpty == true ? instruction : null,
         targetedChauffeurs: targetedChauffeurs,
+        serviceAreaId: serviceAreaId,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -376,6 +390,19 @@ class PostJobController extends GetxController {
       final List<String> targetedChauffeurs =
           isTargeted ? selectedDrivers.toList() : [];
 
+      String? serviceAreaId;
+      if (!isTargeted && selectedServiceAreas.isNotEmpty) {
+        final areaName = selectedServiceAreas.first;
+        final areaModel = serviceAreas.firstWhereOrNull(
+          (a) =>
+              a.areaName.trim().toLowerCase() ==
+              areaName.trim().toLowerCase(),
+        );
+        if (areaModel != null) {
+          serviceAreaId = areaModel.id;
+        }
+      }
+
       final String finalDropoff =
           (dropoffLocation != null && dropoffLocation.isNotEmpty)
               ? dropoffLocation
@@ -394,6 +421,7 @@ class PostJobController extends GetxController {
         dispatchType: dispatchType,
         instruction: instruction?.isNotEmpty == true ? instruction : null,
         targetedChauffeurs: targetedChauffeurs,
+        serviceAreaId: serviceAreaId,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
