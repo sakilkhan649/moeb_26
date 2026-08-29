@@ -19,9 +19,7 @@ class MyScheduleView extends GetView<MyScheduleController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0C),
-      appBar: const CustomSubAppBar(
-        title: "My Schedule",
-      ),
+      appBar: const CustomSubAppBar(title: "My Schedule"),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openAddJobSheet(context),
         backgroundColor: AppColors.primaryColor, // Color(0xFFFFDCA1)
@@ -42,8 +40,8 @@ class MyScheduleView extends GetView<MyScheduleController> {
           // Sub-Header Banner indicating privacy
           _buildPrivacyHeader(),
 
-          // Horizontal Weekly Calendar Strip
-          _buildWeeklyCalendarStrip(),
+          // Horizontal Weekly Calendar Strip with Header & Date Picker
+          _buildWeeklyCalendarStrip(context),
 
           SizedBox(height: 10.h),
 
@@ -59,7 +57,8 @@ class MyScheduleView extends GetView<MyScheduleController> {
                   left: 16.w,
                   right: 16.w,
                   top: 8.h,
-                  bottom: 95.h, // Bottom spacing so scrolling content moves above FAB
+                  bottom: 95
+                      .h, // Bottom spacing so scrolling content moves above FAB
                 ),
                 itemCount: jobs.length,
                 itemBuilder: (context, index) {
@@ -81,11 +80,7 @@ class MyScheduleView extends GetView<MyScheduleController> {
       color: const Color(0xFF141416),
       child: Row(
         children: [
-          Icon(
-            Icons.lock_outline,
-            size: 16.sp,
-            color: AppColors.primaryColor,
-          ),
+          Icon(Icons.lock_outline, size: 16.sp, color: AppColors.primaryColor),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
@@ -102,92 +97,222 @@ class MyScheduleView extends GetView<MyScheduleController> {
     );
   }
 
-  // Horizontal Weekly Calendar Strip
-  Widget _buildWeeklyCalendarStrip() {
+  // Enhanced Calendar Strip with Month Header & Date Picker Icon
+  Widget _buildWeeklyCalendarStrip(BuildContext context) {
     return Container(
-      height: 85.h,
-      padding: EdgeInsets.symmetric(vertical: 8.h),
       decoration: const BoxDecoration(
         color: Color(0xFF141416),
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF24242A), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFF24242A), width: 1)),
       ),
       child: Obx(() {
         final selected = controller.selectedDate.value;
-        final startDate = DateTime.now().subtract(const Duration(days: 3));
+        final isTodaySelected =
+            selected.year == DateTime.now().year &&
+            selected.month == DateTime.now().month &&
+            selected.day == DateTime.now().day;
 
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
-          itemCount: 14,
-          itemBuilder: (context, index) {
-            final date = startDate.add(Duration(days: index));
-            final isSelected = date.year == selected.year &&
-                date.month == selected.month &&
-                date.day == selected.day;
+        // Show a 30-day window starting 7 days before current selected date
+        final startDate = selected.subtract(const Duration(days: 7));
 
-            final isToday = date.year == DateTime.now().year &&
-                date.month == DateTime.now().month &&
-                date.day == DateTime.now().day;
-
-            final hasJobs = controller.hasJobsOnDate(date);
-
-            return GestureDetector(
-              onTap: () => controller.selectDate(date),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                width: 56.w,
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primaryColor
-                      : const Color(0xFF1E1E22),
-                  borderRadius: BorderRadius.circular(14.r),
-                  border: isToday && !isSelected
-                      ? Border.all(color: AppColors.primaryColor, width: 1.2)
-                      : Border.all(color: const Color(0xFF2B2B32), width: 1),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      DateFormat('EEE').format(date).toUpperCase(),
+        return Column(
+          children: [
+            // Month Header & Calendar Action Row
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 6.h),
+              child: Row(
+                children: [
+                  Text(
+                    DateFormat('MMMM yyyy').format(selected),
+                    style: GoogleFonts.inter(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 2.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Text(
+                      DateFormat('EEE, d MMM').format(selected),
                       style: GoogleFonts.inter(
-                        fontSize: 10.sp,
+                        fontSize: 11.sp,
+                        color: AppColors.primaryColor,
                         fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.black : AppColors.gray100,
                       ),
                     ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      DateFormat('d').format(date),
-                      style: GoogleFonts.inter(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.black : Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    if (hasJobs)
-                      Container(
-                        width: 5.r,
-                        height: 5.r,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isSelected ? Colors.black : AppColors.primaryColor,
+                  ),
+                  const Spacer(),
+                  // Quick "Today" jump button
+                  if (!isTodaySelected)
+                    GestureDetector(
+                      onTap: () => controller.selectDate(DateTime.now()),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 5.h,
                         ),
-                      )
-                    else
-                      SizedBox(height: 5.r),
-                  ],
-                ),
+                        margin: EdgeInsets.only(right: 8.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                            color: AppColors.primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          "Today",
+                          style: GoogleFonts.inter(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  // Full Calendar Dialog Launcher Icon
+                  GestureDetector(
+                    onTap: () => _openFullCalendarPicker(context),
+                    child: Container(
+                      padding: EdgeInsets.all(7.r),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E1E22),
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(color: const Color(0xFF2B2B32)),
+                      ),
+                      child: Icon(
+                        Icons.calendar_month_outlined,
+                        size: 18.sp,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            );
-          },
+            ),
+
+            // Horizontal Date Strip List
+            Container(
+              height: 75.h,
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                itemCount: 30,
+                itemBuilder: (context, index) {
+                  final date = startDate.add(Duration(days: index));
+                  final isSelected =
+                      date.year == selected.year &&
+                      date.month == selected.month &&
+                      date.day == selected.day;
+
+                  final isToday =
+                      date.year == DateTime.now().year &&
+                      date.month == DateTime.now().month &&
+                      date.day == DateTime.now().day;
+
+                  final hasJobs = controller.hasJobsOnDate(date);
+
+                  return GestureDetector(
+                    onTap: () => controller.selectDate(date),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      width: 52.w,
+                      margin: EdgeInsets.symmetric(horizontal: 4.w),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.primaryColor
+                            : const Color(0xFF1E1E22),
+                        borderRadius: BorderRadius.circular(14.r),
+                        border: isToday && !isSelected
+                            ? Border.all(
+                                color: AppColors.primaryColor,
+                                width: 1.2,
+                              )
+                            : Border.all(
+                                color: const Color(0xFF2B2B32),
+                                width: 1,
+                              ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            DateFormat('EEE').format(date).toUpperCase(),
+                            style: GoogleFonts.inter(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected
+                                  ? Colors.black
+                                  : AppColors.gray100,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            DateFormat('d').format(date),
+                            style: GoogleFonts.inter(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                              color: isSelected ? Colors.black : Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 3.h),
+                          if (hasJobs)
+                            Container(
+                              width: 5.r,
+                              height: 5.r,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isSelected
+                                    ? Colors.black
+                                    : AppColors.primaryColor,
+                              ),
+                            )
+                          else
+                            SizedBox(height: 5.r),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         );
       }),
     );
+  }
+
+  void _openFullCalendarPicker(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: controller.selectedDate.value,
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primaryColor,
+              onPrimary: Colors.black,
+              surface: Color(0xFF141416),
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      controller.selectDate(picked);
+    }
   }
 
   // Job Card Widget
@@ -202,13 +327,13 @@ class MyScheduleView extends GetView<MyScheduleController> {
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: isDispatched
-              ? AppColors.primaryColor.withOpacity(0.6)
+              ? AppColors.primaryColor.withValues(alpha: 0.6)
               : const Color(0xFF24242A),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -228,7 +353,11 @@ class MyScheduleView extends GetView<MyScheduleController> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.access_time, size: 13.sp, color: AppColors.gray100),
+                    Icon(
+                      Icons.access_time,
+                      size: 13.sp,
+                      color: AppColors.gray100,
+                    ),
                     SizedBox(width: 6.w),
                     Text(
                       DateFormat('hh:mm a').format(job.pickupDateTime),
@@ -312,7 +441,11 @@ class MyScheduleView extends GetView<MyScheduleController> {
                     color: Color(0xFF24242A),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.phone, size: 16.sp, color: AppColors.primaryColor),
+                  child: Icon(
+                    Icons.phone,
+                    size: 16.sp,
+                    color: AppColors.primaryColor,
+                  ),
                 ),
               ),
             ],
@@ -423,7 +556,11 @@ class MyScheduleView extends GetView<MyScheduleController> {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.payment, size: 14.sp, color: AppColors.primaryColor),
+                          Icon(
+                            Icons.payment,
+                            size: 14.sp,
+                            color: AppColors.primaryColor,
+                          ),
                           SizedBox(width: 6.w),
                           Text(
                             "Payment: ",
@@ -435,7 +572,10 @@ class MyScheduleView extends GetView<MyScheduleController> {
                           ),
                           Expanded(
                             child: Text(
-                              job.paymentMethod + (job.paymentInfo.isNotEmpty ? " (${job.paymentInfo})" : ""),
+                              job.paymentMethod +
+                                  (job.paymentInfo.isNotEmpty
+                                      ? " (${job.paymentInfo})"
+                                      : ""),
                               style: GoogleFonts.inter(
                                 fontSize: 11.sp,
                                 color: Colors.white70,
@@ -453,12 +593,19 @@ class MyScheduleView extends GetView<MyScheduleController> {
                       onTap: () => controller.togglePaymentStatus(job.id),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 4.h,
+                        ),
                         decoration: BoxDecoration(
-                          color: job.isPaid ? const Color(0xFF1F3D24) : const Color(0xFF3D1F1F),
+                          color: job.isPaid
+                              ? const Color(0xFF1F3D24)
+                              : const Color(0xFF3D1F1F),
                           borderRadius: BorderRadius.circular(20.r),
                           border: Border.all(
-                            color: job.isPaid ? Colors.greenAccent : Colors.redAccent,
+                            color: job.isPaid
+                                ? Colors.greenAccent
+                                : Colors.redAccent,
                             width: 1,
                           ),
                         ),
@@ -466,9 +613,13 @@ class MyScheduleView extends GetView<MyScheduleController> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              job.isPaid ? Icons.check_circle_outline : Icons.error_outline,
+                              job.isPaid
+                                  ? Icons.check_circle_outline
+                                  : Icons.error_outline,
                               size: 12.sp,
-                              color: job.isPaid ? Colors.greenAccent : Colors.redAccent,
+                              color: job.isPaid
+                                  ? Colors.greenAccent
+                                  : Colors.redAccent,
                             ),
                             SizedBox(width: 4.w),
                             Text(
@@ -476,7 +627,9 @@ class MyScheduleView extends GetView<MyScheduleController> {
                               style: GoogleFonts.inter(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.bold,
-                                color: job.isPaid ? Colors.greenAccent : Colors.redAccent,
+                                color: job.isPaid
+                                    ? Colors.greenAccent
+                                    : Colors.redAccent,
                               ),
                             ),
                           ],
@@ -489,9 +642,13 @@ class MyScheduleView extends GetView<MyScheduleController> {
                 Row(
                   children: [
                     Icon(
-                      job.assignedChauffeurName != null ? Icons.directions_car_filled : Icons.people_outline,
+                      job.assignedChauffeurName != null
+                          ? Icons.directions_car_filled
+                          : Icons.people_outline,
                       size: 14.sp,
-                      color: job.assignedChauffeurName != null ? AppColors.primaryColor : AppColors.gray100,
+                      color: job.assignedChauffeurName != null
+                          ? AppColors.primaryColor
+                          : AppColors.gray100,
                     ),
                     SizedBox(width: 6.w),
                     Text(
@@ -504,11 +661,16 @@ class MyScheduleView extends GetView<MyScheduleController> {
                     ),
                     Expanded(
                       child: Text(
-                        job.assignedChauffeurName ?? "Public Network Dispatch (Unassigned)",
+                        job.assignedChauffeurName ??
+                            "Public Network Dispatch (Unassigned)",
                         style: GoogleFonts.inter(
                           fontSize: 11.sp,
-                          color: job.assignedChauffeurName != null ? Colors.white : Colors.white60,
-                          fontWeight: job.assignedChauffeurName != null ? FontWeight.w600 : FontWeight.normal,
+                          color: job.assignedChauffeurName != null
+                              ? Colors.white
+                              : Colors.white60,
+                          fontWeight: job.assignedChauffeurName != null
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -587,7 +749,10 @@ class MyScheduleView extends GetView<MyScheduleController> {
               const Spacer(),
               if (isDispatched)
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF24242A),
                     borderRadius: BorderRadius.circular(10.r),
@@ -595,7 +760,11 @@ class MyScheduleView extends GetView<MyScheduleController> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle_outline, size: 14.sp, color: AppColors.primaryColor),
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 14.sp,
+                        color: AppColors.primaryColor,
+                      ),
                       SizedBox(width: 4.w),
                       Text(
                         "Dispatched",
@@ -628,7 +797,9 @@ class MyScheduleView extends GetView<MyScheduleController> {
 
   // Empty State Widget
   Widget _buildEmptyState(BuildContext context) {
-    final dateStr = DateFormat('EEEE, MMM d').format(controller.selectedDate.value);
+    final dateStr = DateFormat(
+      'EEEE, MMM d',
+    ).format(controller.selectedDate.value);
 
     return Center(
       child: Padding(
@@ -668,11 +839,6 @@ class MyScheduleView extends GetView<MyScheduleController> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 24.h),
-            CustomButton(
-              text: "Add New Booking",
-              onPressed: () => _openAddJobSheet(context),
-            ),
           ],
         ),
       ),
@@ -691,7 +857,13 @@ class MyScheduleView extends GetView<MyScheduleController> {
     Get.dialog(
       AlertDialog(
         backgroundColor: const Color(0xFF1E1E22),
-        title: Text("Cancel Booking?", style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(
+          "Cancel Booking?",
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: Text(
           "Are you sure you want to remove this booking from your private schedule?",
           style: GoogleFonts.inter(color: AppColors.gray100),
@@ -699,7 +871,10 @@ class MyScheduleView extends GetView<MyScheduleController> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text("No", style: GoogleFonts.inter(color: AppColors.gray100)),
+            child: Text(
+              "No",
+              style: GoogleFonts.inter(color: AppColors.gray100),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -710,7 +885,10 @@ class MyScheduleView extends GetView<MyScheduleController> {
               Get.back();
               controller.deleteJob(jobId);
             },
-            child: Text("Yes, Remove", style: GoogleFonts.inter(color: Colors.white)),
+            child: Text(
+              "Yes, Remove",
+              style: GoogleFonts.inter(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -725,7 +903,14 @@ class MyScheduleView extends GetView<MyScheduleController> {
           children: [
             Icon(Icons.share, color: AppColors.primaryColor, size: 20.sp),
             SizedBox(width: 8.w),
-            Text("Pass Job to Network?", style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.sp)),
+            Text(
+              "Pass Job to Network?",
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+              ),
+            ),
           ],
         ),
         content: Text(
@@ -735,7 +920,10 @@ class MyScheduleView extends GetView<MyScheduleController> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text("Cancel", style: GoogleFonts.inter(color: AppColors.gray100)),
+            child: Text(
+              "Cancel",
+              style: GoogleFonts.inter(color: AppColors.gray100),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -746,7 +934,13 @@ class MyScheduleView extends GetView<MyScheduleController> {
               Get.back();
               controller.dispatchToNetwork(job);
             },
-            child: Text("Dispatch Now", style: GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.bold)),
+            child: Text(
+              "Dispatch Now",
+              style: GoogleFonts.inter(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
