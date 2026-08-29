@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +7,7 @@ import 'package:moeb_26/data/models/my_rides_model.dart';
 import 'package:moeb_26/config/constants/image_paths.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/Custom_InfoBox.dart';
@@ -231,12 +231,9 @@ class MyRideProgressDetailsView extends StatelessWidget {
                     Get.toNamed(Routes.chatDetailView, arguments: chat);
                   }
                 } catch (e) {
-                  Get.snackbar(
-                    "Error",
+                  Helpers.showCustomSnackBar(
                     "Failed to open chat",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: const Color(0xFFEF4444),
-                    colorText: Colors.white,
+                    isError: true,
                   );
                 }
               }

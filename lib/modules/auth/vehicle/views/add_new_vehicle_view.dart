@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/core/widgets/custom_sub_appbar.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/utils/validators.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
@@ -85,11 +86,9 @@ class _AddNewVehicleViewState extends State<AddNewVehicleView> {
                             .selectedVehicleType
                             .value
                             .isEmpty) {
-                          Get.snackbar(
-                            "Error",
+                          Helpers.showCustomSnackBar(
                             "Please select a vehicle type",
-                            backgroundColor: Colors.red,
-                            colorText: Colors.white,
+                            isError: true,
                           );
                           return;
                         }

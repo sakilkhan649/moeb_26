@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/core/services/marketplace_service.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/my_items_model.dart';
 import 'package:moeb_26/modules/market_place/controllers/market_place_controller.dart';
 
@@ -67,11 +68,7 @@ class MyItemsController extends GetxController {
       }
     } catch (e) {
       print("Error fetching my items: $e");
-      Get.snackbar(
-        "Error",
-        "Failed to fetch your items",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Helpers.showCustomSnackBar("Failed to fetch your items", isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -126,31 +123,17 @@ class MyItemsController extends GetxController {
             createdAt: old.createdAt,
           );
         }
-        Get.snackbar(
-          "Success",
-          "Item marked as sold!",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xff1A1A1A),
-          colorText: Colors.white,
-        );
+        Helpers.showCustomSnackBar("Item marked as sold!", isError: false);
 
         if (Get.isRegistered<MarketplaceController>()) {
           Get.find<MarketplaceController>().fetchItems();
         }
       } else {
-        Get.snackbar(
-          "Error",
-          "Failed to mark item as sold",
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        Helpers.showCustomSnackBar("Failed to mark item as sold", isError: true);
       }
     } catch (e) {
       print("Error marking item as sold: $e");
-      Get.snackbar(
-        "Error",
-        "An error occurred while updating status",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Helpers.showCustomSnackBar("An error occurred while updating status", isError: true);
     }
   }
 
@@ -160,31 +143,17 @@ class MyItemsController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         myItems.removeWhere((item) => item.id == id);
-        Get.snackbar(
-          "Success",
-          "Item deleted successfully",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xff1A1A1A),
-          colorText: Colors.white,
-        );
+        Helpers.showCustomSnackBar("Item deleted successfully", isError: false);
 
         if (Get.isRegistered<MarketplaceController>()) {
           Get.find<MarketplaceController>().fetchItems();
         }
       } else {
-        Get.snackbar(
-          "Error",
-          "Failed to delete item",
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        Helpers.showCustomSnackBar("Failed to delete item", isError: true);
       }
     } catch (e) {
       print("Error deleting item: $e");
-      Get.snackbar(
-        "Error",
-        "An error occurred while deleting",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Helpers.showCustomSnackBar("An error occurred while deleting", isError: true);
     }
   }
 }

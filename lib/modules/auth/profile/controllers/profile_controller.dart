@@ -176,13 +176,7 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200 && response.data?['data'] != null) {
         _applyProfileData(response.data['data']);
       } else {
-        Get.snackbar(
-          "Error",
-          "Failed to load profile",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Helpers.showCustomSnackBar("Failed to load profile", isError: true);
       }
     } catch (e) {
       debugPrint("Error fetching profile: $e");

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
@@ -367,12 +368,9 @@ class _PrivacyPolicySignUpViewState extends State<PrivacyPolicySignUpView> {
                           onPressed: () {
                             // Check if current step items are fully checked
                             if (!_isAllStepChecked(activeStep)) {
-                              Get.snackbar(
-                                "Agreement Required",
+                              Helpers.showCustomSnackBar(
                                 "Please agree to all items above to continue.",
-                                backgroundColor: Colors.red,
-                                colorText: Colors.white,
-                                snackPosition: SnackPosition.BOTTOM,
+                                isError: true,
                               );
                               return;
                             }

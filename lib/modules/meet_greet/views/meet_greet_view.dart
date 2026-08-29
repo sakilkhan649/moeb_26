@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/meet_greet_controller.dart';
 
@@ -280,12 +281,9 @@ class MeetGreetView extends GetView<MeetGreetController> {
                 onPressed: () {
                   if (controller.showCompanyLogo.value &&
                       controller.customLogoPath.value == null) {
-                    Get.snackbar(
-                      'Logo Required',
+                    Helpers.showCustomSnackBar(
                       'Please upload a custom logo or turn off the Logo Header switch.',
-                      backgroundColor: Colors.redAccent,
-                      colorText: Colors.white,
-                      snackPosition: SnackPosition.BOTTOM,
+                      isError: true,
                     );
                     return;
                   }

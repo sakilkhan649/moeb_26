@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import '../controllers/invoice_controller.dart';
 import 'invoice_preview_view.dart';
@@ -516,12 +517,9 @@ class InvoiceDetailView extends GetView<InvoiceController> {
                         await controller.deleteInvoiceAtIndex(index);
                         Get.back(); // close dialog
                         Get.back(); // close details page (returns to history view)
-                        Get.snackbar(
-                          'Deleted',
+                        Helpers.showCustomSnackBar(
                           'Invoice has been deleted.',
-                          backgroundColor: Colors.redAccent,
-                          colorText: Colors.white,
-                          snackPosition: SnackPosition.BOTTOM,
+                          isError: false,
                         );
                       },
                       padding: EdgeInsets.symmetric(vertical: 14.h),

@@ -395,13 +395,7 @@ class CommunityChatDetailController extends GetxController {
       debugPrint('Error sending community message: $e');
       messages.removeWhere((m) => m.id == tempId);
       selectedImages.addAll(imagesToSend);
-      Get.snackbar(
-        'Error',
-        'Failed to send broadcast message',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar('Failed to send broadcast message', isError: true);
     }
   }
 

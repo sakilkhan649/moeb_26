@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/market_place_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'CustomButton.dart';
@@ -185,7 +186,7 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                       onPressed: () async {
                         final text = _messageController.text.trim();
                         if (text.isEmpty) {
-                          Get.snackbar('Error', 'Please enter a message');
+                          Helpers.showCustomSnackBar('Please enter a message', isError: true);
                           return;
                         }
 
@@ -200,7 +201,7 @@ class _ContactSellerPopupState extends State<ContactSellerPopup> {
                             Get.toNamed(Routes.chatDetailView, arguments: chat);
                           }
                         } catch (e) {
-                          Get.snackbar('Error', 'Failed to contact seller');
+                          Helpers.showCustomSnackBar('Failed to contact seller', isError: true);
                         } finally {
                           if (mounted) setState(() => _isSending = false);
                         }

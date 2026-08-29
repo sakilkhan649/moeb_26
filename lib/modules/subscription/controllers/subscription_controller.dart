@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 
 class SubscriptionController extends GetxController {
   final RxString selectedPlan = 'yearly'.obs;
@@ -44,16 +45,14 @@ class SubscriptionController extends GetxController {
       isLoading.value = true;
       await Future.delayed(const Duration(seconds: 2));
       isSubscribed.value = true;
-      Get.snackbar(
-        'Success',
+      Helpers.showCustomSnackBar(
         'Welcome to Ekkali Premium!',
-        snackPosition: SnackPosition.TOP,
+        isError: false,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      Helpers.showCustomSnackBar(
         'Failed to process subscription. Please try again.',
-        snackPosition: SnackPosition.TOP,
+        isError: true,
       );
     } finally {
       isLoading.value = false;

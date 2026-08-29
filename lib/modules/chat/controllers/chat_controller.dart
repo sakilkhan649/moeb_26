@@ -1,6 +1,7 @@
 import 'package:moeb_26/core/services/storege_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/chat_model.dart';
 import 'package:moeb_26/data/models/chat_community_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
@@ -211,23 +212,10 @@ class ChatController extends GetxController {
       filterChats(searchController.value);
       selectedChatIdForDelete.value = "";
       if (Get.isDialogOpen ?? false) Get.back();
-      Get.snackbar(
-        'Success',
-        'Chat deleted successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFFFEDB9B),
-        colorText: Colors.black,
-        duration: const Duration(seconds: 2),
-      );
+      Helpers.showCustomSnackBar('Chat deleted successfully', isError: false);
     } catch (e) {
       debugPrint('Error deleting chat: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to delete chat',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar('Failed to delete chat', isError: true);
     } finally {
       isLoading.value = false;
     }

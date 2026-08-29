@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/api_client.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/models/my_jobs_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 import 'package:moeb_26/modules/my_jobs/widgets/MyJobCard.dart';
@@ -325,23 +326,17 @@ class _MyJobsViewState extends State<MyJobsView> {
               }
             } catch (e) {
               debugPrint("Error opening chat: $e");
-              Get.snackbar(
-                "Error",
+              Helpers.showCustomSnackBar(
                 "Could not create chat session. Please try again.",
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: const Color(0xFFEF4444),
-                colorText: Colors.white,
+                isError: true,
               );
               return;
             }
           }
 
-          Get.snackbar(
-            "Notice",
+          Helpers.showCustomSnackBar(
             "Chauffeur is not available to chat right now.",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: const Color(0xFF1E1E1E),
-            colorText: Colors.white,
+            isError: true,
           );
         },
         onActionButtonPressed: () {
