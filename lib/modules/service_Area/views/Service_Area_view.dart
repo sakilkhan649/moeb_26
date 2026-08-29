@@ -186,10 +186,10 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                               if (item.isExpanded)
                                 Container(
                                   margin: EdgeInsets.only(top: 10.h),
-                                  padding: EdgeInsets.all(5.w),
+                                  padding: EdgeInsets.all(12.w),
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF000000),
+                                    color: const Color(0xFF1E2939),
                                     borderRadius: BorderRadius.circular(8.r),
                                     border: Border.all(
                                       color: const Color(0xFF364153),
@@ -207,47 +207,82 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                                             );
                                           }
                                         },
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            vertical: 4.h,
-                                            horizontal: 10.w,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              if (isActive)
-                                                SizedBox(
-                                                  height: 30.h,
-                                                  width: 30.w,
-                                                  child: Radio<String>(
-                                                    value: item.areaName,
-                                                    visualDensity:
-                                                        VisualDensity.compact,
-                                                    groupValue: controller
-                                                        .selectedAreaName
-                                                        .value,
-                                                    onChanged: (value) =>
-                                                        controller
-                                                            .selectServiceArea(
-                                                              value!,
-                                                            ),
-                                                    activeColor: AppColors.primaryColor,
-                                                  ),
-                                                ),
-                                              if (isActive)
-                                                SizedBox(width: 8.w),
-                                              Expanded(
-                                                child: Text(
-                                                  item.city,
-                                                  style: GoogleFonts.inter(
-                                                    color: Colors.grey,
-                                                    fontSize: 15.sp,
-                                                  ),
+                                        child: Row(
+                                          children: [
+                                            if (isActive)
+                                              SizedBox(
+                                                height: 30.h,
+                                                width: 30.w,
+                                                child: Radio<String>(
+                                                  value: item.areaName,
+                                                  visualDensity:
+                                                      VisualDensity.compact,
+                                                  groupValue: controller
+                                                      .selectedAreaName
+                                                      .value,
+                                                  onChanged: (value) =>
+                                                      controller
+                                                          .selectServiceArea(
+                                                            value!,
+                                                          ),
+                                                  activeColor:
+                                                      AppColors.primaryColor,
                                                 ),
                                               ),
-                                            ],
-                                          ),
+                                            if (isActive)
+                                              SizedBox(width: 8.w),
+                                            Text(
+                                              "Select ${item.areaName}",
+                                              style: GoogleFonts.inter(
+                                                color: Colors.white,
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
+                                      if (item.cities.isNotEmpty) ...[
+                                        SizedBox(height: 8.h),
+                                        Text(
+                                          "Included Cities:",
+                                          style: GoogleFonts.inter(
+                                            color: Colors.grey,
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(height: 6.h),
+                                        Wrap(
+                                          spacing: 6.w,
+                                          runSpacing: 6.h,
+                                          children: item.cities.map((city) {
+                                            return Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 8.w,
+                                                vertical: 4.h,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.4),
+                                                borderRadius:
+                                                    BorderRadius.circular(4.r),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0xFF364153),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                city,
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.grey[300],
+                                                  fontSize: 12.sp,
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
                                     ],
                                   ),
                                 ),

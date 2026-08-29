@@ -192,7 +192,11 @@ class FavoriteChauffeur {
       name: json['name']?.toString() ?? 'Chauffeur',
       nickName: json['nickname']?.toString() ?? json['nickName']?.toString(),
       phone: json['phone']?.toString() ?? '',
-      serviceArea: json['serviceArea']?.toString() ?? '',
+      serviceArea: json['serviceArea'] is Map
+          ? (json['serviceArea']['areaName']?.toString() ??
+              json['serviceArea']['name']?.toString() ??
+              '')
+          : (json['serviceArea']?.toString() ?? ''),
       companyName:
           json['company']?.toString() ??
           json['companyName']?.toString() ??

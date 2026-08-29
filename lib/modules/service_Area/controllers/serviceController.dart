@@ -116,7 +116,10 @@ class ServiceAreaController extends GetxController {
         isMoreLoading.value = true;
       }
 
-      final response = await _serviceAreasService.getAllServiceAreas();
+      final response = await _serviceAreasService.getAllServiceAreas(
+        limit: 50,
+        cursor: isRefresh ? null : nextCursor.value,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         ServiceAreaResponseModel data;
@@ -143,13 +146,14 @@ class ServiceAreaController extends GetxController {
         }
 
         hasMore.value = data.cursor?.hasMore ?? false;
-        nextCursor.value = data.cursor?.nextCursor;
+        final newCursor = data.cursor?.nextCursor;
 
         if (isRefresh || nextCursor.value == null) {
           serviceAreas.assignAll(data.data);
         } else {
           serviceAreas.addAll(data.data);
         }
+        nextCursor.value = newCursor;
         debugPrint("Service Areas loaded: ${serviceAreas.length} items");
       } else {
         debugPrint("Service Areas API Error: ${response.statusCode}");

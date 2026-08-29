@@ -29,7 +29,11 @@ class CommunityRoom {
 
     return CommunityRoom(
       name: json['name'] ?? '',
-      serviceArea: json['serviceArea'] ?? '',
+      serviceArea: json['serviceArea'] is Map
+          ? (json['serviceArea']['areaName']?.toString() ??
+              json['serviceArea']['name']?.toString() ??
+              '')
+          : (json['serviceArea']?.toString() ?? ''),
       totalMembers: json['totalMembers'] is int
           ? json['totalMembers'] as int
           : int.tryParse(json['totalMembers']?.toString() ?? '0') ?? 0,
@@ -87,7 +91,11 @@ class CommunityMessage {
 
     return CommunityMessage(
       id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
-      serviceArea: json['serviceArea']?.toString() ?? '',
+      serviceArea: json['serviceArea'] is Map
+          ? (json['serviceArea']['areaName']?.toString() ??
+              json['serviceArea']['name']?.toString() ??
+              '')
+          : (json['serviceArea']?.toString() ?? ''),
       sender: senderObj,
       text: json['text']?.toString() ?? '',
       attachments: json['attachments'] != null

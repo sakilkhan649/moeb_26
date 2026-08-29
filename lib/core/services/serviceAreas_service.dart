@@ -12,11 +12,12 @@ class ServiceAreaService extends GetxService {
     _serviceAreasRepo = ServiceAreasRepo(apiClient: Get.find<ApiClient>());
   }
 
-  Future<Response> getAllServiceAreas({int page = 1, int limit = 10}) async {
+  Future<Response> getAllServiceAreas({int limit = 50, String? cursor, int? page}) async {
     try {
       return await _serviceAreasRepo.getAllServiceAreas(
         page: page,
         limit: limit,
+        cursor: cursor,
       );
     } catch (e) {
       rethrow;

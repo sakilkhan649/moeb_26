@@ -74,19 +74,25 @@ class CursorModel {
 class ServiceAreaModel {
   final String id;
   final String areaName;
-  final String city;
   final List<String> cities;
   final String status;
+  final int? chauffeurCount;
+  final String? createdAt;
+  final String? updatedAt;
   bool isExpanded;
 
   ServiceAreaModel({
     required this.id,
     required this.areaName,
-    this.city = '',
     this.cities = const [],
     this.status = 'ACTIVE',
+    this.chauffeurCount,
+    this.createdAt,
+    this.updatedAt,
     this.isExpanded = false,
   });
+
+  String get city => cities.isNotEmpty ? cities.join(', ') : areaName;
 
   factory ServiceAreaModel.fromJson(Map<String, dynamic> json) {
     final String areaName =
@@ -102,15 +108,16 @@ class ServiceAreaModel {
       parsedCities = [json['city'].toString()];
     }
 
-    final String singleCity = json['city']?.toString() ??
-        (parsedCities.isNotEmpty ? parsedCities.first : areaName);
-
     return ServiceAreaModel(
       id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
       areaName: areaName,
-      city: singleCity,
-      cities: parsedCities.isNotEmpty ? parsedCities : (areaName.isNotEmpty ? [areaName] : []),
+      cities: parsedCities,
       status: json['status']?.toString() ?? 'ACTIVE',
+      chauffeurCount: json['chauffeurCount'] is int
+          ? json['chauffeurCount'] as int
+          : int.tryParse(json['chauffeurCount']?.toString() ?? ''),
+      createdAt: json['createdAt']?.toString(),
+      updatedAt: json['updatedAt']?.toString(),
       isExpanded: false,
     );
   }
@@ -119,8 +126,11 @@ class ServiceAreaModel {
     return {
       '_id': id,
       'areaName': areaName,
-      if (city.isNotEmpty) 'city': city,
+      'cities': cities,
       if (status.isNotEmpty) 'status': status,
+      if (chauffeurCount != null) 'chauffeurCount': chauffeurCount,
+      if (createdAt != null) 'createdAt': createdAt,
+      if (updatedAt != null) 'updatedAt': updatedAt,
     };
   }
 }
