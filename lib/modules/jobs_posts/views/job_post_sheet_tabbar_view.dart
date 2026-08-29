@@ -128,8 +128,9 @@ class JobPostSheetTabBarView extends StatelessWidget {
 
   static void showChauffeurSelectionBottomSheet(
     BuildContext context,
-    PostJobController controller,
-  ) {
+    PostJobController controller, {
+    VoidCallback? onDone,
+  }) {
     final activeTab =
         (controller.chauffeurSelectionType.value == 'favorites' ? 1 : 0).obs;
 
@@ -275,7 +276,12 @@ class JobPostSheetTabBarView extends StatelessWidget {
             // Done Button
             CustomButton(
               text: 'Done',
-              onPressed: () => Get.back(),
+              onPressed: () {
+                Get.back();
+                if (onDone != null) {
+                  onDone();
+                }
+              },
               padding: EdgeInsets.symmetric(vertical: 14.h),
             ),
           ],

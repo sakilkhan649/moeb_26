@@ -79,7 +79,7 @@ class ScheduleJobDetailView extends StatelessWidget {
           ],
         ),
         content: Text(
-          "Do you want to dispatch ${job.clientName}'s trip (${job.pickupLocation} -> ${job.dropoffLocation}) to the public chauffeur network?",
+          "Do you want to dispatch ${job.clientName}'s trip (${job.pickupLocation} -> ${job.dropoffLocation}) to the chauffeur network? You will select the target Service Area or Preferred Chauffeur.",
           style: GoogleFonts.inter(color: AppColors.gray100, fontSize: 13.sp),
         ),
         actions: [
@@ -97,10 +97,10 @@ class ScheduleJobDetailView extends StatelessWidget {
             ),
             onPressed: () {
               Get.back();
-              Get.find<MyScheduleController>().dispatchToNetwork(job);
+              Get.find<MyScheduleController>().openChauffeurSelectionForDispatch(context, job);
             },
             child: Text(
-              "Dispatch Now",
+              "Select Chauffeur",
               style: GoogleFonts.inter(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,

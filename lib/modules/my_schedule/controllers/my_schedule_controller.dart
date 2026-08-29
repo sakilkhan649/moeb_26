@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:moeb_26/modules/jobs_posts/controllers/job_post_controller.dart';
+import 'package:moeb_26/modules/jobs_posts/views/job_post_sheet_tabbar_view.dart';
 import 'package:moeb_26/modules/my_schedule/models/my_schedule_job_model.dart';
 
 class MyScheduleController extends GetxController {
@@ -123,7 +126,26 @@ class MyScheduleController extends GetxController {
     );
   }
 
-  void dispatchToNetwork(MyScheduleJobModel job) {
+  void openChauffeurSelectionForDispatch(
+      BuildContext context, MyScheduleJobModel job) {
+    final postJobController = Get.isRegistered<PostJobController>()
+        ? Get.find<PostJobController>()
+        : Get.put(PostJobController());
+
+    postJobController.fetchServiceAreas();
+    postJobController.fetchFavoriteDrivers();
+
+    JobPostSheetTabBarView.showChauffeurSelectionBottomSheet(
+      context,
+      postJobController,
+      onDone: () {
+        final selectionText = postJobController.chauffeurSelectionText;
+        dispatchToNetwork(job, selectionInfo: selectionText);
+      },
+    );
+  }
+
+  void dispatchToNetwork(MyScheduleJobModel job, {String? selectionInfo}) {
     final index = jobsList.indexWhere((j) => j.id == job.id);
     if (index != -1) {
       final updated = jobsList[index].copyWith(
@@ -132,8 +154,11 @@ class MyScheduleController extends GetxController {
       );
       jobsList[index] = updated;
       jobsList.refresh();
+      final msg = selectionInfo != null && selectionInfo.isNotEmpty
+          ? 'Job dispatched to network ($selectionInfo)!'
+          : 'Job successfully dispatched to the public network!';
       Helpers.showCustomSnackBar(
-        'Job successfully dispatched to the public network!',
+        msg,
         isError: false,
       );
     }
