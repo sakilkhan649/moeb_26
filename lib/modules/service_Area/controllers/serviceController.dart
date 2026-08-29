@@ -19,6 +19,15 @@ class ServiceAreaController extends GetxController {
   // Selected service area name
   var selectedAreaName = "".obs;
   var isUpdating = false.obs;
+  var expandedCitiesAreas = <String>{}.obs;
+
+  void toggleShowAllCities(String areaName) {
+    if (expandedCitiesAreas.contains(areaName)) {
+      expandedCitiesAreas.remove(areaName);
+    } else {
+      expandedCitiesAreas.add(areaName);
+    }
+  }
 
   @override
   void onInit() {
@@ -33,7 +42,11 @@ class ServiceAreaController extends GetxController {
   }
 
   void selectServiceArea(String areaName) {
-    selectedAreaName.value = areaName;
+    if (selectedAreaName.value == areaName) {
+      selectedAreaName.value = "";
+    } else {
+      selectedAreaName.value = areaName;
+    }
   }
 
   Future<void> updateServiceArea() async {

@@ -253,35 +253,98 @@ class _ServiceAreaViewState extends State<ServiceAreaView> {
                                           ),
                                         ),
                                         SizedBox(height: 6.h),
-                                        Wrap(
-                                          spacing: 6.w,
-                                          runSpacing: 6.h,
-                                          children: item.cities.map((city) {
-                                            return Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 8.w,
-                                                vertical: 4.h,
+                                        Obx(() {
+                                          final isShowAll = controller
+                                              .expandedCitiesAreas
+                                              .contains(item.areaName);
+                                          const limit = 6;
+                                          final displayedCities =
+                                              isShowAll || item.cities.length <= limit
+                                                  ? item.cities
+                                                  : item.cities.take(limit).toList();
+
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Wrap(
+                                                spacing: 6.w,
+                                                runSpacing: 6.h,
+                                                children:
+                                                    displayedCities.map((city) {
+                                                  return Container(
+                                                    padding: EdgeInsets.symmetric(
+                                                      horizontal: 8.w,
+                                                      vertical: 4.h,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black
+                                                          .withValues(
+                                                              alpha: 0.4),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4.r),
+                                                      border: Border.all(
+                                                        color: const Color(
+                                                            0xFF364153),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      city,
+                                                      style: GoogleFonts.inter(
+                                                        color: Colors.grey[300],
+                                                        fontSize: 12.sp,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
                                               ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.black
-                                                    .withValues(alpha: 0.4),
-                                                borderRadius:
-                                                    BorderRadius.circular(4.r),
-                                                border: Border.all(
-                                                  color:
-                                                      const Color(0xFF364153),
+                                              if (item.cities.length > limit) ...[
+                                                SizedBox(height: 6.h),
+                                                GestureDetector(
+                                                  onTap: () => controller
+                                                      .toggleShowAllCities(
+                                                          item.areaName),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 2.h),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                          isShowAll
+                                                              ? "Show less"
+                                                              : "Show all (+${item.cities.length - limit} more)",
+                                                          style:
+                                                              GoogleFonts.inter(
+                                                            color: AppColors
+                                                                .primaryColor,
+                                                            fontSize: 12.sp,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 4.w),
+                                                        Icon(
+                                                          isShowAll
+                                                              ? Icons
+                                                                  .keyboard_arrow_up
+                                                              : Icons
+                                                                  .keyboard_arrow_down,
+                                                          size: 16.sp,
+                                                          color: AppColors
+                                                              .primaryColor,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                              child: Text(
-                                                city,
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.grey[300],
-                                                  fontSize: 12.sp,
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
+                                              ],
+                                            ],
+                                          );
+                                        }),
                                       ],
                                     ],
                                   ),

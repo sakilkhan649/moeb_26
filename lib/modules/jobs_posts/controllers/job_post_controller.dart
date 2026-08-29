@@ -135,33 +135,27 @@ class PostJobController extends GetxController {
       selectedServiceAreas.clear();
     }
     if (selectedServiceAreas.contains(area)) {
-      selectedServiceAreas.remove(area);
-      if (selectedServiceAreas.isEmpty) {
-        chauffeurSelectionType.value = '';
-      }
-    } else {
-      selectedServiceAreas.add(area);
-    }
-  }
-
-  void toggleAllActiveCities() {
-    final allActiveCities = <String>[];
-    for (var areaItem in serviceAreas) {
-      if (areaItem.status == 'ACTIVE') {
-        final cities = areaItem.cities.isNotEmpty
-            ? areaItem.cities
-            : (areaItem.city.isNotEmpty ? [areaItem.city] : [areaItem.areaName]);
-        allActiveCities.addAll(cities);
-      }
-    }
-
-    if (selectedServiceAreas.length == allActiveCities.length && allActiveCities.isNotEmpty) {
       selectedServiceAreas.clear();
       chauffeurSelectionType.value = '';
     } else {
-      chauffeurSelectionType.value = 'global';
-      selectedDrivers.clear();
-      selectedServiceAreas.assignAll(allActiveCities);
+      selectedServiceAreas.assignAll([area]);
+    }
+  }
+
+  var expandedCitiesAreas = <String>{}.obs;
+
+  void toggleShowAllCities(String areaName) {
+    if (expandedCitiesAreas.contains(areaName)) {
+      expandedCitiesAreas.remove(areaName);
+    } else {
+      expandedCitiesAreas.add(areaName);
+    }
+  }
+
+  void clearServiceAreaSelection() {
+    selectedServiceAreas.clear();
+    if (chauffeurSelectionType.value == 'global') {
+      chauffeurSelectionType.value = '';
     }
   }
 
