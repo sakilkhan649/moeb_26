@@ -24,6 +24,7 @@ class JobRepo {
     String? passengerPhone,
     List<String>? targetedChauffeurs,
     String? serviceAreaId,
+    List<String>? serviceAreaIds,
   }) async {
     final Map<String, dynamic> body = {
       "jobType": jobType,
@@ -65,10 +66,12 @@ class JobRepo {
     } else {
       body["targetedChauffeurs"] = [];
     }
-    if (dispatchType == "ALL CHAUFFEURS" &&
-        serviceAreaId != null &&
-        serviceAreaId.isNotEmpty) {
-      body["serviceAreaId"] = serviceAreaId;
+    if (dispatchType == "ALL CHAUFFEURS") {
+      if (serviceAreaIds != null && serviceAreaIds.isNotEmpty) {
+        body["serviceAreaIds"] = serviceAreaIds;
+      } else if (serviceAreaId != null && serviceAreaId.isNotEmpty) {
+        body["serviceAreaIds"] = [serviceAreaId];
+      }
     }
 
     return await apiClient.postData(ApiConstants.createJob, body);

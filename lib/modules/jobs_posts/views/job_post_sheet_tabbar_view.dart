@@ -351,8 +351,8 @@ class JobPostSheetTabBarView extends StatelessWidget {
                       SizedBox(height: 2.h),
                       Text(
                         count == 0
-                            ? 'Select 1 service area below to auto-assign'
-                            : 'Auto-assigning in ${controller.selectedServiceAreas.first}',
+                            ? 'Select service area below to auto-assign'
+                            : 'Auto-assigning in ${controller.selectedServiceAreas.join(', ')}',
                         style: GoogleFonts.inter(
                           color: isGlobalActive && count > 0
                               ? AppColors.primaryColor
@@ -394,7 +394,7 @@ class JobPostSheetTabBarView extends StatelessWidget {
 
         SizedBox(height: 16.h),
 
-        // Service Area Selection List (Single-Select Area Cards)
+        // Service Area Selection List (Multi-Select Area Cards)
         Obx(() {
           if (controller.isServiceAreasLoading.value &&
               controller.serviceAreas.isEmpty) {
@@ -435,13 +435,6 @@ class JobPostSheetTabBarView extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                  Text(
-                    'Single select',
-                    style: GoogleFonts.inter(
-                      fontSize: 11.sp,
-                      color: AppColors.gray100,
-                    ),
-                  ),
                 ],
               ),
               SizedBox(height: 12.h),
@@ -449,9 +442,6 @@ class JobPostSheetTabBarView extends StatelessWidget {
                 final areaName = areaItem.areaName;
                 final isActive = areaItem.status == 'ACTIVE';
                 final isSelected = controller.selectedServiceAreas.contains(areaName);
-                final cities = areaItem.cities.isNotEmpty
-                    ? areaItem.cities
-                    : (areaItem.city.isNotEmpty ? [areaItem.city] : []);
 
                 return Container(
                   margin: EdgeInsets.only(bottom: 12.h),
@@ -480,165 +470,67 @@ class JobPostSheetTabBarView extends StatelessWidget {
                     },
                     borderRadius: BorderRadius.circular(12.r),
                     child: Padding(
-                      padding: EdgeInsets.all(14.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      padding: EdgeInsets.all(16.w),
+                      child: Row(
                         children: [
-                          // Header: Selection Indicator + Area Name + Status Badge
-                          Row(
-                            children: [
-                              Container(
-                                width: 22.w,
-                                height: 22.w,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isSelected
-                                      ? AppColors.primaryColor
-                                      : Colors.transparent,
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColors.primaryColor
-                                        : Colors.grey.shade600,
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: isSelected
-                                    ? Icon(
-                                        Icons.check,
-                                        size: 14.sp,
-                                        color: Colors.black,
-                                      )
-                                    : null,
-                              ),
-                              SizedBox(width: 10.w),
-                              Expanded(
-                                child: Text(
-                                  areaName,
-                                  style: GoogleFonts.inter(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.grey.shade200,
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              if (!isActive)
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8.w,
-                                    vertical: 3.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(
-                                      color: Colors.red.withValues(alpha: 0.4),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    "INACTIVE",
-                                    style: GoogleFonts.inter(
-                                      color: Colors.red,
-                                      fontSize: 10.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-
-                          // Read-only Informational Cities Tags
-                          if (cities.isNotEmpty) ...[
-                            SizedBox(height: 10.h),
-                            Text(
-                              "Included Cities:",
-                              style: GoogleFonts.inter(
-                                color: Colors.grey.shade400,
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w500,
+                          Container(
+                            width: 22.w,
+                            height: 22.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isSelected
+                                  ? AppColors.primaryColor
+                                  : Colors.transparent,
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primaryColor
+                                    : Colors.grey.shade600,
+                                width: 1.5,
                               ),
                             ),
-                            SizedBox(height: 6.h),
-                            Obx(() {
-                              final isShowAll = controller
-                                  .expandedCitiesAreas
-                                  .contains(areaName);
-                              const limit = 6;
-                              final displayedCities =
-                                  isShowAll || cities.length <= limit
-                                      ? cities
-                                      : cities.take(limit).toList();
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Wrap(
-                                    spacing: 6.w,
-                                    runSpacing: 6.h,
-                                    children: displayedCities.map((city) {
-                                      return Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 8.w,
-                                          vertical: 4.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF27272A),
-                                          borderRadius:
-                                              BorderRadius.circular(6.r),
-                                          border: Border.all(
-                                            color: const Color(0xFF3F3F46),
-                                            width: 0.8,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          city,
-                                          style: GoogleFonts.inter(
-                                            color: Colors.grey.shade300,
-                                            fontSize: 11.sp,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                  if (cities.length > limit) ...[
-                                    SizedBox(height: 6.h),
-                                    GestureDetector(
-                                      onTap: () => controller
-                                          .toggleShowAllCities(areaName),
-                                      child: Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 2.h),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              isShowAll
-                                                  ? "Show less"
-                                                  : "Show all (+${cities.length - limit} more)",
-                                              style: GoogleFonts.inter(
-                                                color: AppColors.primaryColor,
-                                                fontSize: 12.sp,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            SizedBox(width: 4.w),
-                                            Icon(
-                                              isShowAll
-                                                  ? Icons.keyboard_arrow_up
-                                                  : Icons.keyboard_arrow_down,
-                                              size: 16.sp,
-                                              color: AppColors.primaryColor,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              );
-                            }),
-                          ],
+                            child: isSelected
+                                ? Icon(
+                                    Icons.check,
+                                    size: 14.sp,
+                                    color: Colors.black,
+                                  )
+                                : null,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              areaName,
+                              style: GoogleFonts.inter(
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.grey.shade200,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          if (!isActive)
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 3.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(4.r),
+                                border: Border.all(
+                                  color: Colors.red.withValues(alpha: 0.4),
+                                ),
+                              ),
+                              child: Text(
+                                "INACTIVE",
+                                style: GoogleFonts.inter(
+                                  color: Colors.red,
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),

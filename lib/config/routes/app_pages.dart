@@ -17,8 +17,7 @@ import 'package:moeb_26/modules/my_jobs/bindings/my_jobs_binding.dart';
 import 'package:moeb_26/modules/my_items/bindings/my_items_binding.dart';
 import 'package:moeb_26/modules/ride_completed/bindings/ride_completed_binding.dart';
 import 'package:moeb_26/modules/my_ride_progress_details/bindings/my_ride_progress_details_binding.dart';
-import 'package:moeb_26/modules/service_Area/views/Service_Area_view.dart';
-import 'package:moeb_26/modules/service_area/bindings/service_area_binding.dart';
+
 import 'package:moeb_26/modules/auth/authentication/views/all_vehicle_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/application_not_Approved_view.dart';
 import 'package:moeb_26/modules/auth/authentication/views/application_submited_view.dart';
@@ -111,7 +110,7 @@ class Routes {
   static const String profileView = "/ProfileView";
   static const String settingsView = "/SettingsView";
   static const String ratingsFeedbackView = "/RatingsFeedbackView";
-  static const String serviceAreaView = "/ServiceAreaView";
+
   static const String noInternetScreen = "/NoInternetScreen";
   static const String otpVerificationView = "/OtpVerificationView";
   static const String forgetotpVerificationView = "/ForgetotpVerificationView";
@@ -302,12 +301,7 @@ class Routes {
       page: () => RatingsFeedbackView(),
       transition: Transition.noTransition,
     ),
-    GetPage(
-      name: serviceAreaView,
-      page: () => ServiceAreaView(),
-      transition: Transition.noTransition,
-      binding: ServiceAreaBinding(),
-    ),
+
     GetPage(
       name: noInternetScreen,
       page: () => NoInternetScreen(),

@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:dio/dio.dart';
 import 'package:moeb_26/config/constants/api_constants.dart';
 import 'package:moeb_26/core/services/api_client.dart';
@@ -17,11 +18,5 @@ class ServiceAreasRepo {
       ApiConstants.serviceAreas,
       query: queryParams.isNotEmpty ? queryParams : null,
     );
-  }
-
-  Future<Response> updateServiceArea(String areaName) async {
-    return await apiClient.patchData(ApiConstants.profile, {
-      'serviceArea': areaName,
-    });
   }
 }

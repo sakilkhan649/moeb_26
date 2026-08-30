@@ -135,10 +135,12 @@ class PostJobController extends GetxController {
       selectedServiceAreas.clear();
     }
     if (selectedServiceAreas.contains(area)) {
-      selectedServiceAreas.clear();
-      chauffeurSelectionType.value = '';
+      selectedServiceAreas.remove(area);
+      if (selectedServiceAreas.isEmpty) {
+        chauffeurSelectionType.value = '';
+      }
     } else {
-      selectedServiceAreas.assignAll([area]);
+      selectedServiceAreas.add(area);
     }
   }
 
@@ -301,16 +303,17 @@ class PostJobController extends GetxController {
       final List<String> targetedChauffeurs =
           isTargeted ? selectedDrivers.toList() : [];
 
-      String? serviceAreaId;
+      List<String> serviceAreaIds = [];
       if (!isTargeted && selectedServiceAreas.isNotEmpty) {
-        final areaName = selectedServiceAreas.first;
-        final areaModel = serviceAreas.firstWhereOrNull(
-          (a) =>
-              a.areaName.trim().toLowerCase() ==
-              areaName.trim().toLowerCase(),
-        );
-        if (areaModel != null) {
-          serviceAreaId = areaModel.id;
+        for (final areaName in selectedServiceAreas) {
+          final areaModel = serviceAreas.firstWhereOrNull(
+            (a) =>
+                a.areaName.trim().toLowerCase() ==
+                areaName.trim().toLowerCase(),
+          );
+          if (areaModel != null && areaModel.id.isNotEmpty) {
+            serviceAreaIds.add(areaModel.id);
+          }
         }
       }
 
@@ -329,7 +332,8 @@ class PostJobController extends GetxController {
         instruction:
             instruction?.isNotEmpty == true ? instruction : null,
         targetedChauffeurs: targetedChauffeurs,
-        serviceAreaId: serviceAreaId,
+        serviceAreaId: serviceAreaIds.isNotEmpty ? serviceAreaIds.first : null,
+        serviceAreaIds: serviceAreaIds.isNotEmpty ? serviceAreaIds : null,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -390,16 +394,17 @@ class PostJobController extends GetxController {
       final List<String> targetedChauffeurs =
           isTargeted ? selectedDrivers.toList() : [];
 
-      String? serviceAreaId;
+      List<String> serviceAreaIds = [];
       if (!isTargeted && selectedServiceAreas.isNotEmpty) {
-        final areaName = selectedServiceAreas.first;
-        final areaModel = serviceAreas.firstWhereOrNull(
-          (a) =>
-              a.areaName.trim().toLowerCase() ==
-              areaName.trim().toLowerCase(),
-        );
-        if (areaModel != null) {
-          serviceAreaId = areaModel.id;
+        for (final areaName in selectedServiceAreas) {
+          final areaModel = serviceAreas.firstWhereOrNull(
+            (a) =>
+                a.areaName.trim().toLowerCase() ==
+                areaName.trim().toLowerCase(),
+          );
+          if (areaModel != null && areaModel.id.isNotEmpty) {
+            serviceAreaIds.add(areaModel.id);
+          }
         }
       }
 
@@ -421,7 +426,8 @@ class PostJobController extends GetxController {
         dispatchType: dispatchType,
         instruction: instruction?.isNotEmpty == true ? instruction : null,
         targetedChauffeurs: targetedChauffeurs,
-        serviceAreaId: serviceAreaId,
+        serviceAreaId: serviceAreaIds.isNotEmpty ? serviceAreaIds.first : null,
+        serviceAreaIds: serviceAreaIds.isNotEmpty ? serviceAreaIds : null,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

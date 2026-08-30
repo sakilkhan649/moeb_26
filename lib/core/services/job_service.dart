@@ -33,6 +33,7 @@ class JobService extends GetxService {
     String? passengerPhone,
     List<String>? targetedChauffeurs,
     String? serviceAreaId,
+    List<String>? serviceAreaIds,
   }) async {
     try {
       return await _jobRepo.createJob(
@@ -53,6 +54,7 @@ class JobService extends GetxService {
         passengerPhone: passengerPhone,
         targetedChauffeurs: targetedChauffeurs,
         serviceAreaId: serviceAreaId,
+        serviceAreaIds: serviceAreaIds,
       );
     } catch (e) {
       rethrow;
