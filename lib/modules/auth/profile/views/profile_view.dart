@@ -47,72 +47,35 @@ class ProfileView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // --- HEADER PROFILE CARD ---
-                  Stack(
-                    children: [
-                      Container(
-                        width: 105.w,
-                        height: 105.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.primaryColor,
-                            width: 2.w,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primaryColor.withValues(alpha: 0.2),
-                              blurRadius: 15,
-                              spreadRadius: 2,
+                  Container(
+                    width: 105.w,
+                    height: 105.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.primaryColor,
+                        width: 2.w,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryColor.withValues(alpha: 0.2),
+                          blurRadius: 15,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(55.w),
+                      child: controller.profilePicture.value.isNotEmpty
+                          ? Image.network(
+                              controller.profilePicture.value,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              AppImages.sadat_image,
+                              fit: BoxFit.cover,
                             ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(55.w),
-                          child: controller.profilePicture.value.isNotEmpty
-                              ? Image.network(
-                                  controller.profilePicture.value,
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.asset(
-                                  AppImages.sadat_image,
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 2.w,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 9.w,
-                            vertical: 3.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Colors.black,
-                                size: 12.sp,
-                              ),
-                              SizedBox(width: 2.w),
-                              Text(
-                                controller.rating.value.toStringAsFixed(1),
-                                style: GoogleFonts.inter(
-                                  color: Colors.black,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   SizedBox(height: 12.h),
 
@@ -131,27 +94,54 @@ class ProfileView extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
 
-                  // --- VERIFIED BADGE ---
+                  // --- BADGES FROM API ---
                   Obx(() {
-                    final isVerified =
-                        controller.userProfile.value?.verified ?? false;
-                    if (!isVerified) return const SizedBox.shrink();
+                    final badges = controller.userProfile.value?.badges ?? [];
+                    if (badges.isEmpty) return const SizedBox.shrink();
 
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              ' ⭐ Ekkali Partner',
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFFD5C4AB),
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
+                        SizedBox(height: 6.h),
+                        Wrap(
+                          spacing: 6.w,
+                          runSpacing: 4.h,
+                          alignment: WrapAlignment.center,
+                          children: badges.map((b) {
+                            return Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.w,
+                                vertical: 3.h,
                               ),
-                            ),
-                          ],
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF27272A),
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: const Color(0xFF3F3F46),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.star,
+                                    color: AppColors.primaryColor,
+                                    size: 11.sp,
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    b,
+                                    style: GoogleFonts.inter(
+                                      color: const Color(0xFFD5C4AB),
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
                         ),
                         SizedBox(height: 10.h),
                       ],

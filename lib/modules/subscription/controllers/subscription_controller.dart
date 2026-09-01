@@ -7,31 +7,47 @@ class SubscriptionController extends GetxController {
 
   // Plan Details
   final String planName = 'Ekkali Premium';
-  final String planPrice = '\$29';
+  final String planPrice = '\$89.99';
   final String planPeriod = '/ Year';
   final String billingDescription =
-      'Billed annually at \$29.00 USD (\$2.41/mo)';
+      'Billed annually at \$89.99 USD (Less than \$7.50/mo)';
 
   final List<Map<String, String>> features = [
     {
-      'title': 'Priority Job Matching',
-      'subtitle': 'First access to high-value client requests & premium rides',
-      'icon': 'crown',
+      'title': 'Job Opportunities & Overflow',
+      'subtitle': 'Access jobs posted by other chauffeurs and grow your business',
+      'icon': 'job',
     },
     {
-      'title': '0% Platform Commission',
-      'subtitle': 'Keep 100% of your earnings on direct bookings & invoices',
-      'icon': 'percent',
+      'title': 'Preferred Chauffeur Network',
+      'subtitle': 'Build your trusted network and connect with top chauffeurs',
+      'icon': 'network',
     },
     {
-      'title': 'VIP Verified Badge',
-      'subtitle': 'Exclusive golden partner badge displayed on profile',
-      'icon': 'badge',
+      'title': 'Live State & Regional Chats',
+      'subtitle': 'Communicate in real-time with chauffeurs in your area',
+      'icon': 'chat',
     },
     {
-      'title': '24/7 VIP Concierge Support',
-      'subtitle': 'Direct line to dedicated chauffeur assistance team',
-      'icon': 'support',
+      'title': 'Invoice Creator & Schedule',
+      'subtitle': 'Manage private bookings and create professional invoices easily',
+      'icon': 'invoice',
+    },
+    {
+      'title': 'Meet & Greet Sign Creator',
+      'subtitle': 'Create professional airport and client welcome signs',
+      'icon': 'flight',
+    },
+    {
+      'title': 'Marketplace – Buy & Sell',
+      'subtitle': 'Buy and sell items or services related to your business',
+      'icon': 'marketplace',
+      'isNew': 'true',
+    },
+    {
+      'title': 'Deals & Exclusive Offers',
+      'subtitle': 'Access exclusive deals, discounts, and tools for chauffeurs',
+      'icon': 'deals',
     },
   ];
 

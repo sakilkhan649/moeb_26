@@ -272,63 +272,44 @@ class _PreferredDriverProfileViewState
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 6.h),
-                // Badges row
-                Wrap(
-                  spacing: 6.w,
-                  runSpacing: 4.h,
-                  children: chauffeur.badges.isNotEmpty
-                      ? chauffeur.badges
-                          .take(2)
-                          .map(
-                            (b) => Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8.w, vertical: 2.h),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF27272A),
-                                borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(
-                                    color: const Color(0xFF3F3F46), width: 0.8),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.star,
-                                      color: AppColors.primaryColor,
-                                      size: 10.sp),
-                                  SizedBox(width: 3.w),
-                                  Text(
-                                    b,
-                                    style: GoogleFonts.inter(
-                                      color: const Color(0xFFD5C4AB),
-                                      fontSize: 10.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                          .toList()
-                      : [
-                          Container(
+                if (chauffeur.badges.isNotEmpty) ...[
+                  SizedBox(height: 6.h),
+                  Wrap(
+                    spacing: 6.w,
+                    runSpacing: 4.h,
+                    children: chauffeur.badges
+                        .map(
+                          (b) => Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 8.w, vertical: 2.h),
                             decoration: BoxDecoration(
                               color: const Color(0xFF27272A),
                               borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                  color: const Color(0xFF3F3F46), width: 0.8),
                             ),
-                            child: Text(
-                              '⭐ Verified',
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFFD5C4AB),
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.star,
+                                    color: AppColors.primaryColor,
+                                    size: 10.sp),
+                                SizedBox(width: 3.w),
+                                Text(
+                                  b,
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFFD5C4AB),
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                ),
+                        )
+                        .toList(),
+                  ),
+                ],
               ],
             ),
           ),

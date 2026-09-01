@@ -308,7 +308,7 @@ class SubscriptionView extends StatelessWidget {
                                       ),
                                       child: Icon(
                                         _getFeatureIcon(feature['icon']!),
-                                        color: Colors.white70,
+                                        color: AppColors.primaryColor,
                                         size: 19.sp,
                                       ),
                                     ),
@@ -318,15 +318,42 @@ class SubscriptionView extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            feature['title']!,
-                                            style: GoogleFonts.inter(
-                                              color: Colors.white,
-                                              fontSize: 13.5.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                          Row(
+                                            children: [
+                                              if (feature['isNew'] == 'true') ...[
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 6.w,
+                                                    vertical: 2.h,
+                                                  ),
+                                                  margin: EdgeInsets.only(right: 6.w),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.orange100,
+                                                    borderRadius: BorderRadius.circular(4.r),
+                                                  ),
+                                                  child: Text(
+                                                    'NEW',
+                                                    style: GoogleFonts.inter(
+                                                      color: Colors.black,
+                                                      fontSize: 9.sp,
+                                                      fontWeight: FontWeight.w900,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                              Expanded(
+                                                child: Text(
+                                                  feature['title']!,
+                                                  style: GoogleFonts.inter(
+                                                    color: Colors.white,
+                                                    fontSize: 13.5.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(height: 1.h),
+                                          SizedBox(height: 2.h),
                                           Text(
                                             feature['subtitle']!,
                                             style: GoogleFonts.inter(
@@ -336,6 +363,22 @@ class SubscriptionView extends StatelessWidget {
                                             ),
                                           ),
                                         ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Container(
+                                      padding: EdgeInsets.all(3.r),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppColors.primaryColor,
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.check,
+                                        color: AppColors.primaryColor,
+                                        size: 12.sp,
                                       ),
                                     ),
                                   ],
@@ -372,7 +415,7 @@ class SubscriptionView extends StatelessWidget {
                 children: [
                   Obx(() {
                     return CustomButton(
-                      text: 'Subscribe Now • \$29/Year',
+                      text: 'Subscribe Now • ${controller.planPrice}/Year',
                       loading: controller.isLoading.value,
                       onPressed: () => controller.subscribe(),
 
@@ -386,7 +429,7 @@ class SubscriptionView extends StatelessWidget {
                   }),
                   SizedBox(height: 8.h),
                   Text(
-                    'Auto-renews at \$29/year. Cancel anytime in App Settings.',
+                    'Auto-renews at ${controller.planPrice}/year. Cancel anytime in App Settings.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
                       color: const Color(0xFF71717A),
@@ -404,6 +447,20 @@ class SubscriptionView extends StatelessWidget {
 
   IconData _getFeatureIcon(String iconName) {
     switch (iconName) {
+      case 'job':
+        return Icons.work_outline_rounded;
+      case 'network':
+        return Icons.groups_outlined;
+      case 'chat':
+        return Icons.chat_bubble_outline_rounded;
+      case 'invoice':
+        return Icons.receipt_long_outlined;
+      case 'flight':
+        return Icons.flight_takeoff_rounded;
+      case 'marketplace':
+        return Icons.shopping_bag_outlined;
+      case 'deals':
+        return Icons.local_offer_outlined;
       case 'crown':
         return Icons.workspace_premium_rounded;
       case 'percent':

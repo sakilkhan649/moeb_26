@@ -12,6 +12,7 @@ class UserProfileModel {
   final String profilePicture;
   final String status;
   final bool verified;
+  final List<String> badges;
   final List<String> deviceTokens;
   final List<Vehicle> vehicles;
   final DateTime createdAt;
@@ -35,6 +36,7 @@ class UserProfileModel {
     required this.profilePicture,
     required this.status,
     required this.verified,
+    this.badges = const [],
     required this.deviceTokens,
     required this.vehicles,
     required this.createdAt,
@@ -46,6 +48,17 @@ class UserProfileModel {
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
+    final List<String> badgesList = [];
+    if (json['badges'] is List) {
+      for (var b in json['badges']) {
+        if (b != null && b.toString().isNotEmpty) {
+          badgesList.add(b.toString());
+        }
+      }
+    } else if (json['badge'] != null && json['badge'].toString().isNotEmpty) {
+      badgesList.add(json['badge'].toString());
+    }
+
     return UserProfileModel(
       id: json['_id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
@@ -60,6 +73,7 @@ class UserProfileModel {
       profilePicture: json['profilePicture']?.toString() ?? '',
       status: json['status']?.toString() ?? '',
       verified: json['verified'] ?? false,
+      badges: badgesList,
       deviceTokens:
           (json['deviceTokens'] as List?)?.map((e) => e.toString()).toList() ??
           [],
@@ -99,6 +113,7 @@ class UserProfileModel {
       'profilePicture': profilePicture,
       'status': status,
       'verified': verified,
+      'badges': badges,
       'deviceTokens': deviceTokens,
       'vehicles': vehicles.map((e) => e.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
