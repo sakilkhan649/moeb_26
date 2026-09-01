@@ -311,22 +311,43 @@ class AddExpenseView extends StatelessWidget {
                               ),
                               Align(
                                 alignment: Alignment.topRight,
-                                child: GestureDetector(
-                                  onTap: () =>
-                                      controller.selectedImage.value = null,
-                                  child: Container(
-                                    margin: EdgeInsets.all(8.r),
-                                    padding: EdgeInsets.all(4.r),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.black54,
-                                      shape: BoxShape.circle,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () => controller.downloadReceiptImage(file.path),
+                                      child: Container(
+                                        margin: EdgeInsets.only(top: 8.r, bottom: 8.r, right: 4.r),
+                                        padding: EdgeInsets.all(6.r),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.black54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.file_download_outlined,
+                                          color: AppColors.primaryColor,
+                                          size: 18.sp,
+                                        ),
+                                      ),
                                     ),
-                                    child: Icon(
-                                      Icons.delete_outline,
-                                      color: Colors.redAccent,
-                                      size: 20.sp,
+                                    GestureDetector(
+                                      onTap: () =>
+                                          controller.selectedImage.value = null,
+                                      child: Container(
+                                        margin: EdgeInsets.all(8.r),
+                                        padding: EdgeInsets.all(6.r),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.black54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.redAccent,
+                                          size: 18.sp,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -399,22 +420,43 @@ class AddExpenseView extends StatelessWidget {
                                 ),
                                 Align(
                                   alignment: Alignment.topRight,
-                                  child: GestureDetector(
-                                    onTap: () =>
-                                        controller.existingImageUrl.value = null,
-                                    child: Container(
-                                      margin: EdgeInsets.all(8.r),
-                                      padding: EdgeInsets.all(4.r),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.black54,
-                                        shape: BoxShape.circle,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () => controller.downloadReceiptImage(networkUrl),
+                                        child: Container(
+                                          margin: EdgeInsets.only(top: 8.r, bottom: 8.r, right: 4.r),
+                                          padding: EdgeInsets.all(6.r),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.black54,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.file_download_outlined,
+                                            color: AppColors.primaryColor,
+                                            size: 18.sp,
+                                          ),
+                                        ),
                                       ),
-                                      child: Icon(
-                                        Icons.delete_outline,
-                                        color: Colors.redAccent,
-                                        size: 20.sp,
+                                      GestureDetector(
+                                        onTap: () =>
+                                            controller.existingImageUrl.value = null,
+                                        child: Container(
+                                          margin: EdgeInsets.all(8.r),
+                                          padding: EdgeInsets.all(6.r),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.black54,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.delete_outline,
+                                            color: Colors.redAccent,
+                                            size: 18.sp,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
                               ],

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense_model.dart';
 
@@ -118,66 +119,104 @@ class ExpenseDetailSheet extends StatelessWidget {
               _buildDetailRow("Notes / Description", expense.description, borderColor, isMultiline: true),
             ],
             
-            // Attachment Preview
-            if (expense.receiptImageUrl != null && expense.receiptImageUrl!.isNotEmpty) ...[
-              SizedBox(height: 20.h),
-              Text(
-                "Receipt Attachment",
-                style: GoogleFonts.inter(
-                  color: const Color(0xFFD5C4AB),
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              GestureDetector(
-                onTap: () => _previewReceipt(context, expense.receiptImageUrl!),
-                child: Container(
-                  height: 200.h,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(color: borderColor.withValues(alpha: 0.5)),
-                    image: DecorationImage(
-                      image: expense.receiptImageUrl!.startsWith('http')
-                          ? NetworkImage(expense.receiptImageUrl!) as ImageProvider
-                          : FileImage(File(expense.receiptImageUrl!)),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(30.r),
+              // Attachment Preview
+              if (expense.receiptImageUrl != null && expense.receiptImageUrl!.isNotEmpty) ...[
+                SizedBox(height: 20.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Receipt Attachment",
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFD5C4AB),
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.zoom_in, color: Colors.white, size: 20.sp),
-                          SizedBox(width: 6.w),
-                          Text(
-                            "Tap to zoom",
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
+                    ),
+                    InkWell(
+                      onTap: () => controller.downloadReceiptImage(expense.receiptImageUrl!),
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: AppColors.primaryColor.withValues(alpha: 0.3),
                           ),
-                        ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.file_download_outlined,
+                              color: AppColors.primaryColor,
+                              size: 16.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              "Download",
+                              style: GoogleFonts.inter(
+                                color: AppColors.primaryColor,
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10.h),
+                GestureDetector(
+                  onTap: () => _previewReceipt(context, expense.receiptImageUrl!),
+                  child: Container(
+                    height: 200.h,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: borderColor.withValues(alpha: 0.5)),
+                      image: DecorationImage(
+                        image: expense.receiptImageUrl!.startsWith('http')
+                            ? NetworkImage(expense.receiptImageUrl!) as ImageProvider
+                            : FileImage(File(expense.receiptImageUrl!)),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(30.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.zoom_in, color: Colors.white, size: 20.sp),
+                            SizedBox(width: 6.w),
+                            Text(
+                              "Tap to zoom",
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
+              SizedBox(height: 20.h),
             ],
-            SizedBox(height: 20.h),
-          ],
+          ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
   Widget _buildDetailRow(String label, String value, Color borderColor, {bool isMultiline = false}) {
     return Column(
@@ -240,6 +279,22 @@ class ExpenseDetailSheet extends StatelessWidget {
               ),
             ),
             centerTitle: true,
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.file_download_outlined,
+                  color: AppColors.primaryColor,
+                  size: 22.sp,
+                ),
+                tooltip: "Download Receipt",
+                onPressed: () {
+                  final controller = Get.isRegistered<ExpenseController>()
+                      ? Get.find<ExpenseController>()
+                      : Get.put(ExpenseController());
+                  controller.downloadReceiptImage(imagePath);
+                },
+              ),
+            ],
           ),
           body: Center(
             child: InteractiveViewer(

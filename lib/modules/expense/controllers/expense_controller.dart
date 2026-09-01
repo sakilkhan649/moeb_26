@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
@@ -17,6 +18,67 @@ class ExpenseController extends GetxController {
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
   var totalAmount = 0.0.obs;
+
+  /// Download receipt image helper method
+  Future<void> downloadReceiptImage(String imagePath) async {
+    try {
+      if (imagePath.isEmpty) return;
+
+      final fileName = 'receipt_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      String savePath = '';
+      if (Platform.isAndroid) {
+        final downloadDir = Directory('/storage/emulated/0/Download');
+        if (downloadDir.existsSync()) {
+          savePath = '${downloadDir.path}/$fileName';
+        } else {
+          savePath = '${Directory.systemTemp.path}/$fileName';
+        }
+      } else {
+        savePath = '${Directory.systemTemp.path}/$fileName';
+      }
+
+      if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        final dio = Dio();
+        final response = await dio.get<List<int>>(
+          imagePath,
+          options: Options(responseType: ResponseType.bytes),
+        );
+
+        if (response.data != null) {
+          final file = File(savePath);
+          await file.writeAsBytes(response.data!);
+
+          Get.snackbar(
+            'Download Successful',
+            'Receipt image saved to Downloads',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: const Color(0xFF1E1E20),
+            colorText: Colors.white,
+            duration: const Duration(seconds: 3),
+          );
+        }
+      } else if (File(imagePath).existsSync()) {
+        await File(imagePath).copy(savePath);
+
+        Get.snackbar(
+          'Download Successful',
+          'Receipt image saved to Downloads',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFF1E1E20),
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Download Failed',
+        'Could not save receipt image. Please try again.',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: const Color(0xFF1E1E20),
+        colorText: Colors.white,
+      );
+    }
+  }
 
   // Cursor Pagination state
   var nextCursor = RxnString();
