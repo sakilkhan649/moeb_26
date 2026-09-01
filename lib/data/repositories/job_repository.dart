@@ -19,7 +19,12 @@ class JobRepo {
     String? time,
     String? flightNumber,
     String? instruction,
+    String? paymentStatus,
+    String? passengerName,
+    String? passengerPhone,
     List<String>? targetedChauffeurs,
+    String? serviceAreaId,
+    List<String>? serviceAreaIds,
   }) async {
     final Map<String, dynamic> body = {
       "jobType": jobType,
@@ -47,13 +52,37 @@ class JobRepo {
     if (instruction != null && instruction.isNotEmpty) {
       body["instruction"] = instruction;
     }
+    if (paymentStatus != null && paymentStatus.isNotEmpty) {
+      body["paymentStatus"] = paymentStatus;
+    }
+    if (passengerName != null && passengerName.isNotEmpty) {
+      body["passengerName"] = passengerName;
+    }
+    if (passengerPhone != null && passengerPhone.isNotEmpty) {
+      body["passengerPhone"] = passengerPhone;
+    }
     if (dispatchType == "TARGETED CHAUFFEURS" && targetedChauffeurs != null) {
       body["targetedChauffeurs"] = targetedChauffeurs;
     } else {
       body["targetedChauffeurs"] = [];
     }
+    if (dispatchType == "ALL CHAUFFEURS") {
+      if (serviceAreaIds != null && serviceAreaIds.isNotEmpty) {
+        body["serviceAreaIds"] = serviceAreaIds;
+      } else if (serviceAreaId != null && serviceAreaId.isNotEmpty) {
+        body["serviceAreaIds"] = [serviceAreaId];
+      }
+    }
 
     return await apiClient.postData(ApiConstants.createJob, body);
+  }
+
+  Future<Response> getCalendarJobs({required int month, required int year}) async {
+    final Map<String, dynamic> query = {
+      'month': month,
+      'year': year,
+    };
+    return await apiClient.getData(ApiConstants.calendarJobs, query: query);
   }
 
   Future<Response> getJobs({String? cursor, int limit = 10}) async {
@@ -125,30 +154,33 @@ class JobRepo {
 
   Future<Response> updateJob({
     required String jobId,
-    required String pickupLocation,
-    required double paymentAmount,
-    required String instruction,
-    required String dropoffLocation,
+    String? pickupLocation,
+    double? paymentAmount,
+    String? instruction,
+    String? dropoffLocation,
     String? date,
     String? time,
-    required String vehicleType,
-    required String paymentType,
-    required String jobType,
+    String? vehicleType,
+    String? paymentType,
+    String? jobType,
     String? flightNumber,
+    String? paymentStatus,
+    String? passengerName,
+    String? passengerPhone,
+    String? dispatchType,
+    String? serviceAreaId,
+    List<String>? targetedChauffeurs,
     bool asap = false,
   }) async {
-    final Map<String, dynamic> body = {
-      "pickup": pickupLocation,
-      "pickupLocation": pickupLocation,
-      "dropoff": dropoffLocation,
-      "dropoffLocation": dropoffLocation,
-      "paymentAmount": paymentAmount,
-      "instruction": instruction,
-      "vehicleType": vehicleType,
-      "paymentType": paymentType,
-      "jobType": jobType,
-      "asap": asap,
-    };
+    final Map<String, dynamic> body = {};
+
+    if (pickupLocation != null) body["pickup"] = pickupLocation;
+    if (dropoffLocation != null) body["dropoff"] = dropoffLocation;
+    if (paymentAmount != null) body["paymentAmount"] = paymentAmount;
+    if (instruction != null) body["instruction"] = instruction;
+    if (vehicleType != null) body["vehicleType"] = vehicleType;
+    if (paymentType != null) body["paymentType"] = paymentType;
+    if (jobType != null) body["jobType"] = jobType;
 
     if (!asap) {
       if (date != null && date.isNotEmpty) {
@@ -161,6 +193,27 @@ class JobRepo {
 
     if (flightNumber != null && flightNumber.isNotEmpty) {
       body["flightNumber"] = flightNumber;
+    }
+    if (paymentStatus != null && paymentStatus.isNotEmpty) {
+      body["paymentStatus"] = paymentStatus;
+    }
+    if (passengerName != null && passengerName.isNotEmpty) {
+      body["passengerName"] = passengerName;
+    }
+    if (passengerPhone != null && passengerPhone.isNotEmpty) {
+      body["passengerPhone"] = passengerPhone;
+    }
+
+    if (dispatchType != null && dispatchType.isNotEmpty) {
+      body["dispatchType"] = dispatchType;
+      if (dispatchType == "ALL CHAUFFEURS" &&
+          serviceAreaId != null &&
+          serviceAreaId.isNotEmpty) {
+        body["serviceAreaId"] = serviceAreaId;
+      } else if (dispatchType == "TARGETED CHAUFFEURS" &&
+          targetedChauffeurs != null) {
+        body["targetedChauffeurs"] = targetedChauffeurs;
+      }
     }
 
     return await apiClient.patchData(

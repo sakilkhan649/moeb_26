@@ -66,7 +66,11 @@ class UserProfileModel {
       email: json['email']?.toString() ?? '',
       phone: json['phone']?.toString() ?? '',
       home: json['home']?.toString() ?? '',
-      serviceArea: json['serviceArea']?.toString() ?? '',
+      serviceArea: json['serviceArea'] is Map
+          ? (json['serviceArea']['areaName']?.toString() ??
+              json['serviceArea']['name']?.toString() ??
+              '')
+          : (json['serviceArea']?.toString() ?? ''),
       experience: json['experience'] is int ? json['experience'] : 0,
       company: json['company']?.toString() ?? '',
       companyRole: json['companyRole']?.toString() ?? '',

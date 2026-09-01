@@ -41,10 +41,7 @@ class ExpenseListView extends GetView<ExpenseController> {
           actions: [
             // Monthly/Yearly Filter Option
             PopupMenuButton<String>(
-              icon: const Icon(
-                Icons.filter_alt_outlined,
-                color: Colors.white,
-              ),
+              icon: const Icon(Icons.filter_alt_outlined, color: Colors.white),
               tooltip: "Filter Period",
               offset: Offset(0, 48.h),
               color: const Color(0xFF1E1E20),
@@ -270,7 +267,8 @@ class ExpenseListView extends GetView<ExpenseController> {
                         parent: BouncingScrollPhysics(),
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      itemCount: groupedExpenses.keys.length +
+                      itemCount:
+                          groupedExpenses.keys.length +
                           (controller.isLoadingMore.value ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index == groupedExpenses.keys.length) {
@@ -553,46 +551,54 @@ class ExpenseListView extends GetView<ExpenseController> {
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 2,
-                        child: Text(
-                          DateFormat('dd MMM').format(e.date),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11.sp,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 4,
+                        flex: 8,
                         child: GestureDetector(
                           onTap: () => Get.bottomSheet(
                             ExpenseDetailSheet(expense: e),
                             isScrollControlled: true,
                             ignoreSafeArea: false,
                           ),
-                          child: Text(
-                            e.description.isNotEmpty
-                                ? e.description
-                                : "No description",
-                            style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 11.sp,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          behavior: HitTestBehavior.opaque,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  DateFormat('dd MMM').format(e.date),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11.sp,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 4,
+                                child: Text(
+                                  e.description.isNotEmpty
+                                      ? e.description
+                                      : "No description",
+                                  style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 11.sp,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  "\$${e.amount.toStringAsFixed(2)}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          "\$${e.amount.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.right,
                         ),
                       ),
                       Expanded(
@@ -728,7 +734,8 @@ class ExpenseListView extends GetView<ExpenseController> {
                                                     Get.back();
                                                   },
                                                   text: "Delete",
-                                                  backgroundColor: Colors.redAccent,
+                                                  backgroundColor:
+                                                      Colors.redAccent,
                                                   textColor: Colors.white,
                                                   padding: EdgeInsets.symmetric(
                                                     vertical: 12.h,
@@ -767,9 +774,9 @@ class ExpenseListView extends GetView<ExpenseController> {
                       ),
                     ],
                   ),
-                  );
-                }),
-              ],
+                );
+              }),
+            ],
           ),
         ),
       ),

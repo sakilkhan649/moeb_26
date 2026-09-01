@@ -1,87 +1,112 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:moeb_26/core/services/job_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:moeb_26/modules/jobs_posts/controllers/job_post_controller.dart';
+import 'package:moeb_26/modules/jobs_posts/views/job_post_sheet_tabbar_view.dart';
 import 'package:moeb_26/modules/my_schedule/models/my_schedule_job_model.dart';
 
 class MyScheduleController extends GetxController {
   final Rx<DateTime> selectedDate = DateTime.now().obs;
   final RxList<MyScheduleJobModel> jobsList = <MyScheduleJobModel>[].obs;
+  final RxList<String> eventDates = <String>[].obs;
+  var isSubmitting = false.obs;
+
+  var isLoading = false.obs;
+  int? _lastFetchedMonth;
+  int? _lastFetchedYear;
 
   @override
   void onInit() {
     super.onInit();
-    _loadSampleJobs();
-  }
-
-  void _loadSampleJobs() {
-    final now = DateTime.now();
-    jobsList.assignAll([
-      MyScheduleJobModel(
-        id: '1',
-        clientName: 'Alexander Wright',
-        clientPhone: '+1 (555) 234-5678',
-        pickupDateTime: DateTime(now.year, now.month, now.day, 10, 30),
-        pickupLocation: 'JFK International Airport Terminal 4',
-        dropoffLocation: 'The Plaza Hotel, 5th Ave, NYC',
-        vehicleType: 'Executive Sedan',
-        fare: '\$145.00',
-        notes: 'Flight BA178. VIP client, prefers quiet ride.',
-        isPaid: true,
-        assignedChauffeurId: 'ch_1',
-        assignedChauffeurName: 'Alex Rivera (Miami FL - Suburban)',
-        paymentMethod: 'Credit Card',
-        paymentInfo: 'Paid via Stripe (Receipt #INV-8921)',
-      ),
-      MyScheduleJobModel(
-        id: '2',
-        clientName: 'Sophia Martinez',
-        clientPhone: '+1 (555) 876-5432',
-        pickupDateTime: DateTime(now.year, now.month, now.day, 14, 15),
-        pickupLocation: 'Wall Street Financial District',
-        dropoffLocation: 'LaGuardia Airport Terminal B',
-        vehicleType: 'Luxury SUV',
-        fare: '\$180.00',
-        notes: '2 Large Luggage bags.',
-        isPaid: false,
-        paymentMethod: 'Zelle / Cash',
-        paymentInfo: 'Client requested cash payment upon arrival',
-      ),
-      MyScheduleJobModel(
-        id: '3',
-        clientName: 'Robert Vance',
-        clientPhone: '+1 (555) 345-6789',
-        pickupDateTime: DateTime(now.year, now.month, now.day + 1, 9, 0),
-        pickupLocation: 'Midtown Manhattan Corporate Center',
-        dropoffLocation: 'Newark Liberty International Airport',
-        vehicleType: 'Chauffeur Van',
-        fare: '\$220.00',
-        notes: 'Group of 4 passengers.',
-        isPaid: true,
-        assignedChauffeurId: 'ch_2',
-        assignedChauffeurName: 'Marcus Vance (NYC Metro Area)',
-        paymentMethod: 'Corporate Invoice',
-        paymentInfo: 'Direct billing to Vance Corp #VC-402',
-      ),
-    ]);
+    fetchCalendarJobs();
   }
 
   void selectDate(DateTime date) {
     selectedDate.value = date;
+    if (_lastFetchedMonth != date.month || _lastFetchedYear != date.year) {
+      fetchCalendarJobs(targetDate: date);
+    }
   }
 
-  void togglePaymentStatus(String id) {
-    final index = jobsList.indexWhere((j) => j.id == id);
-    if (index != -1) {
-      final current = jobsList[index];
-      final updated = current.copyWith(isPaid: !current.isPaid);
-      jobsList[index] = updated;
-      jobsList.refresh();
-      Helpers.showCustomSnackBar(
-        updated.isPaid
-            ? 'Marked job for ${updated.clientName} as Paid'
-            : 'Marked job for ${updated.clientName} as Not Paid',
-        isError: false,
+  Future<void> fetchCalendarJobs({DateTime? targetDate}) async {
+    try {
+      isLoading.value = true;
+      final date = targetDate ?? selectedDate.value;
+      _lastFetchedMonth = date.month;
+      _lastFetchedYear = date.year;
+
+      final response = await Get.find<JobService>().getCalendarJobs(
+        month: date.month,
+        year: date.year,
       );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data is Map && data['success'] == true && data['data'] != null) {
+          final resData = data['data'] as Map;
+          if (resData.containsKey('eventDates')) {
+            final datesList = resData['eventDates'] as List? ?? [];
+            eventDates.assignAll(datesList.map((e) => e.toString()).toList());
+          }
+
+          final eventsJson = resData['events'] as List? ?? [];
+          final loadedJobs = eventsJson
+              .map((item) =>
+                  MyScheduleJobModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+
+          jobsList.assignAll(loadedJobs);
+        }
+      }
+    } catch (e) {
+      // Keep real state or empty list on network error
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<bool> togglePaymentStatus(String id) async {
+    final index = jobsList.indexWhere((j) => j.id == id);
+    if (index == -1) return false;
+
+    final current = jobsList[index];
+    final newIsPaid = !current.isPaid;
+    final newPaymentStatusStr = newIsPaid ? 'PAID' : 'UNPAID';
+
+    try {
+      isSubmitting.value = true;
+      final response = await Get.find<JobService>().updateJob(
+        jobId: current.id,
+        paymentStatus: newPaymentStatusStr,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final updated = current.copyWith(isPaid: newIsPaid);
+        jobsList[index] = updated;
+        jobsList.refresh();
+
+        Helpers.showCustomSnackBar(
+          'Payment status updated to $newPaymentStatusStr',
+          isError: false,
+        );
+        return true;
+      } else {
+        final message =
+            response.statusMessage ?? 'Failed to update payment status';
+        Helpers.showCustomSnackBar(message, isError: true);
+        return false;
+      }
+    } catch (e) {
+      Helpers.showCustomSnackBar(
+        e.toString().replaceAll('Exception: ', ''),
+        isError: true,
+      );
+      return false;
+    } finally {
+      isSubmitting.value = false;
     }
   }
 
@@ -95,53 +120,252 @@ class MyScheduleController extends GetxController {
   }
 
   bool hasJobsOnDate(DateTime date) {
+    final dateStr = DateFormat('yyyy-MM-dd').format(date);
+    if (eventDates.contains(dateStr)) {
+      return true;
+    }
     return jobsList.any((job) =>
         job.pickupDateTime.year == date.year &&
         job.pickupDateTime.month == date.month &&
         job.pickupDateTime.day == date.day);
   }
 
-  void addJob(MyScheduleJobModel job) {
-    jobsList.add(job);
-    Helpers.showCustomSnackBar(
-      'Direct booking added to your schedule',
-      isError: false,
-    );
-  }
+  Future<bool> createDirectBooking(MyScheduleJobModel job) async {
+    try {
+      isSubmitting.value = true;
 
-  void updateJob(MyScheduleJobModel updatedJob) {
-    final index = jobsList.indexWhere((j) => j.id == updatedJob.id);
-    if (index != -1) {
-      jobsList[index] = updatedJob;
-      jobsList.refresh();
-      Helpers.showCustomSnackBar(
-        'Booking details updated successfully',
-        isError: false,
+      final dateStr = DateFormat('yyyy-MM-dd').format(job.pickupDateTime);
+      final timeStr = DateFormat('HH:mm').format(job.pickupDateTime);
+
+      final fareText = job.fare.replaceAll(RegExp(r'[^\d.]'), '');
+      final fareDouble = double.tryParse(fareText) ?? 0.0;
+
+      final String pType = job.paymentMethod.toUpperCase().contains('COLLECT')
+          ? 'COLLECT PAYMENT'
+          : 'CREDIT CARD ON FILE';
+
+      final response = await Get.find<JobService>().createJob(
+        jobType: 'ONE WAY',
+        pickup: job.pickupLocation,
+        dropoff: job.dropoffLocation,
+        date: dateStr,
+        time: timeStr,
+        vehicleType: job.vehicleType,
+        paymentAmount: fareDouble,
+        paymentType: pType,
+        paymentStatus: job.isPaid ? 'PAID' : 'UNPAID',
+        passengerName: job.clientName,
+        passengerPhone: job.clientPhone,
+        instruction: job.notes,
+        flightNumber: job.flightNumber,
+        dispatchType: 'PERSONAL NOTE',
       );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+        dynamic createdData;
+        if (data is Map && data.containsKey('data')) {
+          createdData = data['data'];
+        } else {
+          createdData = data;
+        }
+
+        final newJob = job.copyWith(
+          id: (createdData != null && createdData['_id'] != null)
+              ? createdData['_id']
+              : job.id,
+        );
+
+        jobsList.add(newJob);
+        jobsList.refresh();
+
+        Helpers.showCustomSnackBar(
+          'Direct booking added to your schedule',
+          isError: false,
+        );
+        return true;
+      } else {
+        final message = response.statusMessage ?? 'Failed to create booking';
+        Helpers.showCustomSnackBar(message, isError: true);
+        return false;
+      }
+    } catch (e) {
+      Helpers.showCustomSnackBar(
+        e.toString().replaceAll('Exception: ', ''),
+        isError: true,
+      );
+      return false;
+    } finally {
+      isSubmitting.value = false;
     }
   }
 
-  void deleteJob(String id) {
-    jobsList.removeWhere((j) => j.id == id);
-    Helpers.showCustomSnackBar(
-      'Booking removed from your schedule',
-      isError: false,
+  Future<bool> updateDirectBooking(MyScheduleJobModel updatedJob) async {
+    try {
+      isSubmitting.value = true;
+
+      final dateStr =
+          DateFormat('yyyy-MM-dd').format(updatedJob.pickupDateTime);
+      final timeStr = DateFormat('HH:mm').format(updatedJob.pickupDateTime);
+
+      final fareText = updatedJob.fare.replaceAll(RegExp(r'[^\d.]'), '');
+      final fareDouble = double.tryParse(fareText) ?? 0.0;
+
+      final String pType =
+          updatedJob.paymentMethod.toUpperCase().contains('COLLECT')
+              ? 'COLLECT PAYMENT'
+              : 'CREDIT CARD ON FILE';
+
+      final response = await Get.find<JobService>().updateJob(
+        jobId: updatedJob.id,
+        jobType: 'ONE WAY',
+        pickupLocation: updatedJob.pickupLocation,
+        dropoffLocation: updatedJob.dropoffLocation,
+        date: dateStr,
+        time: timeStr,
+        vehicleType: updatedJob.vehicleType,
+        paymentAmount: fareDouble,
+        paymentType: pType,
+        paymentStatus: updatedJob.isPaid ? 'PAID' : 'UNPAID',
+        passengerName: updatedJob.clientName,
+        passengerPhone: updatedJob.clientPhone,
+        instruction: updatedJob.notes,
+        flightNumber: updatedJob.flightNumber,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final index = jobsList.indexWhere((j) => j.id == updatedJob.id);
+        if (index != -1) {
+          jobsList[index] = updatedJob;
+          jobsList.refresh();
+        }
+        Helpers.showCustomSnackBar(
+          'Booking details updated successfully',
+          isError: false,
+        );
+        return true;
+      } else {
+        final message = response.statusMessage ?? 'Failed to update booking';
+        Helpers.showCustomSnackBar(message, isError: true);
+        return false;
+      }
+    } catch (e) {
+      Helpers.showCustomSnackBar(
+        e.toString().replaceAll('Exception: ', ''),
+        isError: true,
+      );
+      return false;
+    } finally {
+      isSubmitting.value = false;
+    }
+  }
+
+  void addJob(MyScheduleJobModel job) {
+    createDirectBooking(job);
+  }
+
+  void updateJob(MyScheduleJobModel updatedJob) {
+    updateDirectBooking(updatedJob);
+  }
+
+  Future<void> deleteJob(String id) async {
+    try {
+      final response = await Get.find<JobService>().deleteJob(jobId: id);
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        jobsList.removeWhere((j) => j.id == id);
+        Helpers.showCustomSnackBar(
+          'Booking removed from your schedule',
+          isError: false,
+        );
+      } else {
+        jobsList.removeWhere((j) => j.id == id);
+      }
+    } catch (e) {
+      jobsList.removeWhere((j) => j.id == id);
+    }
+  }
+
+  void openChauffeurSelectionForDispatch(
+      BuildContext context, MyScheduleJobModel job) {
+    final postJobController = Get.isRegistered<PostJobController>()
+        ? Get.find<PostJobController>()
+        : Get.put(PostJobController());
+
+    postJobController.fetchServiceAreas();
+    postJobController.fetchFavoriteDrivers();
+
+    JobPostSheetTabBarView.showChauffeurSelectionBottomSheet(
+      context,
+      postJobController,
+      onDone: () {
+        dispatchToNetwork(job, postJobController: postJobController);
+      },
     );
   }
 
-  void dispatchToNetwork(MyScheduleJobModel job) {
-    final index = jobsList.indexWhere((j) => j.id == job.id);
-    if (index != -1) {
-      final updated = jobsList[index].copyWith(
-        isDispatchedToNetwork: true,
-        status: "Dispatched to Network",
+  Future<void> dispatchToNetwork(MyScheduleJobModel job,
+      {PostJobController? postJobController}) async {
+    try {
+      isSubmitting.value = true;
+
+      String dispatchType = "ALL CHAUFFEURS";
+      String? serviceAreaId;
+      List<String>? targetedChauffeurs;
+
+      if (postJobController != null) {
+        final selectionType = postJobController.chauffeurSelectionType.value;
+        if (selectionType == 'favorites' &&
+            postJobController.selectedDrivers.isNotEmpty) {
+          dispatchType = "TARGETED CHAUFFEURS";
+          targetedChauffeurs = postJobController.selectedDrivers.toList();
+        } else if (postJobController.selectedServiceAreas.isNotEmpty) {
+          dispatchType = "ALL CHAUFFEURS";
+          final areaName = postJobController.selectedServiceAreas.first;
+          final areaModel = postJobController.serviceAreas.firstWhereOrNull(
+            (a) =>
+                a.areaName.trim().toLowerCase() ==
+                areaName.trim().toLowerCase(),
+          );
+          if (areaModel != null) {
+            serviceAreaId = areaModel.id;
+          }
+        }
+      }
+
+      final response = await Get.find<JobService>().updateJob(
+        jobId: job.id,
+        dispatchType: dispatchType,
+        serviceAreaId: serviceAreaId,
+        targetedChauffeurs: targetedChauffeurs,
       );
-      jobsList[index] = updated;
-      jobsList.refresh();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final index = jobsList.indexWhere((j) => j.id == job.id);
+        if (index != -1) {
+          final updated = jobsList[index].copyWith(
+            isDispatchedToNetwork: true,
+            status: "Dispatched to Network",
+          );
+          jobsList[index] = updated;
+          jobsList.refresh();
+        }
+
+        final selectionText = postJobController?.chauffeurSelectionText;
+        final msg = selectionText != null && selectionText.isNotEmpty
+            ? 'Job dispatched to network ($selectionText)!'
+            : 'Job successfully dispatched to the network!';
+        Helpers.showCustomSnackBar(msg, isError: false);
+      } else {
+        final message = response.statusMessage ?? 'Failed to dispatch job';
+        Helpers.showCustomSnackBar(message, isError: true);
+      }
+    } catch (e) {
       Helpers.showCustomSnackBar(
-        'Job successfully dispatched to the public network!',
-        isError: false,
+        e.toString().replaceAll('Exception: ', ''),
+        isError: true,
       );
+    } finally {
+      isSubmitting.value = false;
     }
   }
 
@@ -156,6 +380,20 @@ class MyScheduleController extends GetxController {
       }
     } catch (_) {
       Helpers.showCustomSnackBar('Calling $phoneNumber...', isError: false);
+    }
+  }
+
+  Future<void> sendTextMessage(String phoneNumber) async {
+    final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+    final Uri launchUri = Uri(scheme: 'sms', path: cleanPhone);
+    try {
+      if (await canLaunchUrl(launchUri)) {
+        await launchUrl(launchUri);
+      } else {
+        Helpers.showCustomSnackBar('Messaging $phoneNumber...', isError: false);
+      }
+    } catch (_) {
+      Helpers.showCustomSnackBar('Messaging $phoneNumber...', isError: false);
     }
   }
 }

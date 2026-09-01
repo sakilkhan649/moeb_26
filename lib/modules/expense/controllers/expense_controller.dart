@@ -7,7 +7,6 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:moeb_26/core/services/expense_service.dart';
-import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import '../models/expense_model.dart';
 
@@ -293,12 +292,7 @@ class ExpenseController extends GetxController {
         existingImageUrl.value = null;
       }
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Failed to pick image: $e",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Failed to pick image: $e", isError: true);
     }
   }
 
@@ -337,12 +331,7 @@ class ExpenseController extends GetxController {
     final amount = double.tryParse(amountText);
 
     if (amount == null || amount <= 0) {
-      Get.snackbar(
-        "Invalid Input",
-        "Please enter a valid amount",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Please enter a valid amount", isError: true);
       return;
     }
 
@@ -363,27 +352,15 @@ class ExpenseController extends GetxController {
         filterDate.value = addedDate;
         fetchExpenses();
 
-        Get.snackbar(
-          "Success",
-          "Expense added successfully",
-          backgroundColor: AppColors.primaryColor,
-          colorText: Colors.black,
-        );
+        Helpers.showCustomSnackBar("Expense added successfully", isError: false);
       } else {
-        Get.snackbar(
-          "Error",
+        Helpers.showCustomSnackBar(
           response.data?['message'] ?? "Failed to add expense",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+          isError: true,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Failed to add expense: $e",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Failed to add expense: $e", isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -394,12 +371,7 @@ class ExpenseController extends GetxController {
     final amount = double.tryParse(amountText);
 
     if (amount == null || amount <= 0) {
-      Get.snackbar(
-        "Invalid Input",
-        "Please enter a valid amount",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Please enter a valid amount", isError: true);
       return;
     }
 
@@ -419,27 +391,15 @@ class ExpenseController extends GetxController {
         Get.back(); // close modal
         fetchExpenses();
 
-        Get.snackbar(
-          "Success",
-          "Expense updated successfully",
-          backgroundColor: AppColors.primaryColor,
-          colorText: Colors.black,
-        );
+        Helpers.showCustomSnackBar("Expense updated successfully", isError: false);
       } else {
-        Get.snackbar(
-          "Error",
+        Helpers.showCustomSnackBar(
           response.data?['message'] ?? "Failed to update expense",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+          isError: true,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Failed to update expense: $e",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Failed to update expense: $e", isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -458,34 +418,21 @@ class ExpenseController extends GetxController {
       final response = await _expenseService.deleteExpense(id);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          "Deleted",
-          "Expense deleted successfully",
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 2),
-        );
+        Helpers.showCustomSnackBar("Expense deleted successfully", isError: false);
       } else {
         // Rollback if server call fails
         expenses.insert(index, removedExpense);
         fetchTotalExpenses();
-        Get.snackbar(
-          "Error",
+        Helpers.showCustomSnackBar(
           response.data?['message'] ?? "Failed to delete expense",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+          isError: true,
         );
       }
     } catch (e) {
       // Rollback on network failure
       expenses.insert(index, removedExpense);
       fetchTotalExpenses();
-      Get.snackbar(
-        "Error",
-        "Failed to delete expense: $e",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Failed to delete expense: $e", isError: true);
     }
   }
 
@@ -514,12 +461,7 @@ class ExpenseController extends GetxController {
             'expense_report_${DateFormat('yyyyMMdd').format(DateTime.now())}.csv',
       );
     } catch (e) {
-      Get.snackbar(
-        "Export Failed",
-        e.toString(),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Export Failed: $e", isError: true);
     }
   }
 
@@ -598,12 +540,7 @@ class ExpenseController extends GetxController {
             'expense_report_${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf',
       );
     } catch (e) {
-      Get.snackbar(
-        "Export Failed",
-        e.toString(),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Export Failed: $e", isError: true);
     }
   }
 

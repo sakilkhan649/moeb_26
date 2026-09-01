@@ -24,7 +24,6 @@ class ProfileController extends GetxController {
   // Extended Driver / Chauffeur Profile Fields
   var company = "Executive Chauffeur Services".obs;
   var carTag = "Luxury SUV & Sedan".obs;
-  var languages = "English, Spanish".obs;
   var zelle = "pay@chauffeur.com".obs;
   var venmo = "@ChauffeurPay".obs;
   var cashApp = "\$ChauffeurApp".obs;
@@ -56,7 +55,6 @@ class ProfileController extends GetxController {
   // Extended Chauffeur Controllers
   late TextEditingController companyController;
   late TextEditingController carTagController;
-  late TextEditingController languagesController;
   late TextEditingController zelleController;
   late TextEditingController venmoController;
   late TextEditingController cashAppController;
@@ -72,7 +70,6 @@ class ProfileController extends GetxController {
 
     companyController = TextEditingController(text: company.value);
     carTagController = TextEditingController(text: carTag.value);
-    languagesController = TextEditingController(text: languages.value);
     zelleController = TextEditingController(text: zelle.value);
     venmoController = TextEditingController(text: venmo.value);
     cashAppController = TextEditingController(text: cashApp.value);
@@ -179,13 +176,7 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200 && response.data?['data'] != null) {
         _applyProfileData(response.data['data']);
       } else {
-        Get.snackbar(
-          "Error",
-          "Failed to load profile",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Helpers.showCustomSnackBar("Failed to load profile", isError: true);
       }
     } catch (e) {
       debugPrint("Error fetching profile: $e");
@@ -214,11 +205,7 @@ class ProfileController extends GetxController {
         data['company']?.toString() ??
         "";
 
-    if (data['languages'] is List) {
-      languages.value = (data['languages'] as List).join(', ');
-    } else if (data['languages'] != null) {
-      languages.value = data['languages'].toString();
-    }
+
 
     final pm = data['paymentMethods'];
     if (pm is Map) {
@@ -242,7 +229,6 @@ class ProfileController extends GetxController {
     serviceAreaController.text = serviceArea.value;
     nickNameController.text = nickName.value;
     companyController.text = company.value;
-    languagesController.text = languages.value;
     zelleController.text = zelle.value;
     venmoController.text = venmo.value;
     cashAppController.text = cashApp.value;
@@ -381,20 +367,10 @@ class ProfileController extends GetxController {
   Future<void> saveProfile() async {
     isUpdating.value = true;
     try {
-      List<String> langList = languagesController.text
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-      if (!langList.any((l) => l.toLowerCase() == 'english')) {
-        langList.insert(0, 'English');
-      }
-
       Map<String, dynamic> body = {
         "phone": phoneController.text.trim(),
         "nickname": nickNameController.text.trim(),
         "companyName": companyController.text.trim(),
-        "languages": langList,
       };
 
       dynamic requestBody;
@@ -447,7 +423,6 @@ class ProfileController extends GetxController {
     nickNameController.dispose();
     companyController.dispose();
     carTagController.dispose();
-    languagesController.dispose();
     zelleController.dispose();
     venmoController.dispose();
     cashAppController.dispose();

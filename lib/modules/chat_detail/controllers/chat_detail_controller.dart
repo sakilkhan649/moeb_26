@@ -278,13 +278,7 @@ class ChatDetailController extends GetxController {
       } catch (e) {
         messages.removeWhere((m) => m.id == tempId);
         selectedImages.addAll(imagesToSend);
-        Get.snackbar(
-          'Error',
-          'Failed to send message',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Helpers.showCustomSnackBar('Failed to send message', isError: true);
       }
     }
   }

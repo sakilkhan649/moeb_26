@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/api_client.dart';
-import 'package:moeb_26/core/services/user_service.dart';
-import 'package:moeb_26/data/models/chat_model.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/data/repositories/favorite_chauffeur_repository.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
 
@@ -193,7 +192,11 @@ class FavoriteChauffeur {
       name: json['name']?.toString() ?? 'Chauffeur',
       nickName: json['nickname']?.toString() ?? json['nickName']?.toString(),
       phone: json['phone']?.toString() ?? '',
-      serviceArea: json['serviceArea']?.toString() ?? '',
+      serviceArea: json['serviceArea'] is Map
+          ? (json['serviceArea']['areaName']?.toString() ??
+              json['serviceArea']['name']?.toString() ??
+              '')
+          : (json['serviceArea']?.toString() ?? ''),
       companyName:
           json['company']?.toString() ??
           json['companyName']?.toString() ??
@@ -507,23 +510,15 @@ class PreferredDriversController extends GetxController {
             globalChauffeursList[globalIndex] = updatedChauffeur;
           }
 
-          Get.snackbar(
-            "Added to Favorites",
+          Helpers.showCustomSnackBar(
             response.data?['message'] ??
                 "${chauffeur.name} added to your favorites!",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: const Color(0xFF1E1E1E),
-            colorText: Colors.white,
-            duration: const Duration(seconds: 2),
+            isError: false,
           );
         } else {
-          Get.snackbar(
-            "Notice",
+          Helpers.showCustomSnackBar(
             response.data?['message'] ?? "Could not add to favorites",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: const Color(0xFF1E1E1E),
-            colorText: Colors.white,
-            duration: const Duration(seconds: 2),
+            isError: true,
           );
         }
       } catch (e) {
@@ -678,23 +673,15 @@ class PreferredDriversController extends GetxController {
           globalChauffeursList[globalIndex] = updatedChauffeur;
         }
 
-        Get.snackbar(
-          "Removed from Favorites",
+        Helpers.showCustomSnackBar(
           response.data?['message'] ??
               "${chauffeur.name} removed from favorites",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFF1E1E1E),
-          colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+          isError: false,
         );
       } else {
-        Get.snackbar(
-          "Notice",
+        Helpers.showCustomSnackBar(
           response.data?['message'] ?? "Could not remove from favorites",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFF1E1E1E),
-          colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+          isError: true,
         );
       }
     } catch (e) {
@@ -710,22 +697,16 @@ class PreferredDriversController extends GetxController {
       if (chat != null) {
         Get.toNamed(Routes.chatDetailView, arguments: chat);
       } else {
-        Get.snackbar(
-          "Notice",
+        Helpers.showCustomSnackBar(
           "Could not start chat session with chauffeur.",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFF1E1E1E),
-          colorText: Colors.white,
+          isError: true,
         );
       }
     } catch (e) {
       debugPrint("Error opening chauffeur chat: $e");
-      Get.snackbar(
-        "Notice",
+      Helpers.showCustomSnackBar(
         "Could not start chat session with chauffeur.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFF1E1E1E),
-        colorText: Colors.white,
+        isError: true,
       );
     }
   }

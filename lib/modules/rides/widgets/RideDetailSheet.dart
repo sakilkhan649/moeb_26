@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/services/api_client.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 import 'package:moeb_26/data/models/my_rides_model.dart';
 import 'package:moeb_26/data/repositories/socket_repository.dart';
@@ -127,12 +128,9 @@ class RideDetailSheet extends StatelessWidget {
       }
     }
 
-    Get.snackbar(
-      "Notice",
+    Helpers.showCustomSnackBar(
       "Unable to start chat session with user right now.",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFF1E1E1E),
-      colorText: Colors.white,
+      isError: true,
     );
   }
 

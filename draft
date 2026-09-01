@@ -1,594 +1,250 @@
-Launching lib\main.dart on sdk gphone16k x86 64 in debug mode...
-Warning: Flutter support for your project's Gradle version (8.14.0) will soon be dropped. Please upgrade your Gradle version to a version of at least 9.1.0 soon.
-Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
-
-Potential fix: Your project's gradle version is typically defined in the gradle wrapper file. By default, this can be found at C:\Users\mdbay\StudioProjects\moeb_26\android/gradle/wrapper/gradle-wrapper.properties.
-For more information, see https://docs.gradle.org/current/userguide/gradle_wrapper.html.
-
-Warning: Flutter support for your project's Android Gradle Plugin version (Android Gradle Plugin version 8.11.1) will soon be dropped. Please upgrade your Android Gradle Plugin version to a version of at least Android Gradle Plugin version 9.0.1 soon.
-Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
-
-Potential fix: Your project's AGP version is typically defined in the plugins block of the `settings.gradle` file (C:\Users\mdbay\StudioProjects\moeb_26\android/settings.gradle), by a plugin with the id of com.android.application.
-If you don't see a plugins block, your project was likely created with an older template version. In this case it is most likely defined in the top-level build.gradle file (C:\Users\mdbay\StudioProjects\moeb_26\android/build.gradle) by the following line in the dependencies block of the buildscript: "classpath 'com.android.tools.build:gradle:<version>'".
-
-Warning: Flutter support for your project's Kotlin version (2.2.20) will soon be dropped. Please upgrade your Kotlin version to a version of at least 2.3.20 soon.
-Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
-
-Potential fix: Your project's KGP version is typically defined in the plugins block of the `settings.gradle` file (C:\Users\mdbay\StudioProjects\moeb_26\android/settings.gradle), by a plugin with the id of org.jetbrains.kotlin.android.
-If you don't see a plugins block, your project was likely created with an older template version, in which case it is most likely defined in the top-level build.gradle file (C:\Users\mdbay\StudioProjects\moeb_26\android/build.gradle) by the ext.kotlin_version property.
-
-√ Built build\app\outputs\flutter-apk\app-debug.apk
-I/FlutterActivityAndFragmentDelegate(10358): If you are attempting to set --start-paused via Intent extras to launch a Flutter component outside of using the Flutter CLI, note that support for setting engine flags on Android via Intent will soon be dropped; see https://github.com/flutter/flutter/issues/180686 for more information on this breaking change. To migrate, set --start-paused or any other flags specified via Intent extras on the command line instead or see https://github.com/flutter/flutter/blob/main/docs/engine/Flutter-Android-Engine-Flags.md for alternative methods.
-D/FlutterJNI(10358): Beginning load of flutter...
-D/FlutterJNI(10358): flutter (null) was loaded normally!
-I/flutter (10358): [IMPORTANT:flutter/shell/platform/android/android_context_gl_impeller.cc(104)] Using the Impeller rendering backend (OpenGLES).
-I/com.moeb26.app(10358): hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityNodeInfo;->getSourceNodeId()J (runtime_flags=0, domain=platform, api=unsupported,test-api) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app, TargetSdkVersion=36) using reflection: allowed
-I/com.moeb26.app(10358): hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityRecord;->getSourceNodeId()J (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app, TargetSdkVersion=36) using reflection: allowed
-I/com.moeb26.app(10358): hiddenapi: Accessing hidden field Landroid/view/accessibility/AccessibilityNodeInfo;->mChildNodeIds:Landroid/util/LongArray; (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app, TargetSdkVersion=36) using reflection: allowed
-I/com.moeb26.app(10358): hiddenapi: Accessing hidden method Landroid/util/LongArray;->get(I)J (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app, TargetSdkVersion=36) using reflection: allowed
-D/AccessibilityBridge(10358): Setting not found: accessibility_display_inversion_enabled, using default: 0
-Connecting to VM Service at ws://127.0.0.1:51296/K12qNc7hvNU=/ws
-Connected to the VM Service.
-D/FlutterRenderer(10358): Width is zero. 0,0
-D/CompatChangeReporter(10358): Compat change id reported: 377864165; UID 10232; state: ENABLED
-W/HWUI    (10358): Unknown dataspace 0
-W/libc    (10358): Access denied finding property "vendor.mesa.virtgpu.kumquat"
-D/ProfileInstaller(10358): Installing profile for com.moeb26.app
-I/Choreographer(10358): Skipped 31 frames!  The application may be doing too much work on its main thread.
-D/WindowOnBackDispatcher(10358): setTopOnBackInvokedCallback (unwrapped): android.app.Activity$$ExternalSyntheticLambda0@f191b13
-D/WindowOnBackDispatcher(10358): setOnBackInvokedCallbackInfo: android.app.Activity$$ExternalSyntheticLambda0@f191b13
-I/WindowExtensionsImpl(10358): Initializing Window Extensions, vendor API level=10, activity embedding enabled=true
-W/UiContextUtils(10358): Requested context is a non-UI Context. Creating a UI-Context with display: 0. Context: Context=android.app.Application@a4a4b, of which baseContext=android.app.ContextImpl@eb21457
-D/VRI[MainActivity](10358): WindowInsets changed: 1080x2400 statusBars:[0,74,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,74,0,84]
-D/FlutterRenderer(10358): Width is zero. 0,0
-I/Surface (10358): Creating surface for consumer unnamed-10358-0 with slotExpansion=1 for 64 slots
-I/Surface (10358): Creating surface for consumer VRI[MainActivity]#0(BLAST Consumer)0 with slotExpansion=1 for 64 slots
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/Surface (10358): Creating surface for consumer unnamed-10358-1 with slotExpansion=1 for 64 slots
-I/Surface (10358): Creating surface for consumer 2027629 SurfaceView[com.moeb26.app/com.moeb26.app.MainActivity]#1(BLAST Consumer)1 with slotExpansion=1 for 64 slots
-I/com.moeb26.app(10358): Compiler allocated 5559KB to compile void android.view.ViewRootImpl.performTraversals(long)
-I/Choreographer(10358): Skipped 828 frames!  The application may be doing too much work on its main thread.
-D/WindowLayoutComponentImpl(10358): Register WindowLayoutInfoListener on Context=com.moeb26.app.MainActivity@9e5374f, of which baseContext=android.app.ContextImpl@7402e5e
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/HWUI    (10358): Using FreeType backend (prop=Auto)
-I/com.moeb26.app(10358): Background young concurrent mark compact GC freed 1877KB AllocSpace bytes, 6(320KB) LOS objects, 28% free, 3780KB/5321KB, paused 40.614ms,133.585ms total 1.129s
-I/Choreographer(10358): Skipped 56 frames!  The application may be doing too much work on its main thread.
-[GETX] Instance "InternetController" has been created
-[GETX] Instance "InternetController" has been initialized
-[GETX] Instance "ApiClient" has been created
-[GETX] Instance "ApiClient" has been initialized
-[GETX] Instance "StorageService" has been created
-[GETX] Instance "StorageService" has been initialized
-[GETX] Instance "AuthRepo" has been created
-[GETX] Instance "UserRepo" has been created
-[GETX] Instance "UserService" has been created
-[GETX] Instance "UserService" has been initialized
-[GETX] Instance "SocketRepository" has been created
-[GETX] Instance "SocketService" has been created
-[GETX] Instance "SocketService" has been initialized
-[GETX] Instance "AuthService" has been created
-[GETX] Instance "AuthService" has been initialized
-[GETX] Instance "VehicleConfigService" has been created
-[GETX] Instance "VehicleConfigService" has been initialized
-[GETX] Instance "GetMaterialController" has been created
-[GETX] Instance "GetMaterialController" has been initialized
-[GETX] GOING TO ROUTE /SplashView
-[GETX] Instance "SplashScreenController" has been created
-[GETX] Instance "SplashScreenController" has been initialized
-I/Choreographer(10358): Skipped 146 frames!  The application may be doing too much work on its main thread.
-I/flutter (10358): ! SocketService: No token found, skipping connection
-I/flutter (10358):
-I/flutter (10358): ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter (10358): │ GET https://nayem5001.binarybards.online/api/v1/vehicle-configs/options
-I/flutter (10358): │ Headers: {Content-Type: application/json}
-I/flutter (10358): └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter (10358):
-I/Choreographer(10358): Skipped 44 frames!  The application may be doing too much work on its main thread.
-I/HWUI    (10358): Davey! duration=1094ms; Flags=1, FrameTimelineVsyncId=1718376, IntendedVsync=179278031813070, Vsync=179278765146374, InputEventId=0, HandleInputStart=179278768253900, AnimationStart=179278768292100, PerformTraversalsStart=179278768322600, DrawStart=179278812037300, FrameDeadline=179278048479736, FrameStartTime=179278765536300, FrameInterval=16666666, WorkloadTarget=16666666, AnimationTime=179278765146374, AnimationCounter=-1, SyncQueued=179278857751700, SyncStart=179278893960500, IssueDrawCommandsStart=179278933588600, SwapBuffers=179279129488000, FrameCompleted=179279162923100, DequeueBufferDuration=21199900, QueueBufferDuration=5470100, GpuCompleted=179279161558300, SwapBuffersCompleted=179279162923100, DisplayPresentTime=0, CommandSubmissionCompleted=179279129488000,
-[GETX] GOING TO ROUTE /AuthSelectionView
-[GETX] REMOVING ROUTE /SplashView
-D/InsetsController(10358): hide(ime())
-I/ImeTracker(10358): com.moeb26.app:5c7e54a0: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
-[GETX] "SplashScreenController" onDelete() called
-[GETX] "SplashScreenController" deleted from memory
-I/flutter (10358):
-I/flutter (10358): ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
-I/flutter (10358): │ [ GET 200] https://nayem5001.binarybards.online/api/v1/vehicle-configs/options
-I/flutter (10358): │ {
-I/flutter (10358): │   "success": true,
-I/flutter (10358): │   "message": "Vehicle options retrieved successfully",
-I/flutter (10358): │   "cursor": {
-I/flutter (10358): │     "nextCursor": null,
-I/flutter (10358): │     "hasMore": false,
-I/flutter (10358): │     "limit": 10
-I/flutter (10358): │   },
-I/flutter (10358): │   "data": [
-I/flutter (10358): │     {
-I/flutter (10358): │       "_id": "6a8e67e46ca41362da9d52ac",
-I/flutter (10358): │       "vehicleType": "Sedan",
-I/flutter (10358): │       "maxAge": 5,
-I/flutter (10358): │       "allowedColors": [
-I/flutter (10358): │         "Black"
-I/flutter (10358): │       ],
-I/flutter (10358): │       "makesAndModels": [
-I/flutter (10358): │         "Mercedes-Benz S-Class",
-I/flutter (10358): │         "Mercedes-Benz E-Class",
-I/flutter (10358): │         "Mercedes-Benz GLE",
-I/flutter (10358): │         "BMW 7 Series",
-I/flutter (10358): │         "BMW 5 Series",
-I/flutter (10358): │         "BMW X7",
-I/flutter (10358): │         "BMW X5",
-I/flutter (10358): │         "Audi A8",
-I/flutter (10358): │         "Audi A6",
-I/flutter (10358): │         "Audi Q5",
-I/flutter (10358): │         "Audi Q7",
-I/flutter (10358): │         "Genesis G90",
-I/flutter (10358): │         "Genesis GV80",
-I/flutter (10358): │         "Cadillac CT5",
-I/flutter (10358): │         "Cadillac XT6",
-I/flutter (10358): │         "Lincoln Aviator",
-I/flutter (10358): │         "Lincoln Nautilus",
-I/flutter (10358): │         "Volvo S90",
-I/flutter (10358): │         "Volvo XC90"
-I/flutter (10358): │       ]
-I/flutter (10358): │     },
-I/flutter (10358): │     {
-I/flutter (10358): │       "_id": "6a8e67e46ca41362da9d52ad",
-I/flutter (10358): │       "vehicleType": "SUV",
-I/flutter (10358): │       "maxAge": 5,
-I/flutter (10358): │       "allowedColors": [
-I/flutter (10358): │         "Black"
-I/flutter (10358): │       ],
-I/flutter (10358): │       "makesAndModels": [
-I/flutter (10358): │         "Chevrolet Suburban",
-I/flutter (10358): │         "GMC Yukon XL",
-I/flutter (10358): │         "Cadillac Escalade",
-I/flutter (10358): │         "Lincoln Navigator L",
-I/flutter (10358): │         "Ford Expedition MAX",
-I/flutter (10358): │         "Jeep Grand Wagoneer L"
-I/flutter (10358): │       ]
-I/flutter (10358): │     },
-I/flutter (10358): │     {
-I/flutter (10358): │       "_id": "6a8e67e46ca41362da9d52ae",
-I/flutter (10358): │       "vehicleType": "Van/Sprinter",
-I/flutter (10358): │       "maxAge": 5,
-I/flutter (10358): │       "allowedColors": [
-I/flutter (10358): │         "Black"
-I/flutter (10358): │       ],
-I/flutter (10358): │       "makesAndModels": [
-I/flutter (10358): │         "Mercedes-Benz Sprinter"
-I/flutter (10358): │       ]
-I/flutter (10358): │     },
-I/flutter (10358): │     {
-I/flutter (10358): │       "_id": "6a8e67e46ca41362da9d52af",
-I/flutter (10358): │       "vehicleType": "Stretch Limousine",
-I/flutter (10358): │       "maxAge": 15,
-I/flutter (10358): │       "allowedColors": [
-I/flutter (10358): │         "Black",
-I/flutter (10358): │         "White"
-I/flutter (10358): │       ],
-I/flutter (10358): │       "makesAndModels": [
-I/flutter (10358): │         "Chrysler 300 Stretch",
-I/flutter (10358): │         "Lincoln MKT Stretch",
-I/flutter (10358): │         "Lincoln Town Car Stretch",
-I/flutter (10358): │         "Lincoln Continental",
-I/flutter (10358): │         "Lincoln Navigator Stretch",
-I/flutter (10358): │         "Cadillac XTS Stretch",
-I/flutter (10358): │         "Cadillac XT5 Stretch",
-I/flutter (10358): │         "Cadillac Escalade Stretch",
-I/flutter (10358): │         "Hummer H2 Stretch"
-I/flutter (10358): │       ]
-I/flutter (10358): │     }
-I/flutter (10358): │   ]
-I/flutter (10358): │ }
-I/flutter (10358): └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅│
-I/flutter (10358):
-I/flutter (10358): ✅ User granted permission
-I/flutter (10358): 📱 SocketService: App resumed, checking connection...
-I/flutter (10358): 🔑 FCM Token: cMZzjt74Rw2xiGf6-H9ApK:APA91bGMQYGrZLq1nqYaPASJXW4eB_7Wo_8jiwaAqpB6NlcpTj46jHVmcYxYY80Z5j0JZPmFLauSHDxE7Dx1WNaFwUPqj9SxKXaA7yhyhC1YS0ONqtza58E
-D/InsetsController(10358): hide(ime())
-I/ImeTracker(10358): com.moeb26.app:82e89539: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
-I/com.moeb26.app(10358): Background concurrent mark compact GC freed 769KB AllocSpace bytes, 3(160KB) LOS objects, 49% free, 4148KB/8296KB, paused 10.412ms,32.834ms total 320.651ms
-I/FLTFireBGExecutor(10358): Creating background FlutterEngine instance, with args: [--start-paused, --enable-dart-profiling]
-D/FLTFireContextHolder(10358): received application context.
-W/libc    (10358): Access denied finding property "vendor.mesa.virtgpu.kumquat"
-I/flutter (10358): [IMPORTANT:flutter/shell/platform/android/android_context_gl_impeller.cc(104)] Using the Impeller rendering backend (OpenGLES).
-W/libc    (10358): Access denied finding property "vendor.mesa.virtgpu.kumquat"
-I/Choreographer(10358): Skipped 308 frames!  The application may be doing too much work on its main thread.
-I/flutter (10358): Service Areas Request: Page 1, Limit 10
-[GETX] GOING TO ROUTE /Createaccountview
-[GETX] Instance "ServiceAreaService" has been created
-[GETX] Instance "ServiceAreaService" has been initialized
-[GETX] Instance "ServiceAreaController" has been created
-[GETX] Instance "ServiceAreaController" has been initialized
-[GETX] Instance "SignupController" has been created
-[GETX] Instance "SignupController" has been initialized
-I/flutter (10358):
-I/flutter (10358): ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter (10358): │ GET https://nayem5001.binarybards.online/api/v1/service-areas?page=1&limit=10
-I/flutter (10358): │ Headers: {Content-Type: application/json}
-I/flutter (10358): │ Query: {page: 1, limit: 10}
-I/flutter (10358): └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter (10358):
-D/WindowOnBackDispatcher(10358): setTopOnBackInvokedCallback (unwrapped): io.flutter.embedding.android.FlutterActivity$1@82155ce
-D/WindowOnBackDispatcher(10358): setOnBackInvokedCallbackInfo: io.flutter.embedding.android.FlutterActivity$1@82155ce
-I/FLTFireMsgService(10358): FlutterFirebaseMessagingBackgroundService started!
-I/flutter (10358):
-I/flutter (10358): ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
-I/flutter (10358): │ [ GET 200] https://nayem5001.binarybards.online/api/v1/service-areas?page=1&limit=10
-I/flutter (10358): │ {
-I/flutter (10358): │   "success": true,
-I/flutter (10358): │   "message": "Service areas retrieved successfully",
-I/flutter (10358): │   "pagination": {
-I/flutter (10358): │     "total": 3,
-I/flutter (10358): │     "limit": 10,
-I/flutter (10358): │     "page": 1,
-I/flutter (10358): │     "totalPage": 1
-I/flutter (10358): │   },
-I/flutter (10358): │   "data": [
-I/flutter (10358): │     {
-I/flutter (10358): │       "_id": "6a8bb7e361f4ff5a4cbcfe5b",
-I/flutter (10358): │       "areaName": "Los Angeles Area",
-I/flutter (10358): │       "cities": [
-I/flutter (10358): │         "Los Angeles",
-I/flutter (10358): │         "Beverly Hills",
-I/flutter (10358): │         "Santa Monica",
-I/flutter (10358): │         "West Hollywood",
-I/flutter (10358): │         "Culver City"
-I/flutter (10358): │       ],
-I/flutter (10358): │       "createdAt": "2026-08-24T03:17:55.767Z",
-I/flutter (10358): │       "status": "ACTIVE",
-I/flutter (10358): │       "updatedAt": "2026-08-25T03:29:46.926Z",
-I/flutter (10358): │       "chauffeurCount": 2
-I/flutter (10358): │     },
-I/flutter (10358): │     {
-I/flutter (10358): │       "_id": "6a8bb7e361f4ff5a4cbcfe5a",
-I/flutter (10358): │       "areaName": "Miami South Florida",
-I/flutter (10358): │       "cities": [
-I/flutter (10358): │         "Miami",
-I/flutter (10358): │         "Fort Lauderdale",
-I/flutter (10358): │         "Miami Beach",
-I/flutter (10358): │         "Coral Gables",
-I/flutter (10358): │         "Brickell"
-I/flutter (10358): │       ],
-I/flutter (10358): │       "createdAt": "2026-08-24T03:17:55.759Z",
-I/flutter (10358): │       "status": "ACTIVE",
-I/flutter (10358): │       "updatedAt": "2026-08-25T03:29:46.922Z",
-I/flutter (10358): │       "chauffeurCount": 3
-I/flutter (10358): │     },
-I/flutter (10358): │     {
-I/flutter (10358): │       "_id": "6a8bb7e361f4ff5a4cbcfe59",
-I/flutter (10358): │       "areaName": "New York Metro",
-I/flutter (10358): │       "cities": [
-I/flutter (10358): │         "New York",
-I/flutter (10358): │         "Brooklyn",
-I/flutter (10358): │         "Queens",
-I/flutter (10358): │         "Manhattan",
-I/flutter (10358): │         "Staten Island",
-I/flutter (10358): │         "Bronx"
-I/flutter (10358): │       ],
-I/flutter (10358): │       "createdAt": "2026-08-24T03:17:55.730Z",
-I/flutter (10358): │       "status": "ACTIVE",
-I/flutter (10358): │       "updatedAt": "2026-08-25T03:29:46.911Z",
-I/flutter (10358): │       "chauffeurCount": 4
-I/flutter (10358): │     }
-I/flutter (10358): │   ]
-I/flutter (10358): │ }
-I/flutter (10358): └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅│
-I/flutter (10358):
-I/flutter (10358): Service Areas API Response Code: 200
-I/flutter (10358): Service Areas loaded: 3 items (Page 1/1)
-I/ImeTracker(10358): com.moeb26.app:4457f2b2: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-D/InsetsController(10358): Setting requestedVisibleTypes to 511 (was 503)
-I/Choreographer(10358): Skipped 39 frames!  The application may be doing too much work on its main thread.
-D/InputConnectionAdaptor(10358): The input method toggled cursor monitoring on
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-W/InteractionJankMonitor(10358): Initializing without READ_DEVICE_CONFIG permission. enabled=true, interval=1, missedFrameThreshold=3, frameTimeThreshold=64, package=com.moeb26.app
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): com.moeb26.app:4457f2b2: onShown
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1720549, totalDuration: 321717014, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1720549, totalDuration: 321717014, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1720677, totalDuration: 365286292, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1720677, totalDuration: 365286292, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-I/ImeTracker(10358): com.moeb26.app:24a72e86: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-I/ImeTracker(10358): com.moeb26.app:24a72e86: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
-D/InputConnectionAdaptor(10358): The input method toggled cursor monitoring on
-I/ImeTracker(10358): com.moeb26.app:a0297c09: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-I/ImeTracker(10358): com.moeb26.app:a0297c09: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
-D/InputConnectionAdaptor(10358): The input method toggled cursor monitoring on
-I/ImeTracker(10358): com.moeb26.app:8f5da787: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-I/ImeTracker(10358): com.moeb26.app:8f5da787: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
-D/InputConnectionAdaptor(10358): The input method toggled cursor monitoring on
-I/ImeTracker(10358): com.moeb26.app:595a5489: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): hide(ime())
-D/InsetsController(10358): Setting requestedVisibleTypes to 503 (was 511)
-D/CompatChangeReporter(10358): Compat change id reported: 395521150; UID 10232; state: ENABLED
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): system_server:27817ad1: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: JANK_COMPOSER, jankTypeExperimental: UNKNOWN: 3, vsyncId: 1721790, totalDuration: 283324666, CUJ=J<IME_INSETS_HIDE_ANIMATION::1@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: JANK_COMPOSER, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1721941, totalDuration: 133039682, CUJ=J<IME_INSETS_HIDE_ANIMATION::1@1@com.moeb26.app>
-V/PerfettoTrigger(10358): Triggering /system/bin/trigger_perfetto com.android.telemetry.interaction-jank-monitor-81
-I/ImeTracker(10358): com.moeb26.app:6eb0252c: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-D/InsetsController(10358): Setting requestedVisibleTypes to 511 (was 503)
-D/InputConnectionAdaptor(10358): The input method toggled cursor monitoring on
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): com.moeb26.app:6eb0252c: onShown
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1722585, totalDuration: 68107098, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1722585, totalDuration: 68107098, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: JANK_COMPOSER, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1722622, totalDuration: 223926600, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: JANK_COMPOSER, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1722651, totalDuration: 254012702, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-V/PerfettoTrigger(10358): Triggering /system/bin/trigger_perfetto com.android.telemetry.interaction-jank-monitor-80
-I/ImeTracker(10358): com.moeb26.app:64954de2: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): hide(ime())
-D/InsetsController(10358): Setting requestedVisibleTypes to 503 (was 511)
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): system_server:4a063694: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1723411, totalDuration: 401879818, CUJ=J<IME_INSETS_HIDE_ANIMATION::1@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1723411, totalDuration: 401879818, CUJ=J<IME_INSETS_HIDE_ANIMATION::1@1@com.moeb26.app>
-I/ImeTracker(10358): com.moeb26.app:532e9cd1: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-D/InsetsController(10358): Setting requestedVisibleTypes to 511 (was 503)
-D/InputConnectionAdaptor(10358): The input method toggled cursor monitoring on
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): com.moeb26.app:532e9cd1: onShown
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1724404, totalDuration: 188770688, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1724404, totalDuration: 188770688, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: JANK_COMPOSER, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1724527, totalDuration: 275079226, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-I/ImeTracker(10358): com.moeb26.app:525da69b: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-I/ImeTracker(10358): com.moeb26.app:525da69b: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
-D/InputConnectionAdaptor(10358): The input method toggled cursor monitoring on
-[GETX] GOING TO ROUTE /PrivacyPolicySignUpView
-I/ImeTracker(10358): com.moeb26.app:25c853de: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): hide(ime())
-D/InsetsController(10358): Setting requestedVisibleTypes to 503 (was 511)
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): system_server:cffd0a17: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
-D/InteractionJankMonitor(10358): Build configuration failed!
-D/InteractionJankMonitor(10358): java.lang.IllegalArgumentException: Must pass in a valid surface control if only instrument surface;
-D/InteractionJankMonitor(10358): 	at com.android.internal.jank.InteractionJankMonitor$Configuration.validate(InteractionJankMonitor.java:947)
-D/InteractionJankMonitor(10358): 	at com.android.internal.jank.InteractionJankMonitor$Configuration.<init>(InteractionJankMonitor.java:883)
-D/InteractionJankMonitor(10358): 	at com.android.internal.jank.InteractionJankMonitor$Configuration.<init>(InteractionJankMonitor.java:0)
-D/InteractionJankMonitor(10358): 	at com.android.internal.jank.InteractionJankMonitor$Configuration$Builder.build(InteractionJankMonitor.java:853)
-D/InteractionJankMonitor(10358): 	at com.android.internal.jank.InteractionJankMonitor.begin(InteractionJankMonitor.java:400)
-D/InteractionJankMonitor(10358): 	at android.view.inputmethod.ImeTracker$ImeJankTracker.lambda$onRequestAnimation$0(ImeTracker.java:1088)
-D/InteractionJankMonitor(10358): 	at android.view.inputmethod.ImeTracker$ImeJankTracker$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
-D/InteractionJankMonitor(10358): 	at android.os.Handler.handleCallback(Handler.java:1082)
-D/InteractionJankMonitor(10358): 	at android.os.Handler.dispatchMessageImpl(Handler.java:135)
-D/InteractionJankMonitor(10358): 	at android.os.Handler.dispatchMessage(Handler.java:126)
-D/InteractionJankMonitor(10358): 	at android.os.Looper.loopOnce(Looper.java:295)
-D/InteractionJankMonitor(10358): 	at android.os.Looper.loop(Looper.java:398)
-D/InteractionJankMonitor(10358): 	at android.app.ActivityThread.main(ActivityThread.java:9569)
-D/InteractionJankMonitor(10358): 	at java.lang.reflect.Method.invoke(Native Method)
-D/InteractionJankMonitor(10358): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:575)
-D/InteractionJankMonitor(10358): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:918)
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/flutter (10358):
-I/flutter (10358): ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter (10358): │ POST https://nayem5001.binarybards.online/api/v1/auth/register
-I/flutter (10358): │ Headers: {Content-Type: application/json}
-I/flutter (10358): │ Body: {
-I/flutter (10358): │ Body:   "name": "trtr",
-I/flutter (10358): │ Body:   "email": "devolan839@ehwit.com",
-I/flutter (10358): │ Body:   "password": "12Ab....@",
-I/flutter (10358): │ Body:   "phone": "151063216",
-I/flutter (10358): │ Body:   "serviceAreaId": "6a8bb7e361f4ff5a4cbcfe5a",
-I/flutter (10358): │ Body:   "companyName": "STA",
-I/flutter (10358): │ Body:   "companyRole": "Chauffeur",
-I/flutter (10358): │ Body:   "languages": [
-I/flutter (10358): │ Body:     "English"
-I/flutter (10358): │ Body:   ]
-I/flutter (10358): │ Body: }
-I/flutter (10358): └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter (10358): 
-I/flutter (10358):
-I/flutter (10358): ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
-I/flutter (10358): │ [ POST 201] https://nayem5001.binarybards.online/api/v1/auth/register
-I/flutter (10358): │ {
-I/flutter (10358): │   "success": true,
-I/flutter (10358): │   "message": "Registration successful. Please check your email to verify your account.",
-I/flutter (10358): │   "data": {
-I/flutter (10358): │     "userId": "6a8e81547d01a0db1ad942f6",
-I/flutter (10358): │     "accountState": "UNVERIFIED"
-I/flutter (10358): │   }
-I/flutter (10358): │ }
-I/flutter (10358): └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅│
-I/flutter (10358):
-[GETX] GOING TO ROUTE /OtpVerificationView
-[GETX] Instance "OtpController" has been created
-[GETX] Instance "OtpController" has been initialized
-I/ImeTracker(10358): com.moeb26.app:5e6deb6c: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-D/InsetsController(10358): Setting requestedVisibleTypes to 511 (was 503)
-D/InputConnectionAdaptor(10358): The input method toggled cursor monitoring on
-I/AssistStructure(10358): Flattened final assist data: 440 bytes, containing 1 windows, 3 views
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): com.moeb26.app:be53424b: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-I/ImeTracker(10358): com.moeb26.app:be53424b: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
-I/ImeTracker(10358): com.moeb26.app:61746018: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): show(ime())
-I/ImeTracker(10358): com.moeb26.app:61746018: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): com.moeb26.app:5e6deb6c: onShown
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: JANK_APPLICATION, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1729416, totalDuration: 143368424, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1729489, totalDuration: 160769362, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1729489, totalDuration: 160769362, CUJ=J<IME_INSETS_SHOW_ANIMATION::0@1@com.moeb26.app>
-I/com.moeb26.app(10358): Background young concurrent mark compact GC freed 3604KB AllocSpace bytes, 6(384KB) LOS objects, 47% free, 4356KB/8296KB, paused 931us,34.803ms total 390.175ms
-I/ImeTracker(10358): com.moeb26.app:b93bbba6: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false userId 0 displayId 0
-D/InsetsController(10358): hide(ime())
-D/InsetsController(10358): Setting requestedVisibleTypes to 503 (was 511)
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/flutter (10358):
-I/flutter (10358): ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter (10358): │ POST https://nayem5001.binarybards.online/api/v1/auth/verify-otp
-I/flutter (10358): │ Headers: {Content-Type: application/json}
-I/flutter (10358): │ Body: {
-I/flutter (10358): │ Body:   "email": "devolan839@ehwit.com",
-I/flutter (10358): │ Body:   "oneTimeCode": 568060
-I/flutter (10358): │ Body: }
-I/flutter (10358): └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter (10358):
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-I/ImeTracker(10358): system_server:9eabfec6: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-D/FlutterJNI(10358): Sending viewport metrics to the engine.
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1732250, totalDuration: 278166918, CUJ=J<IME_INSETS_HIDE_ANIMATION::1@1@com.moeb26.app>
-W/FrameTracker(10358): Missed SF frame:jankTypeLegacy: UNKNOWN: 3, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1732250, totalDuration: 278166918, CUJ=J<IME_INSETS_HIDE_ANIMATION::1@1@com.moeb26.app>
-W/FrameTracker(10358): Missed App frame:jankTypeLegacy: JANK_APPLICATION, jankTypeExperimental: JANK_APPLICATION, vsyncId: 1732281, totalDuration: 286660494, CUJ=J<IME_INSETS_HIDE_ANIMATION::1@1@com.moeb26.app>
-I/flutter (10358):
-I/flutter (10358): ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
-I/flutter (10358): │ [ POST 200] https://nayem5001.binarybards.online/api/v1/auth/verify-otp
-I/flutter (10358): │ {
-I/flutter (10358): │   "success": true,
-I/flutter (10358): │   "message": "Email verified successfully. Please wait for admin approval to access the app.",
-I/flutter (10358): │   "data": {
-I/flutter (10358): │     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOGU4MTU0N2QwMWEwZGIxYWQ5NDJmNiIsInJvbGUiOiJVU0VSIiwiZW1haWwiOiJkZXZvbGFuODM5QGVod2l0LmNvbSIsImFwcFN0YXRlIjoiUEVORElORyIsImFjY291bnRTdGF0ZSI6IlZFUklGSUVEIiwic2VydmljZUFyZWFJZCI6IjZhOGJiN2UzNjFmNGZmNWE0Y2JjZmU1YSIsImlhdCI6MTc4NzcyNDE1MiwiZXhwIjoxNzg3ODEwNTUyfQ.L5Kq5axucIcmPtrhfsNXMGKb_HxNt8osCwcsArAQFpw",
-I/flutter (10358): │     "isOnboard": false,
-I/flutter (10358): │     "isApproved": false
-I/flutter (10358): │   }
-I/flutter (10358): │ }
-I/flutter (10358): └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅│
-I/flutter (10358):
-I/flutter (10358): 🌐 SocketService: Initializing socket on: https://nayem5001.binarybards.online
-[GETX] GOING TO ROUTE /Vehicleinformation
-[GETX] REMOVING ROUTE /OtpVerificationView
-[GETX] REMOVING ROUTE /PrivacyPolicySignUpView
-[GETX] REMOVING ROUTE /Createaccountview
-[GETX] REMOVING ROUTE /AuthSelectionView
-
-════════ Exception caught by widgets library ═══════════════════════════════════
-The following assertion was thrown building Builder:
-setState() or markNeedsBuild() called during build.
-This Obx widget cannot be marked as needing to build because the framework is already in the process of building widgets. A widget can be marked as needing to be built during the build phase only if one of its ancestors is currently building. This exception is allowed because the framework builds parent widgets before children, which means a dirty descendant will always be built. Otherwise, the framework might not visit this widget during this build phase.
-The widget on which setState() or markNeedsBuild() was called was: Obx
-    has builder
-    state: ObxState#423be
-The widget which was currently being built when the offending call was made was: Builder
-
-The relevant error-causing widget was:
-    GetMaterialApp GetMaterialApp:file:///C:/Users/mdbay/StudioProjects/moeb_26/lib/app.dart:19:14
-
-When the exception was thrown, this was the stack:
-#0      Element.markNeedsBuild.<anonymous closure> (package:flutter/src/widgets/framework.dart:5386:9)
-#1      Element.markNeedsBuild (package:flutter/src/widgets/framework.dart:5398:6)
-#2      State.setState (package:flutter/src/widgets/framework.dart:1221:15)
-#3      ObxState._updateTree (package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart:43:7)
-#4      GetStream._notifyData (package:get/get_rx/src/rx_stream/get_stream.dart:47:21)
-#5      GetStream.add (package:get/get_rx/src/rx_stream/get_stream.dart:97:5)
-#6      NotifyManager.addListener.<anonymous closure> (package:get/get_rx/src/rx_types/rx_core/rx_impl.dart:158:40)
-#7      GetStream._notifyData (package:get/get_rx/src/rx_stream/get_stream.dart:47:21)
-#8      GetStream.add (package:get/get_rx/src/rx_stream/get_stream.dart:97:5)
-#9      RxObjectMixin.value= (package:get/get_rx/src/rx_types/rx_core/rx_impl.dart:105:13)
-#10     _VehicleInformationViewState.initState (package:moeb_26/modules/auth/vehicle/views/vehicle_Information_view.dart:45:27)
-#11     StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5963:55)
-#12     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5806:5)
-...     Normal element mounting (160 frames)
-#172    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4600:20)
-#173    MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:7277:36)
-#174    Element.updateChild (package:flutter/src/widgets/framework.dart:4072:18)
-#175    Element.updateChildren (package:flutter/src/widgets/framework.dart:4268:32)
-#176    MultiChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7308:17)
-#177    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#178    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#179    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
-#180    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#181    StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
-#182    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#183    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#184    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#185    ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
-#186    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#187    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#188    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#189    ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
-#190    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
-#191    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#192    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#193    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
-#194    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#195    StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
-#196    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#197    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#198    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#199    ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
-#200    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
-#201    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#202    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#203    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
-#204    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#205    StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
-#206    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#207    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#208    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
-#209    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#210    StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
-#211    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#212    SingleChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7135:14)
-#213    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#214    SingleChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7135:14)
-#215    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#216    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#217    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#218    ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
-#219    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#220    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#221    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#222    ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
-#223    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
-#224    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
-#225    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
-#226    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
-#227    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2763:15)
-#228    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2820:11)
-#229    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3124:18)
-#230    WidgetsBinding.drawFrame (package:flutter/src/widgets/binding.dart:1571:21)
-#231    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:558:5)
-#232    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
-#233    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
-#234    SchedulerBinding._handleDrawFrame (package:flutter/src/scheduler/binding.dart:1198:5)
-#235    _invoke (dart:ui/hooks.dart:441:13)
-#236    PlatformDispatcher._drawFrame (dart:ui/platform_dispatcher.dart:450:5)
-#237    _drawFrame (dart:ui/hooks.dart:413:31)
-
-════════════════════════════════════════════════════════════════════════════════
-[GETX] Instance "OtpController" has been created
-[GETX] Instance "OtpController" has been initialized
-D/WindowOnBackDispatcher(10358): setTopOnBackInvokedCallback (unwrapped): android.app.Activity$$ExternalSyntheticLambda0@f191b13
-D/WindowOnBackDispatcher(10358): setOnBackInvokedCallbackInfo: android.app.Activity$$ExternalSyntheticLambda0@f191b13
-[GETX] "ServiceAreaController" onDelete() called
-[GETX] "ServiceAreaController" deleted from memory
-[GETX] "SignupController" has been marked as permanent, SmartManagement is not authorized to delete it.
-[GETX] "OtpController" onDelete() called
-I/flutter (10358): ✅ SocketService: Connected to server
-I/flutter (10358): 🔗 SocketService: Transport: websocket
+[GETX] GOING TO ROUTE /MyScheduleView
+[GETX] Instance "MyScheduleController" has been created
+[GETX] Instance "MyScheduleController" has been initialized
+flutter:
+flutter: ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+flutter: │ GET https://nayem5001.binarybards.online/api/v1/jobs/calendar?month=8&year=2026
+flutter: │ Headers: {Content-Type: application/json, Authorization: ***}
+flutter: │ Query: {month: 8, year: 2026}
+flutter: └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+flutter:
+flutter:
+flutter: ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
+flutter: │ [ GET 200] https://nayem5001.binarybards.online/api/v1/jobs/calendar?month=8&year=2026
+flutter: │ {
+flutter: │   "success": true,
+flutter: │   "message": "Calendar jobs retrieved successfully",
+flutter: │   "data": {
+flutter: │     "eventDates": [
+flutter: │       "2026-08-10",
+flutter: │       "2026-08-14",
+flutter: │       "2026-08-18",
+flutter: │       "2026-08-28",
+flutter: │       "2026-08-29"
+flutter: │     ],
+flutter: │     "events": [
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab66",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Fort Lauderdale-Hollywood Int Airport (FLL)",
+flutter: │         "dropoff": "1 Hotel South Beach, 2341 Collins Ave",
+flutter: │         "date": "2026-08-10T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 240,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.347Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.347Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab32",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Hotel Bel-Air, 701 Stone Canyon Rd",
+flutter: │         "dropoff": "Century City Plaza Towers, 2029 Century Park E",
+flutter: │         "date": "2026-08-10T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "Sedan",
+flutter: │         "paymentAmount": 170,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.243Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.243Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab27",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Fort Lauderdale-Hollywood Int Airport (FLL)",
+flutter: │         "dropoff": "1 Hotel South Beach, 2341 Collins Ave",
+flutter: │         "date": "2026-08-10T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 240,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.221Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.221Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab1a",
+flutter: │         "jobType": "BY THE HOUR",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Four Seasons Hotel Downtown, 27 Barclay St",
+flutter: │         "dropoff": "Teterboro Airport, Jet Aviation FBO",
+flutter: │         "date": "2026-08-10T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "Sedan",
+flutter: │         "paymentAmount": 260,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.199Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.199Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab0d",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "The St. Regis New York, Two E 55th St",
+flutter: │         "dropoff": "Greenwich Polo Club, VIP Pavilion",
+flutter: │         "date": "2026-08-14T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 380,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.176Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.176Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab5d",
+flutter: │         "jobType": "BY THE HOUR",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Van Nuys Private Airport (VNY), Signature FBO",
+flutter: │         "dropoff": "Waldorf Astoria Beverly Hills, 9850 Wilshire Blvd",
+flutter: │         "date": "2026-08-18T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 230,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.329Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.329Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab52",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Fisher Island Ferry Terminal",
+flutter: │         "dropoff": "MIA Signature Flight Support Private Jet FBO",
+flutter: │         "date": "2026-08-18T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 220,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.309Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.309Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb814a4ef66e3e19ab45",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "VIP Executive Guest",
+flutter: │         "passengerPhone": "+12125550199",
+flutter: │         "pickup": "Hudson Yards, 30 Hudson Yards",
+flutter: │         "dropoff": "Newark Liberty International Airport, Terminal C",
+flutter: │         "date": "2026-08-18T10:10:09.159Z",
+flutter: │         "time": "10:30",
+flutter: │         "vehicleType": "Sedan",
+flutter: │         "paymentAmount": 210,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "COMPLETED",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:09.285Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:09.285Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb8dfbe4898364b6a80f",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": null,
+flutter: │         "passengerPhone": null,
+flutter: │         "pickup": "Four Seasons Hotel at The Surf Club (9011 Collins Ave)",
+flutter: │         "dropoff": "Fort Lauderdale-Hollywood Int Airport (FLL), Sheltair FBO",
+flutter: │         "date": "2026-08-28T10:10:21.514Z",
+flutter: │         "time": "16:00",
+flutter: │         "vehicleType": "SUV",
+flutter: │         "paymentAmount": 260,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "PENDING",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": "PRIVATE-G650",
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:21.629Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:21.629Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a92bbceb195b25e429cbcd6",
+flutter: │         "jobType": "ONE WAY",
+flutter: │         "passengerName": "Nayeeem",
+flutter: │         "passengerPhone": "1654654256",
+flutter: │         "pickup": "Dhaka",
+flutter: │         "dropoff": "faridpur",
+flutter: │         "date": "2026-08-29T00:00:00.000Z",
+flutter: │         "time": "16:55",
+flutter: │         "vehicleType": "SEDAN",
+flutter: │         "paymentAmount": 500,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "PENDING",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "PERSONAL NOTE",
+flutter: │         "isPersonalNote": true,
+flutter: │         "createdAt": "2026-08-29T11:00:30.287Z",
+flutter: │         "updatedAt": "2026-08-29T11:00:30.287Z"
+flutter: │       },
+flutter: │       {
+flutter: │         "_id": "6a8ebb8dfbe4898364b6a807",
+flutter: │         "jobType": "BY THE HOUR",
+flutter: │         "passengerName": null,
+flutter: │         "passengerPhone": null,
+flutter: │         "pickup": "Fisher Island Ferry Terminal, VIP Slip",
+flutter: │         "dropoff": "Hard Rock Stadium VIP Lounge (Multi-Stop F1 Event)",
+flutter: │         "date": "2026-08-29T10:10:21.514Z",
+flutter: │         "time": "11:30",
+flutter: │         "vehicleType": "Van",
+flutter: │         "paymentAmount": 650,
+flutter: │         "paymentType": "CREDIT CARD ON FILE",
+flutter: │         "status": "PENDING",
+flutter: │         "paymentStatus": "UNPAID",
+flutter: │         "flightNumber": null,
+flutter: │         "dispatchType": "ALL CHAUFFEURS",
+flutter: │         "isPersonalNote": false,
+flutter: │         "createdAt": "2026-08-26T10:10:21.615Z",
+flutter: │         "updatedAt": "2026-08-26T10:10:21.615Z"
+flutter: │       }
+flutter: │     ]
+flutter: │   }
+flutter: │ }
+flutter: └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅│
+flutter:

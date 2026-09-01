@@ -96,11 +96,7 @@ class MarketplaceController extends GetxController {
       }
     } catch (e) {
       print("Error fetching items: $e");
-      Get.snackbar(
-        "Error",
-        "Failed to fetch marketplace items",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Helpers.showCustomSnackBar("Failed to fetch marketplace items", isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -173,13 +169,7 @@ class MarketplaceController extends GetxController {
     if (titleController.text.trim().isEmpty ||
         priceController.text.trim().isEmpty ||
         locationController.text.trim().isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Please fill title, price, and location",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar("Please fill title, price, and location", isError: true);
       return;
     }
 
@@ -218,14 +208,11 @@ class MarketplaceController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back();
-        Get.snackbar(
-          "Success",
+        Helpers.showCustomSnackBar(
           editItemId == null
               ? "Item listed successfully!"
               : "Item updated successfully!",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xff1A1A1A),
-          colorText: Colors.white,
+          isError: false,
         );
         clearFields();
         fetchItems(); // Refresh the general marketplace list
@@ -235,22 +222,16 @@ class MarketplaceController extends GetxController {
           Get.find<my_items.MyItemsController>().fetchMyItems();
         }
       } else {
-        Get.snackbar(
-          "Error",
+        Helpers.showCustomSnackBar(
           "Failed to ${editItemId == null ? 'list' : 'update'} item: ${response.statusMessage ?? 'Unknown error'}",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+          isError: true,
         );
       }
     } catch (e) {
       print("Error processing item: $e");
-      Get.snackbar(
-        "Error",
+      Helpers.showCustomSnackBar(
         "An error occurred while ${editItemId == null ? 'listing' : 'updating'} the item",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        isError: true,
       );
     } finally {
       isLoading.value = false;

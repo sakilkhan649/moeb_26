@@ -32,6 +32,7 @@ class ApiConstants {
   // Create JobEndpoint
   static const String createJob = '/jobs';
   static const String myJobs = '/jobs/my-jobs';
+  static const String calendarJobs = '/jobs/calendar';
 
   static const String getAllJobOffers = '/jobs';
   static const String applytoJob = '/jobs/{jobId}/apply';

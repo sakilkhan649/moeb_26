@@ -40,7 +40,11 @@ class FavoriteChauffeurModel {
       id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       phone: json['phone']?.toString() ?? '',
-      serviceArea: json['serviceArea']?.toString() ?? '',
+      serviceArea: json['serviceArea'] is Map
+          ? (json['serviceArea']['areaName']?.toString() ??
+              json['serviceArea']['name']?.toString() ??
+              '')
+          : (json['serviceArea']?.toString() ?? ''),
       company: json['company']?.toString() ?? json['companyName']?.toString() ?? '',
       companyRole: json['companyRole']?.toString() ?? 'Chauffeur',
       profilePicture: json['profilePicture']?.toString() ?? '',

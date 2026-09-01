@@ -214,57 +214,82 @@ class ExpenseDetailSheet extends StatelessWidget {
   }
 
   void _previewReceipt(BuildContext context, String imagePath) {
+    showFullScreenReceipt(context, imagePath);
+  }
+
+  static void showFullScreenReceipt(BuildContext context, String imagePath) {
     showDialog(
       context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E1E1E),
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: const Color(0xFF2C2C2C)),
+      useSafeArea: false,
+      builder: (dialogContext) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
+              onPressed: () => Navigator.pop(dialogContext),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  automaticallyImplyLeading: false,
-                  title: Text(
-                    "Receipt Preview",
-                    style: GoogleFonts.inter(color: Colors.white, fontSize: 16.sp),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(16.r),
-                    bottomRight: Radius.circular(16.r),
-                  ),
-                  child: imagePath.startsWith('http')
-                      ? Image.network(
-                          imagePath,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Icon(Icons.broken_image,
-                                color: Colors.white54, size: 40),
+            title: Text(
+              "Receipt Picture",
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
+          body: Center(
+            child: InteractiveViewer(
+              panEnabled: true,
+              boundaryMargin: const EdgeInsets.all(20),
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: imagePath.startsWith('http')
+                  ? Image.network(
+                      imagePath,
+                      fit: BoxFit.contain,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFFFFDCA1),
                           ),
-                        )
-                      : Image.file(
-                          File(imagePath),
-                          fit: BoxFit.contain,
-                        ),
-                ),
-              ],
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) =>
+                          Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.broken_image,
+                              color: Colors.white54, size: 60.sp),
+                          SizedBox(height: 10.h),
+                          Text(
+                            "Failed to load receipt image",
+                            style: GoogleFonts.inter(color: Colors.white54, fontSize: 14.sp),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Image.file(
+                      File(imagePath),
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.broken_image,
+                              color: Colors.white54, size: 60.sp),
+                          SizedBox(height: 10.h),
+                          Text(
+                            "Failed to load receipt image",
+                            style: GoogleFonts.inter(color: Colors.white54, fontSize: 14.sp),
+                          ),
+                        ],
+                      ),
+                    ),
             ),
           ),
         );

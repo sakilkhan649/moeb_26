@@ -238,23 +238,17 @@ class _MyJobProgressDetailsViewState extends State<MyJobProgressDetailsView> {
                               }
                             } catch (e) {
                               debugPrint("Error opening chat: $e");
-                              Get.snackbar(
-                                "Error",
+                              Helpers.showCustomSnackBar(
                                 "Could not create chat session. Please try again.",
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: const Color(0xFFEF4444),
-                                colorText: Colors.white,
+                                isError: true,
                               );
                               return;
                             }
                           }
 
-                          Get.snackbar(
-                            "Notice",
+                          Helpers.showCustomSnackBar(
                             "Chauffeur is not available to chat right now.",
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: const Color(0xFF1E1E1E),
-                            colorText: Colors.white,
+                            isError: true,
                           );
                         },
                       ),

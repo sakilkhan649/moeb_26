@@ -8,6 +8,7 @@ import 'package:moeb_26/data/models/invoice_model.dart';
 import 'package:moeb_26/data/repositories/invoice_repository.dart';
 import 'package:moeb_26/modules/invoice/views/invoice_preview_view.dart';
 import 'package:moeb_26/core/utils/validators.dart';
+import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/widgets/CustomButton.dart';
 
 class InvoiceHistoryRecord {
@@ -375,13 +376,9 @@ class InvoiceController extends GetxController {
     if (countryOptions.contains(client.country)) {
       clientCountry.value = client.country;
     }
-    Get.snackbar(
-      'Client Selected',
+    Helpers.showCustomSnackBar(
       'Loaded details for ${client.name}',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFFD08700),
-      colorText: Colors.black,
-      duration: const Duration(seconds: 2),
+      isError: false,
     );
   }
 
@@ -483,15 +480,11 @@ class InvoiceController extends GetxController {
             }
           }
         }
-        Get.snackbar(
-          'Success',
+        Helpers.showCustomSnackBar(
           isEditing
               ? 'Client updated successfully'
               : 'New client added successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFFD08700),
-          colorText: Colors.black,
-          duration: const Duration(seconds: 2),
+          isError: false,
         );
         return true;
       } else {
@@ -499,25 +492,13 @@ class InvoiceController extends GetxController {
           response.data,
           defaultMsg: 'Failed to save client.',
         );
-        Get.snackbar(
-          'Error',
-          errorMsg,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Helpers.showCustomSnackBar(errorMsg, isError: true);
         return false;
       }
     } catch (e) {
       debugPrint('Error saving client to API: $e');
       final errorMsg = _extractErrorMessage(e, defaultMsg: 'Failed to save client.');
-      Get.snackbar(
-        'Error',
-        errorMsg,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar(errorMsg, isError: true);
       return false;
     } finally {
       isLoading.value = false;
@@ -782,13 +763,7 @@ class InvoiceController extends GetxController {
         businessLogoPath.value = image.path;
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Could not access gallery: $e',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar('Could not access gallery: $e', isError: true);
     }
   }
 
@@ -830,13 +805,7 @@ class InvoiceController extends GetxController {
 
   Future<void> saveProfileSettings() async {
     if (businessNameController.text.trim().isEmpty) {
-      Get.snackbar(
-        'Required',
-        'Business name is required.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar('Business name is required.', isError: true);
       return;
     }
 
@@ -883,36 +852,20 @@ class InvoiceController extends GetxController {
 
         Get.back(); // Return to settings page
 
-        Get.snackbar(
-          'Success',
+        Helpers.showCustomSnackBar(
           'Profile settings saved successfully.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFFFEDB9B), // Soft peach-yellow
-          colorText: Colors.black,
-          duration: const Duration(seconds: 2),
+          isError: false,
         );
       } else {
         final errorMsg = _extractErrorMessage(
           response.data,
           defaultMsg: 'Failed to save profile. Code: ${response.statusCode}',
         );
-        Get.snackbar(
-          'Validation Error',
-          errorMsg,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Helpers.showCustomSnackBar(errorMsg, isError: true);
       }
     } catch (e) {
       final errorMsg = _extractErrorMessage(e, defaultMsg: 'Profile update failed.');
-      Get.snackbar(
-        'Error',
-        errorMsg,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar(errorMsg, isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -1011,39 +964,27 @@ class InvoiceController extends GetxController {
             'status': isPaid ? 'paid' : 'unpaid',
           });
           if (response.statusCode == 200 || response.statusCode == 201) {
-            Get.snackbar(
-              'Status Updated',
+            Helpers.showCustomSnackBar(
               'Invoice marked as $newStatus.',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: isPaid
-                  ? const Color(0xFF10B981)
-                  : const Color(0xFFEF4444),
-              colorText: Colors.white,
-              duration: const Duration(seconds: 2),
+              isError: false,
             );
           } else {
             final reverted = record.copyWith(
               status: isPaid ? 'Unpaid' : 'Paid',
             );
             invoiceHistory[index] = reverted;
-            Get.snackbar(
-              'Error',
+            Helpers.showCustomSnackBar(
               'Failed to update status. Code: ${response.statusCode}',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
+              isError: true,
             );
           }
         } catch (e) {
           final reverted = record.copyWith(status: isPaid ? 'Unpaid' : 'Paid');
           invoiceHistory[index] = reverted;
           debugPrint('Error updating invoice status on backend: $e');
-          Get.snackbar(
-            'Error',
+          Helpers.showCustomSnackBar(
             'Failed to update invoice status.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
+            isError: true,
           );
         }
       }
@@ -1079,13 +1020,7 @@ class InvoiceController extends GetxController {
     if (wasEditing) {
       Get.back(); // close details view screen
     }
-    Get.snackbar(
-      'Deleted',
-      'Invoice has been deleted.',
-      backgroundColor: Colors.redAccent,
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    Helpers.showCustomSnackBar('Invoice has been deleted.', isError: false);
   }
 
   Future<void> fetchInvoicesFromApi() async {
@@ -1296,38 +1231,22 @@ class InvoiceController extends GetxController {
           Get.back(); // close detail screen
         }
 
-        Get.snackbar(
-          'Success',
+        Helpers.showCustomSnackBar(
           wasEditing
               ? 'Invoice updated successfully.'
               : 'Invoice created successfully.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFFFEDB9B),
-          colorText: Colors.black,
-          duration: const Duration(seconds: 2),
+          isError: false,
         );
       } else {
         final errorMsg = _extractErrorMessage(
           response.data,
           defaultMsg: 'Failed to create invoice. Code: ${response.statusCode}',
         );
-        Get.snackbar(
-          'Error',
-          errorMsg,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Helpers.showCustomSnackBar(errorMsg, isError: true);
       }
     } catch (e) {
       final errorMsg = _extractErrorMessage(e, defaultMsg: 'Invoice submission failed.');
-      Get.snackbar(
-        'Error',
-        errorMsg,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Helpers.showCustomSnackBar(errorMsg, isError: true);
     } finally {
       isLoading.value = false;
     }

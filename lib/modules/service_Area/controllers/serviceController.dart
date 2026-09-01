@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:moeb_26/core/services/serviceAreas_service.dart';
-import 'package:moeb_26/core/services/user_service.dart';
-import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/core/services/user_profile_service.dart';
 import 'package:moeb_26/data/models/service_area_model.dart';
 
 class ServiceAreaController extends GetxController {
@@ -16,9 +15,17 @@ class ServiceAreaController extends GetxController {
 
   final ScrollController scrollController = ScrollController();
 
-  // Selected service area name
-  var selectedAreaName = "".obs;
-  var isUpdating = false.obs;
+  // Selected service area names list for multi-selection
+  var selectedAreaNames = <String>[].obs;
+  var expandedCitiesAreas = <String>{}.obs;
+
+  void toggleShowAllCities(String areaName) {
+    if (expandedCitiesAreas.contains(areaName)) {
+      expandedCitiesAreas.remove(areaName);
+    } else {
+      expandedCitiesAreas.add(areaName);
+    }
+  }
 
   @override
   void onInit() {
@@ -29,56 +36,45 @@ class ServiceAreaController extends GetxController {
   }
 
   void _initCurrentServiceArea() {
-    // Current service area initialization if needed
+    try {
+      if (Get.isRegistered<UserProfileService>()) {
+        final profileService = Get.find<UserProfileService>();
+        profileService.getUserProfile().then((response) {
+          if (response.statusCode == 200 &&
+              response.data != null &&
+              response.data['data'] != null) {
+            final rawArea = response.data['data']['serviceArea'] ??
+                response.data['data']['serviceAreas'];
+            if (rawArea is List) {
+              selectedAreaNames.assignAll(
+                rawArea.map((e) => e.toString()).toList(),
+              );
+            } else if (rawArea is String && rawArea.isNotEmpty) {
+              selectedAreaNames.assignAll([rawArea]);
+            }
+          }
+        }).catchError((e) {
+          debugPrint("Error initializing current service area: $e");
+        });
+      }
+    } catch (e) {
+      debugPrint("UserProfileService not available: $e");
+    }
   }
 
   void selectServiceArea(String areaName) {
-    selectedAreaName.value = areaName;
+    toggleServiceArea(areaName);
   }
 
-  Future<void> updateServiceArea() async {
-    if (selectedAreaName.value.isEmpty) {
-      Helpers.showCustomSnackBar(
-        "Please select a service area first",
-        isError: true,
-      );
-      return;
-    }
-
-    try {
-      isUpdating.value = true;
-      final response = await _serviceAreasService.updateServiceArea(
-        selectedAreaName.value,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.back();
-        Helpers.showCustomSnackBar(
-          "Service area updated successfully",
-          isError: false,
-        );
-
-        try {
-          Get.find<UserService>().fetchUserId();
-        } catch (e) {
-          debugPrint("Safe to ignore: User profile refresh failed $e");
-        }
-      } else {
-        Helpers.showCustomSnackBar(
-          response.data?['message'] ?? "Failed to update service area",
-          isError: true,
-        );
-      }
-    } catch (e) {
-      debugPrint("Error updating service area: $e");
-      Helpers.showCustomSnackBar(
-        "Something went wrong while updating",
-        isError: true,
-      );
-    } finally {
-      isUpdating.value = false;
+  void toggleServiceArea(String areaName) {
+    if (selectedAreaNames.contains(areaName)) {
+      selectedAreaNames.remove(areaName);
+    } else {
+      selectedAreaNames.add(areaName);
     }
   }
+
+
 
   @override
   void onClose() {
@@ -116,7 +112,10 @@ class ServiceAreaController extends GetxController {
         isMoreLoading.value = true;
       }
 
-      final response = await _serviceAreasService.getAllServiceAreas();
+      final response = await _serviceAreasService.getAllServiceAreas(
+        limit: 50,
+        cursor: isRefresh ? null : nextCursor.value,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         ServiceAreaResponseModel data;
@@ -143,13 +142,14 @@ class ServiceAreaController extends GetxController {
         }
 
         hasMore.value = data.cursor?.hasMore ?? false;
-        nextCursor.value = data.cursor?.nextCursor;
+        final newCursor = data.cursor?.nextCursor;
 
         if (isRefresh || nextCursor.value == null) {
           serviceAreas.assignAll(data.data);
         } else {
           serviceAreas.addAll(data.data);
         }
+        nextCursor.value = newCursor;
         debugPrint("Service Areas loaded: ${serviceAreas.length} items");
       } else {
         debugPrint("Service Areas API Error: ${response.statusCode}");

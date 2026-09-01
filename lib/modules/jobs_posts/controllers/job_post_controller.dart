@@ -144,6 +144,23 @@ class PostJobController extends GetxController {
     }
   }
 
+  var expandedCitiesAreas = <String>{}.obs;
+
+  void toggleShowAllCities(String areaName) {
+    if (expandedCitiesAreas.contains(areaName)) {
+      expandedCitiesAreas.remove(areaName);
+    } else {
+      expandedCitiesAreas.add(areaName);
+    }
+  }
+
+  void clearServiceAreaSelection() {
+    selectedServiceAreas.clear();
+    if (chauffeurSelectionType.value == 'global') {
+      chauffeurSelectionType.value = '';
+    }
+  }
+
   // Shared Date, Time, and Payment State
   var selectedRole = 'Credit Card on File'.obs;
   var roles = ['Credit Card on File', 'Collect Payment'].obs;
@@ -286,6 +303,20 @@ class PostJobController extends GetxController {
       final List<String> targetedChauffeurs =
           isTargeted ? selectedDrivers.toList() : [];
 
+      List<String> serviceAreaIds = [];
+      if (!isTargeted && selectedServiceAreas.isNotEmpty) {
+        for (final areaName in selectedServiceAreas) {
+          final areaModel = serviceAreas.firstWhereOrNull(
+            (a) =>
+                a.areaName.trim().toLowerCase() ==
+                areaName.trim().toLowerCase(),
+          );
+          if (areaModel != null && areaModel.id.isNotEmpty) {
+            serviceAreaIds.add(areaModel.id);
+          }
+        }
+      }
+
       final response = await _jobService.createJob(
         jobType: "ONE WAY",
         pickup: pickupLocation,
@@ -301,6 +332,8 @@ class PostJobController extends GetxController {
         instruction:
             instruction?.isNotEmpty == true ? instruction : null,
         targetedChauffeurs: targetedChauffeurs,
+        serviceAreaId: serviceAreaIds.isNotEmpty ? serviceAreaIds.first : null,
+        serviceAreaIds: serviceAreaIds.isNotEmpty ? serviceAreaIds : null,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -361,6 +394,20 @@ class PostJobController extends GetxController {
       final List<String> targetedChauffeurs =
           isTargeted ? selectedDrivers.toList() : [];
 
+      List<String> serviceAreaIds = [];
+      if (!isTargeted && selectedServiceAreas.isNotEmpty) {
+        for (final areaName in selectedServiceAreas) {
+          final areaModel = serviceAreas.firstWhereOrNull(
+            (a) =>
+                a.areaName.trim().toLowerCase() ==
+                areaName.trim().toLowerCase(),
+          );
+          if (areaModel != null && areaModel.id.isNotEmpty) {
+            serviceAreaIds.add(areaModel.id);
+          }
+        }
+      }
+
       final String finalDropoff =
           (dropoffLocation != null && dropoffLocation.isNotEmpty)
               ? dropoffLocation
@@ -379,6 +426,8 @@ class PostJobController extends GetxController {
         dispatchType: dispatchType,
         instruction: instruction?.isNotEmpty == true ? instruction : null,
         targetedChauffeurs: targetedChauffeurs,
+        serviceAreaId: serviceAreaIds.isNotEmpty ? serviceAreaIds.first : null,
+        serviceAreaIds: serviceAreaIds.isNotEmpty ? serviceAreaIds : null,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

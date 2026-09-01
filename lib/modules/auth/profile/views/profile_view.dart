@@ -289,7 +289,7 @@ class ProfileView extends StatelessWidget {
                         _buildSettingTile(
                           icon: Icons.person_outline_rounded,
                           title: "My information",
-                          subtitle: "Manage email, phone, company & languages",
+                          subtitle: "Manage email, phone, and company",
                           onTap: () {
                             Get.to(() => const PersonalInformationView());
                           },

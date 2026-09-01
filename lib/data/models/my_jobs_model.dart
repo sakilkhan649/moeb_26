@@ -116,7 +116,10 @@ class JobData {
         : null;
     paymentType = json['paymentType'];
     instruction = json['instruction'];
-    serviceArea = json['serviceArea'];
+    serviceArea = json['serviceArea'] is Map
+        ? (json['serviceArea']['areaName']?.toString() ??
+            json['serviceArea']['name']?.toString())
+        : json['serviceArea']?.toString();
     dispatchType = json['dispatchType'];
     status = json['status'];
     rideStatus = json['rideStatus'];
