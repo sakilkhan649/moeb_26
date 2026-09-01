@@ -27,7 +27,8 @@ class ApiConstants {
   static const String profile = '/user/profile';
   static const String userProfile = '/user/profile';
   // Marketplace Endpoints
-  static const String items = '/items/feed';
+  static const String items = '/items';
+  static const String feedItems = '/items/feed';
 
   // Create JobEndpoint
   static const String createJob = '/jobs';
@@ -91,5 +92,3 @@ class ApiConstants {
   static const String chauffeurs = '/users/chauffeurs';
   static const String users = '/users';
 }
-
-

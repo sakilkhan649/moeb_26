@@ -57,7 +57,10 @@ class MyItemsCard extends StatelessWidget {
                   child: _buildImage(),
                 ),
                 // Floating Condition Badge
-                if (item.condition.isNotEmpty)
+                if (item.condition.trim().isNotEmpty &&
+                    item.condition.trim().toLowerCase() != 'none' &&
+                    item.condition.trim().toLowerCase() != 'null' &&
+                    item.condition.trim().toLowerCase() != 'n/a')
                   Positioned(
                     top: 8.h,
                     left: 8.w,

@@ -55,7 +55,11 @@ class MarketplaceCard extends StatelessWidget {
                   child: _buildImage(imagePath),
                 ),
                 // Floating Condition Badge
-                if (condition != null && condition.isNotEmpty)
+                if (condition != null &&
+                    condition.trim().isNotEmpty &&
+                    condition.trim().toLowerCase() != 'none' &&
+                    condition.trim().toLowerCase() != 'null' &&
+                    condition.trim().toLowerCase() != 'n/a')
                   Positioned(
                     top: 8.h,
                     left: 8.w,

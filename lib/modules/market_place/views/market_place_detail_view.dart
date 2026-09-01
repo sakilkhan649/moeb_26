@@ -238,7 +238,10 @@ class _MarketplaceItemDetailViewState extends State<MarketplaceItemDetailView> {
                           runSpacing: 8.h,
                           children: [
                             if (widget.item.condition != null &&
-                                widget.item.condition!.isNotEmpty)
+                                widget.item.condition!.trim().isNotEmpty &&
+                                widget.item.condition!.trim().toLowerCase() != 'none' &&
+                                widget.item.condition!.trim().toLowerCase() != 'null' &&
+                                widget.item.condition!.trim().toLowerCase() != 'n/a')
                               _buildBadge(
                                 label: "Condition: ${widget.item.condition}",
                                 backgroundColor: const Color(0xFF1F1C1C),

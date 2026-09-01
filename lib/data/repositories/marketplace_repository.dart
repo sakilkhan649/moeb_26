@@ -16,9 +16,7 @@ class MarketplaceRepo {
     int limit = 10,
     String? cursor,
   }) async {
-    final Map<String, dynamic> queryParams = {
-      'limit': limit,
-    };
+    final Map<String, dynamic> queryParams = {'limit': limit};
 
     if (cursor != null && cursor.isNotEmpty) {
       queryParams['cursor'] = cursor;
@@ -40,7 +38,7 @@ class MarketplaceRepo {
       queryParams['maxPrice'] = maxPrice;
     }
 
-    return await apiClient.getData(ApiConstants.items, query: queryParams);
+    return await apiClient.getData(ApiConstants.feedItems, query: queryParams);
   }
 
   Future<Response> getMyItems({
@@ -51,9 +49,7 @@ class MarketplaceRepo {
     int limit = 10,
     String? cursor,
   }) async {
-    final Map<String, dynamic> queryParams = {
-      'limit': limit,
-    };
+    final Map<String, dynamic> queryParams = {'limit': limit};
 
     if (cursor != null && cursor.isNotEmpty) {
       queryParams['cursor'] = cursor;
@@ -145,8 +141,8 @@ class MarketplaceRepo {
 
     final List<MultipartBody> multipartBody =
         photos != null && photos.isNotEmpty
-            ? photos.map((file) => MultipartBody('photos', file)).toList()
-            : [];
+        ? photos.map((file) => MultipartBody('photos', file)).toList()
+        : [];
 
     return await apiClient.patchMultipartData(
       '${ApiConstants.items}/$itemId',
