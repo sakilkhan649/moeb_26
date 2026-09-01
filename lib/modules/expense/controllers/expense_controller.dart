@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
@@ -24,18 +25,7 @@ class ExpenseController extends GetxController {
     try {
       if (imagePath.isEmpty) return;
 
-      final fileName = 'receipt_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      String savePath = '';
-      if (Platform.isAndroid) {
-        final downloadDir = Directory('/storage/emulated/0/Download');
-        if (downloadDir.existsSync()) {
-          savePath = '${downloadDir.path}/$fileName';
-        } else {
-          savePath = '${Directory.systemTemp.path}/$fileName';
-        }
-      } else {
-        savePath = '${Directory.systemTemp.path}/$fileName';
-      }
+      Uint8List? imageBytes;
 
       if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
         final dio = Dio();
@@ -43,33 +33,36 @@ class ExpenseController extends GetxController {
           imagePath,
           options: Options(responseType: ResponseType.bytes),
         );
-
         if (response.data != null) {
-          final file = File(savePath);
-          await file.writeAsBytes(response.data!);
-
-          Get.snackbar(
-            'Download Successful',
-            'Receipt image saved to Downloads',
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: const Color(0xFF1E1E20),
-            colorText: Colors.white,
-            duration: const Duration(seconds: 3),
-          );
+          imageBytes = Uint8List.fromList(response.data!);
         }
-      } else if (File(imagePath).existsSync()) {
-        await File(imagePath).copy(savePath);
+      } else {
+        final file = File(imagePath);
+        if (await file.exists()) {
+          imageBytes = await file.readAsBytes();
+        }
+      }
 
+      if (imageBytes != null && imageBytes.isNotEmpty) {
+        final isPng = imagePath.toLowerCase().endsWith('.png');
+        final fileName =
+            'receipt_${DateTime.now().millisecondsSinceEpoch}.${isPng ? 'png' : 'jpg'}';
+
+        await Printing.sharePdf(
+          bytes: imageBytes,
+          filename: fileName,
+        );
+      } else {
         Get.snackbar(
-          'Download Successful',
-          'Receipt image saved to Downloads',
+          'Download Failed',
+          'Receipt image could not be loaded.',
           snackPosition: SnackPosition.TOP,
           backgroundColor: const Color(0xFF1E1E20),
           colorText: Colors.white,
-          duration: const Duration(seconds: 3),
         );
       }
     } catch (e) {
+      debugPrint('Error sharing/downloading receipt image: $e');
       Get.snackbar(
         'Download Failed',
         'Could not save receipt image. Please try again.',

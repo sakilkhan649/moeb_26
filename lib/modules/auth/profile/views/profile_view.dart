@@ -149,7 +149,8 @@ class ProfileView extends StatelessWidget {
                   }),
                   SizedBox(height: 14.h),
 
-                  // --- EKKALI PREMIUM SUBSCRIPTION BANNER ---
+                  // --- EKKALI PREMIUM SUBSCRIPTION BANNER (COMMENTED OUT) ---
+                  /*
                   GestureDetector(
                     onTap: () => Get.toNamed(Routes.subscriptionView),
                     child: Container(
@@ -248,6 +249,7 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20.h),
+                  */
 
                   // --- CATEGORY 1: ACCOUNT & CHAUFFEUR DETAILS ---
                   Align(
