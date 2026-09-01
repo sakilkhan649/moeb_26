@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/core/services/serviceAreas_service.dart';
+import 'package:moeb_26/core/services/storege_service.dart';
 import 'package:moeb_26/core/services/user_profile_service.dart';
 import 'package:moeb_26/data/models/service_area_model.dart';
 
@@ -35,8 +37,11 @@ class ServiceAreaController extends GetxController {
     scrollController.addListener(_onScroll);
   }
 
-  void _initCurrentServiceArea() {
+  Future<void> _initCurrentServiceArea() async {
     try {
+      final token = await StorageService.getString(StorageConstants.bearerToken);
+      if (token.isEmpty) return;
+
       if (Get.isRegistered<UserProfileService>()) {
         final profileService = Get.find<UserProfileService>();
         profileService.getUserProfile().then((response) {
