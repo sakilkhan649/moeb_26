@@ -166,11 +166,11 @@ class InvoicePreviewView extends GetView<InvoiceController> {
                                     children: [
                                       pdfLayout,
                                       pw.Positioned(
-                                        bottom: 90,
-                                        right: 180,
+                                        bottom: 75,
+                                        right: 150,
                                         child: pw.Image(
                                           paidStampImage,
-                                          height: 180,
+                                          height: 130,
                                         ),
                                       ),
                                     ],
@@ -537,9 +537,9 @@ class InvoicePreviewView extends GetView<InvoiceController> {
               children: [
                 pdfLayout,
                 pw.Positioned(
-                  bottom: 50,
-                  right: 20,
-                  child: pw.Image(paidStampImage, height: 165),
+                  bottom: 75,
+                  right: 80,
+                  child: pw.Image(paidStampImage, height: 130),
                 ),
               ],
             );
