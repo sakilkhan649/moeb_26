@@ -1,18 +1,37 @@
 import 'package:get/get.dart';
-import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:moeb_26/core/services/subscription_service.dart';
 
 class SubscriptionController extends GetxController {
-  final RxString selectedPlan = 'yearly'.obs;
-  final RxBool isLoading = false.obs;
-  final RxBool isSubscribed = false.obs;
+  late final SubscriptionService _subscriptionService;
 
-  // Plan Details
+  // ─── Delegates from SubscriptionService ─────────────────────────────────────
+  RxBool get isPremium => _subscriptionService.isPremium;
+  RxBool get isLoading => _subscriptionService.isLoading;
+  RxBool get isAvailable => _subscriptionService.isAvailable;
+  Rx<ProductDetails?> get yearlyProduct => _subscriptionService.yearlyProduct;
+
+  // Keep isSubscribed as alias for backward compat with any older UI references
+  RxBool get isSubscribed => _subscriptionService.isPremium;
+
+  // ─── Plan Display Info ────────────────────────────────────────────────────────
   final String planName = 'Ekkali Premium';
-  final String planPrice = '\$89.99';
   final String planPeriod = '/ Year';
-  final String billingDescription =
-      'Billed annually at \$89.99 USD (Less than \$7.50/mo)';
 
+  String get planPrice {
+    final product = _subscriptionService.yearlyProduct.value;
+    return product?.price ?? '\$89.99';
+  }
+
+  String get billingDescription {
+    final product = _subscriptionService.yearlyProduct.value;
+    if (product != null) {
+      return 'Billed annually at ${product.price} (Less than \$7.50/mo)';
+    }
+    return 'Billed annually at \$89.99 USD (Less than \$7.50/mo)';
+  }
+
+  // ─── Feature List ─────────────────────────────────────────────────────────────
   final List<Map<String, String>> features = [
     {
       'title': 'Job Opportunities & Overflow',
@@ -52,26 +71,24 @@ class SubscriptionController extends GetxController {
     },
   ];
 
-  void selectPlan(String planId) {
-    selectedPlan.value = planId;
+  @override
+  void onInit() {
+    super.onInit();
+    _subscriptionService = Get.find<SubscriptionService>();
   }
 
+  // ─── Actions ──────────────────────────────────────────────────────────────────
+
+  /// Triggers the real in-app purchase flow
   Future<void> subscribe() async {
-    try {
-      isLoading.value = true;
-      await Future.delayed(const Duration(seconds: 2));
-      isSubscribed.value = true;
-      Helpers.showCustomSnackBar(
-        'Welcome to Ekkali Premium!',
-        isError: false,
-      );
-    } catch (e) {
-      Helpers.showCustomSnackBar(
-        'Failed to process subscription. Please try again.',
-        isError: true,
-      );
-    } finally {
-      isLoading.value = false;
-    }
+    await _subscriptionService.buySubscription();
   }
+
+  /// Restores previously purchased subscriptions
+  Future<void> restorePurchases() async {
+    await _subscriptionService.restorePurchases();
+  }
+
+  /// Legacy plan selector (kept for UI compatibility)
+  void selectPlan(String planId) {}
 }

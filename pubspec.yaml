@@ -60,6 +60,8 @@ dependencies:
   printing: ^5.11.1
   wakelock_plus: ^1.2.8
   url_launcher: ^6.3.2
+  in_app_purchase: ^3.2.0
+  in_app_purchase_storekit: ^0.3.18+1
 
 dev_dependencies:
   flutter_test:

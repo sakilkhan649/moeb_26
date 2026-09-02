@@ -91,4 +91,10 @@ class ApiConstants {
   static const String favorites = '/users/favorites';
   static const String chauffeurs = '/users/chauffeurs';
   static const String users = '/users';
+
+  // Subscription Endpoints
+  static const String subscriptionVerifyApple = '/subscriptions/verify-apple';
+  static const String subscriptionVerifyGoogle = '/subscriptions/verify-google';
+  static const String subscriptionRestore = '/subscriptions/restore';
+  static const String subscriptionStatus = '/subscriptions/status';
 }

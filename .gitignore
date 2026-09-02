@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Apple In-App Purchase & App Store Connect Private Keys
+*.p8
+SubscriptionKey_*.p8

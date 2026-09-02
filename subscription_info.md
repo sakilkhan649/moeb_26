@@ -29,6 +29,16 @@ This document contains all details, product IDs, pricing, names, and localizatio
 | **Localization Display Name** | `Ekkali Annual Membership` *(max 35 chars)* |
 | **Localization Description** | `Unlock job opportunities, live chats & chauffeur tools.` *(max 55 chars)* |
 
+### 🔑 App Store Connect API Credentials & Key
+
+| Credential / Key | Value |
+| :--- | :--- |
+| **Issuer ID** | `f9ed49c4-524c-4933-867e-beff6c0e005d` |
+| **Key ID** | `6GCW7YAAQC` |
+| **Team ID** | `L2S8P8TC9Z` |
+| **Shared Secret** | `d80a9f618b89421caa13ca23b2c8c996` |
+| **Key File Location** | [`ios/SubscriptionKey_6GCW7YAAQC.p8`](file:///c:/Users/mdbay/StudioProjects/moeb_26/ios/SubscriptionKey_6GCW7YAAQC.p8) *(Protected by .gitignore)* |
+
 ---
 
 ## 🤖 2. Google Play Console Setup

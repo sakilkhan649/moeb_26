@@ -24,6 +24,8 @@ import 'package:moeb_26/core/services/vehicle_config_service.dart';
 import 'package:moeb_26/data/repositories/compliance_document_repository.dart';
 import 'package:moeb_26/data/repositories/invoice_repository.dart';
 import 'package:moeb_26/core/services/invoice_service.dart';
+import 'package:moeb_26/data/repositories/subscription_repository.dart';
+import 'package:moeb_26/core/services/subscription_service.dart';
 
 class InitialBinding extends Bindings {
   @override
@@ -40,6 +42,8 @@ class InitialBinding extends Bindings {
     Get.put(SocketService(), permanent: true);
     Get.put(AuthService(), permanent: true);
     Get.put(VehicleConfigService(), permanent: true);
+    Get.put(SubscriptionRepo(apiClient: Get.find()), permanent: true);
+    Get.put(SubscriptionService(), permanent: true);
 
     // Feature Repositories & Services (Lazy loaded on-demand when accessed)
     Get.lazyPut(() => ComplianceDocumentRepository(apiClient: Get.find()), fenix: true);

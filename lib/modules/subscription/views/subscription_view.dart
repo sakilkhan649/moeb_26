@@ -116,10 +116,9 @@ class SubscriptionView extends StatelessWidget {
 
                     // --- PRICING CARD ---
                     Obx(() {
-                      final isSelected =
-                          controller.selectedPlan.value == 'yearly';
+                      final isSelected = !controller.isPremium.value;
                       return GestureDetector(
-                        onTap: () => controller.selectPlan('yearly'),
+                        onTap: () {},
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: EdgeInsets.all(18.r),
@@ -410,34 +409,104 @@ class SubscriptionView extends StatelessWidget {
                   top: BorderSide(color: Color(0xFF222222), width: 1),
                 ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Obx(() {
-                    return CustomButton(
+              child: Obx(() {
+                final isPremium = controller.isPremium.value;
+                final isLoading = controller.isLoading.value;
+                if (isPremium) {
+                  // ─── Already Subscribed ───────────────────────────────────
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 14.h, horizontal: 16.w),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF1A2A1A),
+                              Color(0xFF112211),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(14.r),
+                          border: Border.all(
+                            color: const Color(0xFF2E7D32),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.check_circle_rounded,
+                              color: const Color(0xFF4CAF50),
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              'You are a Premium Member',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF81C784),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Manage your subscription in App Settings.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF71717A),
+                          fontSize: 11.sp,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                // ─── Not Subscribed ───────────────────────────────────────
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomButton(
                       text: 'Subscribe Now • ${controller.planPrice}/Year',
-                      loading: controller.isLoading.value,
-                      onPressed: () => controller.subscribe(),
-
+                      loading: isLoading,
+                      onPressed: isLoading ? () {} : () => controller.subscribe(),
                       icon: Icon(
                         Icons.workspace_premium_rounded,
                         color: Colors.black,
                         size: 20.sp,
                       ),
-
-                    );
-                  }),
-                  SizedBox(height: 8.h),
-                  Text(
-                    'Auto-renews at ${controller.planPrice}/year. Cancel anytime in App Settings.',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF71717A),
-                      fontSize: 11.sp,
                     ),
-                  ),
-                ],
-              ),
+                    SizedBox(height: 10.h),
+                    GestureDetector(
+                      onTap: isLoading ? null : () => controller.restorePurchases(),
+                      child: Text(
+                        'Restore Purchases',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFFEDB9B),
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                          decorationColor: const Color(0xFFFEDB9B),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      'Auto-renews at ${controller.planPrice}/year. Cancel anytime in App Settings.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF71717A),
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ),
           ],
         ),
