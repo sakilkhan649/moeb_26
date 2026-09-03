@@ -51,3 +51,8 @@ SubscriptionKey_*.p8
 # Google Play / Cloud Service Account Credentials
 *service-account*.json
 google-service-account.json
+
+# Documentation & Archives with sensitive credentials
+backend_subscription_guide.md
+Archive/
+/Archive
