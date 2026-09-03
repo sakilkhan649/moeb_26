@@ -47,3 +47,7 @@ app.*.map.json
 # Apple In-App Purchase & App Store Connect Private Keys
 *.p8
 SubscriptionKey_*.p8
+
+# Google Play / Cloud Service Account Credentials
+*service-account*.json
+google-service-account.json

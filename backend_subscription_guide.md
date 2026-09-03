@@ -77,7 +77,16 @@ Returns { isPremium: true/false, expiresAt: "..." } to Flutter app
 > The `.p8` private key file is located in the `ios/` folder of the project. Store it securely on the server (e.g., environment variable or secret manager).
 
 ### Google Play / Android Credentials
-> ⏳ Google Play credentials will be provided once the Play Console is set up. The endpoint structure is already implemented in the app.
+
+| Field | Value |
+|-------|-------|
+| **Project ID** | `ekkali-ed609` |
+| **Service Account Email** | `play-store-subscriptions@ekkali-ed609.iam.gserviceaccount.com` |
+| **Key ID** | `4a62cb55db39201314c64a96fb3ba667dbe21176` |
+| **Package Name (Application ID)** | `com.moeb26.app` |
+| **Service Account Key File** | `google-service-account.json` (located in project root) |
+
+> ⚠️ **IMPORTANT:** The `google-service-account.json` file must be kept securely on your backend server. Do not commit it to public repositories or expose it to client apps.
 
 ---
 
@@ -205,7 +214,7 @@ Content-Type: application/json
 ```
 GET https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{packageName}/purchases/subscriptionsv2/tokens/{purchaseToken}
 ```
-- Replace `{packageName}` with your Android app's package name (e.g., `com.ekkali.app`)
+- Replace `{packageName}` with your Android app's package name (`com.moeb26.app`)
 - Replace `{purchaseToken}` with the token from the request body
 
 **Step 2:** Check the response:
@@ -514,7 +523,7 @@ async function verifyGooglePurchase(purchaseToken, productId, orderId, userId) {
   const token = await authClient.getAccessToken();
 
   // Step 2: Call Google Play API
-  const packageName = 'com.ekkali.app'; // your Android package name
+  const packageName = 'com.moeb26.app'; // your Android package name
   const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/subscriptionsv2/tokens/${purchaseToken}`;
   
   const response = await fetch(url, {
