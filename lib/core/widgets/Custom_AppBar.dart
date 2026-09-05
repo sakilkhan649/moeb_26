@@ -9,7 +9,8 @@ import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/modules/notifications/controllers/notifications_controller.dart';
 import 'package:moeb_26/core/widgets/CustomText.dart';
 import 'package:moeb_26/core/widgets/CustomTextGary.dart';
-import 'package:moeb_26/config/themes/app_theme.dart';
+import 'package:moeb_26/core/services/subscription_service.dart';
+import 'package:moeb_26/core/widgets/premium_required_dialog.dart';
 import 'package:moeb_26/modules/market_place/views/market_place_view.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -358,6 +359,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   void handleMenuItemSelection(int item) {
+    // Check if user is premium
+    bool isPrem = false;
+    try {
+      isPrem = Get.find<SubscriptionService>().isPremium.value;
+    } catch (_) {
+      isPrem = false;
+    }
+
+    if (!isPrem) {
+      PremiumRequiredDialog.show();
+      return;
+    }
+
     switch (item) {
       case 3:
         Get.toNamed(Routes.invoiceHistoryView);

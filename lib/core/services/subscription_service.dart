@@ -284,8 +284,8 @@ class SubscriptionService extends GetxService {
         final receiptData = await SKReceiptManager.retrieveReceiptData();
         if (receiptData.isEmpty) {
           debugPrint('[SubscriptionService] No iOS receipt data available');
-          // Fallback: trust StoreKit (purchase came from Apple's servers)
-          return true;
+          // If canceled or no receipt, do not proceed with verification
+          return false;
         }
         final response =
             await _repo.verifyAppleReceipt(receiptData: receiptData);
@@ -306,14 +306,23 @@ class SubscriptionService extends GetxService {
             return isPrem;
           }
         }
-        // If backend unreachable/500 → trust Apple's StoreKit confirmation
         return true;
       } else if (Platform.isAndroid) {
         // Android: send purchase token to backend
         final androidDetails = details.verificationData;
+        final purchaseToken = androidDetails.serverVerificationData;
+        final productId = details.productID;
+
+        // Validation check: If user canceled or token/productId is empty, do NOT call backend
+        if (purchaseToken.isEmpty || productId.isEmpty) {
+          debugPrint(
+              '[SubscriptionService] Empty purchaseToken or productId. Skipping backend verification.');
+          return false;
+        }
+
         final response = await _repo.verifyGooglePurchase(
-          purchaseToken: androidDetails.serverVerificationData,
-          productId: details.productID,
+          purchaseToken: purchaseToken,
+          productId: productId,
           orderId: details.purchaseID ?? '',
         );
         if (response.data != null) {
@@ -333,13 +342,11 @@ class SubscriptionService extends GetxService {
             return isPrem;
           }
         }
-        // Fallback for Android too
         return true;
       }
     } catch (e) {
       debugPrint('[SubscriptionService] Backend verification error: $e');
-      // Network error → fallback: trust the store
-      return true;
+      return false;
     }
     return false;
   }
