@@ -1,0 +1,25 @@
+
+I/flutter ( 6036): ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+I/flutter ( 6036): │ POST https://nayem5001.binarybards.online/api/v1/subscriptions/verify-google
+I/flutter ( 6036): │ Headers: {Content-Type: application/json, Authorization: ***}
+I/flutter ( 6036): │ Body: {
+I/flutter ( 6036): │ Body:   "purchaseToken": "fpdgdekajbfonpoocniblfcm.AO-J1OwInM20PGxwfvnl87L75PQ71cspoPfUydwlRSB-hvFch0en6NWIlN51_0mzVIXbD1ubcJIY3f2ac5DWq7xKTlaQtgdiJQ",
+I/flutter ( 6036): │ Body:   "productId": "ekkali_premium_yearly",
+I/flutter ( 6036): │ Body:   "orderId": "GPA.3362-3061-8396-18093"
+I/flutter ( 6036): │ Body: }
+I/flutter ( 6036): └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+I/flutter ( 6036):
+
+I/flutter ( 6036):
+I/flutter ( 6036): ┌ ❌❌❌❌ ERROR ══════════════════════════════════════ ❌❌❌❌
+I/flutter ( 6036):
+I/flutter ( 6036): │  POST : https://nayem5001.binarybards.online/api/v1/subscriptions/verify-google
+I/flutter ( 6036): │ Status: 400
+I/flutter ( 6036): │ {
+I/flutter ( 6036): │   "success": false,
+I/flutter ( 6036): │   "message": "Failed to verify purchase token with Google Play: Google Play Android Developer API has not been used in project 499834824876 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/overview?project=499834824876 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.",
+I/flutter ( 6036): │   "errorMessages": [],
+I/flutter ( 6036): │   "stack": "Error: Failed to verify purchase token with Google Play: Google Play Android Developer API has not been used in project 499834824876 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/overview?project=499834824876 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.\n    at verifyGooglePurchase (C:\\Users\\Khaled\\Khaled Dask\\Backend\\moeb26\\src\\app\\modules\\subscription\\iap.service.ts:217:11)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at C:\\Users\\Khaled\\Khaled Dask\\Backend\\moeb26\\src\\app\\logging\\autoLabelBootstrap.ts:53:30\n    at C:\\Users\\Khaled\\Khaled Dask\\Backend\\moeb26\\src\\app\\modules\\subscription\\subscription.controller.ts:95:20\n    at C:\\Users\\Khaled\\Khaled Dask\\Backend\\moeb26\\src\\shared\\catchAsync.ts:7:7\n    at C:\\Users\\Khaled\\Khaled Dask\\Backend\\moeb26\\src\\app\\loggi
+I/flutter ( 6036): │ }
+I/flutter ( 6036): └ ❌❌❌❌ ERROR ══════════════════════════════════════ ❌❌❌❌
+I/flutter ( 6036):

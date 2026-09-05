@@ -10,6 +10,7 @@ import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/core/services/storege_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
+import 'package:moeb_26/data/models/subscription_status_model.dart';
 import 'package:moeb_26/data/repositories/subscription_repository.dart';
 
 /// Product IDs – must match exactly what is set in App Store Connect & Google Play
@@ -116,10 +117,14 @@ class SubscriptionService extends GetxService {
         );
       }
       if (response.productDetails.isNotEmpty) {
-        yearlyProduct.value = response.productDetails.firstWhere(
-          (p) => p.id == SubscriptionProductIds.yearlyPremium,
-          orElse: () => response.productDetails.first,
-        );
+        ProductDetails? matched;
+        for (final p in response.productDetails) {
+          if (p.id == SubscriptionProductIds.yearlyPremium) {
+            matched = p;
+            break;
+          }
+        }
+        yearlyProduct.value = matched ?? response.productDetails.first;
         debugPrint('[SubscriptionService] Product loaded: ${yearlyProduct.value?.title} (${yearlyProduct.value?.price})');
       }
     } catch (e) {
@@ -212,13 +217,25 @@ class SubscriptionService extends GetxService {
         if (details.error?.code != 'storekit_duplicate_product_object') {
           Helpers.showCustomSnackBar(errMsg, isError: true);
         }
-        await _iap.completePurchase(details);
+        if (details.pendingCompletePurchase) {
+          try {
+            await _iap.completePurchase(details);
+          } catch (e) {
+            debugPrint('[SubscriptionService] completePurchase error: $e');
+          }
+        }
         continue;
       }
 
       if (details.status == PurchaseStatus.canceled) {
         isLoading.value = false;
-        await _iap.completePurchase(details);
+        if (details.pendingCompletePurchase) {
+          try {
+            await _iap.completePurchase(details);
+          } catch (e) {
+            debugPrint('[SubscriptionService] completePurchase error: $e');
+          }
+        }
         continue;
       }
 
@@ -246,7 +263,13 @@ class SubscriptionService extends GetxService {
           );
         }
         isLoading.value = false;
-        await _iap.completePurchase(details);
+        if (details.pendingCompletePurchase) {
+          try {
+            await _iap.completePurchase(details);
+          } catch (e) {
+            debugPrint('[SubscriptionService] completePurchase error: $e');
+          }
+        }
       }
     }
   }
@@ -266,16 +289,22 @@ class SubscriptionService extends GetxService {
         }
         final response =
             await _repo.verifyAppleReceipt(receiptData: receiptData);
-        final data = response.data;
-        if (data is Map && data['success'] == true) {
-          // Save expiry from backend if available
-          final expiry = data['data']?['expiresAt'] as String?;
-          if (expiry != null) {
-            await StorageService.setString(
-                StorageConstants.subscriptionExpiry, expiry);
-            subscriptionExpiry.value = expiry;
+        if (response.data != null) {
+          final res = SubscriptionStatusResponse.fromJson(
+            Map<String, dynamic>.from(response.data as Map),
+          );
+          if (res.success && res.data != null) {
+            final isPrem = res.data!.isPremium;
+            final expiry = res.data!.expiresAt;
+            await StorageService.setBool(StorageConstants.isPremium, isPrem);
+            isPremium.value = isPrem;
+            if (expiry != null && expiry.isNotEmpty) {
+              await StorageService.setString(
+                  StorageConstants.subscriptionExpiry, expiry);
+              subscriptionExpiry.value = expiry;
+            }
+            return isPrem;
           }
-          return true;
         }
         // If backend unreachable/500 → trust Apple's StoreKit confirmation
         return true;
@@ -287,15 +316,22 @@ class SubscriptionService extends GetxService {
           productId: details.productID,
           orderId: details.purchaseID ?? '',
         );
-        final data = response.data;
-        if (data is Map && data['success'] == true) {
-          final expiry = data['data']?['expiresAt'] as String?;
-          if (expiry != null) {
-            await StorageService.setString(
-                StorageConstants.subscriptionExpiry, expiry);
-            subscriptionExpiry.value = expiry;
+        if (response.data != null) {
+          final res = SubscriptionStatusResponse.fromJson(
+            Map<String, dynamic>.from(response.data as Map),
+          );
+          if (res.success && res.data != null) {
+            final isPrem = res.data!.isPremium;
+            final expiry = res.data!.expiresAt;
+            await StorageService.setBool(StorageConstants.isPremium, isPrem);
+            isPremium.value = isPrem;
+            if (expiry != null && expiry.isNotEmpty) {
+              await StorageService.setString(
+                  StorageConstants.subscriptionExpiry, expiry);
+              subscriptionExpiry.value = expiry;
+            }
+            return isPrem;
           }
-          return true;
         }
         // Fallback for Android too
         return true;
@@ -312,16 +348,25 @@ class SubscriptionService extends GetxService {
   Future<void> _syncStatusWithBackend() async {
     try {
       final response = await _repo.getSubscriptionStatus();
-      final data = response.data;
-      if (data is Map && data['success'] == true) {
-        final isPrem = data['data']?['isPremium'] as bool? ?? false;
-        final expiry = data['data']?['expiresAt'] as String?;
-        await StorageService.setBool(StorageConstants.isPremium, isPrem);
-        isPremium.value = isPrem;
-        if (expiry != null) {
-          await StorageService.setString(
-              StorageConstants.subscriptionExpiry, expiry);
-          subscriptionExpiry.value = expiry;
+      if (response.statusCode == 200 && response.data != null) {
+        final statusModel = SubscriptionStatusResponse.fromJson(
+          Map<String, dynamic>.from(response.data as Map),
+        );
+        if (statusModel.success && statusModel.data != null) {
+          final isPrem = statusModel.data!.isPremium;
+          final expiry = statusModel.data!.expiresAt;
+
+          await StorageService.setBool(StorageConstants.isPremium, isPrem);
+          isPremium.value = isPrem;
+
+          if (expiry != null && expiry.isNotEmpty) {
+            await StorageService.setString(
+                StorageConstants.subscriptionExpiry, expiry);
+            subscriptionExpiry.value = expiry;
+          } else if (!isPrem) {
+            await StorageService.remove(StorageConstants.subscriptionExpiry);
+            subscriptionExpiry.value = '';
+          }
         }
       }
     } catch (e) {
