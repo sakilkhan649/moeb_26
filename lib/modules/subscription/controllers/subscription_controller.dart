@@ -18,17 +18,19 @@ class SubscriptionController extends GetxController {
   final String planName = 'Ekkali Premium';
   final String planPeriod = '/ Year';
 
+  bool get hasProduct => _subscriptionService.yearlyProduct.value != null;
+
   String get planPrice {
     final product = _subscriptionService.yearlyProduct.value;
-    return product?.price ?? '\$89.99';
+    return product?.price ?? 'Not Found';
   }
 
   String get billingDescription {
     final product = _subscriptionService.yearlyProduct.value;
     if (product != null) {
-      return 'Billed annually at ${product.price} (Less than \$7.50/mo)';
+      return 'Billed annually at ${product.price}';
     }
-    return 'Billed annually at \$89.99 USD (Less than \$7.50/mo)';
+    return 'Product unavailable from store';
   }
 
   // ─── Feature List ─────────────────────────────────────────────────────────────
@@ -75,6 +77,7 @@ class SubscriptionController extends GetxController {
   void onInit() {
     super.onInit();
     _subscriptionService = Get.find<SubscriptionService>();
+    _subscriptionService.loadProducts();
   }
 
   // ─── Actions ──────────────────────────────────────────────────────────────────

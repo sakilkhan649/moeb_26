@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:moeb_26/config/themes/app_theme.dart';
 import 'package:moeb_26/core/utils/media_picker_helper.dart';
 import 'package:moeb_26/core/services/marketplace_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
@@ -155,6 +159,144 @@ class MarketplaceController extends GetxController {
         selectedImages.add(compressed);
       }
     }
+  }
+
+  Future<void> takePhoto() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+      if (image != null) {
+        final compressed = await Helpers.compressImage(File(image.path));
+        selectedImages.add(compressed);
+      }
+    } catch (e) {
+      Helpers.error('Error picking from camera: $e');
+      Helpers.showCustomSnackBar(
+        'Could not open camera. Please check app permissions in settings.',
+        isError: true,
+      );
+    }
+  }
+
+  void showPhotoSelectionDialog(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFF141414),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          border: const Border(
+            top: BorderSide(color: Color(0xFF282828), width: 1),
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40.w,
+                height: 4.h,
+                margin: EdgeInsets.only(bottom: 20.h),
+                decoration: BoxDecoration(
+                  color: Colors.grey[700],
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              Text(
+                'Add Photo',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        Get.back();
+                        takePhoto();
+                      },
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 18.h),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E1E1E),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: const Color(0xFF2C2C2C)),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.camera_alt_outlined,
+                              color: AppColors.primaryColor,
+                              size: 28.sp,
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'Camera',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 14.w),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        Get.back();
+                        pickImages(context);
+                      },
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 18.h),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E1E1E),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: const Color(0xFF2C2C2C)),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.photo_library_outlined,
+                              color: AppColors.primaryColor,
+                              size: 28.sp,
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'Gallery',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
   }
 
   void updateCondition(String condition) {

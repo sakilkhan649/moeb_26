@@ -128,7 +128,7 @@ class PersonalInformationView extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Edit Personal & Chauffeur Details',
+                  'Edit Personal Details',
                   style: GoogleFonts.inter(
                     color: const Color(0xFFD5C4AB),
                     fontSize: 15.sp,

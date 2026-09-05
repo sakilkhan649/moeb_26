@@ -179,7 +179,8 @@ class SellItemBottomSheet extends StatelessWidget {
 
                         if (newImages.isEmpty && existingImages.isEmpty) {
                           return GestureDetector(
-                            onTap: () => controller.pickImages(context),
+                            onTap: () =>
+                                controller.showPhotoSelectionDialog(context),
                             child: Container(
                               width: double.infinity,
                               padding: EdgeInsets.symmetric(vertical: 40.h),
@@ -224,7 +225,8 @@ class SellItemBottomSheet extends StatelessWidget {
                               if (index ==
                                   existingImages.length + newImages.length) {
                                 return GestureDetector(
-                                  onTap: () => controller.pickImages(context),
+                                  onTap: () => controller
+                                      .showPhotoSelectionDialog(context),
                                   child: Container(
                                     width: 100.h,
                                     height: 100.h,

@@ -206,47 +206,73 @@ class SubscriptionView extends StatelessWidget {
                               ),
                               SizedBox(height: 14.h),
 
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Text(
-                                    controller.planPrice,
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 34.sp,
-                                      fontWeight: FontWeight.w900,
+                              if (controller.hasProduct) ...[
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children: [
+                                    Text(
+                                      controller.planPrice,
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontSize: 32.sp,
+                                        fontWeight: FontWeight.w900,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    ' USD',
-                                    style: GoogleFonts.inter(
-                                      color: const Color(0xFFFEDB9B),
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
+                                    SizedBox(width: 6.w),
+                                    Text(
+                                      controller.planPeriod,
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFFA1A1AA),
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    controller.planPeriod,
+                                  ],
+                                ),
+                                SizedBox(height: 4.h),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    controller.billingDescription,
                                     style: GoogleFonts.inter(
-                                      color: const Color(0xFFA1A1AA),
-                                      fontSize: 13.sp,
-                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF71717A),
+                                      fontSize: 11.sp,
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 4.h),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  controller.billingDescription,
-                                  style: GoogleFonts.inter(
-                                    color: const Color(0xFF71717A),
-                                    fontSize: 11.sp,
                                   ),
                                 ),
-                              ),
+                              ] else ...[
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline_rounded,
+                                      color: const Color(0xFFE57373),
+                                      size: 20.sp,
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      'Product Not Found',
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFFE57373),
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 6.h),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Could not fetch product details from Store.',
+                                    style: GoogleFonts.inter(
+                                      color: const Color(0xFF9E9E9E),
+                                      fontSize: 11.sp,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),

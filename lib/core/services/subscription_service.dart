@@ -73,7 +73,7 @@ class SubscriptionService extends GetxService {
     );
 
     // 5. Load products from store
-    await _loadProducts();
+    await loadProducts();
 
     // 6. Sync status with backend (non-blocking)
     _syncStatusWithBackend();
@@ -98,8 +98,11 @@ class SubscriptionService extends GetxService {
   }
 
   /// Fetch product details from the stores
-  Future<void> _loadProducts() async {
+  Future<void> loadProducts() async {
     try {
+      if (!isAvailable.value) {
+        isAvailable.value = await _iap.isAvailable();
+      }
       final ProductDetailsResponse response = await _iap.queryProductDetails(
         SubscriptionProductIds.all,
       );
@@ -107,15 +110,20 @@ class SubscriptionService extends GetxService {
         debugPrint('[SubscriptionService] Product query error: ${response.error}');
         return;
       }
+      if (response.notFoundIDs.isNotEmpty) {
+        debugPrint(
+          '[SubscriptionService] Warning: Product IDs not found in Store: ${response.notFoundIDs}. Make sure "ekkali_premium_yearly" is created & active in Play Console / App Store Connect.',
+        );
+      }
       if (response.productDetails.isNotEmpty) {
         yearlyProduct.value = response.productDetails.firstWhere(
           (p) => p.id == SubscriptionProductIds.yearlyPremium,
           orElse: () => response.productDetails.first,
         );
-        debugPrint('[SubscriptionService] Product loaded: ${yearlyProduct.value?.title}');
+        debugPrint('[SubscriptionService] Product loaded: ${yearlyProduct.value?.title} (${yearlyProduct.value?.price})');
       }
     } catch (e) {
-      debugPrint('[SubscriptionService] _loadProducts error: $e');
+      debugPrint('[SubscriptionService] loadProducts error: $e');
     }
   }
 
@@ -124,17 +132,26 @@ class SubscriptionService extends GetxService {
   /// Call this when user taps "Subscribe Now"
   Future<void> buySubscription() async {
     if (!isAvailable.value) {
-      Helpers.showCustomSnackBar(
-        'Store is not available. Please try again later.',
-        isError: true,
-      );
-      return;
+      isAvailable.value = await _iap.isAvailable();
+      if (!isAvailable.value) {
+        Helpers.showCustomSnackBar(
+          'Store is not available on this device.',
+          isError: true,
+        );
+        return;
+      }
+    }
+
+    if (yearlyProduct.value == null) {
+      isLoading.value = true;
+      await loadProducts();
+      isLoading.value = false;
     }
 
     final product = yearlyProduct.value;
     if (product == null) {
       Helpers.showCustomSnackBar(
-        'Product not found. Please restart the app.',
+        'Product not found in Store (ID: ekkali_premium_yearly).',
         isError: true,
       );
       return;
@@ -151,7 +168,7 @@ class SubscriptionService extends GetxService {
       isLoading.value = false;
       debugPrint('[SubscriptionService] buySubscription error: $e');
       Helpers.showCustomSnackBar(
-        'Purchase failed. Please try again.',
+        '$e',
         isError: true,
       );
     }
@@ -168,7 +185,7 @@ class SubscriptionService extends GetxService {
       isLoading.value = false;
       debugPrint('[SubscriptionService] restorePurchases error: $e');
       Helpers.showCustomSnackBar(
-        'Could not restore purchases. Please try again.',
+        '$e',
         isError: true,
       );
     }
