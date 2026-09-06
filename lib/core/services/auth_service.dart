@@ -9,6 +9,7 @@ import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/api_client.dart';
 import 'package:moeb_26/core/services/socket_service.dart';
 import 'package:moeb_26/core/services/storege_service.dart';
+import 'package:moeb_26/core/services/subscription_service.dart';
 import 'package:moeb_26/core/services/user_service.dart';
 import 'package:moeb_26/data/repositories/auth_reporitory.dart';
 import 'package:moeb_26/data/models/vehicle_model.dart';
@@ -221,6 +222,13 @@ class AuthService extends GetxService {
           userService.fetchUserId();
         }
       }
+
+      // 4. Sync subscription status for the newly logged-in user
+      try {
+        if (Get.isRegistered<SubscriptionService>()) {
+          Get.find<SubscriptionService>().syncStatusWithBackend();
+        }
+      } catch (_) {}
     } catch (e) {
       debugPrint("Error handling auth response: $e");
     }
@@ -234,6 +242,17 @@ class AuthService extends GetxService {
     await StorageService.remove(StorageConstants.isApproved);
     await StorageService.remove(StorageConstants.isOnboard);
     await StorageService.remove(StorageConstants.isOnboardingCompleted);
+
+    // Clear subscription local data on logout
+    try {
+      if (Get.isRegistered<SubscriptionService>()) {
+        await Get.find<SubscriptionService>().clearSubscriptionData();
+      } else {
+        await StorageService.remove(StorageConstants.isPremium);
+        await StorageService.remove(StorageConstants.subscriptionExpiry);
+      }
+    } catch (_) {}
+
     ApiClient.temporaryToken = null;
     isLoggedIn.value = false;
   }

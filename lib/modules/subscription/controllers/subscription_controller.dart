@@ -78,6 +78,7 @@ class SubscriptionController extends GetxController {
     super.onInit();
     _subscriptionService = Get.find<SubscriptionService>();
     _subscriptionService.loadProducts();
+    _subscriptionService.syncStatusWithBackend();
   }
 
   // ─── Actions ──────────────────────────────────────────────────────────────────

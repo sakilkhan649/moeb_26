@@ -6,6 +6,7 @@ import 'package:moeb_26/core/services/firebase_notification_service.dart';
 import 'package:moeb_26/config/constants/app_constants.dart';
 import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
+import 'package:moeb_26/core/services/subscription_service.dart';
 import 'package:moeb_26/modules/auth/authentication/views/auth_selection_view.dart';
 import 'package:moeb_26/core/services/storege_service.dart';
 
@@ -31,8 +32,7 @@ class SplashScreenController extends GetxController {
     try {
       // Initialize Firebase asynchronously after the first frame has rendered
       if (Firebase.apps.isEmpty) {
-        await Firebase.
-        initializeApp(
+        await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
         );
       }
@@ -70,6 +70,13 @@ class SplashScreenController extends GetxController {
       StorageConstants.bearerToken,
     );
     if (accessToken.isNotEmpty) {
+      // Sync subscription status with backend for logged in user
+      try {
+        if (Get.isRegistered<SubscriptionService>()) {
+          Get.find<SubscriptionService>().syncStatusWithBackend();
+        }
+      } catch (_) {}
+
       final bool? isApproved = await StorageService.getBool(
         StorageConstants.isApproved,
       );
@@ -85,6 +92,13 @@ class SplashScreenController extends GetxController {
         Get.offAllNamed(Routes.applicationSubmitedView);
       }
     } else {
+      // Not logged in: ensure any leftover subscription cache is cleared
+      try {
+        if (Get.isRegistered<SubscriptionService>()) {
+          Get.find<SubscriptionService>().clearSubscriptionData();
+        }
+      } catch (_) {}
+
       Get.offAll(() => const AuthSelectionView());
     }
   }

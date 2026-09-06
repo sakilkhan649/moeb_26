@@ -46,24 +46,27 @@ class SubscriptionService extends GetxService {
 
   // ─── Initialization ──────────────────────────────────────────────────────────
   Future<void> _initService() async {
-    // 1. Load cached premium status first so UI is instant
+    // 1. Load cached premium status first so UI is instant (only if token exists)
     await _loadCachedStatus();
 
-    // 2. Check if store is available
+    // 2. Always sync status with backend if user has a token
+    syncStatusWithBackend();
+
+    // 3. Check if store is available
     isAvailable.value = await _iap.isAvailable();
     if (!isAvailable.value) {
       debugPrint('[SubscriptionService] Store not available.');
       return;
     }
 
-    // 3. iOS: enable pending transactions
+    // 4. iOS: enable pending transactions
     if (Platform.isIOS) {
       final iosPlatformAddition = _iap
           .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
 
-    // 4. Listen to purchase updates
+    // 5. Listen to purchase updates
     final Stream<List<PurchaseDetails>> purchaseUpdated = _iap.purchaseStream;
     _purchaseSubscription = purchaseUpdated.listen(
       _onPurchaseUpdated,
@@ -73,15 +76,19 @@ class SubscriptionService extends GetxService {
       },
     );
 
-    // 5. Load products from store
+    // 6. Load products from store
     await loadProducts();
-
-    // 6. Sync status with backend (non-blocking)
-    _syncStatusWithBackend();
   }
 
-  /// Load previously cached premium status from SharedPreferences
+  /// Load previously cached premium status from SharedPreferences (only if logged in)
   Future<void> _loadCachedStatus() async {
+    final token = await StorageService.getString(StorageConstants.bearerToken);
+    if (token.isEmpty) {
+      isPremium.value = false;
+      subscriptionExpiry.value = '';
+      return;
+    }
+
     final cached = (await StorageService.getBool(StorageConstants.isPremium)) ?? false;
     isPremium.value = cached;
     final expiry =
@@ -256,12 +263,8 @@ class SubscriptionService extends GetxService {
               isError: false,
             );
           }
-        } else {
-          Helpers.showCustomSnackBar(
-            'Purchase verification failed. Contact support.',
-            isError: true,
-          );
         }
+        // Note: If verification failed, _verifyWithBackend has already shown the specific error snackbar and set _setNotPremium()
         isLoading.value = false;
         if (details.pendingCompletePurchase) {
           try {
@@ -276,7 +279,7 @@ class SubscriptionService extends GetxService {
 
   // ─── Backend Verification ────────────────────────────────────────────────────
 
-  /// Returns true if purchase is valid (either backend verified OR fallback local trust)
+  /// Returns true only if purchase is successfully verified with backend
   Future<bool> _verifyWithBackend(PurchaseDetails details) async {
     try {
       if (Platform.isIOS) {
@@ -284,16 +287,17 @@ class SubscriptionService extends GetxService {
         final receiptData = await SKReceiptManager.retrieveReceiptData();
         if (receiptData.isEmpty) {
           debugPrint('[SubscriptionService] No iOS receipt data available');
-          // If canceled or no receipt, do not proceed with verification
+          Helpers.showCustomSnackBar('No Apple receipt found to restore.', isError: true);
+          await _setNotPremium();
           return false;
         }
         final response =
             await _repo.verifyAppleReceipt(receiptData: receiptData);
-        if (response.data != null) {
+        if (response.data != null && response.data is Map) {
           final res = SubscriptionStatusResponse.fromJson(
             Map<String, dynamic>.from(response.data as Map),
           );
-          if (res.success && res.data != null) {
+          if (res.success && res.data != null && res.data!.isPremium) {
             final isPrem = res.data!.isPremium;
             final expiry = res.data!.expiresAt;
             await StorageService.setBool(StorageConstants.isPremium, isPrem);
@@ -303,10 +307,20 @@ class SubscriptionService extends GetxService {
                   StorageConstants.subscriptionExpiry, expiry);
               subscriptionExpiry.value = expiry;
             }
-            return isPrem;
+            return true;
+          } else {
+            final errorMsg = response.data?['message'] ??
+                'Apple receipt verification failed.';
+            Helpers.showCustomSnackBar(errorMsg.toString(), isError: true);
+            await _setNotPremium();
+            return false;
           }
+        } else {
+          final errorMsg = response.statusMessage ?? 'Verification failed.';
+          Helpers.showCustomSnackBar(errorMsg.toString(), isError: true);
+          await _setNotPremium();
+          return false;
         }
-        return true;
       } else if (Platform.isAndroid) {
         // Android: send purchase token to backend
         final androidDetails = details.verificationData;
@@ -317,6 +331,8 @@ class SubscriptionService extends GetxService {
         if (purchaseToken.isEmpty || productId.isEmpty) {
           debugPrint(
               '[SubscriptionService] Empty purchaseToken or productId. Skipping backend verification.');
+          Helpers.showCustomSnackBar('No Google Play purchase token found.', isError: true);
+          await _setNotPremium();
           return false;
         }
 
@@ -325,11 +341,11 @@ class SubscriptionService extends GetxService {
           productId: productId,
           orderId: details.purchaseID ?? '',
         );
-        if (response.data != null) {
+        if (response.data != null && response.data is Map) {
           final res = SubscriptionStatusResponse.fromJson(
             Map<String, dynamic>.from(response.data as Map),
           );
-          if (res.success && res.data != null) {
+          if (res.success && res.data != null && res.data!.isPremium) {
             final isPrem = res.data!.isPremium;
             final expiry = res.data!.expiresAt;
             await StorageService.setBool(StorageConstants.isPremium, isPrem);
@@ -339,21 +355,42 @@ class SubscriptionService extends GetxService {
                   StorageConstants.subscriptionExpiry, expiry);
               subscriptionExpiry.value = expiry;
             }
-            return isPrem;
+            return true;
+          } else {
+            final errorMsg = response.data?['message'] ??
+                'Google Play purchase verification failed.';
+            Helpers.showCustomSnackBar(errorMsg.toString(), isError: true);
+            await _setNotPremium();
+            return false;
           }
+        } else {
+          final errorMsg = response.statusMessage ?? 'Verification failed.';
+          Helpers.showCustomSnackBar(errorMsg.toString(), isError: true);
+          await _setNotPremium();
+          return false;
         }
-        return true;
       }
     } catch (e) {
       debugPrint('[SubscriptionService] Backend verification error: $e');
+      Helpers.showCustomSnackBar('Verification error: $e', isError: true);
+      await _setNotPremium();
       return false;
     }
+    await _setNotPremium();
     return false;
   }
 
-  /// Sync subscription status from backend on app start (non-blocking)
-  Future<void> _syncStatusWithBackend() async {
+  /// Sync subscription status from backend (non-blocking) - called on app start, login, or screen load
+  Future<void> syncStatusWithBackend() async {
     try {
+      final token = await StorageService.getString(StorageConstants.bearerToken);
+      if (token.isEmpty) {
+        debugPrint('[SubscriptionService] No bearer token found. Skipping status sync.');
+        isPremium.value = false;
+        subscriptionExpiry.value = '';
+        return;
+      }
+
       final response = await _repo.getSubscriptionStatus();
       if (response.statusCode == 200 && response.data != null) {
         final statusModel = SubscriptionStatusResponse.fromJson(
@@ -374,12 +411,24 @@ class SubscriptionService extends GetxService {
             await StorageService.remove(StorageConstants.subscriptionExpiry);
             subscriptionExpiry.value = '';
           }
+          debugPrint(
+            '[SubscriptionService] Synced backend status: isPremium=$isPrem, expiresAt=$expiry',
+          );
         }
       }
     } catch (e) {
       // Backend not available – keep cached status
-      debugPrint('[SubscriptionService] Status sync error (using cached): $e');
+      debugPrint('[SubscriptionService] Status sync error: $e');
     }
+  }
+
+  /// Clear subscription local data on logout
+  Future<void> clearSubscriptionData() async {
+    await StorageService.remove(StorageConstants.isPremium);
+    await StorageService.remove(StorageConstants.subscriptionExpiry);
+    isPremium.value = false;
+    subscriptionExpiry.value = '';
+    debugPrint('[SubscriptionService] Cleared subscription local data.');
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────────

@@ -6,6 +6,7 @@ import 'package:moeb_26/config/constants/api_constants.dart';
 import 'package:moeb_26/config/constants/storage_constants.dart';
 import 'package:moeb_26/config/routes/app_pages.dart';
 import 'package:moeb_26/core/services/storege_service.dart';
+import 'package:moeb_26/core/services/subscription_service.dart';
 import 'package:moeb_26/core/utils/helpers.dart';
 import 'package:moeb_26/core/utils/logger.dart';
 
@@ -19,7 +20,6 @@ import 'package:moeb_26/core/utils/logger.dart';
 
 class ApiClient extends GetxService {
   static late Dio _dio;
-  static final String _bearerToken = '';
   static Future<bool>? _refreshFuture;
 
   static const String _fallbackMessage =
@@ -465,6 +465,11 @@ class ApiClient extends GetxService {
   /// Force logout when refresh fails
   void _forceLogout() {
     StorageService.clearAll();
+    try {
+      if (Get.isRegistered<SubscriptionService>()) {
+        Get.find<SubscriptionService>().clearSubscriptionData();
+      }
+    } catch (_) {}
     final currentRoute = Get.currentRoute;
     if (currentRoute != Routes.signinView &&
         currentRoute != Routes.authSelectionView &&

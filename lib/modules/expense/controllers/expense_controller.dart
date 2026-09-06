@@ -493,6 +493,11 @@ class ExpenseController extends GetxController {
 
   Future<void> exportToCSV() async {
     try {
+      if (filteredExpenses.isEmpty) {
+        Helpers.showCustomSnackBar("No expenses to export", isError: true);
+        return;
+      }
+
       final csvContent = StringBuffer();
       csvContent.writeln('ID,Date,Category,Description,Amount');
       for (var e in filteredExpenses) {
@@ -500,9 +505,12 @@ class ExpenseController extends GetxController {
         final cleanCategory = e.category.replaceAll('"', '""');
         final cleanDesc = e.description.replaceAll('"', '""');
         csvContent.writeln(
-          '${e.id},"$formattedDate","$cleanCategory","$cleanDesc",${e.amount}',
+          '${e.id},"$formattedDate","$cleanCategory","$cleanDesc",${e.amount.toStringAsFixed(2)}',
         );
       }
+
+      // Append Total row
+      csvContent.writeln(',,,Total,${filteredTotalAmount.toStringAsFixed(2)}');
 
       final tempDir = Directory.systemTemp;
       final file = File(
@@ -521,6 +529,7 @@ class ExpenseController extends GetxController {
   }
 
   String _sanitizeForPdf(String text) {
+    if (text.isEmpty) return '';
     final buffer = StringBuffer();
     for (var char in text.runes) {
       if ((char >= 32 && char <= 126) ||
@@ -536,11 +545,29 @@ class ExpenseController extends GetxController {
 
   Future<void> exportToPDF() async {
     try {
-      final pdf = pw.Document();
+      if (filteredExpenses.isEmpty) {
+        Helpers.showCustomSnackBar("No expenses to export", isError: true);
+        return;
+      }
+
+      pw.ThemeData theme;
+      try {
+        final font = await PdfGoogleFonts.robotoRegular();
+        final boldFont = await PdfGoogleFonts.robotoBold();
+        theme = pw.ThemeData.withFont(base: font, bold: boldFont);
+      } catch (_) {
+        theme = pw.ThemeData.withFont(
+          base: pw.Font.helvetica(),
+          bold: pw.Font.helveticaBold(),
+        );
+      }
+
+      final pdf = pw.Document(theme: theme);
 
       pdf.addPage(
         pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(32),
           build: (pw.Context context) {
             return [
               pw.Header(
@@ -551,17 +578,39 @@ class ExpenseController extends GetxController {
                     pw.Text(
                       "Expense Tracker Report",
                       style: pw.TextStyle(
-                        fontSize: 24,
+                        fontSize: 22,
                         fontWeight: pw.FontWeight.bold,
                       ),
                     ),
-                    pw.Text(DateFormat('dd MMM yyyy').format(DateTime.now())),
+                    pw.Text(
+                      DateFormat('dd MMM yyyy').format(DateTime.now()),
+                      style: const pw.TextStyle(
+                        fontSize: 12,
+                        color: PdfColors.grey700,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              pw.SizedBox(height: 20),
+              pw.SizedBox(height: 16),
               pw.TableHelper.fromTextArray(
                 headers: ['Date', 'Category', 'Description', 'Amount (\$)'],
+                headerStyle: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white,
+                  fontSize: 10,
+                ),
+                headerDecoration: const pw.BoxDecoration(
+                  color: PdfColor.fromInt(0xFF1E1E20),
+                ),
+                cellStyle: const pw.TextStyle(fontSize: 9),
+                cellAlignment: pw.Alignment.centerLeft,
+                cellAlignments: {
+                  0: pw.Alignment.centerLeft,
+                  1: pw.Alignment.centerLeft,
+                  2: pw.Alignment.centerLeft,
+                  3: pw.Alignment.centerRight,
+                },
                 data: filteredExpenses
                     .map(
                       (e) => [
@@ -573,14 +622,26 @@ class ExpenseController extends GetxController {
                     )
                     .toList(),
               ),
-              pw.SizedBox(height: 20),
+              pw.SizedBox(height: 16),
               pw.Align(
                 alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                  "Total: \$${filteredTotalAmount.toStringAsFixed(2)}",
-                  style: pw.TextStyle(
-                    fontSize: 16,
-                    fontWeight: pw.FontWeight.bold,
+                child: pw.Container(
+                  padding: const pw.EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey300),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(6),
+                    ),
+                  ),
+                  child: pw.Text(
+                    "Total Amount: \$${filteredTotalAmount.toStringAsFixed(2)}",
+                    style: pw.TextStyle(
+                      fontSize: 14,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -589,9 +650,11 @@ class ExpenseController extends GetxController {
         ),
       );
 
-      await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdf.save(),
-        name:
+      final pdfBytes = await pdf.save();
+
+      await Printing.sharePdf(
+        bytes: pdfBytes,
+        filename:
             'expense_report_${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf',
       );
     } catch (e) {
